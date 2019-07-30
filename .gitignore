@@ -41,3 +41,11 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+
+# Protobuf compiled files
+**/protobuf-*/cmake/*
+*.pb.cc
+*.pb.h
+
+# Opus Win32 generated files
+**/opus-*/win32/*
