@@ -24,3 +24,9 @@
 /configure.log
 
 .DS_Store
+
+*.vcxproj*
+*.sln
+*.dir
+Debug/
+*cmake*
