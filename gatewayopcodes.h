@@ -1,0 +1,4 @@
+#ifndef GATEWAYOPCODES_H
+#define GATEWAYOPCODES_H
+
+#endif // GATEWAYOPCODES_H

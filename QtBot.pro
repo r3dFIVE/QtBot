@@ -1,4 +1,5 @@
 QT -= gui
+QT += websockets
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -15,7 +16,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        src/main.cpp
+    src/bot.cc \
+    src/gatewayconnection.cc \
+    src/main.cc \
+    src/messagehandler.cc \
+    src/payloads/user.pb.cc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -48,3 +53,14 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/prot
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/liblibprotobufd.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/libprotobuf.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/libprotobufd.lib
+
+DISTFILES +=
+
+HEADERS += \
+    gatewayopcodes.h \
+    src/bot.h \
+    src/gatewayconnection.h \
+    src/lockingqueue.h \
+    src/messagehandler.h \
+    src/opcodes/gatewayopcodes.h \
+    src/payloads/gatewaypayload.h
