@@ -2,14 +2,15 @@
 
 #include "opcodes/gatewayopcodes.h"
 
-MessageHandler::MessageHandler()
+MessageHandler::MessageHandler(const GatewayConnection* connection, QObject *parent) :
+QObject(parent)
 {
-
+    connect(connection, &GatewayConnection::payloadReady, this, &MessageHandler::processPayload);
 }
 
 void
 MessageHandler::processPayload(GatewayPayload payload) {
-    switch (payload.opcode) {
+    switch (payload.op()) {
         case GatewayOpcodes::DISPATCH:
             //Receive	dispatches an event
             break;

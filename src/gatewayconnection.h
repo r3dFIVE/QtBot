@@ -13,28 +13,21 @@ class GatewayConnection : public QObject
     Q_OBJECT
 
 public:
-    GatewayConnection(const QUrl &url,
-                      bool debug = false,
-                      QObject *parent = nullptr);
+    GatewayConnection(const QUrl &url, QObject *parent = nullptr);
 
 Q_SIGNALS:
     void payloadReady(GatewayPayload payload);
 
 private Q_SLOTS:
     void onConnected();
-    void onMessageReceived(QString message);
+    void onTextMessageReceived(QString message);
+    void onBinaryMessageReceived(QByteArray message);
     void reconnect();
 
 private:
-    int ParseInt(QString key, QString message);
-    QString ParseEventPayload(QString message);
-    QString ParseEventName(QString message);
-    GatewayPayload BuildPayload(QString message);
-    bool ValidatePayload(GatewayPayload payload);
-
     QWebSocket socket_;
     QUrl url_;
-    bool debug_;
+    bool debug_ = true;
 };
 
 #endif // GATEWAYCONNECTION_H

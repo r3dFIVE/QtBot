@@ -18,9 +18,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/bot.cc \
     src/gatewayconnection.cc \
+    src/jsonserializer.cc \
     src/main.cc \
     src/messagehandler.cc \
-    src/payloads/user.pb.cc
+    src/payloads/gatewaypayload.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -60,7 +61,9 @@ HEADERS += \
     gatewayopcodes.h \
     src/bot.h \
     src/gatewayconnection.h \
-    src/lockingqueue.h \
+    src/jsonserializeable.h \
+    src/jsonserializer.h \
+    src/lockingdeque.h \
     src/messagehandler.h \
     src/opcodes/gatewayopcodes.h \
     src/payloads/gatewaypayload.h

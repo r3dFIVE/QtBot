@@ -5,12 +5,16 @@
 
 #include "payloads/gatewaypayload.h"
 
-class MessageHandler
-{
-public:
-    MessageHandler();
+#include "gatewayconnection.h"
 
-public slots:
+class MessageHandler : public QObject
+{
+    Q_OBJECT
+
+public:
+    MessageHandler(const GatewayConnection* connection, QObject *parent = nullptr);
+
+private Q_SLOTS:
     void processPayload(GatewayPayload payload);
 };
 

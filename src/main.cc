@@ -12,22 +12,16 @@ extern "C"{
 }
 #endif
 
-#include <google/protobuf/util/json_util.h>
 #include "payloads/gatewaypayload.h"
-#include "lockingqueue.h"
+#include "lockingdeque.h"
 
-#include "payloads/user.pb.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-
-    User user;
-
     std::string test = "{ \"id\" : \"1\", \"username\" : \"ross\" }";
-    google::protobuf::util::JsonParseOptions options2;
-      JsonStringToMessage(test, &user, options2);
+
 
     LockingDeque<int> q;
     q.enqueue_front(1);
