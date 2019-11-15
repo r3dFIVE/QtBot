@@ -6,10 +6,10 @@
 
 class JsonSerializer {
 public:
-    static QString toQString(JsonSerializeable &serializeable);
-    static QByteArray toByteArray(JsonSerializeable &serializeable);
-    static void fromByteArray(const QByteArray &json, JsonSerializeable &serializeable);
-    static void fromQString(const QString &json, JsonSerializeable &serializeable);
+    static QString toQString(const JsonSerializeable &serializeable);
+    static QByteArray toByteArray(const JsonSerializeable &serializeable);
+    static void fromByteArray(JsonSerializeable &serializeable, const QByteArray &json);
+    static void fromQString(JsonSerializeable &serializeable, const QString &json);
 };
 
 #endif // JSONSERIALIZER_H

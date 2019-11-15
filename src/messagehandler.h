@@ -12,10 +12,16 @@ class MessageHandler : public QObject
     Q_OBJECT
 
 public:
-    MessageHandler(const GatewayConnection* connection, QObject *parent = nullptr);
+    MessageHandler(QObject *parent = nullptr);
 
-private Q_SLOTS:
-    void processPayload(GatewayPayload payload);
+public slots:
+    void processPayload(int payload);
+
+signals:
+    void updateHeartbeat(int heartbeatInterval);
+
+private:
+    void processHello(GatewayPayload payload);
 };
 
 #endif // MESSAGEHANDLER_H

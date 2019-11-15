@@ -2,7 +2,6 @@
 #define GATEWAYCONNECTION_H
 
 #include <QObject>
-#include <QQueue>
 #include <QtWebSockets/QWebSocket>
 
 #include "payloads/gatewaypayload.h"
@@ -14,9 +13,16 @@ class GatewayConnection : public QObject
 
 public:
     GatewayConnection(const QUrl &url, QObject *parent = nullptr);
+    ~GatewayConnection();
+
+public slots:
+    void init();
+    void sendTextMessage(const JsonSerializeable &message);
+    void sendBinaryMessage(const JsonSerializeable &message);
+    void updateHeartbeatInterval(int milliseconds);
 
 Q_SIGNALS:
-    void payloadReady(GatewayPayload payload);
+    void payloadReady(int payload);
 
 private Q_SLOTS:
     void onConnected();
@@ -25,9 +31,10 @@ private Q_SLOTS:
     void reconnect();
 
 private:
-    QWebSocket socket_;
-    QUrl url_;
-    bool debug_ = true;
+    QWebSocket *_socket;
+    QUrl _url;
+    bool _debug = true;
+    int _heartbeatInterval;
 };
 
 #endif // GATEWAYCONNECTION_H

@@ -4,12 +4,12 @@
 #include <QJsonDocument>
 
 QString
-JsonSerializer::toQString(JsonSerializeable &serializeable) {
+JsonSerializer::toQString(const JsonSerializeable &serializeable) {
     return QString(JsonSerializer::toByteArray(serializeable));
 }
 
 QByteArray
-JsonSerializer::toByteArray(JsonSerializeable &serializeable) {
+JsonSerializer::toByteArray(const JsonSerializeable &serializeable) {
     QJsonObject jsonObject;
     serializeable.write(jsonObject);
     QJsonDocument document(jsonObject);
@@ -17,13 +17,13 @@ JsonSerializer::toByteArray(JsonSerializeable &serializeable) {
 }
 
 void
-JsonSerializer::fromByteArray(const QByteArray &json, JsonSerializeable &serializeable) {
+JsonSerializer::fromByteArray(JsonSerializeable &serializeable, const QByteArray &json) {
     QJsonDocument document = QJsonDocument::fromJson(json);
     QJsonObject object = document.object();
     serializeable.read(object);
 }
 
 void
-JsonSerializer::fromQString(const QString &json, JsonSerializeable &serializeable) {
-    JsonSerializer::fromByteArray(json.toUtf8(), serializeable);
+JsonSerializer::fromQString(JsonSerializeable &serializeable, const QString &json) {
+    JsonSerializer::fromByteArray(serializeable, json.toUtf8());
 }

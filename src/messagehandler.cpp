@@ -1,16 +1,20 @@
+#include "jsonserializer.h"
 #include "messagehandler.h"
 
 #include "opcodes/gatewayopcodes.h"
 
-MessageHandler::MessageHandler(const GatewayConnection* connection, QObject *parent) :
+#include <src/payloads/hello.h>
+
+#include <QJsonDocument>
+
+MessageHandler::MessageHandler(QObject *parent) :
 QObject(parent)
 {
-    connect(connection, &GatewayConnection::payloadReady, this, &MessageHandler::processPayload);
 }
 
 void
-MessageHandler::processPayload(GatewayPayload payload) {
-    switch (payload.op()) {
+MessageHandler::processPayload(int  op) {
+    switch (op) {
         case GatewayOpcodes::DISPATCH:
             //Receive	dispatches an event
             break;
@@ -40,10 +44,19 @@ MessageHandler::processPayload(GatewayPayload payload) {
             break;
         case GatewayOpcodes::HELLO:
             //Receive	sent immediately after connecting, contains heartbeat and server debug information
+            //processHello(payload);
             break;
         case GatewayOpcodes::HEARTBEAT_ACK:
             //Receive	sent immediately following a client heartbeat that was received
             break;
 
     }
+}
+
+void
+MessageHandler::processHello(GatewayPayload payload) {
+    Hello hello;
+    QJsonDocument doc(payload.d());
+    JsonSerializer::fromQString(hello, doc.toJson());
+    emit updateHeartbeat(hello.heartbeatInterval());
 }

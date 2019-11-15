@@ -1,17 +1,18 @@
 #include "gatewaypayload.h"
 
-QString
+QJsonObject
 GatewayPayload::d() {
     return _d;
 }
 
 void
-GatewayPayload::setD(QString d) {
+GatewayPayload::setD(QJsonObject d) {
     _d = d;
 }
 
 
-QString GatewayPayload::t() {
+QString
+GatewayPayload::t() {
     return _t;
 }
 
@@ -35,13 +36,14 @@ GatewayPayload::s() {
     return _s;
 }
 
-void GatewayPayload::setS(int s) {
+void
+GatewayPayload::setS(int s) {
     _s = s;
 }
 
 void
 GatewayPayload::read(const QJsonObject &jsonObject) {
-    _d = jsonObject["d"].toString();
+    _d = jsonObject["d"].toObject();
     _t = jsonObject["t"].toString();
     _op = jsonObject["op"].toInt();
     _s = jsonObject["s"].toInt();

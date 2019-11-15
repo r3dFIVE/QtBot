@@ -2,13 +2,25 @@
 #define BOT_H
 
 #include <QObject>
+#include <QThread>
 #include "gatewayconnection.h"
 
-class Bot
+class Bot : public QObject
 {
+    Q_OBJECT
+
+private:
+    QThread _gatewayThread;
+    QThread _messageHandlerThread;
+
+private slots:
+
+
 public:
     Bot();
-    void Run();
+    void run();
+
+
 };
 
 #endif // BOT_H
