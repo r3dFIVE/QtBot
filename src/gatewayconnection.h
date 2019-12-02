@@ -2,8 +2,10 @@
 #define GATEWAYCONNECTION_H
 
 #include <QObject>
+#include <QTimer>
 #include <QtWebSockets/QWebSocket>
 
+#include "payloads/heartbeat.h"
 #include "payloads/gatewaypayload.h"
 
 
@@ -19,22 +21,23 @@ public slots:
     void init();
     void sendTextMessage(const JsonSerializeable &message);
     void sendBinaryMessage(const JsonSerializeable &message);
-    void updateHeartbeatInterval(int milliseconds);
 
 Q_SIGNALS:
-    void payloadReady(int payload);
-
-private Q_SLOTS:
-    void onConnected();
-    void onTextMessageReceived(QString message);
-    void onBinaryMessageReceived(QByteArray message);
-    void reconnect();
+    void payloadReady(QSharedPointer<GatewayPayload> payload);
 
 private:
-    QWebSocket *_socket;
-    QUrl _url;
-    bool _debug = true;
-    int _heartbeatInterval;
+    Heartbeat *m_heartBeat;
+    QWebSocket *m_socket;
+    QTimer *m_heartbeatTimer;
+    QUrl m_url;
+
+    bool m_debug = true;
+    bool m_heartbeatAck = false;
+    int m_lastSequenceNumber = -1;
+
+    void processHello(QSharedPointer<GatewayPayload> payload);
+    void processPayload(QSharedPointer<GatewayPayload> payload);
+    void sendHeartbeat();
 };
 
 #endif // GATEWAYCONNECTION_H

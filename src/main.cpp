@@ -1,31 +1,18 @@
 #include <QCoreApplication>
+
+#include <QSettings>
 #include "bot.h"
-
-#ifdef __cplusplus
-extern "C"{
-#endif
-
-#include <sodium.h>
-#include <opus.h>
-
-#ifdef __cplusplus
-}
-#endif
-
-#include "payloads/gatewaypayload.h"
-#include "lockingdeque.h"
 
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QThread botThread;
-    Bot *bot = new Bot();
-    QObject::connect(&botThread, &QThread::started, bot, &Bot::run);
-    bot->moveToThread(&botThread);
-    botThread.start();
+    QString str = "C:\\BMCProjects\\QtBot-master\\settings.ini";
+    QSharedPointer<QSettings> settings(new QSettings(str, QSettings::IniFormat));
 
+    Bot bot(settings);
+    bot.run();
 
     return a.exec();
 }

@@ -3,23 +3,22 @@
 
 #include <QString>
 #include <QObject>
+#include <QJsonDocument>
 
 #include "src/jsonserializeable.h"
 
 
 class GatewayPayload : public JsonSerializeable {
     Q_OBJECT
-    Q_PROPERTY(QJsonObject _d READ d WRITE setD)
-    Q_PROPERTY(int op READ op WRITE setOp)
 
     QJsonObject _d;
     QString _t;
     int _op = -1;
     int _s = -1;
  public:
-    GatewayPayload(const GatewayPayload &payload) {}
+    GatewayPayload(const GatewayPayload &payload) { Q_UNUSED(payload) }
     GatewayPayload() {}
-    ~GatewayPayload() {}
+    ~GatewayPayload() override {}
 
     QJsonObject d();
     void setD(QJsonObject d);

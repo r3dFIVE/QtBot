@@ -15,13 +15,9 @@ public:
     MessageHandler(QObject *parent = nullptr);
 
 public slots:
-    void processPayload(int payload);
+    void processPayload(QSharedPointer<GatewayPayload> payload);
 
-signals:
-    void updateHeartbeat(int heartbeatInterval);
 
-private:
-    void processHello(GatewayPayload payload);
 };
 
 #endif // MESSAGEHANDLER_H

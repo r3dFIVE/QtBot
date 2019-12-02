@@ -1,78 +1,124 @@
 #include "gatewayconnection.h"
 #include "jsonserializer.h"
+#include "opcodes/gatewayopcodes.h"
 
+#include <QSettings>
 #include <QThread>
+
+#include <src/payloads/hello.h>
 
 GatewayConnection::GatewayConnection(const QUrl& url, QObject *parent) :
     QObject(parent),
-    _url(url)
+    m_url(url)
 {    
 
 }
 
 GatewayConnection::~GatewayConnection() {
-    _socket->close();
+    m_socket->close();
+    delete m_socket;
+
+    m_heartbeatTimer->stop();
+    delete m_heartbeatTimer;
+    delete m_heartBeat;
 }
 
 void
 GatewayConnection::init() {
-    if (_debug)
-        qDebug() << "Gateway Connection Url: " << _url.toString();
+    if (m_debug)
+        qDebug() << "Gateway Connection Url: " << m_url.toString();
 
-    _socket = new QWebSocket;
+    m_socket = new QWebSocket;
 
-    connect(_socket, &QWebSocket::connected, this, &GatewayConnection::onConnected);
-    connect(_socket, &QWebSocket::textMessageReceived, this, &GatewayConnection::onTextMessageReceived);
-    connect(_socket, &QWebSocket::binaryMessageReceived, this, &GatewayConnection::onBinaryMessageReceived);
-    connect(_socket, &QWebSocket::disconnected, this, &GatewayConnection::reconnect);
-    connect(_socket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+    connect(m_socket, &QWebSocket::connected, this, [&](){
+        qDebug() << "WebSocket connected";
+        QString str("{ \"op\" : 10, \"d\" : { \"heartbeat_interval\" : 5000 } }");
+        m_socket->sendTextMessage(str);
+    });
+
+    connect(m_socket, &QWebSocket::textMessageReceived, this, [&](QString messageString) {
+        qDebug() << "Message recieved: " << messageString;
+
+        QSharedPointer<GatewayPayload> event(new GatewayPayload);
+
+        JsonSerializer::fromQString(*event, messageString);
+
+        processPayload(event);
+    });
+
+    connect(m_socket, &QWebSocket::binaryMessageReceived, this, [&](QByteArray messageArray){
+        QSharedPointer<GatewayPayload> event(new GatewayPayload);
+
+        JsonSerializer::fromByteArray(*event, messageArray);
+
+        processPayload(event);
+    });
+
+    connect(m_socket, &QWebSocket::disconnected, this,
+            [&](){
+        // Disconnect not implemented
+    });
+
+    connect(m_socket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
         [=](QAbstractSocket::SocketError error) {
             qDebug() << error;
         }
     );
 
-    _socket->open(QUrl(_url));
+    m_heartbeatTimer = new QTimer(this);
+    m_heartBeat = new Heartbeat;
+    connect(m_heartbeatTimer, &QTimer::timeout, this, &GatewayConnection::sendHeartbeat);
+
+    m_socket->open(QUrl(m_url));
 }
 
-void
-GatewayConnection::onConnected() {
-    qDebug() << "WebSocket connected";
-    QString str("{ \"op\" : 10, \"d\" : { \"heartbeat_interval\" : 5000 } }");
-    _socket->sendTextMessage(str);
-    //do nothing, wait for OPCODE 10 for now and dispatch accordingly
-}
 
 void
-GatewayConnection::reconnect() {
-    //TODO implement reco
-}
+GatewayConnection::processPayload(QSharedPointer<GatewayPayload> payload) {
+    m_lastSequenceNumber = payload->s();
 
-void
-GatewayConnection::onTextMessageReceived(QString message) {
-    qDebug() << "Message recieved: " << message;
-    GatewayPayload payload;
-    JsonSerializer::fromQString(payload, message);
-    emit payloadReady(123);
-}
-
-void
-GatewayConnection::onBinaryMessageReceived(QByteArray message) {
-    GatewayPayload payload;
-    JsonSerializer::fromByteArray(payload, message);
-    emit payloadReady(123);
+    switch(payload->op()) {
+        case GatewayOpcodes::HELLO:
+            processHello(payload);
+            break;
+        case GatewayOpcodes::HEARTBEAT:
+            //sendHeartbeat();
+            break;
+        case GatewayOpcodes::HEARTBEAT_ACK:
+            m_heartbeatAck = true;
+            break;
+        default:
+            emit payloadReady(payload);
+            break;
+    }
 }
 
 void
 GatewayConnection::sendTextMessage(const JsonSerializeable &message) {
-    _socket->sendTextMessage(JsonSerializer::toQString(message));
+    m_socket->sendTextMessage(JsonSerializer::toQString(message));
 }
 
 void
 GatewayConnection::sendBinaryMessage(const JsonSerializeable &message) {
-    _socket->sendBinaryMessage(JsonSerializer::toByteArray(message));
+    m_socket->sendBinaryMessage(JsonSerializer::toByteArray(message));
 }
 
 void
-GatewayConnection::updateHeartbeatInterval(int heartbeatInterval) {
-    _heartbeatInterval = heartbeatInterval;
+GatewayConnection::processHello(QSharedPointer<GatewayPayload> payload) {
+    Hello helloEvent;
+    JsonSerializer::fromQJsonObject(helloEvent, payload->d());
+
+    if (m_heartbeatTimer->isActive()) {
+        m_heartbeatTimer->stop();
+    }
+
+    m_heartbeatTimer->setInterval(helloEvent.heartbeatInterval());
+    m_heartbeatTimer->start();
+}
+
+void
+GatewayConnection::sendHeartbeat() {
+    m_heartBeat->setD(m_lastSequenceNumber);
+    m_socket->sendTextMessage(JsonSerializer::toQString(*m_heartBeat));
+    m_heartbeatAck = false;
 }

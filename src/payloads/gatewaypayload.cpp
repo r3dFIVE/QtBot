@@ -41,6 +41,7 @@ GatewayPayload::setS(int s) {
     _s = s;
 }
 
+
 void
 GatewayPayload::read(const QJsonObject &jsonObject) {
     _d = jsonObject["d"].toObject();
@@ -56,4 +57,3 @@ GatewayPayload::write(QJsonObject &jsonObject) const {
     jsonObject["op"] = _op;
     jsonObject["s"] = _s;
 }
-

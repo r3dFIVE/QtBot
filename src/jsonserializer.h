@@ -10,6 +10,7 @@ public:
     static QByteArray toByteArray(const JsonSerializeable &serializeable);
     static void fromByteArray(JsonSerializeable &serializeable, const QByteArray &json);
     static void fromQString(JsonSerializeable &serializeable, const QString &json);
+    static void fromQJsonObject(JsonSerializeable &serializeable, const QJsonObject &json);
 };
 
 #endif // JSONSERIALIZER_H

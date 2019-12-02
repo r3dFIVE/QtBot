@@ -20,10 +20,15 @@ void
 JsonSerializer::fromByteArray(JsonSerializeable &serializeable, const QByteArray &json) {
     QJsonDocument document = QJsonDocument::fromJson(json);
     QJsonObject object = document.object();
-    serializeable.read(object);
+    JsonSerializer::fromQJsonObject(serializeable, object);
 }
 
 void
 JsonSerializer::fromQString(JsonSerializeable &serializeable, const QString &json) {
     JsonSerializer::fromByteArray(serializeable, json.toUtf8());
+}
+
+void
+JsonSerializer::fromQJsonObject(JsonSerializeable &serializeable, const QJsonObject &json) {
+    serializeable.read(json);
 }

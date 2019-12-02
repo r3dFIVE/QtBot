@@ -8,7 +8,9 @@
 class JsonSerializeable : public QObject {
     Q_OBJECT
 public:
-    virtual ~JsonSerializeable() {}
+    JsonSerializeable() {}
+    JsonSerializeable(const JsonSerializeable &serializeable) { Q_UNUSED(serializeable) }
+    ~JsonSerializeable() {}
     virtual void read(const QJsonObject &jsonObject) = 0;
     virtual void write(QJsonObject &jsonObject) const = 0;
 };

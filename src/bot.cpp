@@ -1,30 +1,36 @@
 #include "bot.h"
 #include "messagehandler.h"
 
-
-Bot::Bot()
+Bot::Bot(QSharedPointer<QSettings> settings) : m_settings(settings)
 {
-    qRegisterMetaType<GatewayPayload>();
-}
+    qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
 
+    qDebug() << QSysInfo::kernelType();
+    qDebug() << m_settings->isWritable();
+    qDebug() << m_settings->value("test_val").toBool();
+    qDebug() << m_settings->value("bot_token").toString();
+}
 
 void
 Bot::run() {
-    qDebug() << "in bot run.";
-
-
-    GatewayConnection *connection = new GatewayConnection(QUrl(QStringLiteral("ws://192.168.1.72:1234")), nullptr);
-    connection->moveToThread(&_gatewayThread);
-    connect(&_gatewayThread, &QThread::finished, connection, &QObject::deleteLater);
-    connect(&_gatewayThread, &QThread::started, connection, &GatewayConnection::init);
+    QUrl connectionUrl = buildConnectionUrl();
+    GatewayConnection *connection = new GatewayConnection(QUrl(QStringLiteral("ws://172.21.98.196:1234")), nullptr);
+    connection->moveToThread(&m_gatewayThread);
+    connect(&m_gatewayThread, &QThread::finished, connection, &QObject::deleteLater);
+    connect(&m_gatewayThread, &QThread::started, connection, &GatewayConnection::init);
 
     MessageHandler *messageHandler = new MessageHandler;
-    messageHandler->moveToThread(&_messageHandlerThread);
+    messageHandler->moveToThread(&m_messageHandlerThread);
+    connect(&m_messageHandlerThread, &QThread::finished, messageHandler, &QObject::deleteLater);
     connect(connection, &GatewayConnection::payloadReady, messageHandler, &MessageHandler::processPayload);
-    connect(messageHandler, &MessageHandler::updateHeartbeat, connection, &GatewayConnection::updateHeartbeatInterval);
 
-    _messageHandlerThread.start();
-    _gatewayThread.start();
+    m_messageHandlerThread.start();
+    m_gatewayThread.start();
+    m_gatewayThread.setPriority(QThread::HighestPriority);
+}
 
-    qDebug() << "in bot run. (finished)";
+QUrl
+Bot::buildConnectionUrl() {
+    QUrl url("url");
+    return url;
 }

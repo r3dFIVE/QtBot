@@ -13,8 +13,8 @@ QObject(parent)
 }
 
 void
-MessageHandler::processPayload(int  op) {
-    switch (op) {
+MessageHandler::processPayload(QSharedPointer<GatewayPayload> payload) {
+    switch (payload->op()) {
         case GatewayOpcodes::DISPATCH:
             //Receive	dispatches an event
             break;
@@ -43,20 +43,11 @@ MessageHandler::processPayload(int  op) {
             //Receive	used to notify client they have an invalid session id
             break;
         case GatewayOpcodes::HELLO:
-            //Receive	sent immediately after connecting, contains heartbeat and server debug information
-            //processHello(payload);
+            // Handled in GatewayConnection
             break;
         case GatewayOpcodes::HEARTBEAT_ACK:
             //Receive	sent immediately following a client heartbeat that was received
             break;
 
     }
-}
-
-void
-MessageHandler::processHello(GatewayPayload payload) {
-    Hello hello;
-    QJsonDocument doc(payload.d());
-    JsonSerializer::fromQString(hello, doc.toJson());
-    emit updateHeartbeat(hello.heartbeatInterval());
 }
