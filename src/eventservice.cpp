@@ -1,19 +1,19 @@
 #include "jsonserializer.h"
-#include "messagehandler.h"
+#include "eventservice.h"
 
 #include "opcodes/gatewayopcodes.h"
 
-#include <src/payloads/hello.h>
+#include "payloads/hello.h"
 
 #include <QJsonDocument>
 
-MessageHandler::MessageHandler(QObject *parent) :
+EventService::EventService(QObject *parent) :
 QObject(parent)
 {
 }
 
 void
-MessageHandler::processPayload(QSharedPointer<GatewayPayload> payload) {
+EventService::processEvent(QSharedPointer<GatewayPayload> payload) {
     switch (payload->op()) {
         case GatewayOpcodes::DISPATCH:
             //Receive	dispatches an event

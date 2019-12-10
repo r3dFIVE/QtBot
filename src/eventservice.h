@@ -5,17 +5,17 @@
 
 #include "payloads/gatewaypayload.h"
 
-#include "gatewayconnection.h"
+#include "gatewayservice.h"
 
-class MessageHandler : public QObject
+class EventService : public QObject
 {
     Q_OBJECT
 
 public:
-    MessageHandler(QObject *parent = nullptr);
+    EventService(QObject *parent = nullptr);
 
 public slots:
-    void processPayload(QSharedPointer<GatewayPayload> payload);
+    void processEvent(QSharedPointer<GatewayPayload> payload);
 
 
 };

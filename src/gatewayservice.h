@@ -9,13 +9,13 @@
 #include "payloads/gatewaypayload.h"
 
 
-class GatewayConnection : public QObject
+class GatewayService : public QObject
 {
     Q_OBJECT
 
 public:
-    GatewayConnection(const QUrl &url, QObject *parent = nullptr);
-    ~GatewayConnection();
+    GatewayService(const QUrl &url, QObject *parent = nullptr);
+    ~GatewayService();
 
 public slots:
     void init();

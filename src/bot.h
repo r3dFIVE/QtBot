@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSettings>
 #include <QThread>
-#include "gatewayconnection.h"
+#include "gatewayservice.h"
 
 class Bot : public QObject
 {
@@ -20,6 +20,10 @@ private:
     QSharedPointer<QSettings> m_settings;
 
     QUrl buildConnectionUrl();
+    void validateSettings();
+    void initializeLogging();
+    void invalidSetting [[ noreturn ]] (QString fileName, QString propertyName);
+    void invalidSetting [[ noreturn ]] (QString fileName, QString databaseType, QString propertyName);
 };
 
 #endif // BOT_H

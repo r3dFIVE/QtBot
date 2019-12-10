@@ -1,4 +1,4 @@
-#include "gatewayconnection.h"
+#include "gatewayservice.h"
 #include "jsonserializer.h"
 #include "opcodes/gatewayopcodes.h"
 
@@ -7,14 +7,14 @@
 
 #include <src/payloads/hello.h>
 
-GatewayConnection::GatewayConnection(const QUrl& url, QObject *parent) :
+GatewayService::GatewayService(const QUrl& url, QObject *parent) :
     QObject(parent),
     m_url(url)
 {    
 
 }
 
-GatewayConnection::~GatewayConnection() {
+GatewayService::~GatewayService() {
     m_socket->close();
     delete m_socket;
 
@@ -24,7 +24,7 @@ GatewayConnection::~GatewayConnection() {
 }
 
 void
-GatewayConnection::init() {
+GatewayService::init() {
     if (m_debug)
         qDebug() << "Gateway Connection Url: " << m_url.toString();
 
@@ -67,14 +67,14 @@ GatewayConnection::init() {
 
     m_heartbeatTimer = new QTimer(this);
     m_heartBeat = new Heartbeat;
-    connect(m_heartbeatTimer, &QTimer::timeout, this, &GatewayConnection::sendHeartbeat);
+    connect(m_heartbeatTimer, &QTimer::timeout, this, &GatewayService::sendHeartbeat);
 
     m_socket->open(QUrl(m_url));
 }
 
 
 void
-GatewayConnection::processPayload(QSharedPointer<GatewayPayload> payload) {
+GatewayService::processPayload(QSharedPointer<GatewayPayload> payload) {
     m_lastSequenceNumber = payload->s();
 
     switch(payload->op()) {
@@ -94,17 +94,17 @@ GatewayConnection::processPayload(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-GatewayConnection::sendTextMessage(const JsonSerializeable &message) {
+GatewayService::sendTextMessage(const JsonSerializeable &message) {
     m_socket->sendTextMessage(JsonSerializer::toQString(message));
 }
 
 void
-GatewayConnection::sendBinaryMessage(const JsonSerializeable &message) {
+GatewayService::sendBinaryMessage(const JsonSerializeable &message) {
     m_socket->sendBinaryMessage(JsonSerializer::toByteArray(message));
 }
 
 void
-GatewayConnection::processHello(QSharedPointer<GatewayPayload> payload) {
+GatewayService::processHello(QSharedPointer<GatewayPayload> payload) {
     Hello helloEvent;
     JsonSerializer::fromQJsonObject(helloEvent, payload->d());
 
@@ -117,7 +117,7 @@ GatewayConnection::processHello(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-GatewayConnection::sendHeartbeat() {
+GatewayService::sendHeartbeat() {
     m_heartBeat->setD(m_lastSequenceNumber);
     m_socket->sendTextMessage(JsonSerializer::toQString(*m_heartBeat));
     m_heartbeatAck = false;

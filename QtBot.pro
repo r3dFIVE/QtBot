@@ -17,16 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     src/bot.cpp \
-    src/gatewayconnection.cpp \
+    src/eventservice.cpp \
+    src/gatewayservice.cpp \
     src/jsonserializer.cpp \
     src/main.cpp \
-    src/messagehandler.cpp \
     src/payloads/gatewaypayload.cpp \
     src/bot.cpp \
-    src/gatewayconnection.cpp \
     src/jsonserializer.cpp \
     src/main.cpp \
-    src/messagehandler.cpp \
     src/payloads/gatewaypayload.cpp \
     src/payloads/gatewaypayload.cpp \
     src/payloads/heartbeat.cpp
@@ -36,51 +34,26 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-#win32: LIBS += -L$$PWD/lib/debug/libsodium/ -llibsodium
-
-#INCLUDEPATH += $$PWD/lib/debug/libsodium/include
-#DEPENDPATH += $$PWD/lib/debug/libsodium
-
-#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/debug/libsodium/libsodium.lib
-#else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/debug/libsodium/libsodium.lib
-
-#win32: LIBS += -L$$PWD/lib/debug/opus/ -lopus
-
-#INCLUDEPATH += $$PWD/lib/debug/opus/include
-#DEPENDPATH += $$PWD/lib/debug/opus
-
-#win32:!win32-g++: PRE_TARGETDEPS += $$PWD/lib/debug/opus/opus.lib
-#else:win32-g++: PRE_TARGETDEPS += $$PWD/lib/debug/opus/libopus.a
-
-#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/lib/debug/protobuf/lib/ -llibprotobuf
-#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/lib/debug/protobuf/lib/ -llibprotobufd
-
-#INCLUDEPATH += $$PWD/lib/debug/protobuf/include
-#DEPENDPATH += $$PWD/lib/debug/protobuf/
-
-#win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/liblibprotobuf.a
-#else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/liblibprotobufd.a
-#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/libprotobuf.lib
-#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/lib/debug/protobuf/lib/libprotobufd.lib
+INCLUDEPATH += $$PWD/src/.
+DEPENDPATH += $$PWD/src/.
 
 DISTFILES += \
     settings.ini
 
 HEADERS += \
     src/bot.h \
-    src/gatewayconnection.h \
+    src/eventservice.h \
+    src/gatewayservice.h \
+    src/globals.h \
     src/jsonserializeable.h \
     src/jsonserializer.h \
     src/lockingdeque.h \
-    src/messagehandler.h \
     src/opcodes/gatewayopcodes.h \
     src/payloads/gatewaypayload.h \
     src/bot.h \
-    src/gatewayconnection.h \
     src/jsonserializeable.h \
     src/jsonserializer.h \
     src/lockingdeque.h \
-    src/messagehandler.h \
     src/payloads/gatewaypayload.h \
     src/payloads/hello.h \
     src/payloads/gatewaypayload.h \
