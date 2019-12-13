@@ -26,14 +26,14 @@ Q_SIGNALS:
     void payloadReady(QSharedPointer<GatewayPayload> payload);
 
 private:
-    Heartbeat *m_heartBeat;
-    QWebSocket *m_socket;
-    QTimer *m_heartbeatTimer;
+    Heartbeat *_heartbeat;
+    QWebSocket *_socket;
+    QTimer *_heartbeatTimer;
     QUrl m_url;
 
-    bool m_debug = true;
-    bool m_heartbeatAck = false;
-    int m_lastSequenceNumber = -1;
+    bool _debug = true;
+    bool _heartbeatAck = false;
+    int _lastSequenceNumber = -1;
 
     void processHello(QSharedPointer<GatewayPayload> payload);
     void processPayload(QSharedPointer<GatewayPayload> payload);

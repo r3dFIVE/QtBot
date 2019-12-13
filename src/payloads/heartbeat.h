@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "src/jsonserializeable.h"
-#include "src/opcodes/gatewayopcodes.h"
+#include "jsonserializeable.h"
+#include "globals.h"
 
 class Heartbeat : public JsonSerializeable
 {

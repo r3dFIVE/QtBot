@@ -48,7 +48,6 @@ HEADERS += \
     src/jsonserializeable.h \
     src/jsonserializer.h \
     src/lockingdeque.h \
-    src/opcodes/gatewayopcodes.h \
     src/payloads/gatewaypayload.h \
     src/bot.h \
     src/jsonserializeable.h \

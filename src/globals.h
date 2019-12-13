@@ -1,7 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#include <QString>
+#include <QObject>
+
 
 /*************************
  * Settings file related *
@@ -11,7 +12,7 @@ namespace Settings {
 //
 // Connection properties
 //
-namespace Connection{
+namespace Connection {
 const QString BOT_TOKEN = "bot_token";
 const QString CONNECTION_URL = "connection_url";
 const QString ZLIB_ENABLED = "zlib_enabled";
@@ -20,28 +21,34 @@ const QString ZLIB_ENABLED = "zlib_enabled";
 //
 // Logging proerties
 //
-namespace Logging{
+namespace Logging {
+Q_NAMESPACE
+
+const QString LOGGER = "bot";
 const QString CONSOLE_LOG_LEVEL = "console_log_level";
 const QString FILE_LOG_LEVEL = "file_log_level";
 const QString LOG_FILE_SIZE = "log_file_size";
 const QString LOG_FILE_COUNT = "log_file_count";
 const QString LOG_FILE_DIRECTORY = "log_file_directory";
 
-namespace Levels {
-const QString TRACE = "trace";          // Level 0
-const QString DEBUG = "debug";          // Level 1
-const QString INFO = "info";            // Level 2
-const QString WARN = "warn";            // Level 3
-const QString ERROR = "error";          // Level 4
-const QString CRITICAL = "critical";    // Level 5
-const QString OFF = "off";              // Level 6
-}
+enum Levels {
+    TRACE = 0,
+    DEBUG = 1,
+    INFO = 2,
+    WARN = 3,
+    ERR = 4,
+    CRITICAL = 5,
+    OFF = 6
+};
+Q_ENUM_NS(Levels)
 }
 
 //
 // Database properties
 //
 namespace Database {
+Q_NAMESPACE
+
 const QString DATABASE_HOST = "database_host";
 const QString DATABASE_PORT = "database_port";
 const QString DATABASE_USER = "database_user";
@@ -49,13 +56,29 @@ const QString DATABASE_USER = "database_user";
 const QString DATABASE_PASSWORD = "database_password";
 const QString DATABASE_TYPE = "database_type";
 
-namespace DatabaseTypes {
-const QString SQLITE = "SQLITE";
-const QString MSSQL_SERVER = "MSSQL_SERVER";
-const QString ORACLE = "ORACLE";
-const QString POSTGRES = "POSTGRES";
+enum DatabaseTypes {
+    SQLITE = 0,
+    MSSQL_SERVER,
+    ORACLE,
+    POSTGRES
+};
+Q_ENUM_NS(DatabaseTypes)
 }
 }
-}
+
+enum GatewayOpcodes {
+    DISPATCH = 0,
+    HEARTBEAT = 1,
+    IDENTIFY = 2,
+    STATUS_UPDATE = 3,
+    VOICE_STATUS_UPDATE = 4,
+    RESUME = 6,
+    RECONNECT = 7,
+    REQUEST_GUILD_MEMBERS = 8,
+    INVALID_SESSION = 9,
+    HELLO = 10,
+    HEARTBEAT_ACK = 11
+};
+
 
 #endif // GLOBALS_H

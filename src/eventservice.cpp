@@ -1,8 +1,7 @@
 #include "jsonserializer.h"
 #include "eventservice.h"
 
-#include "opcodes/gatewayopcodes.h"
-
+#include "globals.h"
 #include "payloads/hello.h"
 
 #include <QJsonDocument>

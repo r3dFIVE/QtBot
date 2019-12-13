@@ -7,54 +7,54 @@
 
 template<typename T>
 class LockingDeque {
-    QQueue<T> queue_;
-    QReadWriteLock lock_;
+    QQueue<T> _queue;
+    QReadWriteLock _lock;
 
 public:
     T dequeue() {
-        lock_.lockForRead();
-        T& t = std::move(queue_.head());
-        queue_.dequeue();
-        lock_.unlock();
+        _lock.lockForRead();
+        T& t = std::move(_queue.head());
+        _queue.dequeue();
+        _lock.unlock();
         return t;
     }
 
     void enqueue(const T& t) {
-        lock_.lockForWrite();
-        queue_.enqueue(std::move(t));
-        lock_.unlock();
+        _lock.lockForWrite();
+        _queue.enqueue(std::move(t));
+        _lock.unlock();
     }
 
     void enqueue_front(const T& t) {
-        lock_.lockForWrite();
-        queue_.insert(0, t);
-        lock_.unlock();
+        _lock.lockForWrite();
+        _queue.insert(0, t);
+        _lock.unlock();
     }
 
     T& head() {
-        lock_.lockForRead();
-        T& t = queue_.head();
-        lock_.unlock();
+        _lock.lockForRead();
+        T& t = _queue.head();
+        _lock.unlock();
         return t;
     }
 
     const T& head() const {
-        lock_.lockForRead();
-        T& t = queue_.head();
-        lock_.unlock();
+        _lock.lockForRead();
+        T& t = _queue.head();
+        _lock.unlock();
         return t;
     }
 
     void swap(QQueue<T> &other) {
-        lock_.lockForWrite();
-        queue_.swap(other);
-        lock_.unlock();
+        _lock.lockForWrite();
+        _queue.swap(other);
+        _lock.unlock();
     }
 
     void swap(int i, int j) {
-        lock_.lockForWrite();
-        queue_.swap(i, j);
-        lock_.unlock();
+        _lock.lockForWrite();
+        _queue.swap(i, j);
+        _lock.unlock();
     }
 };
 
