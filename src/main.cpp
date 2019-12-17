@@ -13,18 +13,21 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    QMap<QString, QVariant> myMap;
+
+    QVariant test = myMap["test"];
+    qDebug() << test.isNull() << test.isValid();
+    QString testString = test.toString();
+
     QString path = "C:\\workspace\\QtBot\\settings.ini";
 
     if(!(QFileInfo::exists(path))) {
-        // TODO - clean up message;
-        qDebug() << "Settings file not found. . . exiting.\n";
+        qDebug().noquote() << QString("Settings file %1 does not exist. . . exiting.\n").arg(path);
         exit(1);
     }
 
 
-    QSharedPointer<QSettings> settings(new QSettings(path, QSettings::IniFormat));
-
-    Bot bot(settings);
+    Bot bot(path);
     bot.run();
 
     return a.exec();

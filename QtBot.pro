@@ -21,13 +21,10 @@ SOURCES += \
     src/gatewayservice.cpp \
     src/jsonserializer.cpp \
     src/main.cpp \
-    src/payloads/gatewaypayload.cpp \
     src/bot.cpp \
     src/jsonserializer.cpp \
     src/main.cpp \
-    src/payloads/gatewaypayload.cpp \
-    src/payloads/gatewaypayload.cpp \
-    src/payloads/heartbeat.cpp
+    src/settingsservice.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -57,4 +54,5 @@ HEADERS += \
     src/payloads/hello.h \
     src/payloads/gatewaypayload.h \
     src/payloads/hello.h \
-    src/payloads/heartbeat.h
+    src/payloads/heartbeat.h \
+    src/settingsservice.h

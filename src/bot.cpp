@@ -6,11 +6,10 @@
 #include <QMetaEnum>
 
 
-Bot::Bot(QSharedPointer<QSettings> settings) : _settings(settings)
-{
-    qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
+Bot::Bot(QString path)
+{   
+    _settings = QSharedPointer<SettingsService>(new SettingsService(path));
 
-    validateSettings();
     initializeLogging();
 
     _logger->info("QtBot is now starting. . .");
@@ -20,120 +19,10 @@ Bot::Bot(QSharedPointer<QSettings> settings) : _settings(settings)
 //    qDebug() << _settings->value("test_val").toBool();
 //    qDebug() << _settings->value("bot_token").toString();
 //    qDebug() << _settings->value("invalid_token").isNull();
+
+    qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
 }
 
-void
-Bot::validateSettings() {
-    if (!_settings) {
-        qDebug() << "Error initializing settings file. . . exiting.";
-        exit(1);
-    }
-
-    validateConnectionSettings();
-    validateDatabaseSettings();
-    validateLoggingSettings();
-}
-
-void
-Bot::validateConnectionSettings() {
-    //    if (_settings->value(Settings::Connection::BOT_TOKEN).toString().isEmpty()) {
-
-    //    }
-
-        if (_settings->value(Settings::Connection::CONNECTION_URL).toString().isEmpty()) {
-            _settings->setValue(Settings::Connection::CONNECTION_URL, "wss://gateway.discord.gg");
-        }
-}
-
-void
-Bot::validateDatabaseSettings() {
-    if (_settings->value(Settings::Database::DATABASE_TYPE).toString().isEmpty()) {
-        _settings->setValue(Settings::Database::DATABASE_TYPE, Settings::Database::DatabaseTypes::SQLITE);
-    }
-
-    QMetaEnum metaEnum = QMetaEnum::fromType<Settings::Database::DatabaseTypes>();
-    QString databaseType = _settings->value(Settings::Database::DATABASE_TYPE).toString();
-    int typeValue = metaEnum.keyToValue(databaseType.toUpper().toStdString().c_str());
-    if (typeValue < 0) {
-        invalidEnumValue(Settings::Database::DATABASE_TYPE, databaseType, metaEnum);
-    }
-
-    if (typeValue != Settings::Database::DatabaseTypes::SQLITE) {
-        if (_settings->value(Settings::Database::DATABASE_HOST).toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, Settings::Database::DATABASE_HOST);
-        }
-
-        if (_settings->value(Settings::Database::DATABASE_PORT).toInt() == 0) {
-            invalidDatabaseProperty(databaseType, Settings::Database::DATABASE_PORT);
-        }
-
-        if (_settings->value(Settings::Database::DATABASE_USER).toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, Settings::Database::DATABASE_USER);
-        }
-
-        if (_settings->value(Settings::Database::DATABASE_PASSWORD).toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, Settings::Database::DATABASE_PASSWORD);
-        }
-    }
-}
-
-void
-Bot::validateLoggingSettings() {
-    QString consoleLogLevel = _settings->value(Settings::Logging::CONSOLE_LOG_LEVEL).toString();
-    if (consoleLogLevel.isEmpty()) {
-        _settings->value(Settings::Logging::CONSOLE_LOG_LEVEL) = Settings::Logging::Levels::INFO;
-    } else {
-        validateLogLevel(Settings::Logging::CONSOLE_LOG_LEVEL, consoleLogLevel);
-    }
-
-    QString fileLogLevel = _settings->value(Settings::Logging::FILE_LOG_LEVEL).toString();
-    if (fileLogLevel.isEmpty()) {
-        _settings->value(Settings::Logging::FILE_LOG_LEVEL) = Settings::Logging::Levels::INFO;
-    } else {
-        validateLogLevel(Settings::Logging::FILE_LOG_LEVEL, fileLogLevel);
-    }
-
-    if (_settings->value(Settings::Logging::LOG_FILE_SIZE).toInt() == 0) {
-        _settings->setValue(Settings::Logging::LOG_FILE_SIZE, 1048576);
-    }
-
-    if (_settings->value(Settings::Logging::LOG_FILE_COUNT).toInt() == 0) {
-        _settings->setValue(Settings::Logging::LOG_FILE_COUNT, 10);
-    }
-
-    if (_settings->value(Settings::Logging::LOG_FILE_DIRECTORY).toString().isEmpty()) {
-        QString path = QDir::currentPath().append("/logs");
-        _settings->setValue(Settings::Logging::LOG_FILE_DIRECTORY, path);
-    }
-}
-
-void
-Bot::validateLogLevel(QString property, QString logLevel) {
-    QMetaEnum metaEnum = QMetaEnum::fromType<Settings::Logging::Levels>();
-    if (metaEnum.keyToValue(logLevel.toUpper().toStdString().c_str()) < 0) {
-        invalidEnumValue(property, logLevel, metaEnum);
-    }
-}
-
-void
-Bot::invalidEnumValue(QString property, QString value, QMetaEnum metaEnum) {
-    qDebug().noquote() << QString("[%1]").arg(_settings->fileName()) << "\n";
-    qDebug().noquote() << QString("Invalid %1: %2\n").arg(property, value);
-    qDebug() << "Possible values:";
-    for (int i = 0; i < metaEnum.keyCount(); ++i) {
-        qDebug().noquote() << "\t" << metaEnum.key(i);
-    }
-    exit(1);
-}
-
-void
-Bot::invalidDatabaseProperty(QString databaseType, QString propertyName) {
-    QString fileName = QString("[%1]").arg(_settings->fileName());
-    qDebug().noquote() << fileName << "\n";
-    qDebug().noquote() << "Database Type: " << databaseType << "\n";
-    qDebug().noquote() << QString("ERROR: Property \"%1\" cannot be blank.\n").arg(propertyName);
-    exit(1);
-}
 
 void
 Bot::initializeLogging() {
