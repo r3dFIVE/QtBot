@@ -10,7 +10,9 @@ JsonSerializer::toQString(const JsonSerializeable &serializeable) {
 
 QByteArray
 JsonSerializer::toByteArray(const JsonSerializeable &serializeable) {
-    QJsonDocument document(JsonSerializer::toQJsonObject(serializeable));
+    QJsonObject jsonObject;
+    serializeable.write(jsonObject);
+    QJsonDocument document(jsonObject);
     return document.toJson(QJsonDocument::Compact);
 }
 

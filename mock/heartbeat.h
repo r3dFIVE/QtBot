@@ -44,5 +44,5 @@ private:
     int _d = -1;
 
 };
-Q_DECLARE_METATYPE(Heartbeat);
+Q_DECLARE_METATYPE(Heartbeat)
 #endif // HEARTBEART_H

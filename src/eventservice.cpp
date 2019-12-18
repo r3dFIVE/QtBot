@@ -41,9 +41,6 @@ EventService::processEvent(QSharedPointer<GatewayPayload> payload) {
         case GatewayOpcodes::INVALID_SESSION:
             //Receive	used to notify client they have an invalid session id
             break;
-        case GatewayOpcodes::HELLO:
-            // Handled in GatewayConnection
-            break;
         case GatewayOpcodes::HEARTBEAT_ACK:
             //Receive	sent immediately following a client heartbeat that was received
             break;

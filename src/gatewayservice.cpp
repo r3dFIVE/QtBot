@@ -6,13 +6,13 @@
 #include <QSettings>
 #include <QThread>
 
-
-
-GatewayService::GatewayService(const QUrl& url, QObject *parent) :
+GatewayService::GatewayService(QSharedPointer<SettingsService> settings, QObject *parent) :
     QObject(parent),
-    m_url(url)
+    _settings(settings)
 {    
-
+    _lastSequenceNumber = -1;
+    _heartbeatAck = false;
+    _logger = LoggingService::getLogger();
 }
 
 GatewayService::~GatewayService() {
@@ -21,24 +21,21 @@ GatewayService::~GatewayService() {
 
     _heartbeatTimer->stop();
     delete _heartbeatTimer;
-    delete _heartbeat;
 }
 
 void
 GatewayService::init() {
-    if (_debug)
-        qDebug() << "Gateway Connection Url: " << m_url.toString();
+    QString connectionUrl = _settings->value(Settings::Connection::CONNECTION_URL).toString();
+    _logger->debug("Gateway Connection Url: " + connectionUrl.toStdString());
 
     _socket = new QWebSocket;
 
     connect(_socket, &QWebSocket::connected, this, [&](){
         qDebug() << "WebSocket connected";
-        QString str("{ \"op\" : 10, \"d\" : { \"heartbeat_interval\" : 5000 } }");
-        _socket->sendTextMessage(str);
     });
 
     connect(_socket, &QWebSocket::textMessageReceived, this, [&](QString messageString) {
-        qDebug() << "Message recieved: " << messageString;
+        _logger->trace("Message recieved: " + messageString.toStdString());
         QSharedPointer<GatewayPayload> event(new GatewayPayload);
         JsonSerializer::fromQString(*event, messageString);
         processPayload(event);
@@ -62,10 +59,9 @@ GatewayService::init() {
     );
 
     _heartbeatTimer = new QTimer(this);
-    _heartbeat = new Heartbeat;
     connect(_heartbeatTimer, &QTimer::timeout, this, &GatewayService::sendHeartbeat);
 
-    _socket->open(QUrl(m_url));
+    _socket->open(QUrl(connectionUrl));
 }
 
 
@@ -84,7 +80,7 @@ GatewayService::processPayload(QSharedPointer<GatewayPayload> payload) {
             _heartbeatAck = true;
             break;
         default:
-            emit payloadReady(payload);
+            emit eventReady(payload);
             break;
     }
 }
@@ -114,7 +110,22 @@ GatewayService::processHello(QSharedPointer<GatewayPayload> payload) {
 
 void
 GatewayService::sendHeartbeat() {
-    _heartbeat->setD(_lastSequenceNumber);
-    _socket->sendTextMessage(JsonSerializer::toQString(*_heartbeat));
+    _heartbeat.setD(_lastSequenceNumber);
+    _socket->sendTextMessage(JsonSerializer::toQString(_heartbeat));
     _heartbeatAck = false;
 }
+
+
+QUrl
+GatewayService::buildConnectionUrl() {
+    QString zlibParameter = "";
+    if (_settings->value(Settings::Connection::ZLIB_ENABLED).toBool()) {
+        zlibParameter = "&compress=zlib-stream";
+    }
+
+    QString baseUrl = _settings->value(Settings::Connection::CONNECTION_URL).toString();
+    QString fullUrl = QString("%1/?v=6&encoding=json%2").arg(baseUrl).arg(zlibParameter);
+
+    return QUrl(fullUrl);
+}
+

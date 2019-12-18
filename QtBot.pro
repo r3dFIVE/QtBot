@@ -20,6 +20,7 @@ SOURCES += \
     src/eventservice.cpp \
     src/gatewayservice.cpp \
     src/jsonserializer.cpp \
+    src/loggingservice.cpp \
     src/main.cpp \
     src/bot.cpp \
     src/jsonserializer.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     src/jsonserializeable.h \
     src/jsonserializer.h \
     src/lockingdeque.h \
+    src/loggingservice.h \
     src/payloads/gatewaypayload.h \
     src/bot.h \
     src/jsonserializeable.h \

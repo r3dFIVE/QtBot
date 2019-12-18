@@ -4,9 +4,12 @@
 #include <QObject>
 #include <QTimer>
 #include <QtWebSockets/QWebSocket>
+#include <QSharedPointer>
 
 #include "payloads/heartbeat.h"
 #include "payloads/gatewaypayload.h"
+#include "settingsservice.h"
+#include "loggingservice.h"
 
 
 class GatewayService : public QObject
@@ -14,7 +17,7 @@ class GatewayService : public QObject
     Q_OBJECT
 
 public:
-    GatewayService(const QUrl &url, QObject *parent = nullptr);
+    GatewayService(QSharedPointer<SettingsService> settings, QObject *parent = nullptr);
     ~GatewayService();
 
 public slots:
@@ -23,18 +26,19 @@ public slots:
     void sendBinaryMessage(const JsonSerializeable &message);
 
 Q_SIGNALS:
-    void payloadReady(QSharedPointer<GatewayPayload> payload);
+    void eventReady(QSharedPointer<GatewayPayload> payload);
 
 private:
-    Heartbeat *_heartbeat;
     QWebSocket *_socket;
     QTimer *_heartbeatTimer;
-    QUrl m_url;
 
-    bool _debug = true;
-    bool _heartbeatAck = false;
-    int _lastSequenceNumber = -1;
+    Heartbeat _heartbeat;
+    Logger _logger;
+    bool _heartbeatAck;
+    int _lastSequenceNumber;
+    QSharedPointer<SettingsService> _settings;
 
+    QUrl buildConnectionUrl();
     void processHello(QSharedPointer<GatewayPayload> payload);
     void processPayload(QSharedPointer<GatewayPayload> payload);
     void sendHeartbeat();

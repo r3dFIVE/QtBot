@@ -13,12 +13,6 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QMap<QString, QVariant> myMap;
-
-    QVariant test = myMap["test"];
-    qDebug() << test.isNull() << test.isValid();
-    QString testString = test.toString();
-
     QString path = "C:\\workspace\\QtBot\\settings.ini";
 
     if(!(QFileInfo::exists(path))) {
