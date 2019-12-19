@@ -23,6 +23,7 @@ Bot::Bot(QString path)
 //    qDebug() << _settings->value("invalid_token").isNull();
 
     qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
+    //qRegisterMetaType<QSharedPointer<GatewayPayload>>();
 }
 
 void
@@ -40,4 +41,6 @@ Bot::run() {
     _messageServiceThread.start();
     _gatewayThread.start();
     _gatewayThread.setPriority(QThread::HighestPriority);
+
+    _logger->info("Startup complete.");
 }

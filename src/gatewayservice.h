@@ -39,6 +39,7 @@ private:
     QSharedPointer<SettingsService> _settings;
 
     QUrl buildConnectionUrl();
+    void processAck();
     void processHello(QSharedPointer<GatewayPayload> payload);
     void processPayload(QSharedPointer<GatewayPayload> payload);
     void sendHeartbeat();

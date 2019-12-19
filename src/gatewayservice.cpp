@@ -25,13 +25,13 @@ GatewayService::~GatewayService() {
 
 void
 GatewayService::init() {
-    QString connectionUrl = _settings->value(Settings::Connection::CONNECTION_URL).toString();
-    _logger->debug("Gateway Connection Url: " + connectionUrl.toStdString());
+    QUrl connectionUrl = buildConnectionUrl();
+    _logger->debug("Gateway Connection Url: " + connectionUrl.toString().toStdString());
 
     _socket = new QWebSocket;
 
     connect(_socket, &QWebSocket::connected, this, [&](){
-        qDebug() << "WebSocket connected";
+        _logger->info("Gateway connection established.");
     });
 
     connect(_socket, &QWebSocket::textMessageReceived, this, [&](QString messageString) {
@@ -42,6 +42,7 @@ GatewayService::init() {
     });
 
     connect(_socket, &QWebSocket::binaryMessageReceived, this, [&](QByteArray messageArray){
+        _logger->trace("Message recieved: " + messageArray.toStdString());
         QSharedPointer<GatewayPayload> event(new GatewayPayload);
         JsonSerializer::fromByteArray(*event, messageArray);
         processPayload(event);
@@ -77,7 +78,6 @@ GatewayService::processPayload(QSharedPointer<GatewayPayload> payload) {
             //sendHeartbeat();
             break;
         case GatewayOpcodes::HEARTBEAT_ACK:
-            _heartbeatAck = true;
             break;
         default:
             emit eventReady(payload);
@@ -86,8 +86,18 @@ GatewayService::processPayload(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
+GatewayService::processAck() {
+    _logger->trace(QString("ACK receieved for sequence number: %1").arg(_lastSequenceNumber).toStdString());
+
+    _heartbeatAck = true;
+
+}
+
+void
 GatewayService::sendTextMessage(const JsonSerializeable &message) {
-    _socket->sendTextMessage(JsonSerializer::toQString(message));
+    QString messageStr = JsonSerializer::toQString(message);
+    _socket->sendTextMessage(messageStr);
+    _logger->trace("Sent gateway message: " + messageStr.toStdString());
 }
 
 void
@@ -109,10 +119,11 @@ GatewayService::processHello(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-GatewayService::sendHeartbeat() {
+GatewayService::sendHeartbeat() {    
     _heartbeat.setD(_lastSequenceNumber);
     _socket->sendTextMessage(JsonSerializer::toQString(_heartbeat));
     _heartbeatAck = false;
+    _logger->trace("Heartbeat sent: " + JsonSerializer::toQString(_heartbeat).toStdString());
 }
 
 

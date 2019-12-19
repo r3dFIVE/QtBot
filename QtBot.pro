@@ -36,7 +36,8 @@ INCLUDEPATH += $$PWD/src/.
 DEPENDPATH += $$PWD/src/.
 
 DISTFILES += \
-    settings.ini
+    settings.ini \
+    src/spdlog/fmt/bundled/LICENSE.rst
 
 HEADERS += \
     src/bot.h \
@@ -57,4 +58,81 @@ HEADERS += \
     src/payloads/gatewaypayload.h \
     src/payloads/hello.h \
     src/payloads/heartbeat.h \
-    src/settingsservice.h
+    src/settingsservice.h \
+    src/spdlog/async.h \
+    src/spdlog/async_logger-inl.h \
+    src/spdlog/async_logger.h \
+    src/spdlog/common-inl.h \
+    src/spdlog/common.h \
+    src/spdlog/details/backtracer-inl.h \
+    src/spdlog/details/backtracer.h \
+    src/spdlog/details/circular_q.h \
+    src/spdlog/details/console_globals.h \
+    src/spdlog/details/file_helper-inl.h \
+    src/spdlog/details/file_helper.h \
+    src/spdlog/details/fmt_helper.h \
+    src/spdlog/details/log_msg-inl.h \
+    src/spdlog/details/log_msg.h \
+    src/spdlog/details/log_msg_buffer-inl.h \
+    src/spdlog/details/log_msg_buffer.h \
+    src/spdlog/details/mpmc_blocking_q.h \
+    src/spdlog/details/null_mutex.h \
+    src/spdlog/details/os-inl.h \
+    src/spdlog/details/os.h \
+    src/spdlog/details/pattern_formatter-inl.h \
+    src/spdlog/details/pattern_formatter.h \
+    src/spdlog/details/periodic_worker-inl.h \
+    src/spdlog/details/periodic_worker.h \
+    src/spdlog/details/registry-inl.h \
+    src/spdlog/details/registry.h \
+    src/spdlog/details/synchronous_factory.h \
+    src/spdlog/details/thread_pool-inl.h \
+    src/spdlog/details/thread_pool.h \
+    src/spdlog/fmt/bin_to_hex.h \
+    src/spdlog/fmt/bundled/chrono.h \
+    src/spdlog/fmt/bundled/color.h \
+    src/spdlog/fmt/bundled/compile.h \
+    src/spdlog/fmt/bundled/core.h \
+    src/spdlog/fmt/bundled/format-inl.h \
+    src/spdlog/fmt/bundled/format.h \
+    src/spdlog/fmt/bundled/locale.h \
+    src/spdlog/fmt/bundled/ostream.h \
+    src/spdlog/fmt/bundled/posix.h \
+    src/spdlog/fmt/bundled/printf.h \
+    src/spdlog/fmt/bundled/ranges.h \
+    src/spdlog/fmt/bundled/safe-duration-cast.h \
+    src/spdlog/fmt/fmt.h \
+    src/spdlog/fmt/ostr.h \
+    src/spdlog/formatter.h \
+    src/spdlog/logger-inl.h \
+    src/spdlog/logger.h \
+    src/spdlog/sinks/android_sink.h \
+    src/spdlog/sinks/ansicolor_sink-inl.h \
+    src/spdlog/sinks/ansicolor_sink.h \
+    src/spdlog/sinks/base_sink-inl.h \
+    src/spdlog/sinks/base_sink.h \
+    src/spdlog/sinks/basic_file_sink-inl.h \
+    src/spdlog/sinks/basic_file_sink.h \
+    src/spdlog/sinks/daily_file_sink.h \
+    src/spdlog/sinks/dist_sink.h \
+    src/spdlog/sinks/dup_filter_sink.h \
+    src/spdlog/sinks/msvc_sink.h \
+    src/spdlog/sinks/null_sink.h \
+    src/spdlog/sinks/ostream_sink.h \
+    src/spdlog/sinks/ringbuffer_sink.h \
+    src/spdlog/sinks/rotating_file_sink-inl.h \
+    src/spdlog/sinks/rotating_file_sink.h \
+    src/spdlog/sinks/sink-inl.h \
+    src/spdlog/sinks/sink.h \
+    src/spdlog/sinks/stdout_color_sinks-inl.h \
+    src/spdlog/sinks/stdout_color_sinks.h \
+    src/spdlog/sinks/stdout_sinks-inl.h \
+    src/spdlog/sinks/stdout_sinks.h \
+    src/spdlog/sinks/syslog_sink.h \
+    src/spdlog/sinks/systemd_sink.h \
+    src/spdlog/sinks/wincolor_sink-inl.h \
+    src/spdlog/sinks/wincolor_sink.h \
+    src/spdlog/spdlog-inl.h \
+    src/spdlog/spdlog.h \
+    src/spdlog/tweakme.h \
+    src/spdlog/version.h
