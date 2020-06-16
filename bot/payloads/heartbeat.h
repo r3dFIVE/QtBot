@@ -14,7 +14,19 @@ public:
     int op = GatewayOpcodes::HEARTBEAT;
     int d = -1;
 
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) const override;
+    void read(const QJsonObject &jsonObject) override {
+        d = jsonObject[D].toInt();
+        op = jsonObject[OP].toInt();
+    }
+
+    void write(QJsonObject &jsonObject) const override {
+        if (d == -1) {
+            jsonObject[D] = QJsonValue::Null;
+        } else {
+            jsonObject[D] = d;
+        }
+        jsonObject[OP] = op;
+    }
 };
+
 #endif // HEARTBEART_H

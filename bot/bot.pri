@@ -43,17 +43,4 @@ SOURCES += \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
     $$PWD/logging/logworker.cpp \
-    $$PWD/payloads/activity.cpp \
-    $$PWD/payloads/assets.cpp \
-    $$PWD/payloads/emoji.cpp \
-    $$PWD/payloads/gatewaypayload.cpp \
-    $$PWD/payloads/heartbeat.cpp \
-    $$PWD/payloads/hello.cpp \
-    $$PWD/payloads/identify.cpp \
-    $$PWD/payloads/party.cpp \
-    $$PWD/payloads/properties.cpp \
-    $$PWD/payloads/resume.cpp \
-    $$PWD/payloads/secrets.cpp \
-    $$PWD/payloads/timestamps.cpp \
-    $$PWD/payloads/updatestatus.cpp \
     $$PWD/settings.cpp

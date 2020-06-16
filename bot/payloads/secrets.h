@@ -13,8 +13,33 @@ public:
     QString spectate;
     QString match;
 
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) const override;
+    void read(const QJsonObject &jsonObject) override {
+        if (jsonObject.contains(JOIN)) {
+            join = jsonObject[JOIN].toString();
+        }
+
+        if (jsonObject.contains(SPECTATE)) {
+            spectate = jsonObject[SPECTATE].toString();
+        }
+
+        if (jsonObject.contains(MATCH)) {
+            match = jsonObject[MATCH].toString();
+        }
+    }
+
+    void write(QJsonObject &jsonObject) const override {
+        if (!join.isEmpty()) {
+            jsonObject[JOIN] = join;
+        }
+
+        if (!spectate.isEmpty()) {
+            jsonObject[SPECTATE] = spectate;
+        }
+
+        if (!match.isEmpty()) {
+            jsonObject[MATCH] = match;
+        }
+    }
 };
 
 #endif // SECRETS_H
