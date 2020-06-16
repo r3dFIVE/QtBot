@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QString path = "C:\\workspace\\QtBot\\settings.ini";
+    QString path = "C:\\workspace\\QtBot\\bot\\settings.ini";
 
     if(!(QFileInfo::exists(path))) {
         qDebug().noquote() << QString("Settings file %1 does not exist. . . exiting.\n").arg(path);

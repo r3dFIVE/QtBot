@@ -1,8 +1,7 @@
 #include "echoserver.h"
-#include "gatewaypayload.h"
-#include "jsonserializer.h"
+#include "payloads/gatewaypayload.h"
 #include "globals.h"
-#include "hello.h"
+#include "payloads/hello.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
 #include <QtCore/QDebug>
@@ -45,13 +44,13 @@ void EchoServer::onNewConnection()
     m_clients << pSocket;
 
     Hello hello;
-    hello.setHeartbeatInterval(5000);
+    hello.heartbeatInterval = 5000;
 
     GatewayPayload payload;
-    payload.setD(JsonSerializer::toQJsonObject(hello));
-    payload.setOp(GatewayOpcodes::HELLO);
+    payload.d = hello.toQJsonObject();
+    payload.op = GatewayOpcodes::HELLO;
 
-    pSocket->sendTextMessage(JsonSerializer::toQString(payload));
+    pSocket->sendTextMessage(payload.toQString());
 }
 //! [onNewConnection]
 
@@ -61,22 +60,19 @@ void EchoServer::processTextMessage(QString message)
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
     GatewayPayload payload;
-    JsonSerializer::fromQString(payload, message);
-
+    payload.fromQString(message);
 
     qDebug() << "Message received:" << message;
 
     GatewayPayload out;
     if (pClient) {
-
-        switch (payload.op()) {
+        switch (payload.op) {
             case GatewayOpcodes::HEARTBEAT:
-                out.setOp(GatewayOpcodes::HEARTBEAT_ACK);
-                out.setS(s++);
+                out.op = GatewayOpcodes::HEARTBEAT_ACK;
+                out.s = s++;
                 break;
         }
-
-        QString outString = JsonSerializer::toQString(out);
+        QString outString = out.toQString();
         qDebug().noquote() << "sent: " + outString;
         pClient->sendTextMessage(outString);
     }

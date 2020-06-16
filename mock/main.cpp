@@ -3,7 +3,7 @@
 #include <QtCore/QCommandLineOption>
 #include <QSharedPointer>
 #include "echoserver.h"
-#include "jsonserializeable.h"
+#include "payloads/jsonserializeable.h"
 
 int main(int argc, char *argv[])
 {
