@@ -1,11 +1,14 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QCommandLineOption>
+#include <QSharedPointer>
 #include "echoserver.h"
+#include "jsonserializeable.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
 
     QCommandLineParser parser;
     parser.setApplicationDescription("QtWebSockets example: echoserver");

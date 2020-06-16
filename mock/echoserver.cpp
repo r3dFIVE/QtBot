@@ -23,6 +23,7 @@ EchoServer::EchoServer(quint16 port, bool debug, QObject *parent) :
                 this, &EchoServer::onNewConnection);
         connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &EchoServer::closed);
     }
+
 }
 //! [constructor]
 
@@ -43,13 +44,14 @@ void EchoServer::onNewConnection()
 
     m_clients << pSocket;
 
-    QString str("{ \"op\" : 10, \"d\" : { \"heartbeat_interval\" : 5000 } }");
-    GatewayPayload payload;
     Hello hello;
     hello.setHeartbeatInterval(5000);
 
+    GatewayPayload payload;
     payload.setD(JsonSerializer::toQJsonObject(hello));
-    pSocket->sendTextMessage(str);
+    payload.setOp(GatewayOpcodes::HELLO);
+
+    pSocket->sendTextMessage(JsonSerializer::toQString(payload));
 }
 //! [onNewConnection]
 
