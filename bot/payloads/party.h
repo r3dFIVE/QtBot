@@ -8,10 +8,10 @@
 
 class Party : public JsonSerializeable
 {
+public:
     const QString ID = "id";
     const QString SIZE = "size";
 
-public:
     QString id;
     QSharedPointer<int> size[2];
 
@@ -32,7 +32,7 @@ public:
             jsonObject[ID] = id;
         }
 
-        if (size[0] == nullptr || size[1] == nullptr) {
+        if (size[0] != nullptr && size[1] != nullptr) {
             jsonObject[SIZE] = QJsonArray{ *size[0], *size[1] };
         }
     }

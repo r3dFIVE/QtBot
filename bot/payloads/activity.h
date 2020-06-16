@@ -101,7 +101,6 @@ public:
         }
     }
 
-
     /*
      * Note Bot can only send fields "name", "type", and "url"
      */

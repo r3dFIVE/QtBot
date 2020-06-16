@@ -7,9 +7,10 @@
 
 class Timestamps : public JsonSerializeable
 {
+public:
     const QString START = "start";
     const QString END = "end";
-public:
+
     QSharedPointer<int> start;
     QSharedPointer<int> end;
 
