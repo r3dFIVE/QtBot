@@ -6,10 +6,11 @@
 
 class Properties : public JsonSerializeable
 {
+public:
     const QString OS = "$os";
     const QString BROWSER = "$browser";
     const QString DEVICE = "$device";
-public:
+
     QString $os = QSysInfo::productType();
     QString $browser = "QtBot";
     QString $device = "QtBot";

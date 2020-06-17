@@ -87,17 +87,11 @@ ActivityTest::test_deserialization_minimal() {
     QVERIFY(activity.created_at != TEST_INT2);
 
     QVERIFY(activity.timestamps == nullptr);
-
     QVERIFY(activity.emoji == nullptr);
-
     QVERIFY(activity.party == nullptr);
-
     QVERIFY(activity.assets == nullptr);
-
     QVERIFY(activity.secrets == nullptr);
-
     QVERIFY(activity.instance == nullptr);
-
     QVERIFY(activity.flags == nullptr);
 }
 

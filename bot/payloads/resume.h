@@ -6,11 +6,11 @@
 
 class Resume : public JsonSerializeable
 {   
+public:
     const QString TOKEN = "token";
     const QString SESSION_ID = "session_id";
     const QString SEQ = "seq";
 
-public:
     QString token;
     QString session_id;
     int seq;

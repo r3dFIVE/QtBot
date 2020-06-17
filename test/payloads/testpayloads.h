@@ -16,24 +16,42 @@ static QString PLD_HELLO = QString("{\"heartbeat_interval\":%1}")
 static QString PLD_ASSETS_FULL = QString("{\"large_image\":\"%1\",\"large_text\":\"%2\",\"small_image\":\"%3\",\"small_text\":\"%4\"}")
         .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1).arg(TEST_STRING2);
 static QString PLD_ASSETS_MINIMAL = "{}";
+
 static QString PLD_EMOJI_FULL = QString("{\"name\":\"%1\",\"id\":\"%2\",\"animated\":%3}")
         .arg(TEST_STRING1).arg(TEST_STRING2).arg("true");
 static QString PLD_EMOJI_MINIMAL = QString("{\"name\":\"%1\"}")
         .arg(TEST_STRING1);
+
 static QString PLD_GATEWAYPAYLOAD_FULL = "{\"op\":%1,\"d\":%2,\"s\":42,\"t\":\"GATEWAY_EVENT_NAME\"}";
 static QString PLD_GATEWAYPAYLOAD_MINIMAL = QString("{\"op\":%1,\"d\":%2}")
         .arg(GatewayOpcodes::HELLO).arg(PLD_HELLO);
+
 static QString PLD_HEARTBEAT = QString("{\"d\":%1,\"op\":1}")
         .arg(TEST_INT1);
+
 static QString PLD_PARTY_FULL = QString("{\"id\":\"%1\",\"size\":[%2,%3]}")
         .arg(TEST_STRING1).arg(TEST_INT1).arg(TEST_INT2);
 static QString PLD_PARTY_MINIMAL = "{}";
+
+static QString PLD_PROPERTIES = QString("{\"$os\":\"%1\",\"$browser\":\"QtBot\",\"$device\":\"QtBot\"}")
+        .arg(QSysInfo::productType());
+
+static QString PLD_RESUME = QString("{\"token\":\"%1\",\"session_id\":\"%2\",\"seq\":%3}")
+        .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_INT1);
+
 static QString PLD_SECRETS_FULL = QString("{\"join\":\"%1\",\"spectate\":\"%2\",\"match\":\"%3\"}")
         .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1);
 static QString PLD_SECRETS_MINIMAL = "{}";
+
 static QString PLD_TIMESTAMPS_FULL = QString("{\"start\":%1,\"end\":%2}")
         .arg(TEST_INT1).arg(TEST_INT2);
 static QString PLD_TIMESTAMPS_MINIMAL = "{}";
+
+static QString PLD_USER_FULL = QString("{\"id\":\"%1\",\"username\":\"%2\",\"discriminator\":\"%3\",\"avatar\":\"%4\",\"bot\":true,\"system\":true,\"mfa_enabled\":true,\"locale\":\"%5\",\"verified\":true,\"email\":\"%6\",\"flags\":1,\"premium_type\":1,\"public_flags\":1}")
+        .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1).arg(TEST_STRING2)
+        .arg(TEST_STRING1).arg(TEST_STRING2);
+static QString PLD_USER_MINIMAL = QString("{\"id\":\"%1\",\"username\":\"%2\",\"discriminator\":\"%3\"}")
+        .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1);
 
 static QString PLD_ACTIVITY_FULL = QString("{\"name\":\"%1\",\"type\":1,\"url\":\"%2\",\"created_at\":%3,\"timestamps\":%4,\"application_id\":\"%5\",\"details\":\"%6\",\"state\":\"%7\",\"emoji\":%8,\"party\":%9,\"assets\":%10,\"secrets\":%11,\"instance\":true,\"flags\":1}")
         .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_INT1).arg(PLD_TIMESTAMPS_FULL)

@@ -31,6 +31,7 @@ HEADERS += \
     $$PWD/payloads/secrets.h \
     $$PWD/payloads/timestamps.h \
     $$PWD/payloads/updatestatus.h \
+    $$PWD/payloads/user.h \
     $$PWD/settings.h
 
 DISTFILES += \
