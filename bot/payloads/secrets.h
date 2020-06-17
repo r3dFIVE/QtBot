@@ -5,10 +5,11 @@
 
 class Secrets : public JsonSerializeable
 {
+public:    
     const QString JOIN = "join";
     const QString SPECTATE = "spectate";
     const QString MATCH = "match";
-public:    
+
     QString join;
     QString spectate;
     QString match;

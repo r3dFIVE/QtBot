@@ -6,12 +6,12 @@
 
 class Assets : public JsonSerializeable
 {
+public:
     const QString LARGE_IMAGE = "large_image";
     const QString LARGE_TEXT = "large_text";
     const QString SMALL_IMAGE = "small_image";
     const QString SMALL_TEXT = "small_text";
 
-public:
     QString large_image;
     QString large_text;
     QString small_image;

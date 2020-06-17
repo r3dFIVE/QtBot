@@ -14,6 +14,7 @@ class Activity : public JsonSerializeable
 {
     Q_OBJECT
 
+public:
     const QString NAME = "name";
     const QString TYPE = "type";
     const QString URL = "url";
@@ -29,7 +30,6 @@ class Activity : public JsonSerializeable
     const QString INSTANCE = "instance";
     const QString FLAGS = "flags";
 
-public:
     QString name;
     int type;
     QString url;

@@ -39,12 +39,28 @@ PartyTest::test_serialization_full() {
 
 void
 PartyTest::test_deserialization_minimal() {
+    Party party;
+    party.fromQString(PLD_PARTY_MINIMAL);
 
+    QVERIFY(party.id == nullptr);
+
+    QVERIFY(party.size[0] == nullptr);
+
+    QVERIFY(party.size[1] == nullptr);
 }
 
 void
 PartyTest::test_deserialization_full() {
+    Party party;
+    party.fromQString(PLD_PARTY_FULL);
 
+    QVERIFY(party.id == TEST_STRING1);
+
+    QVERIFY(*party.size[0] == TEST_INT1);
+    QVERIFY(*party.size[0] != TEST_INT2);
+
+    QVERIFY(*party.size[1] != TEST_INT1);
+    QVERIFY(*party.size[1] == TEST_INT2);
 }
 
 static PartyTest PARTY_TEST;

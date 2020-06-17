@@ -49,5 +49,6 @@ public:
     }
 
 };
+
 Q_DECLARE_METATYPE(JsonSerializeable*)
 #endif // JSONSERIALIZEABLE_H

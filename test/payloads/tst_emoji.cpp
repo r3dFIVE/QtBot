@@ -33,7 +33,7 @@ EmojiTest::test_serialization_full() {
     QVERIFY(serialized[emoji.ID] == TEST_STRING2);
 
     QVERIFY(serialized.contains(emoji.ANIMATED));
-    QVERIFY(serialized[emoji.ANIMATED] == true);
+    QVERIFY(serialized[emoji.ANIMATED].toBool() == true);
 }
 
 void
@@ -52,6 +52,7 @@ EmojiTest::test_deserialization_minimal() {
 void
 EmojiTest::test_deserialization_full() {
     Emoji emoji;
+    QString s = PLD_EMOJI_FULL;
     emoji.fromQString(PLD_EMOJI_FULL);
 
     QVERIFY(emoji.name == TEST_STRING1);
