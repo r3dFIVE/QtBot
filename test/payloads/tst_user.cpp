@@ -31,13 +31,13 @@ UserTest::test_serialization_full() {
     user.avatar = TEST_STRING2;
     user.bot = QSharedPointer<bool>(new bool(true));
     user.system = QSharedPointer<bool>(new bool(true));
-    user.mfaEnabled = QSharedPointer<bool>(new bool(true));
+    user.mfa_enabled = QSharedPointer<bool>(new bool(true));
     user.locale = TEST_STRING1;
     user.verified = QSharedPointer<bool>(new bool(true));
     user.email = TEST_STRING2;
     user.flags = QSharedPointer<int>(new int(1));
-    user.premiumType = QSharedPointer<int>(new int(1));
-    user.publicFlags = QSharedPointer<int>(new int(1));
+    user.premium_type = QSharedPointer<int>(new int(1));
+    user.public_flags = QSharedPointer<int>(new int(1));
 
     QJsonObject serializedUser = user.toQJsonObject();
 
@@ -119,8 +119,8 @@ UserTest::test_deserialization_full() {
     QVERIFY(user.system != nullptr);
     QVERIFY(*user.system == true);
 
-    QVERIFY(user.mfaEnabled != nullptr);
-    QVERIFY(*user.mfaEnabled == true);
+    QVERIFY(user.mfa_enabled != nullptr);
+    QVERIFY(*user.mfa_enabled == true);
 
     QVERIFY(user.locale == TEST_STRING1);
     QVERIFY(user.locale != TEST_STRING2);
@@ -134,11 +134,11 @@ UserTest::test_deserialization_full() {
     QVERIFY(user.flags != nullptr);
     QVERIFY(*user.verified == 1);
 
-    QVERIFY(user.premiumType != nullptr);
-    QVERIFY(*user.premiumType == 1);
+    QVERIFY(user.premium_type != nullptr);
+    QVERIFY(*user.premium_type == 1);
 
-    QVERIFY(user.publicFlags != nullptr);
-    QVERIFY(*user.publicFlags == 1);
+    QVERIFY(user.public_flags != nullptr);
+    QVERIFY(*user.public_flags == 1);
 }
 
 static UserTest USER_TEST;
