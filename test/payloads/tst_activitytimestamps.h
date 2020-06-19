@@ -1,15 +1,16 @@
-#ifndef ASSETSTEST_H
-#define ASSETSTEST_H
+#ifndef TIMESTAMPSTEST_H
+#define TIMESTAMPSTEST_H
 
 #include "testsuite.h"
 
-class AssetsTest : public TestSuite
+#include <QObject>
+
+class ActivityTimestampsTest : public TestSuite
 {
     Q_OBJECT
-
 public:
-    AssetsTest() {}
-    ~AssetsTest() {};
+    ActivityTimestampsTest() {}
+    ~ActivityTimestampsTest() {}
 
 private slots:
     void test_serialization_minimal();
@@ -18,4 +19,4 @@ private slots:
     void test_deserialization_full();
 };
 
-#endif // ASSETSTEST_H
+#endif // TIMESTAMPSTEST_H

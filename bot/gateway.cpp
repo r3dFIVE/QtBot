@@ -137,7 +137,7 @@ Gateway::processHello(QSharedPointer<GatewayPayload> payload) {
         _heartbeatTimer->stop();
     }
 
-    _heartbeatTimer->setInterval(helloEvent.heartbeatInterval);
+    _heartbeatTimer->setInterval(*helloEvent.heartbeat_interval);
     _heartbeatTimer->start();
 
     if (_resume) {

@@ -1,17 +1,18 @@
 #ifndef JSONSERIALIZEABLE_H
 #define JSONSERIALIZEABLE_H
 
+#include "jsonutils.h"
+
 #include <QJsonObject>
 #include <QObject>
 #include <QJsonDocument>
-
 
 class JsonSerializeable : public QObject
 {
     Q_OBJECT
 
     virtual void read(const QJsonObject &jsonObject) = 0;
-    virtual void write(QJsonObject &jsonObject) const = 0;
+    virtual void write(QJsonObject &jsonObject) = 0;
 
 public:
     JsonSerializeable() {}
@@ -19,18 +20,18 @@ public:
     ~JsonSerializeable() {}
 
 
-    QJsonObject toQJsonObject() const {
+    QJsonObject toQJsonObject() {
         QJsonObject jsonObject;
         this->write(jsonObject);
         return jsonObject;
     }
 
-    QByteArray toByteArray() const {
+    QByteArray toByteArray() {
         QJsonDocument document(this->toQJsonObject());
         return document.toJson(QJsonDocument::Compact);
     }
 
-    QString toQString() const {
+    QString toQString() {
         return QString(this->toByteArray());
     }
 

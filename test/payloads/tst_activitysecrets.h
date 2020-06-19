@@ -5,12 +5,12 @@
 
 #include <QObject>
 
-class SecretsTest : public TestSuite
+class ActivitySecretsTest : public TestSuite
 {
     Q_OBJECT
 public:
-    SecretsTest() {}
-    ~SecretsTest() {}
+    ActivitySecretsTest() {}
+    ~ActivitySecretsTest() {}
 
 private slots:
     void test_serialization_minimal();

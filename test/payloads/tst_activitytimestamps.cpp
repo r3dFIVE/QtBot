@@ -1,11 +1,11 @@
-#include "tst_timestamps.h"
+#include "tst_activitytimestamps.h"
 #include "testpayloads.h"
 
-#include <payloads/timestamps.h>
+#include <payloads/activitytimestamps.h>
 
 void
-TimestampsTest::test_serialization_minimal() {
-    Timestamps timestamps;
+ActivityTimestampsTest::test_serialization_minimal() {
+    ActivityTimestamps timestamps;
 
     QJsonObject serializedTimestamps = timestamps.toQJsonObject();
 
@@ -14,8 +14,8 @@ TimestampsTest::test_serialization_minimal() {
 }
 
 void
-TimestampsTest::test_serialization_full() {
-    Timestamps timestamps;
+ActivityTimestampsTest::test_serialization_full() {
+    ActivityTimestamps timestamps;
     timestamps.start = QSharedPointer<int>(new int(TEST_INT1));
     timestamps.end = QSharedPointer<int>(new int(TEST_INT2));
     QJsonObject serializedTimestamps = timestamps.toQJsonObject();
@@ -30,8 +30,8 @@ TimestampsTest::test_serialization_full() {
 }
 
 void
-TimestampsTest::test_deserialization_minimal() {
-    Timestamps timestamps;
+ActivityTimestampsTest::test_deserialization_minimal() {
+    ActivityTimestamps timestamps;
     timestamps.fromQString(PLD_TIMESTAMPS_MINIMAL);
 
     QVERIFY(timestamps.start == nullptr);
@@ -39,8 +39,8 @@ TimestampsTest::test_deserialization_minimal() {
 }
 
 void
-TimestampsTest::test_deserialization_full() {
-    Timestamps timestamps;
+ActivityTimestampsTest::test_deserialization_full() {
+    ActivityTimestamps timestamps;
     timestamps.fromQString(PLD_TIMESTAMPS_FULL);
 
     QVERIFY(timestamps.start != nullptr);
@@ -52,4 +52,4 @@ TimestampsTest::test_deserialization_full() {
     QVERIFY(*timestamps.end == TEST_INT2);
 }
 
-static TimestampsTest TIMESTAMPS_TEST;
+static ActivityTimestampsTest ACTIVITY_TIMESTAMPS_TEST;

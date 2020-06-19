@@ -7,7 +7,7 @@
 void
 GatewayPayloadTest::test_serialization_minimal() {
     Hello hello;
-    hello.heartbeatInterval = TEST_INT1;
+    hello.setHeartbeatInterval(TEST_INT1);
     QJsonObject serializedHello = hello.toQJsonObject();
 
     GatewayPayload gatewayPayload;
@@ -40,8 +40,8 @@ GatewayPayloadTest::test_deserialization_minimal() {
     Hello hello;
     hello.fromQJsonObject(payload.d);
 
-    QVERIFY(hello.heartbeatInterval == TEST_INT1);
-    QVERIFY(hello.heartbeatInterval != TEST_INT2);
+    QVERIFY(*hello.heartbeat_interval == TEST_INT1);
+    QVERIFY(*hello.heartbeat_interval != TEST_INT2);
 }
 
 void

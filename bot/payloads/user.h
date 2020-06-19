@@ -79,7 +79,7 @@ public:
         }
     }
 
-    void write(QJsonObject &jsonObject) const override {
+    void write(QJsonObject &jsonObject) override {
         jsonObject[ID] = id;
         jsonObject[USERNAME] = username;
         jsonObject[DISCRIMINATOR] = discriminator;

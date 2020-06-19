@@ -1,11 +1,11 @@
-#include "tst_assets.h"
+#include "tst_activityassets.h"
 #include "testpayloads.h"
 
-#include <payloads/assets.h>
+#include <payloads/activityassets.h>
 
 void
-AssetsTest::test_serialization_minimal() {
-    Assets assets;
+ActivityAssetsTest::test_serialization_minimal() {
+    ActivityAssets assets;
 
     QJsonObject serializedAssets = assets.toQJsonObject();
 
@@ -16,8 +16,8 @@ AssetsTest::test_serialization_minimal() {
 }
 
 void
-AssetsTest::test_serialization_full() {
-    Assets assets;
+ActivityAssetsTest::test_serialization_full() {
+    ActivityAssets assets;
     assets.large_image = TEST_STRING1;
     assets.large_text = TEST_STRING2;
     assets.small_image = TEST_STRING1;
@@ -39,8 +39,8 @@ AssetsTest::test_serialization_full() {
 }
 
 void
-AssetsTest::test_deserialization_minimal() {
-    Assets assets;
+ActivityAssetsTest::test_deserialization_minimal() {
+    ActivityAssets assets;
     assets.fromQString(PLD_ASSETS_MINIMAL);
 
     QVERIFY(assets.large_image == "");
@@ -57,8 +57,8 @@ AssetsTest::test_deserialization_minimal() {
 }
 
 void
-AssetsTest::test_deserialization_full() {
-    Assets assets;
+ActivityAssetsTest::test_deserialization_full() {
+    ActivityAssets assets;
     QString s = PLD_ASSETS_FULL;
     assets.fromQString(PLD_ASSETS_FULL);
 
@@ -75,4 +75,4 @@ AssetsTest::test_deserialization_full() {
     QVERIFY(assets.small_text == TEST_STRING2);
 }
 
-static AssetsTest ASSETS_TEST;
+static ActivityAssetsTest ACTIVITY_ASSETS_TEST;

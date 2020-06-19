@@ -1,12 +1,10 @@
-#include "tst_party.h"
+#include "tst_activityparty.h"
 #include "testpayloads.h"
-
-#include <payloads/party.h>
-
+#include "payloads/activityparty.h"
 
 void
-PartyTest::test_serialization_minimal() {
-    Party party;
+ActivityPartyTest::test_serialization_minimal() {
+    ActivityParty party;
 
     QJsonObject serializedParty = party.toQJsonObject();
 
@@ -15,8 +13,8 @@ PartyTest::test_serialization_minimal() {
 }
 
 void
-PartyTest::test_serialization_full() {
-    Party party;
+ActivityPartyTest::test_serialization_full() {
+    ActivityParty party;
     party.id = TEST_STRING1;
     party.size[0] = QSharedPointer<int>(new int(TEST_INT1));
     party.size[1] = QSharedPointer<int>(new int(TEST_INT2));
@@ -38,8 +36,8 @@ PartyTest::test_serialization_full() {
 }
 
 void
-PartyTest::test_deserialization_minimal() {
-    Party party;
+ActivityPartyTest::test_deserialization_minimal() {
+    ActivityParty party;
     party.fromQString(PLD_PARTY_MINIMAL);
 
     QVERIFY(party.id == nullptr);
@@ -50,8 +48,8 @@ PartyTest::test_deserialization_minimal() {
 }
 
 void
-PartyTest::test_deserialization_full() {
-    Party party;
+ActivityPartyTest::test_deserialization_full() {
+    ActivityParty party;
     party.fromQString(PLD_PARTY_FULL);
 
     QVERIFY(party.id == TEST_STRING1);
@@ -63,4 +61,4 @@ PartyTest::test_deserialization_full() {
     QVERIFY(*party.size[1] == TEST_INT2);
 }
 
-static PartyTest PARTY_TEST;
+static ActivityPartyTest ACTIVITY_PARTY_TEST;

@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Inkscape coding style options for the Artistic Style formatter
+# See http://astyle.sourceforge.net/
+# See https://inkscape.org/de/develop/coding-style/
+
+# Opening braces broken from functions only
+--style=google
+
+# Four-space indent; convert stray tabs
+--indent=spaces=4
+--convert-tabs
+
+# Spaces around binary operators and before control statement parens
+--unpad-paren
+--pad-oper
+--pad-header
+
+# Attach pointers and references to variable names
+--align-pointer=name
+--align-reference=name
+
+# Add brackets to single-statement blocks
+--add-brackets
+
+# Misc. options
+--indent-preprocessor
+--indent-col1-comments
