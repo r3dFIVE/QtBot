@@ -1,22 +1,50 @@
 #ifndef HELLO_H
 #define HELLO_H
 
+#include "heartbeat.h"
 #include "jsonserializeable.h"
+
+#include <QSharedPointer>
+
 
 class Hello : public JsonSerializeable
 {     
+    Q_OBJECT
 public:
     const QString HEARTBEAT_INTERVAL = "heartbeat_interval";
 
-    int heartbeatInterval;
+    Q_PROPERTY(QJsonValue heartbeat_interval READ getHeartbeatInterval WRITE setHeartbeatInterval)
+    QSharedPointer<int> heartbeat_interval;
 
-    void read(const QJsonObject &jsonObject) override {
-        heartbeatInterval = jsonObject[HEARTBEAT_INTERVAL].toInt();
+    QJsonValue
+    getHeartbeatInterval() {
+        if (heartbeat_interval) {
+            return QJsonValue(*heartbeat_interval);
+        } else {
+            return QJsonValue();
+        }
     }
 
-    void write(QJsonObject &jsonObject) const override {
-        jsonObject[HEARTBEAT_INTERVAL] = heartbeatInterval;
+    void
+    setHeartbeatInterval(int interval) {
+        heartbeat_interval = QSharedPointer<int>(new int(interval));;
+    }
+
+    void
+    setHeartbeatInterval(QJsonValue interval) {
+        if (!interval.isNull()) {
+            setHeartbeatInterval(interval.toInt());
+        }
+    }
+
+    void
+    read(const QJsonObject &jsonObject) {
+        JsonUtils::readFromJson(*this, jsonObject);
+    }
+    void
+    write(QJsonObject &jsonObject)  {
+        JsonUtils::writeToJson(*this, jsonObject);
     }
 };
-
+Q_DECLARE_METATYPE(Hello);
 #endif // HEARTBEATINTERVAL_H

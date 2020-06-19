@@ -8,18 +8,40 @@
 
 class Heartbeat : public JsonSerializeable
 {
+    Q_OBJECT
+
+public:
     const QString D = "d";
     const QString OP = "op";
-public:
+
+    Q_PROPERTY(int op READ getOp)
     int op = GatewayOpcodes::HEARTBEAT;
+
+    Q_PROPERTY(int d READ getD WRITE setD)
     int d = -1;
 
-    void read(const QJsonObject &jsonObject) override {
-        d = jsonObject[D].toInt();
-        op = jsonObject[OP].toInt();
+    int
+    getD() const {
+        return d;
     }
 
-    void write(QJsonObject &jsonObject) const override {
+    void
+    setD(int value) {
+        d = value;
+    }
+
+    int
+    getOp() const {
+        return op;
+    }
+
+    void
+    read(const QJsonObject &jsonObject) override {
+        JsonUtils::readFromJson(*this, jsonObject);
+    }
+
+    void
+    write(QJsonObject &jsonObject) override {
         if (d == -1) {
             jsonObject[D] = QJsonValue::Null;
         } else {
@@ -29,4 +51,8 @@ public:
     }
 };
 
+Q_DECLARE_METATYPE(Heartbeat)
+
 #endif // HEARTBEART_H
+
+

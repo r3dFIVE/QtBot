@@ -1,11 +1,11 @@
-#include "tst_emoji.h"
+#include "tst_activityemoji.h"
 
-#include <payloads/emoji.h>
+#include <payloads/activityemoji.h>
 #include <payloads/testpayloads.h>
 
 void
-EmojiTest::test_serialization_minimal() {
-    Emoji emoji;
+ActivityEmojiTest::test_serialization_minimal() {
+    ActivityEmoji emoji;
     emoji.name = TEST_STRING1;
 
     QJsonObject serialized = emoji.toQJsonObject();
@@ -19,8 +19,8 @@ EmojiTest::test_serialization_minimal() {
 }
 
 void
-EmojiTest::test_serialization_full() {
-    Emoji emoji;
+ActivityEmojiTest::test_serialization_full() {
+    ActivityEmoji emoji;
     emoji.name = TEST_STRING1;
     emoji.id = TEST_STRING2;
     emoji.animated = QSharedPointer<bool>(new bool(true));
@@ -37,8 +37,8 @@ EmojiTest::test_serialization_full() {
 }
 
 void
-EmojiTest::test_deserialization_minimal() {
-    Emoji emoji;
+ActivityEmojiTest::test_deserialization_minimal() {
+    ActivityEmoji emoji;
     emoji.fromQString(PLD_EMOJI_MINIMAL);
 
     QVERIFY(emoji.name == TEST_STRING1);
@@ -50,8 +50,8 @@ EmojiTest::test_deserialization_minimal() {
 }
 
 void
-EmojiTest::test_deserialization_full() {
-    Emoji emoji;
+ActivityEmojiTest::test_deserialization_full() {
+    ActivityEmoji emoji;
     QString s = PLD_EMOJI_FULL;
     emoji.fromQString(PLD_EMOJI_FULL);
 
@@ -65,4 +65,4 @@ EmojiTest::test_deserialization_full() {
     QVERIFY(emoji.animated);
 }
 
-static EmojiTest TEST_EMOJI;
+static ActivityEmojiTest ACTIVITY_EMOJI_TEST;

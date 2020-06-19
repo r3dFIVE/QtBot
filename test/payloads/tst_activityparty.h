@@ -1,14 +1,16 @@
-#ifndef TST_EMOJI_H
-#define TST_EMOJI_H
+#ifndef PARTYTEST_H
+#define PARTYTEST_H
 
+#include <QObject>
 #include <testsuite.h>
 
-class EmojiTest : public TestSuite
+class ActivityPartyTest : public TestSuite
 {
     Q_OBJECT
+
 public:
-    EmojiTest() {}
-    ~EmojiTest() {}
+    ActivityPartyTest() {}
+    ~ActivityPartyTest() {}
 
 private slots:
     void test_serialization_minimal();
@@ -17,4 +19,4 @@ private slots:
     void test_deserialization_full();
 };
 
-#endif // TST_EMOJI_H
+#endif // PARTYTEST_H

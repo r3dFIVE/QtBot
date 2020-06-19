@@ -8,8 +8,6 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
-
     QCommandLineParser parser;
     parser.setApplicationDescription("QtWebSockets example: echoserver");
     parser.addHelpOption();
@@ -30,3 +28,4 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+

@@ -112,7 +112,7 @@ ActivityTest::test_deserialization_full() {
     QVERIFY(activity.created_at == TEST_INT1);
     QVERIFY(activity.created_at != TEST_INT2);
 
-    Timestamps timestamps;
+    ActivityTimestamps timestamps;
     timestamps.fromQJsonObject(activity.timestamps->toQJsonObject());
 
     QVERIFY(timestamps.start != nullptr);
@@ -132,7 +132,7 @@ ActivityTest::test_deserialization_full() {
     QVERIFY(activity.state == TEST_STRING1);
     QVERIFY(activity.state != TEST_STRING2);
 
-    Emoji emoji;
+    ActivityEmoji emoji;
     emoji.fromQJsonObject(activity.emoji->toQJsonObject());
 
     QVERIFY(emoji.name == TEST_STRING1);
@@ -145,7 +145,7 @@ ActivityTest::test_deserialization_full() {
     QVERIFY(*emoji.animated ==  true);
     QVERIFY(*emoji.animated != false);
 
-    Party party;
+    ActivityParty party;
     party.fromQJsonObject(activity.party->toQJsonObject());
 
     QVERIFY(party.id == TEST_STRING1);
@@ -159,7 +159,7 @@ ActivityTest::test_deserialization_full() {
     QVERIFY(*party.size[1] != TEST_INT1);
     QVERIFY(*party.size[1] == TEST_INT2);
 
-    Assets assets;
+    ActivityAssets assets;
     assets.fromQJsonObject(activity.assets->toQJsonObject());
 
     QVERIFY(assets.large_image == TEST_STRING1);
@@ -174,7 +174,7 @@ ActivityTest::test_deserialization_full() {
     QVERIFY(assets.small_text != TEST_STRING1);
     QVERIFY(assets.small_text == TEST_STRING2);
 
-    Secrets secrets;
+    ActivitySecrets secrets;
     secrets.fromQJsonObject(activity.secrets->toQJsonObject());
 
     QVERIFY(secrets.join == TEST_STRING1);

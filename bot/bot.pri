@@ -14,8 +14,11 @@ HEADERS += \
     $$PWD/logging/logger.h \
     $$PWD/logging/logworker.h \
     $$PWD/payloads/activity.h \
-    $$PWD/payloads/assets.h \
-    $$PWD/payloads/emoji.h \
+    $$PWD/payloads/activityassets.h \
+    $$PWD/payloads/activityemoji.h \
+    $$PWD/payloads/activityparty.h \
+    $$PWD/payloads/activitysecrets.h \
+    $$PWD/payloads/activitytimestamps.h \
     $$PWD/payloads/gatewaypayload.h \
     $$PWD/lockingdeque.h \
     $$PWD/payloads/gatewaypayload.h \
@@ -24,14 +27,13 @@ HEADERS += \
     $$PWD/payloads/hello.h \
     $$PWD/payloads/heartbeat.h \
     $$PWD/payloads/identify.h \
+    $$PWD/payloads/identifyproperties.h \
     $$PWD/payloads/jsonserializeable.h \
-    $$PWD/payloads/party.h \
-    $$PWD/payloads/properties.h \
     $$PWD/payloads/resume.h \
-    $$PWD/payloads/secrets.h \
-    $$PWD/payloads/timestamps.h \
     $$PWD/payloads/updatestatus.h \
     $$PWD/payloads/user.h \
+    $$PWD/jsonutils.h \
+    $$PWD/typefactory.h \
     $$PWD/settings.h
 
 DISTFILES += \

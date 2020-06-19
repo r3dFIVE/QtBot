@@ -1,11 +1,11 @@
-#include "tst_secrets.h"
+#include "tst_activitysecrets.h"
 #include "testpayloads.h"
 
-#include <payloads/secrets.h>
+#include <payloads/activitysecrets.h>
 
 void
-SecretsTest::test_serialization_minimal() {
-    Secrets secrets;
+ActivitySecretsTest::test_serialization_minimal() {
+    ActivitySecrets secrets;
 
     QJsonObject serializedSecrets = secrets.toQJsonObject();
 
@@ -15,8 +15,8 @@ SecretsTest::test_serialization_minimal() {
 }
 
 void
-SecretsTest::test_serialization_full() {
-    Secrets secrets;
+ActivitySecretsTest::test_serialization_full() {
+    ActivitySecrets secrets;
     secrets.join = TEST_STRING1;
     secrets.spectate = TEST_STRING2;
     secrets.match = TEST_STRING1;
@@ -34,8 +34,8 @@ SecretsTest::test_serialization_full() {
 }
 
 void
-SecretsTest::test_deserialization_minimal() {
-    Secrets secrets;
+ActivitySecretsTest::test_deserialization_minimal() {
+    ActivitySecrets secrets;
     secrets.fromQString(PLD_SECRETS_MINIMAL);
 
     QVERIFY(secrets.join == "");
@@ -49,8 +49,8 @@ SecretsTest::test_deserialization_minimal() {
 }
 
 void
-SecretsTest::test_deserialization_full() {
-    Secrets secrets;
+ActivitySecretsTest::test_deserialization_full() {
+    ActivitySecrets secrets;
     secrets.fromQString(PLD_SECRETS_FULL);
 
     QVERIFY(secrets.join != "");
@@ -63,4 +63,4 @@ SecretsTest::test_deserialization_full() {
     QVERIFY(secrets.match == TEST_STRING1);
 }
 
-static SecretsTest SECRETS_TEST;
+static ActivitySecretsTest SECRETS_TEST;

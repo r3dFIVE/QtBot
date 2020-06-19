@@ -4,7 +4,7 @@
 #include "jsonserializeable.h"
 
 
-class Properties : public JsonSerializeable
+class IdentifyProperties : public JsonSerializeable
 {
 public:
     const QString OS = "$os";
@@ -21,7 +21,7 @@ public:
         $device = jsonObject[DEVICE].toString();
     }
 
-    void write(QJsonObject &jsonObject) const override {
+    void write(QJsonObject &jsonObject) override {
         jsonObject[OS] = $os;
         jsonObject[BROWSER] = $browser;
         jsonObject[DEVICE] = $device;

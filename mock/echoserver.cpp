@@ -1,6 +1,8 @@
 #include "echoserver.h"
 #include "payloads/gatewaypayload.h"
 #include "globals.h"
+#include "jsonutils.h"
+#include "typefactory.h"
 #include "payloads/hello.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"
@@ -44,10 +46,10 @@ void EchoServer::onNewConnection()
     m_clients << pSocket;
 
     Hello hello;
-    hello.heartbeatInterval = 5000;
+    hello.setHeartbeatInterval(5000);
 
     GatewayPayload payload;
-    payload.d = hello.toQJsonObject();
+    payload.d = JsonUtils::toQJsonObject(hello);
     payload.op = GatewayOpcodes::HELLO;
 
     pSocket->sendTextMessage(payload.toQString());

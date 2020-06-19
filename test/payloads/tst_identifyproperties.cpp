@@ -1,12 +1,12 @@
-#include "tst_properties.h"
+#include "tst_identifyproperties.h"
 
-#include <payloads/properties.h>
+#include <payloads/identifyproperties.h>
 
 #include <QJsonObject>
 
 void
-PropertiesTest::test_serialization() {
-    Properties properties;
+IdentifyPropertiesTest::test_serialization() {
+    IdentifyProperties properties;
 
     QJsonObject serializedProperties = properties.toQJsonObject();
 
@@ -18,8 +18,8 @@ PropertiesTest::test_serialization() {
 }
 
 void
-PropertiesTest::test_deserialization() {
+IdentifyPropertiesTest::test_deserialization() {
     // N/A
 }
 
-static PropertiesTest PROPERTIES_TEST;
+static IdentifyPropertiesTest IDENTIFY_PROPERTIES_TEST;

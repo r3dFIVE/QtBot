@@ -4,12 +4,12 @@
 #include <QObject>
 #include <testsuite.h>
 
-class PropertiesTest : public TestSuite
+class IdentifyPropertiesTest : public TestSuite
 {
     Q_OBJECT
 public:
-    PropertiesTest() {}
-    ~PropertiesTest() {}
+    IdentifyPropertiesTest() {}
+    ~IdentifyPropertiesTest() {}
 
 private slots:
     void test_serialization();

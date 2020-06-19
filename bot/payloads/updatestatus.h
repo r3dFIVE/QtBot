@@ -9,48 +9,90 @@
 
 class UpdateStatus : public JsonSerializeable
 {
+    Q_OBJECT
+
+public:
     const QString SINCE = "since";
     const QString GAME = "game";
     const QString STATUS = "status";
     const QString AFK = "afk";
 
-public:
+    Q_PROPERTY(QJsonValue since READ getSince WRITE setSince)
     QSharedPointer<int> since;
+
+    Q_PROPERTY(QJsonObject game READ getGame WRITE setGame)
     QSharedPointer<Activity> game;
+
+    Q_PROPERTY(QString status READ getStatus WRITE setStatus)
     QString status;
+
+    Q_PROPERTY(bool afk READ getAfk WRITE setAfk)
     bool afk;
 
-    void read(const QJsonObject &jsonObject) override {
-        if (!jsonObject[SINCE].isNull()) {
-            since = QSharedPointer<int>(new int(jsonObject[SINCE].toInt()));
+    QJsonValue
+    getSince() {
+        if (since) {
+            return QJsonValue(*since);
+        } else {
+            return QJsonValue();
         }
-
-        if (!jsonObject[GAME].isNull()) {
-            game = QSharedPointer<Activity>(new Activity);
-            game->read(jsonObject[GAME].toObject());
-        }
-
-        status = jsonObject[STATUS].toString();
-        afk = jsonObject[AFK].toBool();
     }
 
-    void write(QJsonObject &jsonObject) const override {
-        if (since != nullptr) {
-            jsonObject[SINCE] = *since.get();
-        } else {
-            jsonObject[SINCE] = QJsonValue::Null;
+    void
+    setSince(QJsonValue since) {
+        if (!since.isNull()) {
+            this->since = QSharedPointer<int>(new int(since.toInt()));
         }
+    }
 
-        if (game != nullptr) {
-            jsonObject[GAME] = game->toQJsonObject();
+    QJsonObject
+    getGame() {
+        if (game) {
+            return game->toQJsonObject();
         } else {
-            jsonObject[GAME] = QJsonValue::Null;
+            return QJsonObject();
         }
+    }
 
-        jsonObject[STATUS] = status;
-        jsonObject[AFK] = afk;
+    void
+    setGame(QJsonObject game) {
+        if (!this->game) {
+            this->game = QSharedPointer<Activity>(new Activity);
+        }
+        JsonUtils::readFromJson(*this->game, game);
+    }
+
+    QString
+    getStatus() {
+        return status;
+    }
+
+    void
+    setStatus(QString status) {
+        this->status = status;
+    }
+
+    bool
+    getAfk() {
+        return afk;
+    }
+
+    void
+    setAfk(bool afk) {
+        this->afk = afk;
+    }
+
+    void
+    read(const QJsonObject &jsonObject) override {
+        JsonUtils::readFromJson(*this, jsonObject);
+    }
+
+    void
+    write(QJsonObject &jsonObject) override {
+        JsonUtils::writeToJson(*this, jsonObject);
     }
 };
 
+Q_DECLARE_METATYPE(UpdateStatus)
 
 #endif // PRESENCE_H
