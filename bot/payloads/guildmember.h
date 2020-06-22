@@ -1,0 +1,4 @@
+#ifndef GUILDMEMBER_H
+#define GUILDMEMBER_H
+
+#endif // GUILDMEMBER_H
