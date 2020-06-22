@@ -1,5 +1,4 @@
 #include "tst_activityassets.h"
-#include "testpayloads.h"
 
 #include <payloads/activityassets.h>
 
@@ -41,7 +40,7 @@ ActivityAssetsTest::test_serialization_full() {
 void
 ActivityAssetsTest::test_deserialization_minimal() {
     ActivityAssets assets;
-    assets.fromQString(PLD_ASSETS_MINIMAL);
+    assets.fromQString(PLD_ACTIVITY_ASSETS_MINIMAL);
 
     QVERIFY(assets.large_image == "");
     QVERIFY(assets.large_image != TEST_STRING1);
@@ -59,8 +58,7 @@ ActivityAssetsTest::test_deserialization_minimal() {
 void
 ActivityAssetsTest::test_deserialization_full() {
     ActivityAssets assets;
-    QString s = PLD_ASSETS_FULL;
-    assets.fromQString(PLD_ASSETS_FULL);
+    assets.fromQString(PLD_ACTIVITY_ASSETS_FULL);
 
     QVERIFY(assets.large_image == TEST_STRING1);
     QVERIFY(assets.large_image != TEST_STRING2);

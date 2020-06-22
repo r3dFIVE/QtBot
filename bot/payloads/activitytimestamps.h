@@ -1,11 +1,11 @@
 #ifndef TIMESTAMPS_H
 #define TIMESTAMPS_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 #include <QSharedPointer>
 
-class ActivityTimestamps : public JsonSerializeable
+class ActivityTimestamps : public JsonSerializable
 {
     Q_OBJECT
 

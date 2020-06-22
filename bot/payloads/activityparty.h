@@ -1,12 +1,12 @@
 #ifndef PARTY_H
 #define PARTY_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 #include <QSharedPointer>
 #include <QJsonArray>
 
-class ActivityParty : public JsonSerializeable
+class ActivityParty : public JsonSerializable
 {
     Q_OBJECT
 public:
@@ -40,8 +40,10 @@ public:
 
     void
     setSize(QJsonArray size) {
-        this->size[0] = QSharedPointer<int>(new int(size[0].toInt()));
-        this->size[1] = QSharedPointer<int>(new int(size[1].toInt()));
+        if (!size.isEmpty()) {
+            this->size[0] = QSharedPointer<int>(new int(size[0].toInt()));
+            this->size[1] = QSharedPointer<int>(new int(size[1].toInt()));
+        }
     }
 
     void

@@ -1,12 +1,12 @@
 #ifndef EMOJI_H
 #define EMOJI_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 #include <QSharedPointer>
 
 
-class ActivityEmoji : public JsonSerializeable
+class ActivityEmoji : public JsonSerializable
 {
     Q_OBJECT
 public:

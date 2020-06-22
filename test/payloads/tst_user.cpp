@@ -132,7 +132,7 @@ UserTest::test_deserialization_full() {
     QVERIFY(user.locale != TEST_STRING2);
 
     QVERIFY(user.flags != nullptr);
-    QVERIFY(*user.verified == 1);
+    QVERIFY(*user.flags == 1);
 
     QVERIFY(user.premium_type != nullptr);
     QVERIFY(*user.premium_type == 1);

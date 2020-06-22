@@ -32,7 +32,7 @@ ActivityTimestampsTest::test_serialization_full() {
 void
 ActivityTimestampsTest::test_deserialization_minimal() {
     ActivityTimestamps timestamps;
-    timestamps.fromQString(PLD_TIMESTAMPS_MINIMAL);
+    timestamps.fromQString(PLD_ACTIVITY_TIMESTAMPS_MINIMAL);
 
     QVERIFY(timestamps.start == nullptr);
     QVERIFY(timestamps.end == nullptr);
@@ -41,7 +41,7 @@ ActivityTimestampsTest::test_deserialization_minimal() {
 void
 ActivityTimestampsTest::test_deserialization_full() {
     ActivityTimestamps timestamps;
-    timestamps.fromQString(PLD_TIMESTAMPS_FULL);
+    timestamps.fromQString(PLD_ACTIVITY_TIMESTAMPS_FULL);
 
     QVERIFY(timestamps.start != nullptr);
     QVERIFY(*timestamps.start == TEST_INT1);

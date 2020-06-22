@@ -36,7 +36,7 @@ ActivitySecretsTest::test_serialization_full() {
 void
 ActivitySecretsTest::test_deserialization_minimal() {
     ActivitySecrets secrets;
-    secrets.fromQString(PLD_SECRETS_MINIMAL);
+    secrets.fromQString(PLD_ACTIVITY_SECRETS_MINIMAL);
 
     QVERIFY(secrets.join == "");
     QVERIFY(secrets.join != TEST_STRING1);
@@ -51,7 +51,7 @@ ActivitySecretsTest::test_deserialization_minimal() {
 void
 ActivitySecretsTest::test_deserialization_full() {
     ActivitySecrets secrets;
-    secrets.fromQString(PLD_SECRETS_FULL);
+    secrets.fromQString(PLD_ACTIVITY_SECRETS_FULL);
 
     QVERIFY(secrets.join != "");
     QVERIFY(secrets.join == TEST_STRING1);

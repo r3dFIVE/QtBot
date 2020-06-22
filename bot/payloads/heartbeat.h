@@ -3,10 +3,10 @@
 
 #include <QObject>
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 #include "globals.h"
 
-class Heartbeat : public JsonSerializeable
+class Heartbeat : public JsonSerializable
 {
     Q_OBJECT
 

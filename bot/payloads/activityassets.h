@@ -1,10 +1,10 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 
-class ActivityAssets : public JsonSerializeable
+class ActivityAssets : public JsonSerializable
 {
     Q_OBJECT
 public:

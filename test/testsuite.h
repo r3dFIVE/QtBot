@@ -3,6 +3,9 @@
 
 #include <QtTest>
 #include <QCoreApplication>
+#include <QObject>
+
+#include "payloads/testpayloads.h"
 
 class TestSuite : public QObject
 {

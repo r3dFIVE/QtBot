@@ -1,7 +1,7 @@
 #ifndef ACTIVITY_H
 #define ACTIVITY_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 #include "activitytimestamps.h"
 #include "activityemoji.h"
 #include "activityparty.h"
@@ -10,7 +10,7 @@
 
 #include <QSharedPointer>
 
-class Activity : public JsonSerializeable
+class Activity : public JsonSerializable
 {
     Q_OBJECT
 

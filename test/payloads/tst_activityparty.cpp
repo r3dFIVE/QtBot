@@ -38,7 +38,7 @@ ActivityPartyTest::test_serialization_full() {
 void
 ActivityPartyTest::test_deserialization_minimal() {
     ActivityParty party;
-    party.fromQString(PLD_PARTY_MINIMAL);
+    party.fromQString(PLD_ACTIVITY_PARTY_MINIMAL);
 
     QVERIFY(party.id == nullptr);
 
@@ -50,7 +50,7 @@ ActivityPartyTest::test_deserialization_minimal() {
 void
 ActivityPartyTest::test_deserialization_full() {
     ActivityParty party;
-    party.fromQString(PLD_PARTY_FULL);
+    party.fromQString(PLD_ACTIVITY_PARTY_FULL);
 
     QVERIFY(party.id == TEST_STRING1);
 

@@ -1,10 +1,10 @@
 #ifndef RESUME_H
 #define RESUME_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 
-class Resume : public JsonSerializeable
+class Resume : public JsonSerializable
 {   
     Q_OBJECT
 public:

@@ -1,9 +1,9 @@
 #ifndef SECRETS_H
 #define SECRETS_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
-class ActivitySecrets : public JsonSerializeable
+class ActivitySecrets : public JsonSerializable
 {
     Q_OBJECT
 public:    

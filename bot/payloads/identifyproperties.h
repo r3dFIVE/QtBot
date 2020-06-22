@@ -1,10 +1,10 @@
 #ifndef PROPERTIES_H
 #define PROPERTIES_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 
-class IdentifyProperties : public JsonSerializeable
+class IdentifyProperties : public JsonSerializable
 {
 public:
     const QString OS = "$os";

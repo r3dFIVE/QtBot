@@ -39,7 +39,7 @@ ActivityEmojiTest::test_serialization_full() {
 void
 ActivityEmojiTest::test_deserialization_minimal() {
     ActivityEmoji emoji;
-    emoji.fromQString(PLD_EMOJI_MINIMAL);
+    emoji.fromQString(PLD_ACTIVITY_EMOJI_MINIMAL);
 
     QVERIFY(emoji.name == TEST_STRING1);
     QVERIFY(emoji.name != TEST_STRING2);
@@ -52,8 +52,8 @@ ActivityEmojiTest::test_deserialization_minimal() {
 void
 ActivityEmojiTest::test_deserialization_full() {
     ActivityEmoji emoji;
-    QString s = PLD_EMOJI_FULL;
-    emoji.fromQString(PLD_EMOJI_FULL);
+    QString s = PLD_ACTIVITY_EMOJI_FULL;
+    emoji.fromQString(PLD_ACTIVITY_EMOJI_FULL);
 
     QVERIFY(emoji.name == TEST_STRING1);
     QVERIFY(emoji.name != TEST_STRING2);

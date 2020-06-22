@@ -2,6 +2,8 @@
 #define JSONUTILS_H
 
 #include "typefactory.h"
+#include "logging/logfactory.h"
+#include "payloads/jsonserializable.h"
 
 #include <QObject>
 #include <QCoreApplication>
@@ -13,8 +15,6 @@
 #include <QSharedPointer>
 #include <QTypeInfo>
 
-#include <logging/logfactory.h>
-#include <payloads/jsonserializeable.h>
 
 struct JsonUtils
 {
@@ -34,8 +34,7 @@ struct JsonUtils
                         // Discord only sends ints, all numerical Json values are considered double.
                         // Doubles are serialized as strings in discord API.
                         // Keeping as ints because some are used for bitmastking;
-                        int fromDouble = source[metaProperty.name()].toInt();
-                        metaProperty.write(&target, fromDouble);
+                        metaProperty.write(&target, source[metaProperty.name()].toInt());
                         break;
                     }
                     case QJsonValue::String: {
@@ -47,8 +46,7 @@ struct JsonUtils
                         break;
                     }
                     case QJsonValue::Object: {
-                        QJsonObject obj = source[metaProperty.name()].toObject();
-                        metaProperty.write(&target, obj);
+                        metaProperty.write(&target, source[metaProperty.name()].toObject());
                         break;
                     }
                 }
@@ -69,33 +67,32 @@ struct JsonUtils
 
             switch(QMetaType::Type(variant.type())) {
                 case QMetaType::Int: {
-                    target[metaObject.property(i).name()] = variant.toInt();
+                    target[property.name()] = variant.toInt();
                     break;
                 }
                 case QMetaType::Bool: {
-                    target[metaObject.property(i).name()] = variant.toBool();
+                    target[property.name()] = variant.toBool();
                     break;
                 }
                 case QMetaType::QString: {
-                    target[metaObject.property(i).name()] = variant.toString();
+                    target[property.name()] = variant.toString();
                     break;
                 }
                 case QMetaType::QJsonValue: {
-                    QJsonValue value = variant.toJsonValue();
-                    target[metaObject.property(i).name()] = variant.toJsonValue();
+                    target[property.name()] = variant.toJsonValue();
                     break;
                 }
                 case QMetaType::QJsonObject: {
                     QJsonObject jsonObject = variant.toJsonObject();
                     if (!jsonObject.isEmpty()) {
-                        target[metaObject.property(i).name()] = jsonObject;
+                        target[property.name()] = jsonObject;
                     }
                     break;
                 }
                 case QMetaType::QJsonArray: {
                     QJsonArray jsonArray = variant.toJsonArray();
                     if (!jsonArray.isEmpty()) {
-                        target[metaObject.property(i).name()] = jsonArray;
+                        target[property.name()] = jsonArray;
                     }
                     break;
                 }

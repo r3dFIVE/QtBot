@@ -1,10 +1,10 @@
 #ifndef USER_H
 #define USER_H
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 
-class User : public JsonSerializeable
+class User : public JsonSerializable
 {
     Q_OBJECT
 

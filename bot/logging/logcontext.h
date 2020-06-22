@@ -12,21 +12,21 @@ public:
     LogContext () {}
 
     LogContext(const LogContext& ctx) {
-        this->fileName = ctx.fileName;
-        this->directoryPath = ctx.directoryPath;
-        this->maxRolloverFiles = ctx.maxRolloverFiles;
-        this->maxFileSize = ctx.maxFileSize;
-        this->consoleLogLevel = ctx.consoleLogLevel;
-        this->fileLogLevel = ctx.fileLogLevel;
+        fileName = ctx.fileName;
+        directoryPath = ctx.directoryPath;
+        maxRolloverFiles = ctx.maxRolloverFiles;
+        maxFileSize = ctx.maxFileSize;
+        consoleLogLevel = ctx.consoleLogLevel;
+        fileLogLevel = ctx.fileLogLevel;
     }
 
     void operator=(const LogContext& ctx) {
-        this->fileName = ctx.fileName;
-        this->directoryPath = ctx.directoryPath;
-        this->maxRolloverFiles = ctx.maxRolloverFiles;
-        this->maxFileSize = ctx.maxFileSize;
-        this->consoleLogLevel = ctx.consoleLogLevel;
-        this->fileLogLevel = ctx.fileLogLevel;
+        fileName = ctx.fileName;
+        directoryPath = ctx.directoryPath;
+        maxRolloverFiles = ctx.maxRolloverFiles;
+        maxFileSize = ctx.maxFileSize;
+        consoleLogLevel = ctx.consoleLogLevel;
+        fileLogLevel = ctx.fileLogLevel;
     }
 
     enum LogLevel {

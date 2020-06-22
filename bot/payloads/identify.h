@@ -2,13 +2,13 @@
 #define IDENTIFY_H
 
 #include "identifyproperties.h"
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 #include "updatestatus.h"
 
 #include <QSharedPointer>
 #include <QJsonArray>
 
-class Identify : public JsonSerializeable
+class Identify : public JsonSerializable
 {
 
     Q_OBJECT
@@ -68,7 +68,7 @@ public:
     void
     setProperties(QJsonObject properties) {
         if (!this->properties) {
-            this->properties = QSharedPointer<IdentifyProperties>();
+            this->properties = QSharedPointer<IdentifyProperties>(new IdentifyProperties);
         }
         JsonUtils::readFromJson(*this->properties, properties);
     }

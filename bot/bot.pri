@@ -19,20 +19,25 @@ HEADERS += \
     $$PWD/payloads/activityparty.h \
     $$PWD/payloads/activitysecrets.h \
     $$PWD/payloads/activitytimestamps.h \
+    $$PWD/payloads/emoji.h \
     $$PWD/payloads/gatewaypayload.h \
     $$PWD/lockingdeque.h \
     $$PWD/payloads/gatewaypayload.h \
+    $$PWD/payloads/guild.h \
+    $$PWD/payloads/guildmember.h \
     $$PWD/payloads/hello.h \
     $$PWD/payloads/gatewaypayload.h \
     $$PWD/payloads/hello.h \
     $$PWD/payloads/heartbeat.h \
     $$PWD/payloads/identify.h \
     $$PWD/payloads/identifyproperties.h \
-    $$PWD/payloads/jsonserializeable.h \
+    $$PWD/payloads/jsonserializable.h \
     $$PWD/payloads/resume.h \
+    $$PWD/payloads/role.h \
     $$PWD/payloads/updatestatus.h \
     $$PWD/payloads/user.h \
     $$PWD/jsonutils.h \
+    $$PWD/payloads/voicestate.h \
     $$PWD/typefactory.h \
     $$PWD/settings.h
 

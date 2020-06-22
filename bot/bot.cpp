@@ -9,7 +9,7 @@
 
 Bot::Bot()
 {   
-    qRegisterMetaType<QSharedPointer<JsonSerializeable>>();
+    qRegisterMetaType<QSharedPointer<JsonSerializable>>();
     qRegisterMetaType<LogContext::LogLevel>();
 }
 

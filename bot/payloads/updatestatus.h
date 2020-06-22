@@ -2,12 +2,12 @@
 #define PRESENCE_H
 
 #include "activity.h"
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 #include <QSharedPointer>
 
 
-class UpdateStatus : public JsonSerializeable
+class UpdateStatus : public JsonSerializable
 {
     Q_OBJECT
 
@@ -90,6 +90,14 @@ public:
     void
     write(QJsonObject &jsonObject) override {
         JsonUtils::writeToJson(*this, jsonObject);
+
+        if (!jsonObject.contains(SINCE)) {
+            jsonObject[SINCE] = QJsonValue::Null;
+        }
+
+        if (!jsonObject.contains(GAME)) {
+            jsonObject[GAME] = QJsonValue::Null;
+        }
     }
 };
 

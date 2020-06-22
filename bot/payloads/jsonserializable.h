@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QJsonDocument>
 
-class JsonSerializeable : public QObject
+class JsonSerializable : public QObject
 {
     Q_OBJECT
 
@@ -15,9 +15,9 @@ class JsonSerializeable : public QObject
     virtual void write(QJsonObject &jsonObject) = 0;
 
 public:
-    JsonSerializeable() {}
-    JsonSerializeable(const JsonSerializeable &serializeable) { Q_UNUSED(serializeable) }
-    ~JsonSerializeable() {}
+    JsonSerializable() {}
+    JsonSerializable(const JsonSerializable &serializeable) { Q_UNUSED(serializeable) }
+    ~JsonSerializable() {}
 
 
     QJsonObject toQJsonObject() {
@@ -51,5 +51,5 @@ public:
 
 };
 
-Q_DECLARE_METATYPE(JsonSerializeable*)
+Q_DECLARE_METATYPE(JsonSerializable*)
 #endif // JSONSERIALIZEABLE_H

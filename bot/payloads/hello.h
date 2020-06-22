@@ -2,12 +2,12 @@
 #define HELLO_H
 
 #include "heartbeat.h"
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 
 #include <QSharedPointer>
 
 
-class Hello : public JsonSerializeable
+class Hello : public JsonSerializable
 {     
     Q_OBJECT
 public:

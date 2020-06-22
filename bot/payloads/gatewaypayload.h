@@ -4,10 +4,10 @@
 #include <QString>
 #include <QObject>
 
-#include "jsonserializeable.h"
+#include "jsonserializable.h"
 #include "jsonutils.h"
 
-class GatewayPayload : public JsonSerializeable
+class GatewayPayload : public JsonSerializable
 {
     Q_OBJECT
 

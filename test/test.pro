@@ -13,9 +13,15 @@ SOURCES += \
     payloads/tst_activityparty.cpp \
     payloads/tst_activitysecrets.cpp \
     payloads/tst_activitytimestamps.cpp \
+    payloads/tst_emoji.cpp \
     payloads/tst_gatewaypayload.cpp \
+    payloads/tst_guildmemeber.cpp \
+    payloads/tst_identify.cpp \
     payloads/tst_identifyproperties.cpp \
     payloads/tst_resume.cpp \
+    payloads/tst_role.cpp \
+    payloads/tst_updatestatus.cpp \
+    payloads/tst_voicestate.cpp \
     testmain.cpp \
     testsuite.cpp \
     payloads/tst_heartbeat.cpp \
@@ -29,9 +35,15 @@ HEADERS += \
     payloads/tst_activityparty.h \
     payloads/tst_activitysecrets.h \
     payloads/tst_activitytimestamps.h \
+    payloads/tst_emoji.h \
     payloads/tst_gatewaypayload.h \
+    payloads/tst_guildmemeber.h \
+    payloads/tst_identify.h \
     payloads/tst_identifyproperties.h \
     payloads/tst_resume.h \
+    payloads/tst_role.h \
+    payloads/tst_updatestatus.h \
+    payloads/tst_voicestate.h \
     tests.h \
     testsuite.h \
     payloads/testpayloads.h \
