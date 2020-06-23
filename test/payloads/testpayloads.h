@@ -34,6 +34,8 @@ const static QString PLD_ACTIVITY_TIMESTAMPS_FULL = QString("{\"start\":%1,\"end
         .arg(TEST_INT1).arg(TEST_INT2);
 const static QString PLD_ACTIVITY_TIMESTAMPS_MINIMAL = "{}";
 
+const static QString PLD_CLIENT_STATUS = QString("{\"desktop\":\"%1\",\"mobile\":\"%2\",\"web\":\"%3\"}")
+        .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1);
 
 const static QString PLD_GATEWAYPAYLOAD_FULL = "{\"op\":%1,\"d\":%2,\"s\":42,\"t\":\"GATEWAY_EVENT_NAME\"}";
 const static QString PLD_GATEWAYPAYLOAD_MINIMAL = QString("{\"op\":%1,\"d\":%2}")
@@ -51,7 +53,8 @@ const static QString PLD_RESUME = QString("{\"token\":\"%1\",\"session_id\":\"%2
 const static QString PLD_ROLE = QString("{\"id\":\"%1\",\"name\":\"%2\",\"color\":%3,\"hoist\":true,\"position\":1,\"permissions\":%4,\"managed\":true,\"mentionable\":true}")
         .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_INT1).arg(TEST_INT2);
 
-
+const static QString PLD_PERMISSION_OVERWRITE = QString("{\"id\":\"%1\",\"type\":\"%2\",\"allow\":%3,\"deny\":%4}")
+        .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_INT1).arg(TEST_INT2);
 
 static const QString PLD_USER_FULL = QString("{\"id\":\"%1\",\"username\":\"%2\",\"discriminator\":\"%3\",\"avatar\":\"%4\",\"bot\":true,\"system\":true,\"mfa_enabled\":true,\"locale\":\"%5\",\"verified\":true,\"email\":\"%6\",\"flags\":1,\"premium_type\":1,\"public_flags\":1}")
         .arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1).arg(TEST_STRING2)
@@ -89,5 +92,20 @@ const static QString PLD_IDENTIFY_FULL = QString("{\"token\":\"%1\",\"properties
         .arg(TEST_INT2);
 const static QString PLD_IDENTIFY_MINIMAL = QString("{\"token\":\"%1\",\"properties\":%2}")
         .arg(TEST_STRING1).arg(PLD_PROPERTIES);
+
+const static QString PLD_CHANNEL_FULL = QString("{\"id\":\"%1\",\"type\":%2,\"guild_id\":\"%3\",\"position\":%4,\"permission_overwrites\":[%5],\"name\":\"%6\",\"topic\":\"%7\",\"nsfw\":true,\"last_message_id\":\"%8\",\"bitrate\":%9,\"user_limit\":%10,\"rate_limit_per_user\":%11,\"recipients\":[%12],\"icon\":\"%13\",\"owner_id\":\"%14\",\"application_id\":\"%15\",\"parent_id\":\"%16\",\"last_pin_timestamp\":\"%17\"}")
+        .arg(TEST_STRING1).arg(TEST_INT1).arg(TEST_STRING2).arg(TEST_INT2).arg(PLD_PERMISSION_OVERWRITE).arg(TEST_STRING1).arg(TEST_STRING2)
+        .arg(TEST_STRING1).arg(TEST_INT1).arg(TEST_INT2).arg(TEST_INT1).arg(PLD_USER_MINIMAL).arg(TEST_STRING2).arg(TEST_STRING1)
+        .arg(TEST_STRING2).arg(TEST_STRING1).arg(TEST_STRING2);
+const static QString PLD_CHANNEL_MINIMAL = QString("{\"id\":\"%1\",\"type\":%2}")
+        .arg(TEST_STRING1).arg(TEST_INT1);
+
+const static QString PLD_PRESENCE_UPDATE_FULL = QString("{\"user\":%1,\"roles\":[\"%2\",\"%3\"],\"game\":%4,\"guild_id\":\"%5\",\"status\":\"%6\",\"activities\":[%7],\"client_status\":%8,\"premium_since\":\"%9\",\"nick\":\"%10\"}")
+        .arg(PLD_USER_MINIMAL).arg(TEST_STRING1).arg(TEST_STRING2).arg(PLD_ACTIVITY_MINIMAL)
+        .arg(TEST_STRING1).arg(TEST_STRING2).arg(PLD_ACTIVITY_MINIMAL).arg(PLD_CLIENT_STATUS)
+        .arg(TEST_STRING1).arg(TEST_STRING2);
+const static QString PLD_PRESENCE_UPDATE_MINIMAL = QString("{\"user\":%1,\"roles\":[\"%2\",\"%3\"],\"game\":null,\"guild_id\":\"%5\",\"status\":\"%6\",\"activities\":[%7],\"client_status\":%8}")
+        .arg(PLD_USER_MINIMAL).arg(TEST_STRING1).arg(TEST_STRING2).arg(TEST_STRING1)
+        .arg(TEST_STRING2).arg(PLD_ACTIVITY_MINIMAL).arg(PLD_CLIENT_STATUS);
 
 #endif // TEST_PAYLOADS_H

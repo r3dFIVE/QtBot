@@ -10,6 +10,8 @@
 
 #include <QSharedPointer>
 
+class ActivityEmoji;
+
 class Activity : public JsonSerializable
 {
     Q_OBJECT
@@ -72,208 +74,36 @@ public:
     Q_PROPERTY(QJsonValue flags READ getFlags WRITE setFlags)
     QSharedPointer<int> flags;
 
-    QString
-    getName() {
-        return name;
-    }
-
-    void
-    setName(QString name) {
-        this->name = name;
-    }
-
-    int
-    getType() {
-        return type;
-    }
-
-    void
-    setType(int type) {
-        this->type = type;
-    }
-
-    QString
-    getUrl() {
-        return url;
-    }
-
-    void
-    setUrl(QString url) {
-        this->url = url;
-    }
-
-    int
-    getCreatedAt() {
-        return created_at;
-    }
-
-    void
-    setCreatedAt(int created_at) {
-        this->created_at = created_at;
-    }
-
-    QJsonObject
-    getTimestamps() {
-        if (timestamps) {
-            return timestamps->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setTimestamps(QJsonObject timestamps) {
-        if (!this->timestamps) {
-            this->timestamps = QSharedPointer<ActivityTimestamps>(new ActivityTimestamps);
-        }
-        JsonUtils::readFromJson(*this->timestamps, timestamps);
-    }
-
-    QString
-    getApplicationId() {
-        return application_id;
-    }
-
-    void
-    setApplicationId(QString application_id) {
-        this->application_id = application_id;
-    }
-
-    QString
-    getDetails() {
-        return details;
-    }
-
-    void
-    setDetails(QString details) {
-        this->details = details;
-    }
-
-    QString
-    getState() {
-        return state;
-    }
-
-    void
-    setState(QString state) {
-        this->state = state;
-    }
-
-    QJsonObject
-    getEmoji() {
-        if (emoji) {
-            return emoji->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setEmoji(QJsonObject emoji) {
-        if (!this->emoji) {
-            this->emoji = QSharedPointer<ActivityEmoji>(new ActivityEmoji);
-        }
-        JsonUtils::readFromJson(*this->emoji, emoji);
-    }
-
-    QJsonObject
-    getParty() {
-        if (party) {
-            return party->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setParty(QJsonObject party) {
-        if (!this->party) {
-            this->party = QSharedPointer<ActivityParty>(new ActivityParty);
-        }
-        JsonUtils::readFromJson(*this->party, party);
-    }
-
-    QJsonObject
-    getAssets() {
-        if (assets) {
-            return assets->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setAssets(QJsonObject assets) {
-        if (!this->assets) {
-            this->assets = QSharedPointer<ActivityAssets>(new ActivityAssets);
-        }
-        JsonUtils::readFromJson(*this->assets, assets);
-    }
-
-    QJsonObject
-    getSecrets() {
-        if (secrets) {
-            return secrets->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setSecrets(QJsonObject secrets) {
-        if (!this->secrets) {
-            this->secrets = QSharedPointer<ActivitySecrets>(new ActivitySecrets);
-        }
-        JsonUtils::readFromJson(*this->secrets, secrets);
-    }
-
-    QJsonValue
-    getInstance() {
-        if (instance) {
-            return QJsonValue(*instance);
-        }
-        return QJsonValue();
-    }
-
-    void
-    setInstance(QJsonValue instance) {
-        if (!instance.isNull()) {
-            this->instance = QSharedPointer<bool>(new bool(instance.toBool()));
-        }
-    }
-
-    QJsonValue
-    getFlags() {
-        if (flags) {
-            return QJsonValue(*flags);
-        }
-        return QJsonValue();
-    }
-
-    void
-    setFlags(QJsonValue flags) {
-        if (!flags.isNull()) {
-            this->flags = QSharedPointer<int>(new int(flags.toInt()));
-        }
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    /*
-     * Note Bot can only send fields "name", "type", and "url"
-     */
-    void
-    write(QJsonObject &jsonObject) override {
-        jsonObject[NAME] = name;
-        jsonObject[TYPE] = type;
-
-        if (!url.isEmpty()) {
-            jsonObject[URL] = url;
-        }
-    }
+    QString getName();
+    void setName(QString name);
+    int getType();
+    void setType(int type);
+    QString getUrl();
+    void setUrl(QString url);
+    int getCreatedAt();
+    void setCreatedAt(int created_at);
+    QJsonObject getTimestamps();
+    void setTimestamps(QJsonObject timestamps);
+    QString getApplicationId();
+    void setApplicationId(QString application_id);
+    QString getDetails();
+    void setDetails(QString details);
+    QString getState();
+    void setState(QString state);
+    QJsonObject getEmoji();
+    void setEmoji(QJsonObject emoji);
+    QJsonObject getParty();
+    void setParty(QJsonObject party);
+    QJsonObject getAssets();
+    void setAssets(QJsonObject assets);
+    QJsonObject getSecrets();
+    void setSecrets(QJsonObject secrets);
+    QJsonValue getInstance();
+    void setInstance(QJsonValue instance);
+    QJsonValue getFlags();
+    void setFlags(QJsonValue flags);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 
     enum ActivityType {
         Game = 0,

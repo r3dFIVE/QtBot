@@ -9,6 +9,7 @@
 class ActivityEmoji : public JsonSerializable
 {
     Q_OBJECT
+
 public:
     const QString NAME = "name";
     const QString ID = "id";

@@ -67,10 +67,10 @@ public:
 
     void
     setProperties(QJsonObject properties) {
-        if (!this->properties) {
+        if (!properties.isEmpty()) {
             this->properties = QSharedPointer<IdentifyProperties>(new IdentifyProperties);
+            JsonUtils::readFromJson(*this->properties, properties);
         }
-        JsonUtils::readFromJson(*this->properties, properties);
     }
 
     QJsonValue

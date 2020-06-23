@@ -98,9 +98,7 @@ public:
     void
     setMember(QJsonObject member) {
         if (!member.isEmpty()) {
-            if(!this->member) {
-                this->member = QSharedPointer<GuildMember>(new GuildMember);
-            }
+            this->member = QSharedPointer<GuildMember>(new GuildMember);
             JsonUtils::readFromJson(*this->member, member);
         }
     }

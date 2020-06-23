@@ -56,9 +56,7 @@ public:
 
     void
     setGame(QJsonObject game) {
-        if (!this->game) {
-            this->game = QSharedPointer<Activity>(new Activity);
-        }
+        this->game = QSharedPointer<Activity>(new Activity);
         JsonUtils::readFromJson(*this->game, game);
     }
 

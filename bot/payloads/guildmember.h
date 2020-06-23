@@ -51,9 +51,7 @@ public:
     void
     setUser(QJsonObject user) {
         if (!user.isEmpty()) {
-            if (!this->user) {
-                this->user = QSharedPointer<User>(new User);
-            }
+            this->user = QSharedPointer<User>(new User);
             JsonUtils::readFromJson(*this->user, user);
         }
     }

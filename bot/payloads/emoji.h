@@ -65,21 +65,17 @@ public:
 
     QJsonArray
     getRoles() {
-        if (roles.isEmpty()) {
-            return QJsonArray();
-        } else {
-            QJsonArray roleIds;
-            for (QString roleId : roles) {
-                roleIds.push_back(roleId);
-            }
-            return roleIds;
+        QJsonArray roles;
+        for (QString role : this->roles) {
+            roles.push_back(role);
         }
+        return roles;
     }
 
     void
-    setRoles(QJsonArray roleIds) {
-        for (QJsonValue roleId : roleIds) {
-            roles.push_back(roleId.toString());
+    setRoles(QJsonArray roles) {
+        for (QJsonValue roleId : roles) {
+            this->roles.push_back(roleId.toString());
         }
     }
 
@@ -95,9 +91,7 @@ public:
     void
     setUser(QJsonObject user) {
         if (!user.isEmpty()) {
-            if (!this->user) {
-                this->user = QSharedPointer<User>(new User);
-            }
+            this->user = QSharedPointer<User>(new User);
             JsonUtils::readFromJson(*this->user, user);
         }
     }

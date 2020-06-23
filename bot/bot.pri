@@ -19,6 +19,8 @@ HEADERS += \
     $$PWD/payloads/activityparty.h \
     $$PWD/payloads/activitysecrets.h \
     $$PWD/payloads/activitytimestamps.h \
+    $$PWD/payloads/channel.h \
+    $$PWD/payloads/clientstatus.h \
     $$PWD/payloads/emoji.h \
     $$PWD/payloads/gatewaypayload.h \
     $$PWD/lockingdeque.h \
@@ -32,6 +34,8 @@ HEADERS += \
     $$PWD/payloads/identify.h \
     $$PWD/payloads/identifyproperties.h \
     $$PWD/payloads/jsonserializable.h \
+    $$PWD/payloads/permissionoverwrite.h \
+    $$PWD/payloads/presenceupdate.h \
     $$PWD/payloads/resume.h \
     $$PWD/payloads/role.h \
     $$PWD/payloads/updatestatus.h \
@@ -51,4 +55,5 @@ SOURCES += \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
     $$PWD/logging/logworker.cpp \
+    $$PWD/payloads/activity.cpp \
     $$PWD/settings.cpp
