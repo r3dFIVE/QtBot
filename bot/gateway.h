@@ -30,8 +30,8 @@ Q_SIGNALS:
     void dispatchEvent(QSharedPointer<GatewayPayload> payload);
 
 private:
-    QWebSocket *_socket;
-    QTimer *_heartbeatTimer;
+    QSharedPointer<QWebSocket> _socket;
+    QSharedPointer<QTimer> _heartbeatTimer;
 
     Heartbeat _heartbeat;
     Logger* _logger;
@@ -48,6 +48,7 @@ private:
     void processAck();
     void processDispatch(QSharedPointer<GatewayPayload> payload);
     void processHello(QSharedPointer<GatewayPayload> payload);
+    void processInvalidSession(QSharedPointer<GatewayPayload> payload);
     void processPayload(QSharedPointer<GatewayPayload> payload);
     void processReady(QSharedPointer<GatewayPayload> payload);
     void sendHeartbeat();

@@ -39,100 +39,22 @@ public:
     Q_PROPERTY(bool mute READ getMute WRITE setDeaf)
     bool mute;
 
-    QJsonObject
-    getUser() {
-        if (user) {
-            return (user->toQJsonObject());
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setUser(QJsonObject user) {
-        if (!user.isEmpty()) {
-            this->user = QSharedPointer<User>(new User);
-            JsonUtils::readFromJson(*this->user, user);
-        }
-    }
-
-    QString
-    getNick() {
-        return nick;
-    }
-
-    void
-    setNick(QString nick) {
-        this->nick = nick;
-    }
-
-    QJsonArray
-    getRoles() {
-        if (roles.isEmpty()) {
-            return QJsonArray();
-        } else {
-            QJsonArray roles;
-            for (QString roleId : this->roles) {
-                roles.push_back(roleId);
-            }
-            return roles;
-        }
-    }
-
-    void
-    setRoles(QJsonArray roles) {
-        for (QJsonValue roleId : roles) {
-            this->roles.push_back(roleId.toString());
-        }
-    }
-
-    QString
-    getJoinedAt() {
-        return joined_at;
-    }
-
-    void
-    setJoinedAt(QString joined_at) {
-        this->joined_at = joined_at;
-    }
-
-    QString
-    getPremiumSince() {
-        return premium_since;
-    }
-
-    void
-    setPremiumSince(QString premium_since) {
-        this->premium_since = premium_since;
-    }
-
-    bool
-    getDeaf() {
-        return deaf;
-    }
-
-    void
-    setDeaf(bool deaf) {
-        this->deaf = deaf;
-    }
-
-    bool
-    getMute() {
-        return mute;
-    }
-
-    void
-    setMute(bool mute) {
-        this->mute = mute;
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QJsonObject getUser();
+    void setUser(QJsonObject user);
+    QString getNick();
+    void setNick(QString nick);
+    QJsonArray getRoles();
+    void setRoles(QJsonArray roles);
+    QString getJoinedAt();
+    void setJoinedAt(QString joined_at);
+    QString getPremiumSince();
+    void setPremiumSince(QString premium_since);
+    bool getDeaf();
+    void setDeaf(bool deaf);
+    bool getMute();
+    void setMute(bool mute);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(GuildMember)

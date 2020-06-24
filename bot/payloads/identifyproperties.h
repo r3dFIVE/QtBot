@@ -15,17 +15,8 @@ public:
     QString $browser = "QtBot";
     QString $device = "QtBot";
 
-    void read(const QJsonObject &jsonObject) override {
-        $os = jsonObject[OS].toString();
-        $browser = jsonObject[BROWSER].toString();
-        $device = jsonObject[DEVICE].toString();
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        jsonObject[OS] = $os;
-        jsonObject[BROWSER] = $browser;
-        jsonObject[DEVICE] = $device;
-    }
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 #endif // PROPERTIES_H

@@ -3,6 +3,11 @@
 
 #include <payloads/activity.h>
 
+#include "payloads/activityemoji.h"
+#include "payloads/activitytimestamps.h"
+
+class ActivityEmoji;
+
 void
 ActivityTest::test_serialization_minimal() {
     Activity activity;
@@ -135,15 +140,15 @@ ActivityTest::test_deserialization_full() {
     ActivityEmoji emoji;
     emoji.fromQJsonObject(activity.emoji->toQJsonObject());
 
-    QVERIFY(emoji.name == TEST_STRING1);
-    QVERIFY(emoji.name != TEST_STRING2);
+    QVERIFY(emoji.getName() == TEST_STRING1);
+    QVERIFY(emoji.getName() != TEST_STRING2);
 
-    QVERIFY(emoji.id != TEST_STRING1);
-    QVERIFY(emoji.id == TEST_STRING2);
+    QVERIFY(emoji.getId() != TEST_STRING1);
+    QVERIFY(emoji.getId() == TEST_STRING2);
 
     QVERIFY(emoji.animated != nullptr);
-    QVERIFY(*emoji.animated ==  true);
-    QVERIFY(*emoji.animated != false);
+    QVERIFY(emoji.getAnimated() ==  true);
+
 
     ActivityParty party;
     party.fromQJsonObject(activity.party->toQJsonObject());

@@ -21,45 +21,14 @@ public:
     Q_PROPERTY(int seq READ getSeq WRITE setSeq)
     int seq;
 
-    QString
-    getToken() {
-        return token;
-    }
-
-    void
-    setToken(QString token) {
-        this->token = token;
-    }
-
-    QString
-    getSessionId() {
-        return session_id;
-    }
-
-    void
-    setSessionId(QString session_id) {
-        this->session_id = session_id;
-    }
-
-    int
-    getSeq() {
-        return seq;
-    }
-
-    void
-    setSeq(int seq) {
-        this->seq = seq;
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getToken();
+    void setToken(QString token);
+    QString getSessionId();
+    void setSessionId(QString session_id);
+    int getSeq();
+    void setSeq(int seq);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(Resume)

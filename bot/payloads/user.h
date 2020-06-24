@@ -3,7 +3,6 @@
 
 #include "jsonserializable.h"
 
-
 class User : public JsonSerializable
 {
     Q_OBJECT
@@ -62,185 +61,34 @@ public:
     Q_PROPERTY(QJsonValue public_flags READ getPublicFlags WRITE setPublicFlags)
     QSharedPointer<int> public_flags;
 
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    QString
-    getUsername() {
-        return username;
-    }
-
-    void
-    setUsername(QString username) {
-        this->username = username;
-    }
-
-    QString
-    getDiscriminator() {
-        return discriminator;
-    }
-
-    void
-    setDiscriminator(QString discriminator) {
-        this->discriminator = discriminator;
-    }
-
-    QString
-    getAvatar() {
-        return avatar;
-    }
-
-    void
-    setAvatar(QString avatar) {
-        this->avatar = avatar;
-    }
-
-    QJsonValue
-    getBot() {
-        if (bot) {
-            return QJsonValue(*bot);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setBot(QJsonValue bot) {
-        if (!bot.isNull()) {
-            this->bot = QSharedPointer<bool>(new bool(bot.toBool()));
-        }
-    }
-
-    QJsonValue
-    getSystem() {
-        if (system) {
-            return QJsonValue(*system);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setSystem(QJsonValue system) {
-        if (!system.isNull()) {
-            this->system = QSharedPointer<bool>(new bool(system.toBool()));
-        }
-    }
-
-    QJsonValue
-    getMfaEnabled() {
-        if (mfa_enabled) {
-            return QJsonValue(*mfa_enabled);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setMfaEnabled(QJsonValue mfa_enabled) {
-        if (!mfa_enabled.isNull()) {
-            this->mfa_enabled = QSharedPointer<bool>(new bool(mfa_enabled.toBool()));
-        }
-    }
-
-    QString
-    getLocale() {
-        return locale;
-    }
-
-    void
-    setLocale(QString locale) {
-        this->locale = locale;
-    }
-
-    QJsonValue
-    getVerified() {
-        if (verified) {
-            return QJsonValue(*verified);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setVerified(QJsonValue verified) {
-        if (!verified.isNull()) {
-            this->verified = QSharedPointer<bool>(new bool(verified.toBool()));
-        }
-    }
-
-    QString
-    getEmail() {
-        return email;
-    }
-
-    void
-    setEmail(QString email) {
-        this->email = email;
-    }
-
-    QJsonValue
-    getFlags() {
-        if (flags) {
-            return QJsonValue(*flags);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setFlags(QJsonValue flags) {
-        if (!flags.isNull()) {
-            this->flags = QSharedPointer<int>(new int(flags.toInt()));
-        }
-    }
-
-    QJsonValue
-    getPremiumType() {
-        if (premium_type) {
-            return QJsonValue(*premium_type);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setPremiumType(QJsonValue premium_type) {
-        if (!premium_type.isNull()) {
-            this->premium_type = QSharedPointer<int>(new int(premium_type.toInt()));
-        }
-    }
-
-    QJsonValue
-    getPublicFlags() {
-        if (public_flags) {
-            return QJsonValue(*public_flags);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setPublicFlags(QJsonValue public_flags) {
-        if (!public_flags.isNull()) {
-            this->public_flags = QSharedPointer<int>(new int(public_flags.toInt()));
-        }
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getId();
+    void setId(QString id);
+    QString getUsername();
+    void setUsername(QString username);
+    QString getDiscriminator();
+    void setDiscriminator(QString discriminator);
+    QString getAvatar();
+    void setAvatar(QString avatar);
+    QJsonValue getBot();
+    void setBot(QJsonValue bot);
+    QJsonValue getSystem();
+    void setSystem(QJsonValue system);
+    QJsonValue getMfaEnabled();
+    void setMfaEnabled(QJsonValue mfa_enabled);
+    QString getLocale();
+    void setLocale(QString locale);
+    QJsonValue getVerified();
+    void setVerified(QJsonValue verified);
+    QString getEmail();
+    void setEmail(QString email);
+    QJsonValue getFlags();
+    void setFlags(QJsonValue flags);
+    QJsonValue getPremiumType();
+    void setPremiumType(QJsonValue premium_type);
+    QJsonValue getPublicFlags();
+    void setPublicFlags(QJsonValue public_flags);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(User)

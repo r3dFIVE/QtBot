@@ -5,7 +5,6 @@
 #include <QObject>
 
 #include "jsonserializable.h"
-#include "jsonutils.h"
 
 class GatewayPayload : public JsonSerializable
 {
@@ -22,22 +21,10 @@ public:
     int op = -1;
     int s = -1;
 
-    void
-    read(const QJsonObject &jsonObject) override {
-        d = jsonObject[D].toObject();
-        t = jsonObject[T].toString();
-        op = jsonObject[OP].toInt();
-        s = jsonObject[S].toInt();
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        jsonObject[D] = d;
-        jsonObject[T] = t;
-        jsonObject[OP] = op;
-        jsonObject[S] = s;
-    }
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(GatewayPayload)
+
 #endif // GATEWAYPAYLOAD_H

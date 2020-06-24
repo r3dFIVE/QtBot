@@ -20,45 +20,14 @@ public:
     Q_PROPERTY(QString match READ getMatch WRITE setMatch)
     QString match;
 
-    QString
-    getJoin() {
-        return join;
-    }
-
-    void
-    setJoin(QString join) {
-        this->join = join;
-    }
-
-    QString
-    getSpectate() {
-        return spectate;
-    }
-
-    void
-    setSpectate(QString spectate) {
-        this->spectate = spectate;
-    }
-
-    QString
-    getMatch() {
-        return match;
-    }
-
-    void
-    setMatch(QString match) {
-        this->match = match;
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getJoin();
+    void setJoin(QString join);
+    QString getSpectate();
+    void setSpectate(QString spectate);
+    QString getMatch();
+    void setMatch(QString match);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivitySecrets)

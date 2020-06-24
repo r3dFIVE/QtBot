@@ -4,6 +4,7 @@ INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
 HEADERS += \
+    $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
     $$PWD/gateway.h \
@@ -14,8 +15,7 @@ HEADERS += \
     $$PWD/logging/logger.h \
     $$PWD/logging/logworker.h \
     $$PWD/payloads/activity.h \
-    $$PWD/payloads/activityassets.h \
-    $$PWD/payloads/activityemoji.h \
+    $$PWD/payloads/activityassets.h \    
     $$PWD/payloads/activityparty.h \
     $$PWD/payloads/activitysecrets.h \
     $$PWD/payloads/activitytimestamps.h \
@@ -36,6 +36,7 @@ HEADERS += \
     $$PWD/payloads/jsonserializable.h \
     $$PWD/payloads/permissionoverwrite.h \
     $$PWD/payloads/presenceupdate.h \
+    $$PWD/payloads/ready.h \
     $$PWD/payloads/resume.h \
     $$PWD/payloads/role.h \
     $$PWD/payloads/updatestatus.h \
@@ -49,11 +50,36 @@ DISTFILES += \
     $$PWD/settings.ini
 
 SOURCES += \
+    $$PWD/payloads/activityemoji.cpp \
     $$PWD/bot.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
+    $$PWD/jsonutils.cpp \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
     $$PWD/logging/logworker.cpp \
     $$PWD/payloads/activity.cpp \
+    $$PWD/payloads/activityassets.cpp \
+    $$PWD/payloads/activityparty.cpp \
+    $$PWD/payloads/activitysecrets.cpp \
+    $$PWD/payloads/activitytimestamps.cpp \
+    $$PWD/payloads/channel.cpp \
+    $$PWD/payloads/clientstatus.cpp \
+    $$PWD/payloads/emoji.cpp \
+    $$PWD/payloads/gatewaypayload.cpp \
+    $$PWD/payloads/guild.cpp \
+    $$PWD/payloads/guildmember.cpp \
+    $$PWD/payloads/heartbeat.cpp \
+    $$PWD/payloads/hello.cpp \
+    $$PWD/payloads/identify.cpp \
+    $$PWD/payloads/identifyproperties.cpp \
+    $$PWD/payloads/jsonserializable.cpp \
+    $$PWD/payloads/permissionoverwrite.cpp \
+    $$PWD/payloads/presenceupdate.cpp \
+    $$PWD/payloads/ready.cpp \
+    $$PWD/payloads/resume.cpp \
+    $$PWD/payloads/role.cpp \
+    $$PWD/payloads/updatestatus.cpp \
+    $$PWD/payloads/user.cpp \
+    $$PWD/payloads/voicestate.cpp \
     $$PWD/settings.cpp

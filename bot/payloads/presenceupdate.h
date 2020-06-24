@@ -6,6 +6,8 @@
 #include "jsonserializable.h"
 #include "user.h"
 
+class Activity;
+class User;
 
 class PresenceUpdate : public JsonSerializable
 {
@@ -49,142 +51,26 @@ public:
     Q_PROPERTY(QString nick READ getNick WRITE setNick)
     QString nick;
 
-    QJsonObject
-    getUser() {
-        if (user) {
-            return user->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setUser(QJsonObject user) {
-        if (!user.isEmpty()) {
-            this->user = QSharedPointer<User>(new User);
-            JsonUtils::readFromJson(*this->user, user);
-        }
-    }
-
-    QJsonArray
-    getRoles() {
-        QJsonArray roles;
-        for (QString role : this->roles) {
-            roles.push_back(role);
-        }
-        return roles;
-    }
-
-    void
-    setRoles(QJsonArray roles) {
-        for (QJsonValue roleId : roles) {
-            this->roles.push_back(roleId.toString());
-        }
-    }
-
-    QJsonObject
-    getGame() {
-        if (game) {
-            return game->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setGame(QJsonObject game) {
-        if (!game.isEmpty()) {
-            this->game = QSharedPointer<Activity>(new Activity);
-            JsonUtils::readFromJson(*this->game, game);
-        }
-    }
-
-    QString
-    getGuildId() {
-        return guild_id;
-    }
-
-    void
-    setGuildId(QString guild_id) {
-        this->guild_id = guild_id;
-    }
-
-    QString
-    getStatus() {
-        return status;
-    }
-
-    void
-    setStatus(QString status) {
-        this->status = status;
-    }
-
-    QJsonArray
-    getActivities() {
-        QJsonArray activities;
-        for (Activity activity : this->activities) {
-            activities.push_back(activity.toQJsonObject());
-        }
-        return activities;
-    }
-
-    void
-    setActivities(QJsonArray activities) {
-        for (QJsonValue jsonValue : activities) {
-            Activity activity;
-            activity.fromQJsonObject(jsonValue.toObject());
-            this->activities.push_back(activity);
-        }
-    }
-
-    QJsonObject
-    getClientStatus() {
-        if (client_status) {
-            return client_status->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setClientStatus(QJsonObject client_status) {
-        if (!client_status.isEmpty()) {
-            this->client_status = QSharedPointer<ClientStatus>(new ClientStatus);
-            JsonUtils::readFromJson(*this->client_status, client_status);
-        }
-    }
-
-    QString
-    getPremiumSince() {
-        return premium_since;
-    }
-
-    void
-    setPremiumSince(QString premium_since) {
-        this->premium_since = premium_since;
-    }
-
-    QString
-    getNick() {
-        return nick;
-    }
-
-    void
-    setNick(QString nick) {
-        this->nick = nick;
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-
-        if (!jsonObject.contains(GAME)) {
-            jsonObject[GAME] = QJsonValue::Null;
-        }
-    }
+    QJsonObject getUser();
+    void setUser(QJsonObject user);
+    QJsonArray getRoles();
+    void setRoles(QJsonArray roles);
+    QJsonObject getGame();
+    void setGame(QJsonObject game);
+    QString getGuildId();
+    void setGuildId(QString guild_id);
+    QString getStatus();
+    void setStatus(QString status);
+    QJsonArray getActivities();
+    void setActivities(QJsonArray activities);
+    QJsonObject getClientStatus();
+    void setClientStatus(QJsonObject client_status);
+    QString getPremiumSince();
+    void setPremiumSince(QString premium_since);
+    QString getNick();
+    void setNick(QString nick);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(PresenceUpdate)

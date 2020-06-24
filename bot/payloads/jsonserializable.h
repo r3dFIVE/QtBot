@@ -1,11 +1,11 @@
 #ifndef JSONSERIALIZEABLE_H
 #define JSONSERIALIZEABLE_H
 
-#include "jsonutils.h"
-
-#include <QJsonObject>
 #include <QObject>
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
 
 class JsonSerializable : public QObject
 {
@@ -20,35 +20,12 @@ public:
     ~JsonSerializable() {}
 
 
-    QJsonObject toQJsonObject() {
-        QJsonObject jsonObject;
-        this->write(jsonObject);
-        return jsonObject;
-    }
-
-    QByteArray toByteArray() {
-        QJsonDocument document(this->toQJsonObject());
-        return document.toJson(QJsonDocument::Compact);
-    }
-
-    QString toQString() {
-        return QString(this->toByteArray());
-    }
-
-    void fromQJsonObject(const QJsonObject &json) {
-        this->read(json);
-    }
-
-    void fromQString(const QString &json) {
-        this->fromByteArray(json.toUtf8());
-    }
-
-    void fromByteArray(const QByteArray &json) {
-        QJsonDocument document = QJsonDocument::fromJson(json);
-        QJsonObject object = document.object();
-        this->read(object);
-    }
-
+    QJsonObject toQJsonObject();
+    QByteArray toByteArray();
+    QString toQString();
+    void fromQJsonObject(const QJsonObject &json);
+    void fromQString(const QString &json);
+    void fromByteArray(const QByteArray &json);
 };
 
 Q_DECLARE_METATYPE(JsonSerializable*)

@@ -1,5 +1,10 @@
 #include "activity.h"
 
+#include <jsonutils.h>
+
+#include "activitytimestamps.h"
+#include "activityemoji.h"
+
 QString
 Activity::getName() {
     return name;

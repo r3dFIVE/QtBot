@@ -22,43 +22,14 @@ public:
     Q_PROPERTY(QString web READ getWeb WRITE setWeb)
     QString web;
 
-    QString
-    getDesktop() {
-        return desktop;
-    }
-
-    void
-    setDesktop(QString desktop) {
-        this->desktop = desktop;
-    }
-
-    QString
-    getMobile() {
-        return mobile;
-    }
-
-    void
-    setMobile(QString mobile) {
-        this->mobile = mobile;
-    }
-
-    QString
-    getWeb() {
-        return web;
-    }
-
-    void
-    setWeb(QString web) {
-        this->web = web;
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getDesktop();
+    void setDesktop(QString desktop);
+    QString getMobile();
+    void setMobile(QString mobile);
+    QString getWeb();
+    void setWeb(QString web);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ClientStatus)

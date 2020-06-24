@@ -3,10 +3,10 @@
 
 #include "jsonserializable.h"
 
-
 class ActivityAssets : public JsonSerializable
 {
     Q_OBJECT
+
 public:
     const QString LARGE_IMAGE = "large_image";
     const QString LARGE_TEXT = "large_text";
@@ -25,46 +25,16 @@ public:
     Q_PROPERTY(QString small_text READ getSmallText WRITE setSmallText)
     QString small_text;
 
-    QString getLargeText() const {
-        return large_text;
-    }
-
-    void setLargeText(const QString &value) {
-        large_text = value;
-    }
-    QString getSmallImage() const {
-        return small_image;
-    }
-
-    void setSmallImage(const QString &value) {
-        small_image = value;
-    }
-
-    QString getSmallText() const {
-        return small_text;
-    }
-
-    void setSmallText(const QString &value) {
-        small_text = value;
-    }
-
-    QString getLargeImage() const {
-        return large_image;
-    }
-
-    void setLargeImage(const QString &value) {
-        large_image = value;
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override  {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getLargeText();
+    void setLargeText(QString &value);
+    QString getSmallImage();
+    void setSmallImage(QString &value);
+    QString getSmallText();
+    void setSmallText(QString &value);
+    QString getLargeImage();
+    void setLargeImage(QString &value);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityAssets)

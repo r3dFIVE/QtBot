@@ -29,74 +29,16 @@ public:
     Q_PROPERTY(bool afk READ getAfk WRITE setAfk)
     bool afk;
 
-    QJsonValue
-    getSince() {
-        if (since) {
-            return QJsonValue(*since);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setSince(QJsonValue since) {
-        if (!since.isNull()) {
-            this->since = QSharedPointer<int>(new int(since.toInt()));
-        }
-    }
-
-    QJsonObject
-    getGame() {
-        if (game) {
-            return game->toQJsonObject();
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setGame(QJsonObject game) {
-        this->game = QSharedPointer<Activity>(new Activity);
-        JsonUtils::readFromJson(*this->game, game);
-    }
-
-    QString
-    getStatus() {
-        return status;
-    }
-
-    void
-    setStatus(QString status) {
-        this->status = status;
-    }
-
-    bool
-    getAfk() {
-        return afk;
-    }
-
-    void
-    setAfk(bool afk) {
-        this->afk = afk;
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-
-        if (!jsonObject.contains(SINCE)) {
-            jsonObject[SINCE] = QJsonValue::Null;
-        }
-
-        if (!jsonObject.contains(GAME)) {
-            jsonObject[GAME] = QJsonValue::Null;
-        }
-    }
+    QJsonValue getSince();
+    void setSince(QJsonValue since);
+    QJsonObject getGame();
+    void setGame(QJsonObject game);
+    QString getStatus();
+    void setStatus(QString status);
+    bool getAfk();
+    void setAfk(bool afk);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(UpdateStatus)

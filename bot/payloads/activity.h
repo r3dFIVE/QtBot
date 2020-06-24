@@ -1,16 +1,17 @@
 #ifndef ACTIVITY_H
 #define ACTIVITY_H
 
+class ActivityEmoji;
+class ActivityTimestamps;
+
 #include "jsonserializable.h"
-#include "activitytimestamps.h"
-#include "activityemoji.h"
 #include "activityparty.h"
 #include "activityassets.h"
 #include "activitysecrets.h"
+#include "activityemoji.h"
+#include "activitytimestamps.h"
 
 #include <QSharedPointer>
-
-class ActivityEmoji;
 
 class Activity : public JsonSerializable
 {

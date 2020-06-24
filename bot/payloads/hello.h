@@ -16,35 +16,11 @@ public:
     Q_PROPERTY(QJsonValue heartbeat_interval READ getHeartbeatInterval WRITE setHeartbeatInterval)
     QSharedPointer<int> heartbeat_interval;
 
-    QJsonValue
-    getHeartbeatInterval() {
-        if (heartbeat_interval) {
-            return QJsonValue(*heartbeat_interval);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setHeartbeatInterval(int interval) {
-        heartbeat_interval = QSharedPointer<int>(new int(interval));;
-    }
-
-    void
-    setHeartbeatInterval(QJsonValue interval) {
-        if (!interval.isNull()) {
-            setHeartbeatInterval(interval.toInt());
-        }
-    }
-
-    void
-    read(const QJsonObject &jsonObject) {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-    void
-    write(QJsonObject &jsonObject)  {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QJsonValue getHeartbeatInterval();
+    void setHeartbeatInterval(int interval);
+    void setHeartbeatInterval(QJsonValue interval);
+    void read(const QJsonObject &jsonObject);
+    void write(QJsonObject &jsonObject);
 };
 Q_DECLARE_METATYPE(Hello);
 #endif // HEARTBEATINTERVAL_H

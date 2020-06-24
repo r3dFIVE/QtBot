@@ -6,6 +6,9 @@
 
 #include <logging/logcontext.h>
 
+#include <payloads/emoji.h>
+#include <payloads/presenceupdate.h>
+
 struct TypeFactory {
     TypeFactory() {
         qRegisterMetaType<LogContext::LogLevel>();

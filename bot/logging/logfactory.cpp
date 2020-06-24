@@ -32,7 +32,6 @@ LogFactory::init(QSharedPointer<Settings> settings) {
     ctx.fileLogLevel = LogContext::LogLevel(settings->value(SettingsParam::Logging::FILE_LOG_LEVEL).toInt());
 
     if (_logger == nullptr) {
-        // extra config to go here, context class?
         _logger = new Logger(ctx);
     }
 }

@@ -43,94 +43,24 @@ public:
     Q_PROPERTY(bool mentionable READ getMentionable WRITE setMentionable)
     bool mentionable;
 
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    QString
-    getName() {
-        return name;
-    }
-
-    void
-    setName(QString name) {
-        this->name = name;
-    }
-
-    int
-    getColor() {
-        return color;
-    }
-
-    void
-    setColor(int color) {
-        this->color = color;
-    }
-
-    bool
-    getHoist() {
-        return hoist;
-    }
-
-    void
-    setHoist(bool hoist) {
-        this->hoist = hoist;
-    }
-
-    int
-    getPosition() {
-        return position;
-    }
-
-    void
-    setPosition(int position) {
-        this->position = position;
-    }
-
-    int
-    getPermissions() {
-        return permissions;
-    }
-
-    void
-    setPermissions(int permissions) {
-        this->permissions = permissions;
-    }
-
-    bool
-    getManaged() {
-        return managed;
-    }
-
-    void
-    setManaged(bool managed) {
-        this->managed = managed;
-    }
-
-    bool
-    getMentionable() {
-        return mentionable;
-    }
-
-    void
-    setMentionable(bool mentionable) {
-        this->mentionable = mentionable;
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
-
+    QString getId();
+    void setId(QString id);
+    QString getName();
+    void setName(QString name);
+    int getColor();
+    void setColor(int color);
+    bool getHoist();
+    void setHoist(bool hoist);
+    int getPosition();
+    void setPosition(int position);
+    int getPermissions();
+    void setPermissions(int permissions);
+    bool getManaged();
+    void setManaged(bool managed);
+    bool getMentionable();
+    void setMentionable(bool mentionable);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(Role)

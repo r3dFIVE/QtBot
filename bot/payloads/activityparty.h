@@ -19,42 +19,12 @@ public:
     Q_PROPERTY(QJsonArray size READ getSize WRITE setSize)
     QSharedPointer<int> size[2];
 
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    QJsonArray
-    getSize() {
-        if (size[0] && size[1]) {
-            return QJsonArray { *size[0], *size[1] };
-        } else {
-            return QJsonArray();
-        }
-    }
-
-    void
-    setSize(QJsonArray size) {
-        if (!size.isEmpty()) {
-            this->size[0] = QSharedPointer<int>(new int(size[0].toInt()));
-            this->size[1] = QSharedPointer<int>(new int(size[1].toInt()));
-        }
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override  {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getId();
+    void setId(QString id);
+    QJsonArray getSize();
+    void setSize(QJsonArray size);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityParty)

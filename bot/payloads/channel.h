@@ -5,7 +5,6 @@
 #include "permissionoverwrite.h"
 #include "user.h"
 
-
 class Channel : public JsonSerializable
 {
     Q_OBJECT
@@ -84,236 +83,44 @@ public:
     Q_PROPERTY(QString last_pin_timestamp READ getLastPinTimestamp WRITE setLastPinTimestamp)
     QString last_pin_timestamp;
 
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    int
-    getType() {
-        return type;
-    }
-
-    void
-    setType(int type) {
-        this->type = type;
-    }
-
-    QString
-    getGuildId() {
-        return guild_id;
-    }
-
-    void
-    setGuildId(QString guild_id) {
-        this->guild_id = guild_id;
-    }
-
-    QJsonValue
-    getPosition() {
-        if (position) {
-            return *position;
-        }
-        return QJsonValue();
-    }
-
-    void
-    setPosition(QJsonValue position) {
-        if (!position.isNull()) {
-            this->position = QSharedPointer<int>(new int(position.toInt()));
-        }
-    }
-
-    QJsonArray
-    getPermissionOverwrites() {
-        QJsonArray permission_overwrites;
-        for (PermissionOverwrite po : this->permission_overwrites) {
-            QJsonObject permissionOverwrite = po.toQJsonObject();
-            permission_overwrites.push_back(permissionOverwrite);
-        }
-        return permission_overwrites;
-    }
-
-    void
-    setPermissionOverwrites(QJsonArray permission_overwrites) {
-        for (QJsonValue jsonObject : permission_overwrites) {
-            PermissionOverwrite permissionOverwrite;
-            permissionOverwrite.fromQJsonObject(jsonObject.toObject());
-            this->permission_overwrites.push_back(permissionOverwrite);
-        }
-    }
-
-    QString
-    getName() {
-        return name;
-    }
-
-    void
-    setName(QString name) {
-        this->name = name;
-    }
-
-    QString
-    getTopic() {
-        return topic;
-    }
-
-    void
-    setTopic(QString topic) {
-        this->topic = topic;
-    }
-
-    QJsonValue
-    getNsfw() {
-        if (nsfw) {
-            return *nsfw;
-        }
-        return QJsonValue();
-    }
-
-    void
-    setNsfw(QJsonValue nsfw) {
-        if (!nsfw.isNull()) {
-            this->nsfw = QSharedPointer<bool>(new bool(nsfw.toBool()));
-        }
-    }
-
-    QString
-    getLastMessageId() {
-        return last_message_id;
-    }
-
-    void
-    setLastMessageId(QString last_message_id) {
-        this->last_message_id = last_message_id;
-    }
-
-    QJsonValue
-    getBitrate() {
-        if (bitrate) {
-            return *bitrate;
-        }
-        return QJsonValue();
-    }
-
-    void
-    setBitrate(QJsonValue bitrate) {
-        if (!bitrate.isNull()) {
-            this->bitrate = QSharedPointer<int>(new int(bitrate.toInt()));
-        }
-    }
-
-    QJsonValue
-    getUserLimit() {
-        if (user_limit) {
-            return *user_limit;
-        }
-        return QJsonValue();
-    }
-
-    void
-    setUserLimit(QJsonValue user_limit) {
-        if (!user_limit.isNull()) {
-            this->user_limit = QSharedPointer<int>(new int(user_limit.toInt()));
-        }
-    }
-
-    QJsonValue
-    getRateLimitPerUser() {
-        if (rate_limit_per_user) {
-            return *rate_limit_per_user;
-        }
-        return QJsonValue();
-    }
-
-    void
-    setRateLimitPerUser(QJsonValue rate_limit_per_user) {
-        if (!rate_limit_per_user.isNull()) {
-            this->rate_limit_per_user = QSharedPointer<int>(new int(rate_limit_per_user.toInt()));
-        }
-    }
-
-    QJsonArray
-    getRecipients() {        
-        QJsonArray recipients;
-        for (User u : this->recipients) {
-            QJsonObject user = u.toQJsonObject();
-            recipients.push_back(user);
-        }
-        return recipients;
-    }
-
-    void
-    setRecipients(QJsonArray recipients) {
-        for (QJsonValue jsonValue : recipients) {
-            User recipient;
-            recipient.fromQJsonObject(jsonValue.toObject());
-            this->recipients.push_back(recipient);
-        }
-    }
-
-    QString
-    getIcon() {
-        return icon;
-    }
-
-    void
-    setIcon(QString icon) {
-        this->icon = icon;
-    }
-
-    QString
-    getOwnerId() {
-        return owner_id;
-    }
-
-    void
-    setOwnerId(QString owner_id) {
-        this->owner_id = owner_id;
-    }
-
-    QString
-    getApplicationId() {
-        return application_id;
-    }
-
-    void
-    setApplicationId(QString application_id) {
-        this->application_id = application_id;
-    }
-
-    QString
-    getParentId() {
-        return parent_id;
-    }
-
-    void
-    setParentId(QString parent_id) {
-        this->parent_id = parent_id;
-    }
-
-    QString
-    getLastPinTimestamp() {
-        return last_pin_timestamp;
-    }
-
-    void
-    setLastPinTimestamp(QString last_pin_timestamp) {
-        this->last_pin_timestamp = last_pin_timestamp;
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getId();
+    void setId(QString id);
+    int getType();
+    void setType(int type);
+    QString getGuildId();
+    void setGuildId(QString guild_id);
+    QJsonValue getPosition();
+    void setPosition(QJsonValue position);
+    QJsonArray getPermissionOverwrites();
+    void setPermissionOverwrites(QJsonArray permission_overwrites);
+    QString getName();
+    void setName(QString name);
+    QString getTopic();
+    void setTopic(QString topic);
+    QJsonValue getNsfw();
+    void setNsfw(QJsonValue nsfw);
+    QString getLastMessageId();
+    void setLastMessageId(QString last_message_id);
+    QJsonValue getBitrate();
+    void setBitrate(QJsonValue bitrate);
+    QJsonValue getUserLimit();
+    void setUserLimit(QJsonValue user_limit);
+    QJsonValue getRateLimitPerUser();
+    void setRateLimitPerUser(QJsonValue rate_limit_per_user);
+    QJsonArray getRecipients();
+    void setRecipients(QJsonArray recipients);
+    QString getIcon();
+    void setIcon(QString icon);
+    QString getOwnerId();
+    void setOwnerId(QString owner_id);
+    QString getApplicationId();
+    void setApplicationId(QString application_id);
+    QString getParentId();
+    void  setParentId(QString parent_id);
+    QString getLastPinTimestamp();
+    void setLastPinTimestamp(QString last_pin_timestamp);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(Channel)

@@ -26,53 +26,16 @@ public:
     Q_PROPERTY(int deny READ getDeny WRITE setDeny)
     int deny;
 
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    QString
-    getType() {
-        return type;
-    }
-
-    void
-    setType(QString type) {
-        this->type = type;
-    }
-
-    int
-    getAllow() {
-        return allow;
-    }
-
-    void
-    setAllow(int allow) {
-        this->allow = allow;
-    }
-
-    int
-    getDeny() {
-        return deny;
-    }
-
-    void
-    setDeny(int deny) {
-        this->deny = deny;
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getId();
+    void setId(QString id);
+    QString getType();
+    void setType(QString type);
+    int getAllow();
+    void setAllow(int allow);
+    int getDeny();
+    void setDeny(int deny);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(PermissionOverwrite)

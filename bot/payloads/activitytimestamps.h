@@ -4,6 +4,7 @@
 #include "jsonserializable.h"
 
 #include <QSharedPointer>
+#include <jsonutils.h>
 
 class ActivityTimestamps : public JsonSerializable
 {
@@ -19,47 +20,12 @@ public:
     Q_PROPERTY(QJsonValue end READ getEnd WRITE setEnd)
     QSharedPointer<int> end;
 
-    QJsonValue
-    getStart() {
-        if (start) {
-            return QJsonValue(*start);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setStart(QJsonValue start) {
-        if (!start.isNull()) {
-            this->start = QSharedPointer<int>(new int(start.toInt()));
-        }
-    }
-
-    QJsonValue
-    getEnd() {
-        if (end) {
-            return QJsonValue(*end);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setEnd(QJsonValue end) {
-        if (!end.isNull()) {
-            this->end = QSharedPointer<int>(new int(end.toInt()));
-        }
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override  {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QJsonValue getStart();
+    void setStart(QJsonValue start);
+    QJsonValue getEnd();
+    void setEnd(QJsonValue end);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityTimestamps)

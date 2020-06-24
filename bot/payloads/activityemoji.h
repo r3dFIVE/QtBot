@@ -5,7 +5,6 @@
 
 #include <QSharedPointer>
 
-
 class ActivityEmoji : public JsonSerializable
 {
     Q_OBJECT
@@ -24,50 +23,14 @@ public:
     Q_PROPERTY(QJsonValue animated READ getAnimated WRITE setAnimated)
     QSharedPointer<bool> animated;
 
-    QString
-    getName() {
-        return name;
-    }
-
-    void
-    setName(QString name) {
-        this->name = name;
-    }
-
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    QJsonValue
-    getAnimated() {
-        if (animated) {
-            return QJsonValue(*animated);
-        }
-        return QJsonValue();
-    }
-
-    void
-    setAnimated(QJsonValue animated) {
-        if (!animated.isNull()) {
-            this->animated = QSharedPointer<bool>(new bool(animated.toBool()));
-        }
-    }
-
-    void
-    read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void
-    write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getName();
+    void setName(QString name);
+    QString getId();
+    void setId(QString id);
+    QJsonValue getAnimated();
+    void setAnimated(QJsonValue animated);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityEmoji)

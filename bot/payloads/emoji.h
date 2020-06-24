@@ -4,6 +4,9 @@
 #include "jsonserializable.h"
 #include "user.h"
 
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 class Emoji : public JsonSerializable
 {
@@ -43,130 +46,24 @@ public:
     Q_PROPERTY(QJsonValue available READ getAvailable WRITE setAvailable)
     QSharedPointer<bool> available;
 
-    QString
-    getId() {
-        return id;
-    }
-
-    void
-    setId(QString id) {
-        this->id = id;
-    }
-
-    QString
-    getName() {
-        return name;
-    }
-
-    void
-    setName(QString name) {
-        this->name = name;
-    }
-
-    QJsonArray
-    getRoles() {
-        QJsonArray roles;
-        for (QString role : this->roles) {
-            roles.push_back(role);
-        }
-        return roles;
-    }
-
-    void
-    setRoles(QJsonArray roles) {
-        for (QJsonValue roleId : roles) {
-            this->roles.push_back(roleId.toString());
-        }
-    }
-
-    QJsonObject
-    getUser() {
-        if (user) {
-            return (user->toQJsonObject());
-        } else {
-            return QJsonObject();
-        }
-    }
-
-    void
-    setUser(QJsonObject user) {
-        if (!user.isEmpty()) {
-            this->user = QSharedPointer<User>(new User);
-            JsonUtils::readFromJson(*this->user, user);
-        }
-    }
-
-    QJsonValue
-    getRequireColons() {
-        if (require_colons) {
-            return QJsonValue(*require_colons);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setRequireColons(QJsonValue require_colons) {
-        if (!require_colons.isNull()) {
-            this->require_colons = QSharedPointer<bool>(new bool(require_colons.toBool()));
-        }
-    }
-
-    QJsonValue
-    getManaged() {
-        if (managed) {
-            return QJsonValue(*managed);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setManaged(QJsonValue managed) {
-        if (!managed.isNull()) {
-            this->managed = QSharedPointer<bool>(new bool(managed.toBool()));
-        }
-    }
-
-    QJsonValue
-    getAnimated() {
-        if (animated) {
-            return QJsonValue(*animated);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setAnimated(QJsonValue animated) {
-        if (!animated.isNull()) {
-            this->animated = QSharedPointer<bool>(new bool(animated.toBool()));
-        }
-    }
-
-    QJsonValue
-    getAvailable() {
-        if (require_colons) {
-            return QJsonValue(*require_colons);
-        } else {
-            return QJsonValue();
-        }
-    }
-
-    void
-    setAvailable(QJsonValue available) {
-        if (!available.isNull()) {
-            this->available = QSharedPointer<bool>(new bool(available.toBool()));
-        }
-    }
-
-    void read(const QJsonObject &jsonObject) override {
-        JsonUtils::readFromJson(*this, jsonObject);
-    }
-
-    void write(QJsonObject &jsonObject) override {
-        JsonUtils::writeToJson(*this, jsonObject);
-    }
+    QString getId();
+    void setId(QString id);
+    QString getName();
+    void setName(QString name);
+    QJsonArray getRoles();
+    void setRoles(QJsonArray roles);
+    QJsonObject getUser();
+    void setUser(QJsonObject user);
+    QJsonValue getRequireColons();
+    void setRequireColons(QJsonValue require_colons);
+    QJsonValue getManaged();
+    void setManaged(QJsonValue managed);
+    QJsonValue getAnimated();
+    void setAnimated(QJsonValue animated);
+    QJsonValue getAvailable();
+    void setAvailable(QJsonValue available);
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
 };
 
 #endif // EMOJI_H
