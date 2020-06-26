@@ -21,6 +21,20 @@ public:
     ~Gateway();
 
     enum GatewayCloseCodes {
+        CLOSE_NORMAL = 1000, //Unresumable! Considered a graceful shutdown not meant to resume!!
+        CLOSE_GOING_AWAY = 1001, //Unresumable! Considered a graceful shutdown not meant to resume!!
+        CLOSE_PROTOCOL_ERROR = 1002,
+        CLOSE_UNSUPPORTED = 1003,
+        CLOSE_NO_STATUS = 1005,
+        UNSUPPORTED_PAYLOAD = 1006,
+        POLICY_VIOLATION = 1008,
+        CLOSE_TOO_LARGE = 1009,
+        MANDATORY_EXTENTION = 1010,
+        SERVER_ERROR = 1011,
+        SERVER_RESTART = 1102,
+        TRY_AGAIN_LATER = 1013,
+        BAD_GATEWAY = 1014,
+        TLS_HANDSHAKE_FAIL = 1015,
         UNKNOWN_ERROR = 4000,
         UNKNOWN_OPCODE = 4001,
         DECODE_ERROR = 4002,
@@ -72,12 +86,14 @@ private:
     Logger* _logger;
     bool _heartbeatAck;
     bool _resume;
-    int _lastSequenceNumber;    
+    int _lastSequenceNumber;
+    int _maxRetries;
+    int _retryCount;
     QUrl _gateway;
     QString _botToken;
     QString _sessionId;
 
-    void attemptReconnect(int closeCode);
+    void closeConnection(QWebSocketProtocol::CloseCode closeCode);
     QUrl buildConnectionUrl(QSharedPointer<Settings> settings);
     void processAck();
     void processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload);

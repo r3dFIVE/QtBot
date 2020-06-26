@@ -13,21 +13,22 @@ namespace SettingsParam {
 // Connection properties
 //
 namespace Connection {
-const QString BOT_TOKEN = "bot_token";
-const QString CONNECTION_URL = "connection_url";
-const QString ZLIB_ENABLED = "zlib_enabled";
+static const QString BOT_TOKEN = "bot_token";
+static const QString CONNECTION_URL = "connection_url";
+static const QString MAX_RETRIES = "max_retries";
+static const QString ZLIB_ENABLED = "zlib_enabled";
 }
 
 //
 // Logging proerties
 //
 namespace Logging {
-const QString CONSOLE_LOG_LEVEL = "console_log_level";
-const QString FILE_LOG_LEVEL = "file_log_level";
-const QString LOG_FILE_SIZE = "log_file_size";
-const QString LOG_ROLLOVER_COUNT = "log_rollover_count";
-const QString LOG_FILE_DIRECTORY = "log_file_directory";
-const QString LOG_FILE_NAME = "log_file_name";
+static const QString CONSOLE_LOG_LEVEL = "console_log_level";
+static const QString FILE_LOG_LEVEL = "file_log_level";
+static const QString LOG_FILE_SIZE = "log_file_size";
+static const QString LOG_ROLLOVER_COUNT = "log_rollover_count";
+static const QString LOG_FILE_DIRECTORY = "log_file_directory";
+static const QString LOG_FILE_NAME = "log_file_name";
 }
 
 //
@@ -36,12 +37,12 @@ const QString LOG_FILE_NAME = "log_file_name";
 namespace Database {
 Q_NAMESPACE
 
-const QString DATABASE_HOST = "database_host";
-const QString DATABASE_PORT = "database_port";
-const QString DATABASE_USER = "database_user";
+static const QString DATABASE_HOST = "database_host";
+static const QString DATABASE_PORT = "database_port";
+static const QString DATABASE_USER = "database_user";
 //TODO PASSWORD HASH?
-const QString DATABASE_PASSWORD = "database_password";
-const QString DATABASE_TYPE = "database_type";
+static const QString DATABASE_PASSWORD = "database_password";
+static const QString DATABASE_TYPE = "database_type";
 
 enum DatabaseTypes {
     SQLITE = 0,

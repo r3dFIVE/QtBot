@@ -61,6 +61,11 @@ Settings::validateConnectionSettings() {
     if (_settings[SettingsParam::Connection::CONNECTION_URL].toString().isEmpty()) {
         _settings[SettingsParam::Connection::CONNECTION_URL] = "wss://gateway.discord.gg";
     }
+
+    int max_retries = _settings[SettingsParam::Connection::MAX_RETRIES].toInt();
+    if (max_retries <= 0) {
+        _settings[SettingsParam::Connection::MAX_RETRIES] = 10;
+    }
 }
 
 void

@@ -19,8 +19,18 @@ GatewayPayload::read(const QJsonObject &jsonObject) {
 void
 GatewayPayload::write(QJsonObject &jsonObject) {
     jsonObject[D] = d;
-    jsonObject[T] = t;
-    jsonObject[OP] = op;    
-    jsonObject[S] = s;
+    jsonObject[OP] = op;
+
+    if (s > -1) {
+        jsonObject[S] = s;
+    } else {
+        jsonObject[S] = QJsonValue::Null;
+    }
+
+    if (!t.isEmpty()) {
+        jsonObject[T] = t;
+    } else {
+        jsonObject[T] = QJsonValue::Null;
+    }
 }
 }

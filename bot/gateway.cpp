@@ -16,6 +16,8 @@ Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
 {    
     _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
     _lastSequenceNumber = -1;
+    _maxRetries = settings->value(SettingsParam::Connection::MAX_RETRIES).toInt();
+    _retryCount = 0;
     _heartbeatAck = true;
     _resume = false;
     _logger = LogFactory::init(settings);
@@ -23,8 +25,7 @@ Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
 }
 
 Gateway::~Gateway() {
-    _socket->close();
-    _heartbeatTimer->stop();
+    closeConnection(QWebSocketProtocol::CloseCodeNormal);
 }
 
 void
@@ -56,19 +57,23 @@ Gateway::init() {
 void
 Gateway::onDisconnected() {
     int closeCode = _socket->closeCode();
-    _logger->debug(QString("Socket closed with code: %1").arg(closeCode));
-    if (_resume) {
+    QMetaEnum metaEnum = QMetaEnum::fromType<GatewayCloseCodes>();
+    QString closeReason = metaEnum.valueToKey(closeCode);
+    _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
+    if (_retryCount++ <= _maxRetries) {
         if (_socket->closeCode() == QWebSocketProtocol::CloseCodeAbnormalDisconnection) {
-            QThread::msleep(5250);
+            QThread::msleep(5000);
             _socket->open(_gateway);
-        } else if (_socket->closeCode() == QWebSocketProtocol::CloseCodeGoingAway) {
+        } else if (_socket->closeCode() == QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART)) {
             _socket->open(_gateway);
-        } else {
-            _logger->warning("Bot connection was lost and was instructed not to resume. Shutting down...");
-            exit(1);
         }
+    } else {
+        _logger->warning(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")
+                .arg(_maxRetries));
+        exit(1);
     }
 }
+
 
 void
 Gateway::onTextMessageReceived(QString message) {
@@ -110,9 +115,15 @@ Gateway::processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload) 
 }
 
 void
+Gateway::closeConnection(QWebSocketProtocol::CloseCode closeCode) {
+    _heartbeatTimer->stop();
+    _socket->close(closeCode);
+}
+
+void
 Gateway::processReconnect() {
     _logger->debug("RECONNECT event dispatched, attemping to reconnect...");
-    _socket->close(QWebSocketProtocol::CloseCodeGoingAway);
+    closeConnection(QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART));
 }
 
 
@@ -130,12 +141,11 @@ Gateway::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload)
 void
 Gateway::processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     if (payload->d[GatewayPayload::VALUE].toBool()) {
-        _resume = true;
+        sendResume();
     } else {
         _resume = false;
+        closeConnection(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
     }
-    _heartbeatTimer->stop();
-    _socket->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
 }
 
 void
@@ -182,11 +192,6 @@ Gateway::processHello(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
 
 void
 Gateway::sendIdentify() {
-    if (_botToken.isEmpty()) {
-        _logger->fatal("Bot token is must be set in the options file.");
-        QCoreApplication::quit();
-    }
-
     //TODO add and pull intents from settings file
     int intents = 0;
     intents |= (1 << GUILDS) | (1 << GUILD_MEMBERS) | (1 << GUILD_MESSAGES) | (1 << DIRECT_MESSAGES) | (1 << GUILD_MESSAGE_TYPING);
@@ -224,8 +229,7 @@ Gateway::sendHeartbeat() {
         _heartbeatAck = false;
     } else {
         _logger->warning("No Heartbeat ack received from previous heartbeat, attemping to reconnect...");
-        _heartbeatTimer->stop();
-        _socket->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
+        closeConnection(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
     }
 }
 
