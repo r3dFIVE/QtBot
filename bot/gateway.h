@@ -85,6 +85,7 @@ private:
     void processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> payload);
     void processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload);
     void processReady(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void processReconnect();
     void onBinaryMessageReceived(QByteArray messageArray);
     void onDisconnected();
     void onTextMessageReceived(QString message);

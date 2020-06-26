@@ -2,7 +2,6 @@
 #include "payloads/gatewaypayload.h"
 #include "globals.h"
 #include "jsonutils.h"
-#include "typefactory.h"
 #include "payloads/hello.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"

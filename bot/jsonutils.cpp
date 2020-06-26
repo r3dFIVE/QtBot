@@ -36,22 +36,18 @@ JsonUtils::writeToJson(QObject &source, QJsonObject &target) {
         }
 
         switch(QMetaType::Type(variant.type())) {
-            case QMetaType::Int: {
+            case QMetaType::Int:
                 target[property.name()] = variant.toInt();
-                break;
-            }
-            case QMetaType::Bool: {
+                break;            
+            case QMetaType::Bool:
                 target[property.name()] = variant.toBool();
-                break;
-            }
-            case QMetaType::QString: {
+                break;            
+            case QMetaType::QString:
                 target[property.name()] = variant.toString();
-                break;
-            }
-            case QMetaType::QJsonValue: {
+                break;            
+            case QMetaType::QJsonValue:
                 target[property.name()] = variant.toJsonValue();
-                break;
-            }
+                break;            
             case QMetaType::QJsonObject: {
                 QJsonObject jsonObject = variant.toJsonObject();
                 if (!jsonObject.isEmpty()) {

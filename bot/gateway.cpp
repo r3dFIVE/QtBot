@@ -55,10 +55,13 @@ Gateway::init() {
 
 void
 Gateway::onDisconnected() {
-    _logger->debug(QString("Socket closed with code: %1").arg(_socket->closeCode()));
+    int closeCode = _socket->closeCode();
+    _logger->debug(QString("Socket closed with code: %1").arg(closeCode));
     if (_resume) {
         if (_socket->closeCode() == QWebSocketProtocol::CloseCodeAbnormalDisconnection) {
             QThread::msleep(5250);
+            _socket->open(_gateway);
+        } else if (_socket->closeCode() == QWebSocketProtocol::CloseCodeGoingAway) {
             _socket->open(_gateway);
         } else {
             _logger->warning("Bot connection was lost and was instructed not to resume. Shutting down...");
@@ -101,9 +104,16 @@ Gateway::processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload) 
         case GatewayOpcodes::INVALID_SESSION:
             processInvalidSession(payload);
             break;
+        case GatewayOpcodes::RECONNECT:
+            processReconnect();
     }
 }
 
+void
+Gateway::processReconnect() {
+    _logger->debug("RECONNECT event dispatched, attemping to reconnect...");
+    _socket->close(QWebSocketProtocol::CloseCodeGoingAway);
+}
 
 
 void
@@ -210,9 +220,7 @@ void
 Gateway::sendHeartbeat() {
     if (_heartbeatAck) {
         _heartbeat.d = _lastSequenceNumber;
-
         sendTextPayload(_heartbeat.toQString());
-
         _heartbeatAck = false;
     } else {
         _logger->warning("No Heartbeat ack received from previous heartbeat, attemping to reconnect...");
@@ -232,12 +240,11 @@ Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
     QString baseUrl = settings->value(SettingsParam::Connection::CONNECTION_URL).toString();
     bool zlibEnabled = settings->value(SettingsParam::Connection::ZLIB_ENABLED).toBool();
     QString zlibParameter = "";
+
     if (zlibEnabled) {
         zlibParameter = "&compress=zlib-stream";
     }
 
-    QString fullUrl = QString("%1/?v=6&encoding=json%2").arg(baseUrl).arg(zlibParameter);
-
-    return QUrl(fullUrl);
+    return QUrl(QString("%1/?v=6&encoding=json%2").arg(baseUrl).arg(zlibParameter));
 }
 

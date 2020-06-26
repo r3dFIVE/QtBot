@@ -44,7 +44,6 @@ HEADERS += \
     $$PWD/payloads/user.h \
     $$PWD/jsonutils.h \
     $$PWD/payloads/voicestate.h \
-    $$PWD/typefactory.h \
     $$PWD/settings.h
 
 DISTFILES += \

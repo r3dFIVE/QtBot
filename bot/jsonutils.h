@@ -1,7 +1,6 @@
 #ifndef JSONUTILS_H
 #define JSONUTILS_H
 
-#include "typefactory.h"
 #include "logging/logfactory.h"
 #include "payloads/jsonserializable.h"
 #include <QMetaProperty>
