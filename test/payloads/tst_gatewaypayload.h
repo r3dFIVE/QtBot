@@ -16,6 +16,7 @@ private slots:
     void test_serialization_full();
     void test_deserialization_minimal();
     void test_deserialization_full();
+    void test_single_value();
 };
 
 #endif // TESTGATEWAYPAYLOAD_H

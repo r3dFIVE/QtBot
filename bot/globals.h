@@ -68,8 +68,7 @@ enum GatewayOpcodes {
 };
 
 namespace GatewayEvents {
-    const QString READY = "READY";
+    static const QString READY = "READY";
 };
-
 
 #endif // GLOBALS_H

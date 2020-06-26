@@ -15,7 +15,7 @@ public:
     EventHandler(QObject *parent = nullptr);
 
 public slots:
-    void processEvent(QSharedPointer<GatewayPayload> payload);
+    void processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload);
 
 
 };

@@ -24,6 +24,7 @@ private:
     void invalidDatabaseProperty [[ noreturn ]] (QString databaseType, QString propertyName);
     void invalidEnumValue [[ noreturn ]] (QString property, QString value, QMetaEnum metaEnum);
     bool isComment(QString);
+    int valueFromEnumKey(QString key);
 };
 
 

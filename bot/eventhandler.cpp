@@ -11,7 +11,7 @@ QObject(parent)
 }
 
 void
-EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
+EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     switch (payload->op) {
         case GatewayOpcodes::DISPATCH:
             //Receive	dispatches an event

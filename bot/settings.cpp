@@ -53,13 +53,14 @@ Settings::validateSettings() {
 
 void
 Settings::validateConnectionSettings() {
-    //    if (_settings->value(Settings::Connection::BOT_TOKEN).toString().isEmpty()) {
+    if (_settings[SettingsParam::Connection::BOT_TOKEN].toString().isEmpty()) {
+        qDebug() << "Bot Token must be set in your options file for successful conenctions";
+        QCoreApplication::exit();
+    }
 
-    //    }
-
-        if (_settings[SettingsParam::Connection::CONNECTION_URL].toString().isEmpty()) {
-            _settings[SettingsParam::Connection::CONNECTION_URL] = "wss://gateway.discord.gg";
-        }
+    if (_settings[SettingsParam::Connection::CONNECTION_URL].toString().isEmpty()) {
+        _settings[SettingsParam::Connection::CONNECTION_URL] = "wss://gateway.discord.gg";
+    }
 }
 
 void
@@ -98,17 +99,19 @@ void
 Settings::validateLoggingSettings() {
     QString consoleLogLevel = _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL].toString();
     if (consoleLogLevel.isEmpty()) {
-        _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = LogContext::LogLevel::INFO;
+        _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
     } else {
         validateLogLevel(SettingsParam::Logging::CONSOLE_LOG_LEVEL, consoleLogLevel);
+         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = valueFromEnumKey(consoleLogLevel);
     }
 
 
     QString fileLogLevel = _settings[SettingsParam::Logging::FILE_LOG_LEVEL].toString();
     if (fileLogLevel.isEmpty()) {
-        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = SettingsParam::Logging::FILE_LOG_LEVEL;
+        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = LogContext::DEBUG;
     } else {
         validateLogLevel(SettingsParam::Logging::FILE_LOG_LEVEL, fileLogLevel);
+        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = valueFromEnumKey(fileLogLevel);
     }
 
     if (_settings[SettingsParam::Logging::LOG_FILE_SIZE].toInt() == 0) {
@@ -125,10 +128,17 @@ Settings::validateLoggingSettings() {
     }
 }
 
+int
+Settings::valueFromEnumKey(QString key) {
+    QMetaEnum metaEnum = QMetaEnum::fromType<LogContext::LogLevel>();
+    return metaEnum.keyToValue(key.toUpper().toUtf8());
+}
+
+
 void
 Settings::validateLogLevel(QString property, QString logLevel) {
     QMetaEnum metaEnum = QMetaEnum::fromType<LogContext::LogLevel>();
-    if (metaEnum.keyToValue(logLevel.toUpper().toStdString().c_str()) < 0) {
+    if (valueFromEnumKey(logLevel) < 0) {
         invalidEnumValue(property, logLevel, metaEnum);
     }
 }

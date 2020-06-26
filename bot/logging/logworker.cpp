@@ -17,6 +17,11 @@ LogWorker::LogWorker(LogContext ctx, QObject *parent)
 
 void
 LogWorker::initLogFile() {
+    QDir logDir(_ctx.directoryPath);
+    if (!logDir.exists()) {
+        logDir.mkdir(".");
+    }
+
     _logFile.setFileName(_ctx.getPathWithName());
     if (!_logFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
         disableFileLogging();

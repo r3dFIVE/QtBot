@@ -20,6 +20,7 @@ SOURCES += \
     payloads/tst_guildmemeber.cpp \
     payloads/tst_identify.cpp \
     payloads/tst_identifyproperties.cpp \
+    payloads/tst_invalidsession.cpp \
     payloads/tst_permissionoverwrite.cpp \
     payloads/tst_presenceupdate.cpp \
     payloads/tst_resume.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     payloads/tst_guildmemeber.h \
     payloads/tst_identify.h \
     payloads/tst_identifyproperties.h \
+    payloads/tst_invalidsession.h \
     payloads/tst_permissionoverwrite.h \
     payloads/tst_presenceupdate.h \
     payloads/tst_resume.h \

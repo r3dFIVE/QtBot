@@ -47,7 +47,7 @@ void EchoServer::onNewConnection()
     Hello hello;
     hello.setHeartbeatInterval(5000);
 
-    GatewayPayload payload;
+    GatewayPayload::GatewayPayload payload;
     payload.d = JsonUtils::toQJsonObject(hello);
     payload.op = GatewayOpcodes::HELLO;
 
@@ -60,12 +60,12 @@ void EchoServer::processTextMessage(QString message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
-    GatewayPayload payload;
+    GatewayPayload::GatewayPayload payload;
     payload.fromQString(message);
 
     qDebug() << "Message received:" << message;
 
-    GatewayPayload out;
+    GatewayPayload::GatewayPayload out;
     if (pClient) {
         switch (payload.op) {
             case GatewayOpcodes::HEARTBEAT:

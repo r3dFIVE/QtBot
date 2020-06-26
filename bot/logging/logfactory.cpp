@@ -20,7 +20,7 @@ LogFactory::getLogger() {
     return _logger;
 }
 
-void
+Logger*
 LogFactory::init(QSharedPointer<Settings> settings) {
 
     LogContext ctx;
@@ -34,4 +34,6 @@ LogFactory::init(QSharedPointer<Settings> settings) {
     if (_logger == nullptr) {
         _logger = new Logger(ctx);
     }
+
+    return _logger;
 }

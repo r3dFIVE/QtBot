@@ -44,6 +44,8 @@ const static QString PLD_GATEWAYPAYLOAD_MINIMAL = QString("{\"op\":%1,\"d\":%2}"
 const static QString PLD_HEARTBEAT = QString("{\"d\":%1,\"op\":1}")
         .arg(TEST_INT1);
 
+const static QString PLD_INVALID_SESSION = "{\"op\":9,\"d\":true}";
+
 const static QString PLD_PROPERTIES = QString("{\"$os\":\"%1\",\"$browser\":\"QtBot\",\"$device\":\"QtBot\"}")
         .arg(QSysInfo::productType());
 

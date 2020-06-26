@@ -14,13 +14,12 @@
 Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
     QObject(parent)
 {    
-    _botToken =
+    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
     _lastSequenceNumber = -1;
-    _heartbeatAck = false;
+    _heartbeatAck = true;
     _resume = false;
-    _logger = LogFactory::getLogger();
-    _baseUrl = settings->value(SettingsParam::Connection::CONNECTION_URL).toString();
-    _zlibEnabled = settings->value(SettingsParam::Connection::ZLIB_ENABLED).toBool();
+    _logger = LogFactory::init(settings);
+    _gateway = buildConnectionUrl(settings);
 }
 
 Gateway::~Gateway() {
@@ -30,53 +29,62 @@ Gateway::~Gateway() {
 
 void
 Gateway::init() {
-    QUrl connectionUrl = buildConnectionUrl();
-    _logger->debug("Gateway Connection Url: " + connectionUrl.toString());
-
     _socket = QSharedPointer<QWebSocket>(new QWebSocket);
 
     connect(_socket.data(), &QWebSocket::connected, this, [&](){
         _logger->info("Gateway connection established.");
     });
 
-    connect(_socket.data(), &QWebSocket::textMessageReceived, this, [&](QString messageString) {
-        _logger->trace("Message recieved: " + messageString);
-        QSharedPointer<GatewayPayload> event(new GatewayPayload);
-        event->fromQString(messageString);
-        processPayload(event);
-    });
-
-    connect(_socket.data(), &QWebSocket::binaryMessageReceived, this, [&](QByteArray messageArray){
-        _logger->trace("Message recieved: " + messageArray);
-        QSharedPointer<GatewayPayload> event(new GatewayPayload);
-        event->fromByteArray(messageArray);
-        processPayload(event);
-    });
-
-    connect(_socket.data(), &QWebSocket::disconnected, this, [&](){
-        // Disconnect not implemented
-    });
-
     connect(_socket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
-        [=](QAbstractSocket::SocketError error) {
-            _logger->critical(QString("QSocketError: %1").arg(error));
+        [=](QAbstractSocket::SocketError errorCode) {
+        QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
+        QString errorReason = metaEnum.valueToKey(errorCode);
+        _logger->critical(QString("QSocketError: %1, %2. Shutting down...").arg(errorCode).arg(errorReason));
+        exit(1);
         }
     );
 
+    connect(_socket.data(), &QWebSocket::textMessageReceived, this, &Gateway::onTextMessageReceived);
+    connect(_socket.data(), &QWebSocket::binaryMessageReceived, this, &Gateway::onBinaryMessageReceived);
+    connect(_socket.data(), &QWebSocket::disconnected, this, &Gateway::onDisconnected);
     _heartbeatTimer = QSharedPointer<QTimer>( new QTimer(this));
     connect(_heartbeatTimer.data(), &QTimer::timeout, this, &Gateway::sendHeartbeat);
 
-    _socket->open(QUrl(connectionUrl));
+    _socket->open(_gateway);
 }
 
-//bool
-//GatewayService::attemptReconnect() {
-
-//}
-
+void
+Gateway::onDisconnected() {
+    _logger->debug(QString("Socket closed with code: %1").arg(_socket->closeCode()));
+    if (_resume) {
+        if (_socket->closeCode() == QWebSocketProtocol::CloseCodeAbnormalDisconnection) {
+            QThread::msleep(5250);
+            _socket->open(_gateway);
+        } else {
+            _logger->warning("Bot connection was lost and was instructed not to resume. Shutting down...");
+            exit(1);
+        }
+    }
+}
 
 void
-Gateway::processPayload(QSharedPointer<GatewayPayload> payload) {
+Gateway::onTextMessageReceived(QString message) {
+    _logger->trace("Message recieved: " + message);
+    QSharedPointer<GatewayPayload::GatewayPayload> event(new GatewayPayload::GatewayPayload);
+    event->fromQString(message);
+    processPayload(event);
+}
+
+void
+Gateway::onBinaryMessageReceived(QByteArray messageArray) {
+    _logger->trace("Message recieved: " + messageArray);
+    QSharedPointer<GatewayPayload::GatewayPayload> event(new GatewayPayload::GatewayPayload);
+    event->fromByteArray(messageArray);
+    processPayload(event);
+}
+
+void
+Gateway::processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     switch(payload->op) {
         case GatewayOpcodes::HELLO:
             processHello(payload);
@@ -99,7 +107,7 @@ Gateway::processPayload(QSharedPointer<GatewayPayload> payload) {
 
 
 void
-Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
+Gateway::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     _lastSequenceNumber = payload->s;
 
     if (payload->t == GatewayEvents::READY) {
@@ -110,43 +118,47 @@ Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-Gateway::processInvalidSession(QSharedPointer<GatewayPayload> payload) {
-
+Gateway::processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
+    if (payload->d[GatewayPayload::VALUE].toBool()) {
+        _resume = true;
+    } else {
+        _resume = false;
+    }
+    _heartbeatTimer->stop();
+    _socket->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
 }
 
 void
-Gateway::processReady(QSharedPointer<GatewayPayload> payload) {
+Gateway::processReady(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     Ready ready;
-
+    ready.fromQJsonObject(payload->d);
+    _sessionId = ready.getSessionId();
 }
 
 void
 Gateway::processAck() {
-    _logger->trace(QString("ACK receieved for sequence number: %1").arg(_lastSequenceNumber));
+    _logger->trace(QString("ACK receieved."));
     _heartbeatAck = true;
 }
 
 void
-Gateway::sendTextMessage(QSharedPointer<GatewayPayload> payload) {
+Gateway::sendTextMessage(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     QString messageStr = payload->toQString();
     _socket->sendTextMessage(messageStr);
     _logger->trace("Sent gateway payload: " + messageStr);
 }
 
 void
-Gateway::sendBinaryMessage(QSharedPointer<GatewayPayload> payload) {
+Gateway::sendBinaryMessage(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     _socket->sendBinaryMessage(payload->toByteArray());
 }
 
 void
-Gateway::processHello(QSharedPointer<GatewayPayload> payload) {
+Gateway::processHello(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     Hello helloEvent;
     helloEvent.read(payload->d);
 
-    if (_heartbeatTimer->isActive()) {
-        _heartbeatTimer->stop();
-    }
-
+    _heartbeatTimer->stop();
     _heartbeatTimer->setInterval(*helloEvent.heartbeat_interval);
     _heartbeatTimer->start();
 
@@ -154,18 +166,30 @@ Gateway::processHello(QSharedPointer<GatewayPayload> payload) {
         sendResume();
     } else {
         sendIdentify();
+        _resume = true;
     }
 }
 
 void
 Gateway::sendIdentify() {
     if (_botToken.isEmpty()) {
-        _logger->fatal("Bot token is must be set in options file.");
+        _logger->fatal("Bot token is must be set in the options file.");
         QCoreApplication::quit();
     }
 
+    //TODO add and pull intents from settings file
+    int intents = 0;
+    intents |= (1 << GUILDS) | (1 << GUILD_MEMBERS) | (1 << GUILD_MESSAGES) | (1 << DIRECT_MESSAGES) | (1 << GUILD_MESSAGE_TYPING);
+
     Identify identify;
     identify.setToken(_botToken);
+    identify.setIntents(intents);
+
+    GatewayPayload::GatewayPayload payload;
+    payload.op = GatewayOpcodes::IDENTIFY;
+    identify.write(payload.d);
+
+    sendTextPayload(payload.toQString());
 }
 
 void
@@ -175,40 +199,44 @@ Gateway::sendResume() {
     resume.session_id = _sessionId;
     resume.seq = _lastSequenceNumber;
 
-    GatewayPayload payload;
+    GatewayPayload::GatewayPayload payload;
     payload.op = GatewayOpcodes::RESUME;
     resume.write(payload.d);
 
-    QString payloadString = payload.toQString();
-    _socket->sendTextMessage(payloadString);
-    _logger->trace("Resume payload sent: " + payloadString);
+    sendTextPayload(payload.toQString());
 }
 
 void
 Gateway::sendHeartbeat() {
-    if (_heartbeatAck == false) {
+    if (_heartbeatAck) {
+        _heartbeat.d = _lastSequenceNumber;
+
+        sendTextPayload(_heartbeat.toQString());
+
+        _heartbeatAck = false;
+    } else {
         _logger->warning("No Heartbeat ack received from previous heartbeat, attemping to reconnect...");
-        //TODO handle reconnect
+        _heartbeatTimer->stop();
+        _socket->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
     }
-
-    _heartbeat.d = _lastSequenceNumber;
-
-    QString payloadString = _heartbeat.toQString();
-    _socket->sendTextMessage(payloadString);
-    _logger->trace("Heartbeat payload sent: " + payloadString);
-
-    _heartbeatAck = false;
 }
 
+void
+Gateway::sendTextPayload(QString payload) {
+    _socket->sendTextMessage(payload);
+    _logger->trace(QString("Payload sent: %1").arg(payload));
+}
 
 QUrl
-Gateway::buildConnectionUrl() {
+Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
+    QString baseUrl = settings->value(SettingsParam::Connection::CONNECTION_URL).toString();
+    bool zlibEnabled = settings->value(SettingsParam::Connection::ZLIB_ENABLED).toBool();
     QString zlibParameter = "";
-    if (_zlibEnabled) {
+    if (zlibEnabled) {
         zlibParameter = "&compress=zlib-stream";
     }
 
-    QString fullUrl = QString("%1/?v=6&encoding=json%2").arg(_baseUrl).arg(zlibParameter);
+    QString fullUrl = QString("%1/?v=6&encoding=json%2").arg(baseUrl).arg(zlibParameter);
 
     return QUrl(fullUrl);
 }

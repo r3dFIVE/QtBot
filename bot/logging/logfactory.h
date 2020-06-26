@@ -16,7 +16,7 @@ private:
 
 public:
     static Logger* getLogger();
-    static void init(QSharedPointer<Settings> settings);
+    static Logger* init(QSharedPointer<Settings> settings);
 };
 
 #endif // LOGSERVICE_H

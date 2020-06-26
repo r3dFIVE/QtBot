@@ -6,25 +6,30 @@
 
 #include "jsonserializable.h"
 
+namespace GatewayPayload {
+
+static const QString D = "d";
+static const QString T = "t";
+static const QString OP = "op";
+static const QString S = "s";
+static const QString VALUE = "value";
+
 class GatewayPayload : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-    const QString D = "d";
-    const QString T = "t";
-    const QString OP = "op";
-    const QString S = "s";
 
-    QJsonObject d;
-    QString t;
     int op = -1;
-    int s = -1;
+    QJsonObject d;    
+    int s= -1;
+    QString t;
 
     void read(const QJsonObject &jsonObject) override;
     void write(QJsonObject &jsonObject) override;
 };
+}
 
-Q_DECLARE_METATYPE(GatewayPayload)
+Q_DECLARE_METATYPE(GatewayPayload::GatewayPayload)
 
 #endif // GATEWAYPAYLOAD_H
