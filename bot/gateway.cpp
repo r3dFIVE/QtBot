@@ -38,10 +38,10 @@ Gateway::init() {
 
     connect(_socket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
         [=](QAbstractSocket::SocketError errorCode) {
-        QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
-        QString errorReason = metaEnum.valueToKey(errorCode);
-        _logger->critical(QString("QSocketError: %1, %2. Shutting down...").arg(errorCode).arg(errorReason));
-        exit(1);
+            QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
+            QString errorReason = metaEnum.valueToKey(errorCode);
+            _logger->critical(QString("QSocketError: %1, %2. Shutting down...").arg(errorCode).arg(errorReason));
+            exit(1);
         }
     );
 
@@ -73,7 +73,6 @@ Gateway::onDisconnected() {
         exit(1);
     }
 }
-
 
 void
 Gateway::onTextMessageReceived(QString message) {
@@ -111,6 +110,7 @@ Gateway::processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload) 
             break;
         case GatewayOpcodes::RECONNECT:
             processReconnect();
+            break;
     }
 }
 
