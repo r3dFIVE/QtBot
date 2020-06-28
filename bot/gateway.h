@@ -82,12 +82,13 @@ private:
     QSharedPointer<QWebSocket> _socket;
     QSharedPointer<QTimer> _heartbeatTimer;
 
+    const int _maxRetries;
+
     Heartbeat _heartbeat;
     Logger* _logger;
     bool _heartbeatAck;
     bool _resume;
     int _lastSequenceNumber;
-    int _maxRetries;
     int _retryCount;
     QUrl _gateway;
     QString _botToken;
@@ -102,6 +103,7 @@ private:
     void processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload);
     void processReady(QSharedPointer<GatewayPayload::GatewayPayload> payload);
     void processReconnect();
+    void processResumed(QSharedPointer<GatewayPayload::GatewayPayload> payload);
     void onBinaryMessageReceived(QByteArray messageArray);
     void onDisconnected();
     void onTextMessageReceived(QString message);

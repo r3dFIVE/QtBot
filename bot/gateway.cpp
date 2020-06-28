@@ -12,11 +12,11 @@
 #include <payloads/ready.h>
 
 Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    _maxRetries(settings->value(SettingsParam::Connection::MAX_RETRIES).toInt())
 {    
     _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
     _lastSequenceNumber = -1;
-    _maxRetries = settings->value(SettingsParam::Connection::MAX_RETRIES).toInt();
     _retryCount = 0;
     _heartbeatAck = true;
     _resume = false;
@@ -60,7 +60,7 @@ Gateway::onDisconnected() {
     QMetaEnum metaEnum = QMetaEnum::fromType<GatewayCloseCodes>();
     QString closeReason = metaEnum.valueToKey(closeCode);
     _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
-    if (_retryCount++ <= _maxRetries) {
+    if (_retryCount++ < _maxRetries) {
         if (_socket->closeCode() == QWebSocketProtocol::CloseCodeAbnormalDisconnection) {
             QThread::msleep(5000);
             _socket->open(_gateway);
@@ -93,22 +93,22 @@ Gateway::onBinaryMessageReceived(QByteArray messageArray) {
 void
 Gateway::processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     switch(payload->op) {
-        case GatewayOpcodes::HELLO:
+        case GatewayEvents::HELLO:
             processHello(payload);
             break;
-        case GatewayOpcodes::HEARTBEAT:
+        case GatewayEvents::HEARTBEAT:
             sendHeartbeat();
             break;
-        case GatewayOpcodes::HEARTBEAT_ACK:
+        case GatewayEvents::HEARTBEAT_ACK:
             processAck();
             break;
-        case GatewayOpcodes::DISPATCH:
+        case GatewayEvents::DISPATCH:
             processDispatch(payload);
             break;
-        case GatewayOpcodes::INVALID_SESSION:
+        case GatewayEvents::INVALID_SESSION:
             processInvalidSession(payload);
             break;
-        case GatewayOpcodes::RECONNECT:
+        case GatewayEvents::RECONNECT:
             processReconnect();
             break;
     }
@@ -131,8 +131,17 @@ void
 Gateway::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     _lastSequenceNumber = payload->s;
 
-    if (payload->t == GatewayEvents::READY) {
+    //TODO MetaUtils::keyToValue( T t, QString key); or something
+    QMetaEnum metaEnum = QMetaEnum::fromType<GatewayEvents::Events>();
+    int eventCode = metaEnum.keyToValue(payload->t.toUtf8());
+
+    switch (eventCode) {
+    case GatewayEvents::READY:
         processReady(payload);
+        break;
+    case GatewayEvents::RESUMED:
+        processResumed(payload);
+        break;
     }
 
     emit dispatchEvent(payload);
@@ -140,7 +149,8 @@ Gateway::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload)
 
 void
 Gateway::processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    if (payload->d[GatewayPayload::VALUE].toBool()) {
+    bool isResumable = payload->d[GatewayPayload::VALUE].toBool();
+    if (isResumable) {
         sendResume();
     } else {
         _resume = false;
@@ -150,9 +160,19 @@ Gateway::processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> pa
 
 void
 Gateway::processReady(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
+    _logger->info("Gateway connection established. Bot will join guilds shortly!");
+
     Ready ready;
     ready.fromQJsonObject(payload->d);
+
     _sessionId = ready.getSessionId();
+    _retryCount = 0;
+}
+
+void
+Gateway::processResumed(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
+    _logger->info("Gateway connection sucessfully resumed.");
+    _retryCount = 0;
 }
 
 void
