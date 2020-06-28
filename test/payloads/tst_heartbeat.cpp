@@ -3,7 +3,7 @@
 void
 HeartbeatTest::test_serialization() {
     Heartbeat heartbeat;
-    heartbeat.op = GatewayOpcodes::HEARTBEAT;
+    heartbeat.op = GatewayEvents::HEARTBEAT;
     heartbeat.d = 42;
 
     QString serialized = heartbeat.toQString();
@@ -18,8 +18,8 @@ HeartbeatTest::test_deserialization() {
 
     QVERIFY(heartbeat.d == 42);
     QVERIFY(heartbeat.d != 24);
-    QVERIFY(heartbeat.op == GatewayOpcodes::HEARTBEAT);
-    QVERIFY(heartbeat.op != GatewayOpcodes::HEARTBEAT_ACK);
+    QVERIFY(heartbeat.op == GatewayEvents::HEARTBEAT);
+    QVERIFY(heartbeat.op != GatewayEvents::HEARTBEAT_ACK);
 }
 
 static HeartbeatTest HEARTBEAT_TEST;

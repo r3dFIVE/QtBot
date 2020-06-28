@@ -13,34 +13,34 @@ QObject(parent)
 void
 EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     switch (payload->op) {
-        case GatewayOpcodes::DISPATCH:
+        case GatewayEvents::DISPATCH:
             //Receive	dispatches an event
             break;
-        case GatewayOpcodes::HEARTBEAT:
+        case GatewayEvents::HEARTBEAT:
             //Send/Receive	used for ping checking
             break;
-        case GatewayOpcodes::IDENTIFY:
+        case GatewayEvents::IDENTIFY:
             //Send	used for client handshake
             break;
-        case GatewayOpcodes::STATUS_UPDATE:
+        case GatewayEvents::STATUS_UPDATE:
             //Send	used to update the client status
             break;
-        case GatewayOpcodes::VOICE_STATUS_UPDATE:
+        case GatewayEvents::VOICE_STATUS_UPDATE:
             //Send	used to join/move/leave voice channels
             break;
-        case GatewayOpcodes::RESUME:
+        case GatewayEvents::RESUME:
             //Send	used to resume a closed connection
             break;
-        case GatewayOpcodes::RECONNECT:
+        case GatewayEvents::RECONNECT:
             //Receive	used to tell clients to reconnect to the gateway
             break;
-        case GatewayOpcodes::REQUEST_GUILD_MEMBERS:
+        case GatewayEvents::REQUEST_GUILD_MEMBERS:
             //Send	used to request guild members
             break;
-        case GatewayOpcodes::INVALID_SESSION:
+        case GatewayEvents::INVALID_SESSION:
             //Receive	used to notify client they have an invalid session id
             break;
-        case GatewayOpcodes::HEARTBEAT_ACK:
+        case GatewayEvents::HEARTBEAT_ACK:
             //Receive	sent immediately following a client heartbeat that was received
             break;
     }

@@ -15,7 +15,7 @@ public:
     const QString OP = "op";
 
     Q_PROPERTY(int op READ getOp)
-    int op = GatewayOpcodes::HEARTBEAT;
+    int op = GatewayEvents::HEARTBEAT;
 
     Q_PROPERTY(int d READ getD WRITE setD)
     int d = -1;

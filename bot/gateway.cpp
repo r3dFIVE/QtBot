@@ -221,7 +221,7 @@ Gateway::sendIdentify() {
     identify.setIntents(intents);
 
     GatewayPayload::GatewayPayload payload;
-    payload.op = GatewayOpcodes::IDENTIFY;
+    payload.op = GatewayEvents::IDENTIFY;
     identify.write(payload.d);
 
     sendTextPayload(payload.toQString());
@@ -235,7 +235,7 @@ Gateway::sendResume() {
     resume.seq = _lastSequenceNumber;
 
     GatewayPayload::GatewayPayload payload;
-    payload.op = GatewayOpcodes::RESUME;
+    payload.op = GatewayEvents::RESUME;
     resume.write(payload.d);
 
     sendTextPayload(payload.toQString());

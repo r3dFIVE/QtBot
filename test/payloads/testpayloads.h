@@ -39,7 +39,7 @@ const static QString PLD_CLIENT_STATUS = QString("{\"desktop\":\"%1\",\"mobile\"
 
 const static QString PLD_GATEWAYPAYLOAD_FULL = "{\"op\":%1,\"d\":%2,\"s\":42,\"t\":\"GATEWAY_EVENT_NAME\"}";
 const static QString PLD_GATEWAYPAYLOAD_MINIMAL = QString("{\"op\":%1,\"d\":%2}")
-        .arg(GatewayOpcodes::HELLO).arg(PLD_HELLO);
+        .arg(GatewayEvents::HELLO).arg(PLD_HELLO);
 
 const static QString PLD_HEARTBEAT = QString("{\"d\":%1,\"op\":1}")
         .arg(TEST_INT1);

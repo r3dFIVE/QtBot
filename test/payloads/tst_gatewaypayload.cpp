@@ -12,7 +12,7 @@ GatewayPayloadTest::test_serialization_minimal() {
     QJsonObject serializedHello = hello.toQJsonObject();
 
     GatewayPayload::GatewayPayload gatewayPayload;
-    gatewayPayload.op = GatewayOpcodes::HELLO;
+    gatewayPayload.op = GatewayEvents::HELLO;
     gatewayPayload.d = serializedHello;
 
     QJsonObject serializedPayload = gatewayPayload.toQJsonObject();
@@ -21,8 +21,8 @@ GatewayPayloadTest::test_serialization_minimal() {
     QVERIFY(d.contains(hello.HEARTBEAT_INTERVAL));
     QVERIFY(d[hello.HEARTBEAT_INTERVAL] == TEST_INT1);
 
-    QVERIFY(serializedPayload[GatewayPayload::OP] == GatewayOpcodes::HELLO);
-    QVERIFY(serializedPayload[GatewayPayload::OP] != GatewayOpcodes::HEARTBEAT_ACK);
+    QVERIFY(serializedPayload[GatewayPayload::OP] == GatewayEvents::HELLO);
+    QVERIFY(serializedPayload[GatewayPayload::OP] != GatewayEvents::HEARTBEAT_ACK);
 }
 
 void
@@ -35,8 +35,8 @@ GatewayPayloadTest::test_deserialization_minimal() {
     GatewayPayload::GatewayPayload payload;
     payload.fromQString(PLD_GATEWAYPAYLOAD_MINIMAL);
 
-    QVERIFY(payload.op == GatewayOpcodes::HELLO);
-    QVERIFY(payload.op != GatewayOpcodes::DISPATCH);
+    QVERIFY(payload.op == GatewayEvents::HELLO);
+    QVERIFY(payload.op != GatewayEvents::DISPATCH);
 
     Hello hello;
     hello.fromQJsonObject(payload.d);
@@ -55,7 +55,7 @@ GatewayPayloadTest::test_single_value() {
     GatewayPayload::GatewayPayload payload;
     payload.fromQString(PLD_INVALID_SESSION);
 
-    QVERIFY(payload.op == GatewayOpcodes::INVALID_SESSION);
+    QVERIFY(payload.op == GatewayEvents::INVALID_SESSION);
     QVERIFY(payload.d[GatewayPayload::VALUE].toBool());
 }
 

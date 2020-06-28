@@ -48,7 +48,7 @@ void EchoServer::onNewConnection()
 
     GatewayPayload::GatewayPayload payload;
     payload.d = JsonUtils::toQJsonObject(hello);
-    payload.op = GatewayOpcodes::HELLO;
+    payload.op = GatewayEvents::HELLO;
 
     pSocket->sendTextMessage(payload.toQString());
 }
@@ -67,8 +67,8 @@ void EchoServer::processTextMessage(QString message)
     GatewayPayload::GatewayPayload out;
     if (pClient) {
         switch (payload.op) {
-            case GatewayOpcodes::HEARTBEAT:
-                out.op = GatewayOpcodes::HEARTBEAT_ACK;
+            case GatewayEvents::HEARTBEAT:
+                out.op = GatewayEvents::HEARTBEAT_ACK;
                 out.s = s++;
                 break;
         }
