@@ -50,6 +50,7 @@ public:
         INVALID_INTENTS = 4013,
         DISALLOWED_INTENTS = 4014
     };
+    Q_ENUM(GatewayCloseCodes)
 
     enum GatewayIntents {
         GUILDS = 0,
@@ -68,6 +69,7 @@ public:
         DIRECT_MESSAGE_REACTIONS = 13,
         DIRECT_MESSAGE_TYPING = 14
     };
+    Q_ENUM(GatewayIntents)
 
     void init();
 
@@ -112,8 +114,6 @@ private:
     void sendIdentify();
     void sendResume();
     void sendTextPayload(QString payload);
-
-    Q_ENUM(GatewayCloseCodes)
 };
 
 #endif // GATEWAYCONNECTION_H

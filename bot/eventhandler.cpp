@@ -1,14 +1,8 @@
 #include "eventhandler.h"
-
 #include "globals.h"
 #include "payloads/hello.h"
 
 #include <QJsonDocument>
-
-EventHandler::EventHandler(QObject *parent) :
-QObject(parent)
-{
-}
 
 void
 EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload) {

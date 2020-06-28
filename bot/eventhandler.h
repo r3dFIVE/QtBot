@@ -5,19 +5,13 @@
 
 #include "payloads/gatewaypayload.h"
 
-#include "gateway.h"
 
 class EventHandler : public QObject
 {
     Q_OBJECT
 
-public:
-    EventHandler(QObject *parent = nullptr);
-
 public slots:
     void processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload);
-
-
 };
 
 #endif // MESSAGEHANDLER_H
