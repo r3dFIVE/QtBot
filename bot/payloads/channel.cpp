@@ -1,6 +1,6 @@
 #include "channel.h"
 
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 QString
 Channel::getId() {

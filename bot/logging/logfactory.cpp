@@ -1,5 +1,5 @@
 #include "logfactory.h"
-#include "globals.h"
+#include "util/globals.h"
 
 #include <QVariant>
 

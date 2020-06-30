@@ -4,7 +4,7 @@
 #include "logger.h"
 
 #include <QString>
-#include <settings.h>
+#include <util/settings.h>
 #include <QSharedPointer>
 
 class LogFactory

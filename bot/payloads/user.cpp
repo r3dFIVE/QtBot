@@ -1,6 +1,6 @@
 #include "user.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QString
 User::getId() {

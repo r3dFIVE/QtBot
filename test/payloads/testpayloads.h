@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QJsonValue>
-#include "globals.h"
+#include <util/globals.h>
 
 const static QString TEST_STRING1 = "gfreeman";
 const static QString TEST_STRING2 = "cstrife";

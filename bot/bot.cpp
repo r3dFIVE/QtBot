@@ -1,6 +1,6 @@
 #include "bot.h"
 #include "eventhandler.h"
-#include "globals.h"
+#include "util/globals.h"
 #include "logging/logfactory.h"
 
 #include <QDir>
@@ -21,7 +21,7 @@ Bot::run(QSharedPointer<Settings> settings) {
     connect(&_gatewayThread, &QThread::finished, connection, &QObject::deleteLater);
     connect(&_gatewayThread, &QThread::started, connection, &Gateway::init);
 
-    EventHandler *messageHandler = new EventHandler;
+    EventHandler *messageHandler = new EventHandler(settings);
     messageHandler->moveToThread(&_messageServiceThread);
     connect(&_messageServiceThread, &QThread::finished, messageHandler, &QObject::deleteLater);
     connect(connection, &Gateway::dispatchEvent, messageHandler, &EventHandler::processEvent);

@@ -4,9 +4,8 @@
 #include <QSettings>
 #include <QMetaEnum>
 #include <QObject>
+
 #include "bot.h"
-#include "globals.h"
-#include "payloads/identify.h"
 
 
 int main(int argc, char *argv[])

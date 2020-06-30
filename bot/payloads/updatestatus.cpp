@@ -1,6 +1,6 @@
 #include "updatestatus.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QJsonValue
 UpdateStatus::getSince() {

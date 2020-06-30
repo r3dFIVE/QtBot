@@ -7,7 +7,7 @@
 
 #include "logging/logfactory.h"
 #include "gateway.h"
-#include "settings.h"
+#include "util/settings.h"
 
 
 class Bot : public QObject

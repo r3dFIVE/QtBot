@@ -4,7 +4,7 @@
 #include "jsonserializable.h"
 
 #include <QSharedPointer>
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 class ActivityTimestamps : public JsonSerializable
 {

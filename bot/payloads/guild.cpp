@@ -1,6 +1,6 @@
 #include "guild.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 class Emoji;
 class PresenceUpdate;

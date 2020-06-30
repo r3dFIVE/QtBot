@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "jsonserializable.h"
-#include "globals.h"
+#include "util/globals.h"
 
 class Heartbeat : public JsonSerializable
 {

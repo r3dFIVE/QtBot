@@ -1,6 +1,6 @@
 #include "voicestate.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QString
 VoiceState::getGuildId() {

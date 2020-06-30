@@ -1,6 +1,6 @@
 #include "heartbeat.h"
 
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 int
 Heartbeat::getD() {

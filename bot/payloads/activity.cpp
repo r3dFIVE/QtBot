@@ -1,6 +1,6 @@
 #include "activity.h"
 
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 #include "activitytimestamps.h"
 #include "activityemoji.h"

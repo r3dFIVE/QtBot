@@ -9,7 +9,7 @@
 #include "payloads/heartbeat.h"
 #include "payloads/gatewaypayload.h"
 #include "logging/logfactory.h"
-#include "settings.h"
+#include "util/settings.h"
 
 
 class Gateway : public QObject

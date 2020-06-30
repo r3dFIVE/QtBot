@@ -1,6 +1,6 @@
 #include "hello.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QJsonValue
 Hello::getHeartbeatInterval() {

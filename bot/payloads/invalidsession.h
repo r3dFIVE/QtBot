@@ -2,9 +2,9 @@
 #define INVALIDSESSION_H
 
 #include "jsonserializable.h"
+#include "util/jsonutils.h"
 
 #include <QObject>
-#include <jsonutils.h>
 
 class InvalidSession : public JsonSerializable
 {

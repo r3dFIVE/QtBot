@@ -1,6 +1,6 @@
 #include "activityparty.h"
 
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 QString
 ActivityParty::getId() {

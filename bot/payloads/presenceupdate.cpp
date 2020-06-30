@@ -1,6 +1,6 @@
 #include "presenceupdate.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QJsonObject
 PresenceUpdate::getUser() {

@@ -1,6 +1,5 @@
 #include "guildmember.h"
-
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QJsonObject
 GuildMember::getUser() {

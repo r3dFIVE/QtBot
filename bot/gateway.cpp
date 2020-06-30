@@ -1,15 +1,14 @@
 #include "gateway.h"
-#include "globals.h"
+#include "util/globals.h"
 #include "payloads/hello.h"
 #include "logging/logfactory.h"
+#include "payloads/resume.h"
+#include "payloads/identify.h"
+#include "payloads/ready.h"
 
 #include <QSettings>
 #include <QThread>
 
-#include "payloads/resume.h"
-#include "payloads/identify.h"
-
-#include <payloads/ready.h>
 
 Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
     QObject(parent),
@@ -57,15 +56,26 @@ Gateway::init() {
 void
 Gateway::onDisconnected() {
     int closeCode = _socket->closeCode();
+
     QMetaEnum metaEnum = QMetaEnum::fromType<GatewayCloseCodes>();
     QString closeReason = metaEnum.valueToKey(closeCode);
+
     _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
+
     if (_retryCount++ < _maxRetries) {
-        if (_socket->closeCode() == QWebSocketProtocol::CloseCodeAbnormalDisconnection) {
+        switch (closeCode) {
+        case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
+        case QWebSocketProtocol::CloseCodeGoingAway:
             QThread::msleep(5000);
             _socket->open(_gateway);
-        } else if (_socket->closeCode() == QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART)) {
+            break;
+        case QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART):
             _socket->open(_gateway);
+            break;
+        default:
+            _logger->warning(QString("Bot has received an unrecoverable close code %1 (%2), shutting down...")
+                    .arg(closeCode).arg(closeReason));
+            break;
         }
     } else {
         _logger->warning(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")

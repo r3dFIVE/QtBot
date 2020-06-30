@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "payloads/gatewaypayload.h"
+
 
 /*************************
  * Settings file related *
@@ -46,8 +48,8 @@ static const QString DATABASE_TYPE = "database_type";
 
 enum DatabaseTypes {
     SQLITE = 0,
-    MSSQL_SERVER,
-    ORACLE,
+    MSSQLSERVER,
+    MYSQL,
     POSTGRES
 };
 Q_ENUM_NS(DatabaseTypes)

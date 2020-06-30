@@ -1,6 +1,6 @@
 #include "emoji.h"
 
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 QString
 Emoji::getId() {

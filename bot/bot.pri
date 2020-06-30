@@ -1,15 +1,14 @@
-QT += websockets
+QT += websockets sql
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
+
 
 HEADERS += \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
     $$PWD/gateway.h \
-    $$PWD/globals.h \
-    $$PWD/lockingdeque.h \
     $$PWD/logging/logcontext.h \
     $$PWD/logging/logfactory.h \
     $$PWD/logging/logger.h \
@@ -23,8 +22,6 @@ HEADERS += \
     $$PWD/payloads/channel.h \
     $$PWD/payloads/clientstatus.h \
     $$PWD/payloads/emoji.h \
-    $$PWD/payloads/gatewaypayload.h \
-    $$PWD/lockingdeque.h \
     $$PWD/payloads/gatewaypayload.h \
     $$PWD/payloads/guild.h \
     $$PWD/payloads/guildmember.h \
@@ -42,24 +39,27 @@ HEADERS += \
     $$PWD/payloads/role.h \
     $$PWD/payloads/updatestatus.h \
     $$PWD/payloads/user.h \
-    $$PWD/jsonutils.h \
     $$PWD/payloads/voicestate.h \
-    $$PWD/settings.h
+    $$PWD/util/function.h \
+    $$PWD/util/settings.h \
+    $$PWD/util/commandregistry.h \
+    $$PWD/util/globals.h \
+    $$PWD/util/lockingdeque.h \
+    $$PWD/util/jsonutils.h
 
 DISTFILES += \
     $$PWD/settings.ini
 
 SOURCES += \
-    $$PWD/payloads/activityemoji.cpp \
     $$PWD/bot.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
-    $$PWD/jsonutils.cpp \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
     $$PWD/logging/logworker.cpp \
     $$PWD/payloads/activity.cpp \
     $$PWD/payloads/activityassets.cpp \
+    $$PWD/payloads/activityemoji.cpp \
     $$PWD/payloads/activityparty.cpp \
     $$PWD/payloads/activitysecrets.cpp \
     $$PWD/payloads/activitytimestamps.cpp \
@@ -83,4 +83,6 @@ SOURCES += \
     $$PWD/payloads/updatestatus.cpp \
     $$PWD/payloads/user.cpp \
     $$PWD/payloads/voicestate.cpp \
-    $$PWD/settings.cpp
+    $$PWD/util/jsonutils.cpp \
+    $$PWD/util/settings.cpp \
+    $$PWD/util/commandregistry.cpp

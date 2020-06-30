@@ -1,6 +1,6 @@
 #include "activitysecrets.h"
 
-#include <jsonutils.h>
+#include <util/jsonutils.h>
 
 QString
 ActivitySecrets::getJoin() {

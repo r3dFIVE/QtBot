@@ -1,6 +1,6 @@
 #include "resume.h"
 
-#include <jsonutils.h>
+#include "util/jsonutils.h"
 
 QString
 Resume::getToken() {
