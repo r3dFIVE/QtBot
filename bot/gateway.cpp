@@ -60,16 +60,22 @@ Gateway::onDisconnected() {
     QMetaEnum metaEnum = QMetaEnum::fromType<GatewayCloseCodes>();
     QString closeReason = metaEnum.valueToKey(closeCode);
 
-    _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
+    _logger->debug(QString("Socket closed with code: %1 %2")
+                   .arg(closeCode).arg(closeReason));
 
-    if (_retryCount++ < _maxRetries) {
+    if (_retryCount++ <= _maxRetries) {
+        QString reconnectString = QString("Reconnect attempt %1/%2.")
+                .arg(_retryCount).arg(_maxRetries);
+
         switch (closeCode) {
         case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
         case QWebSocketProtocol::CloseCodeGoingAway:
             QThread::msleep(5000);
+            _logger->debug(reconnectString);
             _socket->open(_gateway);
             break;
         case QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART):
+            _logger->debug(reconnectString);
             _socket->open(_gateway);
             break;
         default:
