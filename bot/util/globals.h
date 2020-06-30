@@ -6,6 +6,9 @@
 #include "payloads/gatewaypayload.h"
 
 
+static const int MS_FIVE_SECONDS = 5000;
+static const int IMMEDIATE = 0;
+
 /*************************
  * Settings file related *
  *************************/

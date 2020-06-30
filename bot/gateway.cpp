@@ -66,11 +66,10 @@ Gateway::onDisconnected() {
         switch (closeCode) {
         case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
         case QWebSocketProtocol::CloseCodeGoingAway:
-            QThread::msleep(5000);
-            reconnect();
+            reconnect(FIVE_SECONDS_MS);
             break;
         case QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART):
-            reconnect();
+            reconnect(IMMEDIATE);
             break;
         default:
             _logger->warning(QString("Bot has received an unrecoverable close code %1 (%2), shutting down...")
@@ -85,7 +84,8 @@ Gateway::onDisconnected() {
 }
 
 void
-Gateway::reconnect() {
+Gateway::reconnect(int mSleep) {
+    QThread::msleep(mSleep);
     _logger->debug(QString("Reconnect attempt %1/%2.").arg(_retryCount).arg(_maxRetries));
     _socket->open(_gateway);
 }

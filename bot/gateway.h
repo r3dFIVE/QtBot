@@ -109,7 +109,7 @@ private:
     void onBinaryMessageReceived(QByteArray messageArray);
     void onDisconnected();
     void onTextMessageReceived(QString message);
-    void reconnect(int sleep);
+    void reconnect(int mSleep);
     void sendHeartbeat();
     void sendIdentify();
     void sendResume();
