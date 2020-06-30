@@ -66,18 +66,18 @@ Gateway::onDisconnected() {
         switch (closeCode) {
         case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
         case QWebSocketProtocol::CloseCodeGoingAway:
-            reconnect(FIVE_SECONDS_MS);
+            reconnect(MS_FIVE_SECONDS);
             break;
         case QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART):
             reconnect(IMMEDIATE);
             break;
         default:
-            _logger->warning(QString("Bot has received an unrecoverable close code %1 (%2), shutting down...")
+            _logger->fatal(QString("Bot has received an unrecoverable close code %1 (%2), shutting down...")
                     .arg(closeCode).arg(closeReason));
             break;
         }
     } else {
-        _logger->warning(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")
+        _logger->fatal(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")
                 .arg(_maxRetries));
         exit(1);
     }
