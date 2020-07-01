@@ -29,4 +29,5 @@ public:
 };
 
 Q_DECLARE_METATYPE(JsonSerializable*)
+
 #endif // JSONSERIALIZEABLE_H

@@ -35,22 +35,30 @@ Gateway::init() {
         _logger->info("Gateway connection established.");
     });
 
-    connect(_socket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
-        [=](QAbstractSocket::SocketError errorCode) {
-            QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
-            QString errorReason = metaEnum.valueToKey(errorCode);
-            _logger->critical(QString("QSocketError: %1, %2. Shutting down...").arg(errorCode).arg(errorReason));
-            exit(1);
-        }
-    );
-
+    connect(_socket.data(), QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, &Gateway::onSocketError);
     connect(_socket.data(), &QWebSocket::textMessageReceived, this, &Gateway::onTextMessageReceived);
     connect(_socket.data(), &QWebSocket::binaryMessageReceived, this, &Gateway::onBinaryMessageReceived);
     connect(_socket.data(), &QWebSocket::disconnected, this, &Gateway::onDisconnected);
+
     _heartbeatTimer = QSharedPointer<QTimer>( new QTimer(this));
+
     connect(_heartbeatTimer.data(), &QTimer::timeout, this, &Gateway::sendHeartbeat);
 
     _socket->open(_gateway);
+}
+
+void
+Gateway::onSocketError(QAbstractSocket::SocketError errorCode) {
+    QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
+    QString errorReason = metaEnum.valueToKey(errorCode);
+
+    _logger->debug(QString("QSocketError: %1, %2. Shutting down...").arg(errorCode).arg(errorReason));
+
+    if (_retryCount++ <= _maxRetries) {
+        reconnect(MS_FIVE_SECONDS);
+    } else {
+        tooManyReconnects();
+    }
 }
 
 void
@@ -77,10 +85,15 @@ Gateway::onDisconnected() {
             break;
         }
     } else {
-        _logger->fatal(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")
-                .arg(_maxRetries));
-        exit(1);
+        tooManyReconnects();
     }
+}
+
+void
+Gateway::tooManyReconnects() {
+    _logger->fatal(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")
+            .arg(_maxRetries));
+    exit(1);
 }
 
 void

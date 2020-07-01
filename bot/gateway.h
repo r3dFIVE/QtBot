@@ -108,6 +108,8 @@ private:
     void processResumed(QSharedPointer<GatewayPayload::GatewayPayload> payload);
     void onBinaryMessageReceived(QByteArray messageArray);
     void onDisconnected();
+    void tooManyReconnects();
+    void onSocketError(QAbstractSocket::SocketError errorCode);
     void onTextMessageReceived(QString message);
     void reconnect(int mSleep);
     void sendHeartbeat();

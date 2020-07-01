@@ -15,7 +15,7 @@ class Bot : public QObject
     Q_OBJECT
 
     QThread _gatewayThread;
-    QThread _messageServiceThread;
+    QThread _eventHandlerThread;
     Logger* _logger;
 
 public:

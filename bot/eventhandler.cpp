@@ -7,44 +7,34 @@
 #include <QDebug>
 #include <QMap>
 #include <QSqlDatabase>
-#include <QSqlQuery>
 #include <QtSql>
+
+#include <payloads/message.h>
 
 EventHandler::EventHandler(QSharedPointer<Settings> settings)
 {
+    _settings = settings;
+}
 
+
+void
+EventHandler::init() {
+
+    _databaseDriver = QSharedPointer<DatabaseDriver>(new DatabaseDriver(_settings));
+
+
+    _logger = LogFactory::getLogger();
 
     const auto addCommand = [this](auto name, auto lambda) {
-        commands.insert(name, lambda);
+        _commands.insert(name, lambda);
     };
 
-    addCommand(QString(".quote"), [&](const QString &args) -> void {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-        db.setHostName(settings->value(SettingsParam::Database::DATABASE_HOST).toString());
-        db.setDatabaseName("quotes");
-        db.setUserName(settings->value(SettingsParam::Database::DATABASE_USER).toString());
-        db.setPassword(settings->value(SettingsParam::Database::DATABASE_PASSWORD).toString());
-        db.setPort(settings->value(SettingsParam::Database::DATABASE_PORT).toInt());
-        if (!db.open()) {
-            qDebug() << db.lastError();
-        }
+    addCommand(".quote", [&](const Message &message) -> void {
+        _databaseDriver->getQuote(message);
+    });
 
-        QList<QString> arguments = args.simplified().split(" ");
-        QSqlQuery query;
-        if (arguments.size() == 1) {
-            query.prepare("SELECT quote,date,author FROM quotes.quote ORDER BY RAND() LIMIT 1");
-        } else {
-            query.prepare("SELECT quote,date,author FROM quotes.quote WHERE quote LIKE ?");
-            query.bindValue(0, "%" + arguments.at(1) + "%");
-        }
-        query.exec();
-        qDebug() << query.lastQuery();
-        qDebug() << query.size();
-        qDebug() << query.boundValue(0);
-        while (query.next()) {
-            qDebug() << "Quote:" << query.value(0) << " -- Date: "
-                     << query.value(1) << " -- Author: " << query.value(2);
-        }
+    addCommand(".quotenext", [&](const Message &message) -> void {
+        _databaseDriver->nextQuote(message);
     });
 }
 
@@ -69,32 +59,28 @@ EventHandler::parseCommandToken(QString message) {
     }
 }
 
-
-void
-EventHandler::execute(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-
-}
-
 void
 EventHandler::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     QMetaEnum metaEnum = QMetaEnum::fromType<GatewayEvents::Events>();
     int enumValue = metaEnum.keyToValue(payload->t.toUtf8());
-    QString message = payload->d["content"].toString();
+
     QString command;
+    Message message;
+
     switch(enumValue) {
-    case GatewayEvents::MESSAGE_CREATE: {
-        command = parseCommandToken(message);
-        break;
-    default:
-        return;
-    }
-    }
-
-    if (commands.contains(command)) {
-        auto cmd = commands[command];
-        cmd(message);
+        //TODO parse message type
+        case GatewayEvents::MESSAGE_CREATE: {
+            message.fromQJsonObject(payload->d);
+            command = parseCommandToken(message.getContent().toString());
+            break;
+        default:
+            return;
+        }
     }
 
+    if (_commands.contains(command)) {
+        _commands[command](message);
+    }
 }
 
 void

@@ -21,12 +21,13 @@ Bot::run(QSharedPointer<Settings> settings) {
     connect(&_gatewayThread, &QThread::finished, connection, &QObject::deleteLater);
     connect(&_gatewayThread, &QThread::started, connection, &Gateway::init);
 
-    EventHandler *messageHandler = new EventHandler(settings);
-    messageHandler->moveToThread(&_messageServiceThread);
-    connect(&_messageServiceThread, &QThread::finished, messageHandler, &QObject::deleteLater);
-    connect(connection, &Gateway::dispatchEvent, messageHandler, &EventHandler::processEvent);
+    EventHandler *eventHandler = new EventHandler(settings);
+    eventHandler->moveToThread(&_eventHandlerThread);
+    connect(&_eventHandlerThread, &QThread::finished, eventHandler, &QObject::deleteLater);
+    connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
+    connect(connection, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 
-    _messageServiceThread.start();
+    _eventHandlerThread.start();
     _gatewayThread.start();
     _gatewayThread.setPriority(QThread::HighestPriority);
 }
