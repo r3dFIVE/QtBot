@@ -1,6 +1,8 @@
 #include "databasedriver.h"
 #include "util/globals.h"
 
+#include <QRandomGenerator>
+
 
 DatabaseDriver::DatabaseDriver(QSharedPointer<Settings> settings)
 {    
@@ -43,9 +45,24 @@ DatabaseDriver::getQuote(const Message &message) {
 
     _query.exec();
 
-    if (_query.next()) {
+    if (_query.size() > 1) {
+        QRandomGenerator generator;
+
+        generator.seed(QDateTime().currentMSecsSinceEpoch());
+
+        int randomIndex = generator.bounded(_query.size() - 1);
+
+        _query.seek(randomIndex);
+
         postQuery(message);
+
         logQuery();
+
+    } else if (_query.next()) {
+        postQuery(message);
+
+        logQuery();
+
     } else {
         _logger->debug("No quote(s) found...");
     }
