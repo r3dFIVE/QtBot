@@ -200,10 +200,6 @@ Gateway::processReady(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
 
 void
 Gateway::processResumed(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    if (!_heartbeatTimer->isActive()) {
-        _heartbeatTimer->start();
-    }
-
     _logger->info("Gateway connection sucessfully resumed.");
     _retryCount = 0;
 }
@@ -231,6 +227,7 @@ Gateway::processHello(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     Hello helloEvent;
     helloEvent.read(payload->d);
 
+    _heartbeatAck = true;
     _heartbeatTimer->stop();
     _heartbeatTimer->setInterval(*helloEvent.heartbeat_interval);
     _heartbeatTimer->start();
