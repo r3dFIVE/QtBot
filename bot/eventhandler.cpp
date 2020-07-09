@@ -1,6 +1,8 @@
 #include "eventhandler.h"
 #include "util/function.h"
 #include "util/globals.h"
+#include "qml/botscript.h"
+#include "payloads/message.h"
 
 #include <QJsonDocument>
 #include <QMetaEnum>
@@ -9,10 +11,8 @@
 #include <QSqlDatabase>
 #include <QtSql>
 
-#include <payloads/message.h>
 
-EventHandler::EventHandler(QSharedPointer<Settings> settings)
-{
+EventHandler::EventHandler(QSharedPointer<Settings> settings) {
     _settings = settings;
 }
 
@@ -20,22 +20,6 @@ EventHandler::EventHandler(QSharedPointer<Settings> settings)
 void
 EventHandler::init() {
 
-    _databaseDriver = QSharedPointer<DatabaseDriver>(new DatabaseDriver(_settings));
-
-
-    _logger = LogFactory::getLogger();
-
-    const auto addCommand = [this](auto name, auto lambda) {
-        _commands.insert(name, lambda);
-    };
-
-    addCommand(".quote", [&](const Message &message) -> void {
-        _databaseDriver->getQuote(message);
-    });
-
-    addCommand(".quotenext", [&](const Message &message) -> void {
-        _databaseDriver->nextQuote(message);
-    });
 }
 
 QString
@@ -64,22 +48,28 @@ EventHandler::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> pay
     QMetaEnum metaEnum = QMetaEnum::fromType<GatewayEvents::Events>();
     int enumValue = metaEnum.keyToValue(payload->t.toUtf8());
 
-    QString command;
-    Message message;
-
     switch(enumValue) {
         //TODO parse message type
-        case GatewayEvents::MESSAGE_CREATE: {
-            message.fromQJsonObject(payload->d);
-            command = parseCommandToken(message.getContent().toString());
+        case GatewayEvents::MESSAGE_CREATE:
+            processMessageCreate(payload);
             break;
         default:
             return;
-        }
     }
+}
 
-    if (_commands.contains(command)) {
-        _commands[command](message);
+void
+EventHandler::processMessageCreate(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
+    Message message;
+    message.fromQJsonObject(payload->d);
+
+    QString content = message.getContent().toString();
+    QString command = parseCommandToken(message.getContent().toString());
+
+    BotMapping mapping = _scriptRegistrar->getScript(command);
+
+    if (!mapping.first.isEmpty()) {
+        mapping.second->execute(mapping.first.toUtf8(), message);
     }
 }
 
@@ -117,4 +107,9 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payloa
             //Receive	sent immediately following a client heartbeat that was received
             break;
     }
+}
+
+void
+EventHandler::processRegistrar(QSharedPointer<ScriptRegistrar> registrar) {
+    _scriptRegistrar = registrar;
 }

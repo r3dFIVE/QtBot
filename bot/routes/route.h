@@ -12,10 +12,13 @@ class Route : public QObject
 {
     Q_OBJECT
 
-    QSharedPointer<Message> _payload =
-            QSharedPointer<Message>(new Message);
+    QSharedPointer<Message> _payload = QSharedPointer<Message>(new Message);
 
 public:
+
+    Route() {}
+    Route(const Route &other) { Q_UNUSED(other) }
+    ~Route() {}
 
     typedef enum RequestType {
         POST,       // C
@@ -30,6 +33,8 @@ public:
 
     virtual QNetworkRequest request() = 0;
     virtual QByteArray data() = 0;
+
+    static const QString PATH;
 };
 
 Q_DECLARE_METATYPE(Route*)

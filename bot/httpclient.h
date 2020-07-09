@@ -14,12 +14,14 @@ class HttpClient : public QObject
     Q_OBJECT
 
     QString _botToken;
-    QSharedPointer<QNetworkAccessManager> _networkManager;
 
 public:
-    HttpClient(QSharedPointer<Settings> settings);
+    HttpClient(const QString &botToken);
     void post(const Message &message, QString quote);
 signals:
+
+public slots:
+    void processResponse(QNetworkReply *reply);
 
 };
 

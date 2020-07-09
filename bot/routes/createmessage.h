@@ -5,6 +5,7 @@
 
 #include <QObject>
 
+
 class CreateMessage : public Route
 {
     Q_OBJECT
@@ -12,11 +13,15 @@ class CreateMessage : public Route
     Message _message;
 public:
 
+
     virtual QNetworkRequest request() override;
     virtual QByteArray data() override;
+
 
     CreateMessage() {}
     ~CreateMessage() {}
 };
+
+Q_DECLARE_METATYPE(CreateMessage)
 
 #endif // CREATEMESSAGE_H

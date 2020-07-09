@@ -7,6 +7,7 @@
 
 #include "logging/logfactory.h"
 #include "gateway.h"
+#include "qml/scriptfactory.h"
 #include "util/settings.h"
 
 
@@ -17,11 +18,21 @@ class Bot : public QObject
     QThread _gatewayThread;
     QThread _eventHandlerThread;
     Logger* _logger;
+    ScriptFactory *_factory;
 
 public:
     Bot();
+    ~Bot() { delete _factory; }
+    Bot(const Bot &other) { Q_UNUSED(other) }
     void run(QSharedPointer<Settings> settings);
 
+public slots:
+    void loadScripts();
+
+signals:
+    void registrarReady(QSharedPointer<ScriptRegistrar> registrar);
 };
+
+Q_DECLARE_METATYPE(Bot)
 
 #endif // BOT_H
