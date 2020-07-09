@@ -2,7 +2,7 @@
 #define INVALIDSESSION_H
 
 #include "jsonserializable.h"
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 #include <QObject>
 

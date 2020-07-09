@@ -1,6 +1,6 @@
 #include "channelmention.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QJsonValue
 ChannelMention::getId() {
@@ -44,10 +44,10 @@ ChannelMention::setName(QJsonValue name) {
 
 void
 ChannelMention::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ChannelMention::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

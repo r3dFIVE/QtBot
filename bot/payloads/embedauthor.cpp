@@ -1,6 +1,6 @@
 #include "embedauthor.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -45,10 +45,10 @@ EmbedAuthor::setProxyIconUrl(const QJsonValue &value) {
 
 void
 EmbedAuthor::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 EmbedAuthor::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

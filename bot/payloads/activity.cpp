@@ -1,6 +1,6 @@
 #include "activity.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 #include "activitytimestamps.h"
 #include "activityemoji.h"
@@ -57,7 +57,7 @@ Activity::getTimestamps() {
 void
 Activity::setTimestamps(QJsonObject timestamps) {
     this->timestamps = QSharedPointer<ActivityTimestamps>(new ActivityTimestamps);
-    JsonUtils::readFromJson(*this->timestamps, timestamps);
+    SerializationUtils::readFromJson(*this->timestamps, timestamps);
 }
 
 QString
@@ -102,7 +102,7 @@ Activity::getEmoji() {
 void
 Activity::setEmoji(QJsonObject emoji) {
     this->emoji = QSharedPointer<ActivityEmoji>(new ActivityEmoji);
-    JsonUtils::readFromJson(*this->emoji, emoji);
+    SerializationUtils::readFromJson(*this->emoji, emoji);
 }
 
 QJsonObject
@@ -117,7 +117,7 @@ Activity::getParty() {
 void
 Activity::setParty(QJsonObject party) {
     this->party = QSharedPointer<ActivityParty>(new ActivityParty);
-    JsonUtils::readFromJson(*this->party, party);
+    SerializationUtils::readFromJson(*this->party, party);
 }
 
 QJsonObject
@@ -132,7 +132,7 @@ Activity::getAssets() {
 void
 Activity::setAssets(QJsonObject assets) {
     this->assets = QSharedPointer<ActivityAssets>(new ActivityAssets);
-    JsonUtils::readFromJson(*this->assets, assets);
+    SerializationUtils::readFromJson(*this->assets, assets);
 }
 
 QJsonObject
@@ -147,7 +147,7 @@ Activity::getSecrets() {
 void
 Activity::setSecrets(QJsonObject secrets) {
     this->secrets = QSharedPointer<ActivitySecrets>(new ActivitySecrets);
-    JsonUtils::readFromJson(*this->secrets, secrets);
+    SerializationUtils::readFromJson(*this->secrets, secrets);
 }
 
 QJsonValue
@@ -182,7 +182,7 @@ Activity::setFlags(QJsonValue flags) {
 
 void
 Activity::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 /*

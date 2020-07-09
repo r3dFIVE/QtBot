@@ -1,5 +1,5 @@
 #include "guildmember.h"
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QJsonObject
 GuildMember::getUser() {
@@ -14,7 +14,7 @@ void
 GuildMember::setUser(QJsonObject user) {
     if (!user.isEmpty()) {
         this->user = QSharedPointer<User>(new User);
-        JsonUtils::readFromJson(*this->user, user);
+        SerializationUtils::readFromJson(*this->user, user);
     }
 }
 
@@ -90,10 +90,10 @@ GuildMember::setMute(bool mute) {
 
 void
 GuildMember::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 GuildMember::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

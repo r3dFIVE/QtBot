@@ -34,10 +34,10 @@ ActivityTimestamps::setEnd(QJsonValue end) {
 
 void
 ActivityTimestamps::read(const QJsonObject &jsonObject)  {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ActivityTimestamps::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

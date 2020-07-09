@@ -1,6 +1,6 @@
 #include "voicestate.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QString
 VoiceState::getGuildId() {
@@ -45,7 +45,7 @@ void
 VoiceState::setMember(QJsonObject member) {
     if (!member.isEmpty()) {
         this->member = QSharedPointer<GuildMember>(new GuildMember);
-        JsonUtils::readFromJson(*this->member, member);
+        SerializationUtils::readFromJson(*this->member, member);
     }
 }
 
@@ -127,10 +127,10 @@ VoiceState::setSuppress(bool suppress) {
 
 void
 VoiceState::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 VoiceState::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

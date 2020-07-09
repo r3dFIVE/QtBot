@@ -1,6 +1,6 @@
 #include "embed.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 
 QJsonValue
@@ -182,7 +182,7 @@ Embed::setFields(const QJsonArray &values) {
     for (QJsonValue value : values) {
         if (!value.isNull()) {
             QSharedPointer<EmbedField> field = QSharedPointer<EmbedField>(new EmbedField);
-            JsonUtils::readFromJson(*field, value.toObject());
+            SerializationUtils::readFromJson(*field, value.toObject());
             fields.push_back(field);
         }
     }
@@ -190,11 +190,11 @@ Embed::setFields(const QJsonArray &values) {
 
 void
 Embed::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Embed::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }
 

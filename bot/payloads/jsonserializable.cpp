@@ -1,6 +1,6 @@
 #include "jsonserializable.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonObject

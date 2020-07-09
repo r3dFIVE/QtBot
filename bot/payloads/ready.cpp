@@ -1,6 +1,6 @@
 #include "ready.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 int
 Ready::getV() {
@@ -89,10 +89,10 @@ Ready::setShard(QJsonArray shard) {
 
 void
 Ready::read(const QJsonObject &jsonObject)  {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Ready::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

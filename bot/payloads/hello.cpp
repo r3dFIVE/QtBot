@@ -1,6 +1,6 @@
 #include "hello.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QJsonValue
 Hello::getHeartbeatInterval() {
@@ -25,9 +25,9 @@ Hello::setHeartbeatInterval(QJsonValue interval) {
 
 void
 Hello::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 void
 Hello::write(QJsonObject &jsonObject)  {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

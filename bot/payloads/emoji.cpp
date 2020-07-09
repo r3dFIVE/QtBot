@@ -1,6 +1,6 @@
 #include "emoji.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QString
 Emoji::getId() {
@@ -51,7 +51,7 @@ void
 Emoji::setUser(QJsonObject user) {
     if (!user.isEmpty()) {
         this->user = QSharedPointer<User>(new User);
-        JsonUtils::readFromJson(*this->user, user);
+        SerializationUtils::readFromJson(*this->user, user);
     }
 }
 
@@ -121,10 +121,10 @@ Emoji::setAvailable(QJsonValue available) {
 
 void
 Emoji::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Emoji::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

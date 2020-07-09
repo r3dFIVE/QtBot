@@ -1,6 +1,6 @@
 #include "permissionoverwrite.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QString
 PermissionOverwrite::getId() {
@@ -44,10 +44,10 @@ PermissionOverwrite::setDeny(int deny) {
 
 void
 PermissionOverwrite::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 PermissionOverwrite::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

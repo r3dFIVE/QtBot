@@ -5,6 +5,10 @@
 #include <QMetaEnum>
 #include <QObject>
 
+#include <routes/createmessage.h>
+
+#include <qml/botscript.h>
+
 #include "bot.h"
 
 

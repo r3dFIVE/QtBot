@@ -1,11 +1,10 @@
-QT += websockets sql
+QT += websockets sql qml
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
 
 HEADERS += \
-    $$PWD/databasedriver.h \
     $$PWD/httpclient.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
@@ -57,21 +56,26 @@ HEADERS += \
     $$PWD/payloads/updatestatus.h \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
+    $$PWD/qml/botscript.h \
+    $$PWD/qml/bsqldatabase.h \
+    $$PWD/qml/commandregistrar.h \
+    $$PWD/qml/eventcontext.h \
+    $$PWD/qml/registrarfactory.h \
     $$PWD/routes/createmessage.h \
     $$PWD/routes/route.h \
-    $$PWD/util/function.h \
+    $$PWD/util/corecommand.h \
+    $$PWD/util/corecommands.h \
+    $$PWD/util/icommand.h \
+    $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
-    $$PWD/util/commandregistry.h \
     $$PWD/util/globals.h \
-    $$PWD/util/lockingdeque.h \
-    $$PWD/util/jsonutils.h
+    $$PWD/util/lockingdeque.h
 
 DISTFILES += \
     $$PWD/settings.ini
 
 SOURCES += \
     $$PWD/bot.cpp \
-    $$PWD/databasedriver.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
     $$PWD/httpclient.cpp \
@@ -119,7 +123,11 @@ SOURCES += \
     $$PWD/payloads/updatestatus.cpp \
     $$PWD/payloads/user.cpp \
     $$PWD/payloads/voicestate.cpp \
+    $$PWD/qml/botscript.cpp \
+    $$PWD/qml/bsqldatabase.cpp \
+    $$PWD/qml/commandregistrar.cpp \
+    $$PWD/qml/eventcontext.cpp \
+    $$PWD/qml/registrarfactory.cpp \
     $$PWD/routes/createmessage.cpp \
-    $$PWD/util/jsonutils.cpp \
-    $$PWD/util/settings.cpp \
-    $$PWD/util/commandregistry.cpp
+    $$PWD/util/serializationutils.cpp \
+    $$PWD/util/settings.cpp

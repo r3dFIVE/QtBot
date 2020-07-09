@@ -1,6 +1,6 @@
 #include "presenceupdate.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QJsonObject
 PresenceUpdate::getUser() {
@@ -15,7 +15,7 @@ void
 PresenceUpdate::setUser(QJsonObject user) {
     if (!user.isEmpty()) {
         this->user = QSharedPointer<User>(new User);
-        JsonUtils::readFromJson(*this->user, user);
+        SerializationUtils::readFromJson(*this->user, user);
     }
 }
 
@@ -48,7 +48,7 @@ void
 PresenceUpdate::setGame(QJsonObject game) {
     if (!game.isEmpty()) {
         this->game = QSharedPointer<Activity>(new Activity);
-        JsonUtils::readFromJson(*this->game, game);
+        SerializationUtils::readFromJson(*this->game, game);
     }
 }
 
@@ -103,7 +103,7 @@ void
 PresenceUpdate::setClientStatus(QJsonObject client_status) {
     if (!client_status.isEmpty()) {
         this->client_status = QSharedPointer<ClientStatus>(new ClientStatus);
-        JsonUtils::readFromJson(*this->client_status, client_status);
+        SerializationUtils::readFromJson(*this->client_status, client_status);
     }
 }
 
@@ -129,7 +129,7 @@ PresenceUpdate::setNick(QString nick) {
 
 void
 PresenceUpdate::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 
     if (!jsonObject.contains(GAME)) {
         jsonObject[GAME] = QJsonValue::Null;
@@ -138,6 +138,6 @@ PresenceUpdate::write(QJsonObject &jsonObject) {
 
 void
 PresenceUpdate::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 

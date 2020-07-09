@@ -1,6 +1,6 @@
 #include "reaction.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -36,17 +36,17 @@ void
 Reaction::setEmoji(const QJsonObject &value) {
     if (!value.isEmpty()) {
         emoji = QSharedPointer<Emoji>(new Emoji);
-        JsonUtils::readFromJson(*emoji, value);
+        SerializationUtils::readFromJson(*emoji, value);
     }
 }
 
 void
 Reaction::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Reaction::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }
 

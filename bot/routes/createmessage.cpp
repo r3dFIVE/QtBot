@@ -1,5 +1,6 @@
 #include "createmessage.h"
 
+const QString Route::PATH = "/channels/{channel.id}/messages";
 
 QNetworkRequest
 CreateMessage::request() {
@@ -9,7 +10,6 @@ CreateMessage::request() {
 
 
 QByteArray
-CreateMessage::data()
-{
+CreateMessage::data() {
     return _message.toByteArray();
 }

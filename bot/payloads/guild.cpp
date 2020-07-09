@@ -1,6 +1,6 @@
 #include "guild.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 class Emoji;
 class PresenceUpdate;
@@ -196,7 +196,7 @@ void
 Guild::setRoles(QJsonArray roles) {
     for (QJsonValue jsonValue : roles) {
         Role role;
-        JsonUtils::readFromJson(role, jsonValue.toObject());
+        SerializationUtils::readFromJson(role, jsonValue.toObject());
         this->roles.push_back(role);
     }
 }
@@ -214,7 +214,7 @@ void
 Guild::setEmojis(QJsonArray emojis) {
     for (QJsonValue jsonValue : emojis) {
         QSharedPointer<Emoji> emoji = QSharedPointer<Emoji>(new Emoji);
-        JsonUtils::readFromJson(*emoji, jsonValue.toObject());
+        SerializationUtils::readFromJson(*emoji, jsonValue.toObject());
         this->emojis.push_back(emoji);
     }
 }
@@ -388,7 +388,7 @@ void
 Guild::setVoiceStates(QJsonArray voice_states) {
     for (QJsonValue jsonValue : voice_states) {
         VoiceState voiceState;
-        JsonUtils::readFromJson(voiceState, jsonValue.toObject());
+        SerializationUtils::readFromJson(voiceState, jsonValue.toObject());
         this->voice_states.push_back(voiceState);
     }
 }
@@ -406,7 +406,7 @@ void
 Guild::setMembers(QJsonArray members) {
     for (QJsonValue jsonValue : members) {
         GuildMember guildMember;
-        JsonUtils::readFromJson(guildMember, jsonValue.toObject());
+        SerializationUtils::readFromJson(guildMember, jsonValue.toObject());
         this->members.push_back(guildMember);
     }
 }
@@ -424,7 +424,7 @@ void
 Guild::setChannels(QJsonArray channels) {
     for (QJsonValue jsonValue : channels) {
         Channel channel;
-        JsonUtils::readFromJson(channel, jsonValue.toObject());
+        SerializationUtils::readFromJson(channel, jsonValue.toObject());
         this->channels.push_back(channel);
     }
 }
@@ -442,7 +442,7 @@ void
 Guild::setPresences(QJsonArray presences) {
     for (QJsonValue jsonValue : presences) {
         QSharedPointer<PresenceUpdate> presenceUpdate = QSharedPointer<PresenceUpdate>();
-        JsonUtils::readFromJson(*presenceUpdate, jsonValue.toObject());
+        SerializationUtils::readFromJson(*presenceUpdate, jsonValue.toObject());
         this->presences.push_back(presenceUpdate);
     }
 }
@@ -605,10 +605,10 @@ Guild::setApproximatePresenceCount(QJsonValue approximate_presence_count) {
 
 void
 Guild::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Guild::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

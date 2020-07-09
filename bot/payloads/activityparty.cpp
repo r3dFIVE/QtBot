@@ -1,6 +1,6 @@
 #include "activityparty.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QString
 ActivityParty::getId() {
@@ -31,10 +31,10 @@ ActivityParty::setSize(QJsonArray size) {
 
 void
 ActivityParty::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ActivityParty::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

@@ -1,6 +1,6 @@
 #include "clientstatus.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QString
 ClientStatus::getDesktop() {
@@ -34,11 +34,11 @@ ClientStatus::setWeb(QString web) {
 
 void
 ClientStatus::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ClientStatus::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }
 

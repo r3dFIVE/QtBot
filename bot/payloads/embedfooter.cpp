@@ -1,6 +1,6 @@
 #include "embedfooter.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QJsonValue
 EmbedFooter::getText() const {
@@ -36,11 +36,11 @@ EmbedFooter::setProxyIconUrl(const QJsonValue &value) {
 
 void
 EmbedFooter::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 EmbedFooter::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 
 }
