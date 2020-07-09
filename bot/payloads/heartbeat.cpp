@@ -1,6 +1,6 @@
 #include "heartbeat.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 int
 Heartbeat::getD() {
@@ -19,7 +19,7 @@ Heartbeat::getOp() {
 
 void
 Heartbeat::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void

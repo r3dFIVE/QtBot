@@ -1,6 +1,6 @@
 #include "activitysecrets.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QString
 ActivitySecrets::getJoin() {
@@ -34,10 +34,10 @@ ActivitySecrets::setMatch(QString match) {
 
 void
 ActivitySecrets::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ActivitySecrets::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

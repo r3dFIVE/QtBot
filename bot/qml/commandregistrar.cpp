@@ -1,20 +1,20 @@
-#include "scriptregistrar.h"
+#include "commandregistrar.h"
 
-ScriptRegistrar::ScriptRegistrar(QObject *parent) : QObject(parent)
+CommandRegistrar::CommandRegistrar(QObject *parent) : QObject(parent)
 {
 
 }
 
 void
-ScriptRegistrar::setRegistry(const QMap<QString, QPair<QString, QSharedPointer<BotScript> > > &registry) {
+CommandRegistrar::setRegistry(const QMap<QString, QPair<QString, QSharedPointer<ICommand> > > &registry) {
     _registry = registry;
 }
 
-BotMapping
-ScriptRegistrar::getScript(const QString &command) {
+ICommand::CommandMapping
+CommandRegistrar::getCommand(const QString &command) {
     if (_registry.contains(command)) {
         return _registry[command];
     } else {
-        return QPair<QString, QSharedPointer<BotScript>>();
+        return QPair<QString, QSharedPointer<ICommand>>();
     }
 }

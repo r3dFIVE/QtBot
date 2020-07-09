@@ -1,6 +1,6 @@
 #include "role.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QString
 Role::getId() {
@@ -84,10 +84,10 @@ Role::setMentionable(bool mentionable) {
 
 void
 Role::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Role::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

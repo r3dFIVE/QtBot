@@ -9,7 +9,9 @@
 #include <QVariantMap>
 #include <httpclient.h>
 
-class BotScript : public QObject
+#include <util/icommand.h>
+
+class BotScript : public QObject, public ICommand
 {
     Q_OBJECT
 
@@ -44,7 +46,7 @@ public:
 
     QString findMapping(const QString &command) const;
 
-    void execute(const QByteArray &command, const Message &message);
+    void execute(const QByteArray &command, const Message &message) override;
 };
 
 Q_DECLARE_METATYPE(BotScript)

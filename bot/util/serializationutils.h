@@ -1,11 +1,11 @@
-#ifndef JSONUTILS_H
-#define JSONUTILS_H
+#ifndef SERIALIZATIONUTILS_H
+#define SERIALIZATIONUTILS_H
 
 #include "logging/logfactory.h"
 #include "payloads/jsonserializable.h"
 #include <QMetaProperty>
 
-struct JsonUtils
+struct SerializationUtils
 {
     static void readFromJson(QObject &target, const QJsonObject &source);
     static void writeToJson(const QObject &source, QJsonObject &target);
@@ -21,4 +21,4 @@ struct JsonUtils
     static void fromVariant(QObject &target, const QVariant &source);
 };
 
-#endif // JSONUTILS_H
+#endif // SERIALIZATIONUTILS_H

@@ -47,6 +47,7 @@ Settings::isComment(QString line) {
 void
 Settings::validateSettings() {
     validateConnectionSettings();
+    validateScriptSettings();
     validateDatabaseSettings();
     validateLoggingSettings();
 }
@@ -65,6 +66,13 @@ Settings::validateConnectionSettings() {
     int max_retries = _settings[SettingsParam::Connection::MAX_RETRIES].toInt();
     if (max_retries <= 0) {
         _settings[SettingsParam::Connection::MAX_RETRIES] = 10;
+    }
+}
+
+void
+Settings::validateScriptSettings() {
+    if (_settings[SettingsParam::Script::SCRIPT_DIRECTORY].toString().isEmpty()) {
+        _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "/scripts";
     }
 }
 

@@ -1,6 +1,6 @@
 #include "resume.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QString
 Resume::getToken() {
@@ -34,10 +34,10 @@ Resume::setSeq(int seq) {
 
 void
 Resume::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Resume::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

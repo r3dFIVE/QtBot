@@ -1,6 +1,6 @@
 #include "embedvideo.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -35,10 +35,10 @@ EmbedVideo::setWidth(const QJsonValue &value) {
 
 void
 EmbedVideo::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 EmbedVideo::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

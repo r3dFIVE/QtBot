@@ -29,14 +29,9 @@ HttpClient::post(const Message &message, QString quote) {
     payload.setContent(quote);
 
 
-
-
-
     QNetworkReply *reply = networkMananger.post(request, payload.toByteArray());
 
     QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
-
-    qDebug() << reply->readAll();
 }

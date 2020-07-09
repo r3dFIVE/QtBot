@@ -18,6 +18,7 @@ class HttpClient : public QObject
 public:
     HttpClient(const QString &botToken);
     void post(const Message &message, QString quote);
+
 signals:
 
 public slots:

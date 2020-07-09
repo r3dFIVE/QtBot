@@ -1,6 +1,6 @@
 #include "qml/botscript.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 #include <payloads/jsonserializable.h>
 #include <payloads/message.h>
@@ -56,7 +56,7 @@ BotScript::execute(const QByteArray &command, const Message &message) {
                               Q_ARG(QVariant, args));
 
     Message returned;
-    JsonUtils::fromVariant(returned, returnValue);
+    SerializationUtils::fromVariant(returned, returnValue);
     returned.setChannelId(message.getChannelId());
 
     LogFactory::getLogger()->debug(returned.content.toString());

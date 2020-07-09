@@ -1,6 +1,6 @@
 #include "activityassets.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QString
 ActivityAssets::getLargeText() {
@@ -43,10 +43,10 @@ ActivityAssets::setLargeImage(QString &value) {
 
 void
 ActivityAssets::read(const QJsonObject &jsonObject)  {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ActivityAssets::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

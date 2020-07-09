@@ -1,6 +1,6 @@
 #include "message.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -46,7 +46,7 @@ void
 Message::setAuthor(const QJsonObject &value) {
     if (!value.isEmpty()) {
         author = QSharedPointer<User>(new User);
-        JsonUtils::readFromJson(*author, value);
+        SerializationUtils::readFromJson(*author, value);
     }
 }
 
@@ -63,7 +63,7 @@ void
 Message::setMember(const QJsonObject &value) {
     if (!value.isEmpty()) {
         member = QSharedPointer<GuildMember>(new GuildMember);
-        JsonUtils::readFromJson(*member, value);
+        SerializationUtils::readFromJson(*member, value);
     }
 }
 
@@ -133,7 +133,7 @@ Message::setMentions(const QJsonArray &values) {
     for (QJsonValue value : values) {
         if (!value.isNull()) {
             QSharedPointer<User> mention = QSharedPointer<User>(new User);
-            JsonUtils::readFromJson(*mention, value.toObject());
+            SerializationUtils::readFromJson(*mention, value.toObject());
             mentions.push_back(mention);
         }
     }
@@ -171,7 +171,7 @@ Message::setMentionChannels(const QJsonArray &values) {
     for (QJsonValue value : values) {
         if (!value.isNull()) {
             QSharedPointer<ChannelMention> channel = QSharedPointer<ChannelMention>(new ChannelMention);
-            JsonUtils::readFromJson(*channel, value.toObject());
+            SerializationUtils::readFromJson(*channel, value.toObject());
             mention_channels.push_back(channel);
         }
     }
@@ -193,7 +193,7 @@ Message::setAttachments(const QJsonArray &values) {
     for (QJsonValue value : values) {
         if (!value.isNull()) {
             QSharedPointer<Attachment> attachment = QSharedPointer<Attachment>(new Attachment);
-            JsonUtils::readFromJson(*attachment, value.toObject());
+            SerializationUtils::readFromJson(*attachment, value.toObject());
             attachments.push_back(attachment);
         }
     }
@@ -215,7 +215,7 @@ Message::setEmbeds(const QJsonArray &values) {
     for (QJsonValue value : values) {
         if (!value.isNull()) {
             QSharedPointer<Embed> embed = QSharedPointer<Embed>(new Embed);
-            JsonUtils::readFromJson(*embed, value.toObject());
+            SerializationUtils::readFromJson(*embed, value.toObject());
             embeds.push_back(embed);
         }
     }
@@ -237,7 +237,7 @@ Message::setReactions(const QJsonArray &values) {
     for (QJsonValue value : values) {
         if (!value.isNull()) {
             QSharedPointer<Reaction> reaction = QSharedPointer<Reaction>(new Reaction);
-            JsonUtils::readFromJson(*reaction, value.toObject());
+            SerializationUtils::readFromJson(*reaction, value.toObject());
             reactions.push_back(reaction);
         }
     }
@@ -296,7 +296,7 @@ void
 Message::setActivity(const QJsonObject &value) {
     if (!value.isEmpty()) {
         activity = QSharedPointer<MessageActivity>(new MessageActivity);
-        JsonUtils::readFromJson(*activity, value);
+        SerializationUtils::readFromJson(*activity, value);
     }
 }
 
@@ -313,7 +313,7 @@ void
 Message::setApplication(const QJsonObject &value) {
     if (!value.isEmpty()) {
         application = QSharedPointer<MessageApplication>(new MessageApplication);
-        JsonUtils::readFromJson(*application, value);
+        SerializationUtils::readFromJson(*application, value);
     }
 }
 
@@ -330,7 +330,7 @@ void
 Message::setMessageReference(const QJsonObject &value) {
     if (!value.isEmpty()) {
         message_reference = QSharedPointer<MessageReference>(new MessageReference);
-        JsonUtils::readFromJson(*message_reference, value);
+        SerializationUtils::readFromJson(*message_reference, value);
     }
 }
 
@@ -346,10 +346,10 @@ Message::setFlags(const QJsonValue &value) {
 
 void
 Message::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Message::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

@@ -1,30 +1,29 @@
-#ifndef SCRIPTREGISTRAR_H
-#define SCRIPTREGISTRAR_H
+#ifndef COMMANDREGISTRAR_H
+#define COMMANDREGISTRAR_H
 
-#include "botscript.h"
+#include "util/icommand.h"
 
 #include <QObject>
 #include <QSharedPointer>
 
-typedef QPair<QString, QSharedPointer<BotScript>> BotMapping;
 
-class ScriptRegistrar : public QObject
+class CommandRegistrar : public QObject
 {
     Q_OBJECT
 
-    QMap<QString, QPair<QString, QSharedPointer<BotScript>>> _registry;
+    QMap<QString, ICommand::CommandMapping> _registry;
 
 public:
-    explicit ScriptRegistrar(QObject *parent = nullptr);
-    ~ScriptRegistrar() {}
-    ScriptRegistrar(const ScriptRegistrar &other) { Q_UNUSED(other)}
+    explicit CommandRegistrar(QObject *parent = nullptr);
+    ~CommandRegistrar() {}
+    CommandRegistrar(const CommandRegistrar &other) { Q_UNUSED(other)}
 
-    void setRegistry(const QMap<QString, QPair<QString, QSharedPointer<BotScript>>> &registry);
+    void setRegistry(const QMap<QString, QPair<QString, QSharedPointer<ICommand>>> &registry);
 
-    QPair<QString, QSharedPointer<BotScript> > getScript(const QString &command);
+    QPair<QString, QSharedPointer<ICommand> > getCommand(const QString &command);
 
 };
 
-Q_DECLARE_METATYPE(ScriptRegistrar)
+Q_DECLARE_METATYPE(CommandRegistrar)
 
 #endif // SCRIPTREGISTRAR_H

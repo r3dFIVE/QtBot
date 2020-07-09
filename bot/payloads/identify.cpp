@@ -1,6 +1,6 @@
 #include "identify.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QString
 Identify::getToken() {
@@ -25,7 +25,7 @@ void
 Identify::setProperties(QJsonObject properties) {
     if (!properties.isEmpty()) {
         this->properties = QSharedPointer<IdentifyProperties>(new IdentifyProperties);
-        JsonUtils::readFromJson(*this->properties, properties);
+        SerializationUtils::readFromJson(*this->properties, properties);
     }
 }
 
@@ -92,7 +92,7 @@ Identify::setPresence(QJsonObject presence) {
     if (!this->presence) {
         this->presence = QSharedPointer<UpdateStatus>(new UpdateStatus);
     }
-    JsonUtils::readFromJson(*this->presence, presence);
+    SerializationUtils::readFromJson(*this->presence, presence);
 }
 
 QJsonValue
@@ -129,10 +129,10 @@ Identify::setIntents(QJsonValue intents) {
 
 void
 Identify::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 Identify::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

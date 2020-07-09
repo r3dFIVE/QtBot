@@ -1,6 +1,6 @@
 #include "messagereference.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -34,10 +34,10 @@ MessageReference::setGuildId(const QJsonValue &value) {
 
 void
 MessageReference::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 MessageReference::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

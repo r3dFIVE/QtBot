@@ -1,5 +1,5 @@
 #include "eventhandler.h"
-#include "util/function.h"
+#include "util/corecommand.h"
 #include "util/globals.h"
 #include "qml/botscript.h"
 #include "payloads/message.h"
@@ -63,10 +63,9 @@ EventHandler::processMessageCreate(QSharedPointer<GatewayPayload::GatewayPayload
     Message message;
     message.fromQJsonObject(payload->d);
 
-    QString content = message.getContent().toString();
     QString command = parseCommandToken(message.getContent().toString());
 
-    BotMapping mapping = _scriptRegistrar->getScript(command);
+    ICommand::CommandMapping mapping = _scriptRegistrar->getCommand(command);
 
     if (!mapping.first.isEmpty()) {
         mapping.second->execute(mapping.first.toUtf8(), message);
@@ -110,6 +109,6 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payloa
 }
 
 void
-EventHandler::processRegistrar(QSharedPointer<ScriptRegistrar> registrar) {
+EventHandler::processRegistrar(QSharedPointer<CommandRegistrar> registrar) {
     _scriptRegistrar = registrar;
 }

@@ -1,6 +1,6 @@
 #include "embedthumbnail.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -45,10 +45,10 @@ EmbedThumbnail::setWidth(const QJsonValue &value) {
 
 void
 EmbedThumbnail::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 EmbedThumbnail::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

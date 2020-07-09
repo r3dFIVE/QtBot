@@ -1,6 +1,6 @@
 #include "updatestatus.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QJsonValue
 UpdateStatus::getSince() {
@@ -30,7 +30,7 @@ UpdateStatus::getGame() {
 void
 UpdateStatus::setGame(QJsonObject game) {
     this->game = QSharedPointer<Activity>(new Activity);
-    JsonUtils::readFromJson(*this->game, game);
+    SerializationUtils::readFromJson(*this->game, game);
 }
 
 QString
@@ -55,12 +55,12 @@ UpdateStatus::setAfk(bool afk) {
 
 void
 UpdateStatus::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 UpdateStatus::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 
     if (!jsonObject.contains(SINCE)) {
         jsonObject[SINCE] = QJsonValue::Null;

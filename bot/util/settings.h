@@ -17,10 +17,11 @@ private:
 
     void parseSettingsFile();
     void validateSettings();
-    void validateConnectionSettings();
+    void validateConnectionSettings();    
     void validateDatabaseSettings();
     void validateLoggingSettings();
     void validateLogLevel(QString property, QString logLevel);
+    void validateScriptSettings();
     void invalidDatabaseProperty [[ noreturn ]] (QString databaseType, QString propertyName);
     void invalidEnumValue [[ noreturn ]] (QString property, QString value, QMetaEnum metaEnum);
     bool isComment(QString);

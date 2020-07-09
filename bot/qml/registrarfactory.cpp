@@ -1,10 +1,11 @@
 #include "qml/botscript.h"
 #include "qml/bsqldatabase.h"
-#include "scriptfactory.h"
-#include "scriptregistrar.h"
+#include "registrarfactory.h"
+#include "commandregistrar.h"
+#include "util/corecommands.h"
 
 #include "payloads/message.h"
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 #include <QDir>
 #include <QFile>
@@ -15,18 +16,16 @@
 #include <QVariant>
 
 
-const QString ScriptFactory::BOT_IMPORT_IDENTIFIER = "BotApi";
-const QString ScriptFactory::BOT_API_MAJOR_VERSION = "0";
-const QString ScriptFactory::BOT_API_MINOR_VERSION = "1";
-const QString ScriptFactory::BOT_TYPE_IDENTIFIER = "BotScript";
+const QString RegistrarFactory::BOT_IMPORT_IDENTIFIER = "BotApi";
+const QString RegistrarFactory::BOT_API_MAJOR_VERSION = "0";
+const QString RegistrarFactory::BOT_API_MINOR_VERSION = "1";
+const QString RegistrarFactory::BOT_TYPE_IDENTIFIER = "BotScript";
 
 
 void
-ScriptFactory::initEngine() {
+RegistrarFactory::initEngine() {
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(), BOT_API_MAJOR_VERSION.toInt(),
                                BOT_API_MINOR_VERSION.toInt(), BOT_TYPE_IDENTIFIER.toUtf8());
-
-
 
     QJSValue bsqlDatabase = _engine.newQMetaObject(&BSqlDatabase::staticMetaObject);
 
@@ -36,13 +35,17 @@ ScriptFactory::initEngine() {
 }
 
 
-QSharedPointer<ScriptRegistrar>
-ScriptFactory::buildRegistrar() {
+QSharedPointer<CommandRegistrar>
+RegistrarFactory::buildRegistrar(Bot &bot) {
     _registry.clear();
+
+    _registeredScriptNames.clear();
+
+    loadCoreCommands(bot);
 
     loadScripts(_scriptDir);
 
-    QSharedPointer<ScriptRegistrar> registrar(new ScriptRegistrar);
+    QSharedPointer<CommandRegistrar> registrar(new CommandRegistrar);
 
     registrar->setRegistry(_registry);
 
@@ -50,7 +53,18 @@ ScriptFactory::buildRegistrar() {
 }
 
 void
-ScriptFactory::loadScripts(const QString &scriptDir) {
+RegistrarFactory::loadCoreCommands(Bot &bot) {
+    QMap<QString, ICommand::CommandMapping > coreCommands = CoreCommands::buildCommands(bot);
+
+    for (QString commandName : coreCommands.keys()) {
+        _coreCommandNames << commandName;
+    }
+
+    _registry.insert(coreCommands);
+}
+
+void
+RegistrarFactory::loadScripts(const QString &scriptDir) {    
     QDir directory(scriptDir);
     QStringList scripts = directory.entryList(QStringList() << "*.*", QDir::Files);
 
@@ -64,11 +78,10 @@ ScriptFactory::loadScripts(const QString &scriptDir) {
 }
 
 void
-ScriptFactory::loadScriptComponent(const QString &fileName) {
+RegistrarFactory::loadScriptComponent(const QString &fileName) {
+    _engine.clearComponentCache();
 
-
-
-    QQmlComponent comp(&_engine, "C:\\workspace\\scripts\\BotScript.qml");
+    QQmlComponent comp(&_engine, fileName);
 
     if (comp.errors().size() > 0) {
         qDebug() << comp.errors();
@@ -87,29 +100,39 @@ ScriptFactory::loadScriptComponent(const QString &fileName) {
 
     QString scriptName = botScript->name();
 
-    if (_registeredNames.contains(botScript->name())) {
+    if (_registeredScriptNames.contains(botScript->name())) {
         QFileInfo info(fileName);
         qDebug() << QString("%1 already registered. Please update name property for %2 and reload.")
                     .arg(botScript->name()).arg(info.fileName());
     }
 
     for (QString command : botScript->commands().keys()) {
-        if (_registry.contains(command)) {
+        bool namingConflict = true;
+
+        if (_coreCommandNames.contains(command)) {
+            qDebug() << QString("Commmand \"%1\" already registered as a core bot command.")
+                        .arg(command);
+        } else if (_registry.contains(command)) {
             QString existingScript = _registry[command].first;
 
             qDebug() << QString("Commmand \"%1\" already registered to bot script named: %2")
                         .arg(command).arg(existingScript);
-            qDebug() << QString("You must rename \"%1\" before it will be enabled.");
         } else {
             QString mapping = botScript->findMapping(command);
             _registry[command] = qMakePair(mapping, botScript);
-            _registeredNames << scriptName;
+            _registeredScriptNames << scriptName;
+            namingConflict = false;
+        }
+
+        if (namingConflict) {
+            qDebug() << QString("You must rename \"%1\" in %2 before it will be enabled.")
+                        .arg(command).arg(fileName);
         }
     }
 }
 
 bool
-ScriptFactory::isBotScript(const QString &fileName) {
+RegistrarFactory::isBotScript(const QString &fileName) {
     QFile scriptCandidate(fileName);
 
     if(!scriptCandidate.open(QIODevice::ReadOnly | QIODevice::Text)) {

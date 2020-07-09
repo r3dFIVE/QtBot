@@ -1,6 +1,6 @@
 #include "user.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 QString
 User::getId() {
@@ -176,10 +176,10 @@ User::setPublicFlags(QJsonValue public_flags) {
 
 void
 User::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 User::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

@@ -1,6 +1,6 @@
 #include "activityemoji.h"
 
-#include <util/jsonutils.h>
+#include <util/serializationutils.h>
 
 QString
 ActivityEmoji::getName() {
@@ -39,10 +39,10 @@ ActivityEmoji::setAnimated(QJsonValue animated) {
 
 void
 ActivityEmoji::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 ActivityEmoji::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

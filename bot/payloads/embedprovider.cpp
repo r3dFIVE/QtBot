@@ -1,6 +1,6 @@
 #include "embedprovider.h"
 
-#include "util/jsonutils.h"
+#include "util/serializationutils.h"
 
 
 QJsonValue
@@ -25,10 +25,10 @@ EmbedProvider::setName(const QJsonValue &value) {
 
 void
 EmbedProvider::read(const QJsonObject &jsonObject) {
-    JsonUtils::readFromJson(*this, jsonObject);
+    SerializationUtils::readFromJson(*this, jsonObject);
 }
 
 void
 EmbedProvider::write(QJsonObject &jsonObject) {
-    JsonUtils::writeToJson(*this, jsonObject);
+    SerializationUtils::writeToJson(*this, jsonObject);
 }

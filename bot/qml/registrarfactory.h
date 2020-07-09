@@ -3,13 +3,16 @@
 
 #include "qml/botscript.h"
 #include "logging/logfactory.h"
-#include "scriptregistrar.h"
+#include "commandregistrar.h"
+#include "bot.h"
 
 #include <QObject>
 #include <QVariantMap>
 #include <QQmlApplicationEngine>
 
-class ScriptFactory : public QObject
+class Bot;
+
+class RegistrarFactory : public QObject
 {
     Q_OBJECT
 
@@ -20,25 +23,28 @@ class ScriptFactory : public QObject
 
     QQmlApplicationEngine _engine;
 
+    QStringList _coreCommandNames;
+    QSet<QString> _registeredScriptNames;
+    QMap<QString, QPair<QString, QSharedPointer<ICommand>>> _registry;
     QMap<QString, QString> _scriptNameByCommand;
-    QSet<QString> _registeredNames;
-    QMap<QString, QPair<QString, QSharedPointer<BotScript>>> _registry;
 
     bool isBotScript(const QString &fileName);
     void initEngine();
+    void loadCoreCommands(Bot &bot);
     void loadScripts(const QString &scriptDir);
     void loadScriptComponent(const QString &fileName);
 
 
 public:
-    ScriptFactory() { initEngine(); }
-    ScriptFactory(const QString &botToken, const QString &scriptDir) {
+    RegistrarFactory() { initEngine(); }
+    RegistrarFactory(const QString &botToken, const QString &scriptDir) {
         _botToken = botToken;
         _scriptDir = scriptDir;
         initEngine();
     }
-    ScriptFactory(const ScriptFactory &other) { Q_UNUSED(other) }
-    ~ScriptFactory() {}
+    RegistrarFactory(const RegistrarFactory &other) { Q_UNUSED(other) }
+    ~RegistrarFactory() {}
+
     const static QString BOT_IMPORT_IDENTIFIER;
     const static QString BOT_TYPE_IDENTIFIER;
     const static QString BOT_API_MINOR_VERSION;
@@ -46,9 +52,9 @@ public:
 
     void init(const QString &botToken, const QString &scriptDir = "./scripts");
 
-    QSharedPointer<ScriptRegistrar> buildRegistrar();
+    QSharedPointer<CommandRegistrar> buildRegistrar(Bot &bot);
 };
 
-Q_DECLARE_METATYPE(ScriptFactory)
+Q_DECLARE_METATYPE(RegistrarFactory)
 
 #endif // SCRIPT_H

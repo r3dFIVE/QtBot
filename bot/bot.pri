@@ -58,16 +58,18 @@ HEADERS += \
     $$PWD/payloads/voicestate.h \
     $$PWD/qml/botscript.h \
     $$PWD/qml/bsqldatabase.h \
+    $$PWD/qml/commandregistrar.h \
     $$PWD/qml/eventcontext.h \
+    $$PWD/qml/registrarfactory.h \
     $$PWD/routes/createmessage.h \
     $$PWD/routes/route.h \
-    $$PWD/qml/scriptfactory.h \
-    $$PWD/qml/scriptregistrar.h \
-    $$PWD/util/function.h \
+    $$PWD/util/corecommand.h \
+    $$PWD/util/corecommands.h \
+    $$PWD/util/icommand.h \
+    $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
     $$PWD/util/globals.h \
-    $$PWD/util/lockingdeque.h \
-    $$PWD/util/jsonutils.h
+    $$PWD/util/lockingdeque.h
 
 DISTFILES += \
     $$PWD/settings.ini
@@ -123,9 +125,9 @@ SOURCES += \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/qml/botscript.cpp \
     $$PWD/qml/bsqldatabase.cpp \
+    $$PWD/qml/commandregistrar.cpp \
     $$PWD/qml/eventcontext.cpp \
+    $$PWD/qml/registrarfactory.cpp \
     $$PWD/routes/createmessage.cpp \
-    $$PWD/qml/scriptfactory.cpp \
-    $$PWD/qml/scriptregistrar.cpp \
-    $$PWD/util/jsonutils.cpp \
+    $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp
