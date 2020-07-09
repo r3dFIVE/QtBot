@@ -19,7 +19,7 @@ Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
     _retryCount = 0;
     _heartbeatAck = true;
     _resume = false;
-    _logger = LogFactory::init(settings);
+    _logger = LogFactory::getLogger();
     _gateway = buildConnectionUrl(settings);
 }
 

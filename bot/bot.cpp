@@ -31,12 +31,13 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     Gateway *connection = new Gateway(settings);
     connection->moveToThread(&_gatewayThread);
+
     connect(&_gatewayThread, &QThread::finished, connection, &QObject::deleteLater);
     connect(&_gatewayThread, &QThread::started, connection, &Gateway::init);
 
     EventHandler *eventHandler = new EventHandler(settings);
-
     eventHandler->moveToThread(&_eventHandlerThread);
+
     connect(&_eventHandlerThread, &QThread::finished, eventHandler, &QObject::deleteLater);
     connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
     connect(&_eventHandlerThread, &QThread::started, this, &Bot::loadRegistrar);

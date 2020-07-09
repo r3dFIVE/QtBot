@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
 
     QSharedPointer<Settings> settings = QSharedPointer<Settings>(new Settings(path));
 
+    LogFactory::init(settings);
+
     Bot bot;
     bot.run(settings);
 

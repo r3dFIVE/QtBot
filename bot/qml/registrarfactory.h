@@ -19,7 +19,7 @@ class RegistrarFactory : public QObject
     QString _scriptDir;
     QString _botToken;
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger;
 
     QQmlApplicationEngine _engine;
 
@@ -36,12 +36,18 @@ class RegistrarFactory : public QObject
 
 
 public:
-    RegistrarFactory() { initEngine(); }
+    RegistrarFactory() {
+        _logger = LogFactory::getLogger();
+        initEngine();
+    }
+
     RegistrarFactory(const QString &botToken, const QString &scriptDir) {
         _botToken = botToken;
         _scriptDir = scriptDir;
+        _logger = LogFactory::getLogger();
         initEngine();
     }
+
     RegistrarFactory(const RegistrarFactory &other) { Q_UNUSED(other) }
     ~RegistrarFactory() {}
 
