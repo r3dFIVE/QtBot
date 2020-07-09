@@ -19,7 +19,7 @@ class RegistrarFactory : public QObject
     QString _scriptDir;
     QString _botToken;
 
-    Logger *_logger;
+    Logger *_logger = LogFactory::getLogger();
 
     QQmlApplicationEngine _engine;
 

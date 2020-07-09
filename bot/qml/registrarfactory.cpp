@@ -71,7 +71,7 @@ RegistrarFactory::loadScripts(const QString &scriptDir) {
     for (QString fileName : scripts) {
         QString fileWithPath = scriptDir + fileName;
         if (isBotScript(fileWithPath)) {
-            qDebug() << fileName << " is a Bot Script!";
+            _logger->debug(QString("Loading bot script: %1").arg(fileName));
             loadScriptComponent(fileWithPath);
         }
     }
@@ -84,7 +84,7 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
     QQmlComponent comp(&_engine, fileName);
 
     if (comp.errors().size() > 0) {
-        qDebug() << comp.errors();
+        _logger->debug(comp.errorString());
         return;
     }
 
@@ -94,7 +94,7 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
     botScript->setToken(_botToken);
 
     if (comp.errors().size() > 0) {
-        qDebug() << comp.errors();
+        _logger->debug(comp.errorString());
         return;
     }
 
@@ -102,21 +102,21 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
 
     if (_registeredScriptNames.contains(botScript->name())) {
         QFileInfo info(fileName);
-        qDebug() << QString("%1 already registered. Please update name property for %2 and reload.")
-                    .arg(botScript->name()).arg(info.fileName());
+        _logger->warning(QString("%1 already registered. Please update name property for %2 and reload.")
+                    .arg(botScript->name()).arg(info.fileName()));
     }
 
     for (QString command : botScript->commands().keys()) {
         bool namingConflict = true;
 
         if (_coreCommandNames.contains(command)) {
-            qDebug() << QString("Commmand \"%1\" already registered as a core bot command.")
-                        .arg(command);
+            _logger->warning(QString("Commmand \"%1\" already registered as a core bot command.")
+                        .arg(command));
         } else if (_registry.contains(command)) {
             QString existingScript = _registry[command].first;
 
-            qDebug() << QString("Commmand \"%1\" already registered to bot script named: %2")
-                        .arg(command).arg(existingScript);
+            _logger->warning(QString("Commmand \"%1\" already registered to bot script named: %2")
+                        .arg(command).arg(existingScript));
         } else {
             QString mapping = botScript->findMapping(command);
             _registry[command] = qMakePair(mapping, botScript);
@@ -125,8 +125,8 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
         }
 
         if (namingConflict) {
-            qDebug() << QString("You must rename \"%1\" in %2 before it will be enabled.")
-                        .arg(command).arg(fileName);
+            _logger->warning(QString("You must rename \"%1\" in %2 before it will be enabled.")
+                        .arg(command).arg(fileName));
         }
     }
 }
