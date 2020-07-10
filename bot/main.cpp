@@ -16,6 +16,11 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    if (!QSslSocket::supportsSsl()) {
+        qDebug() << "OpenSSL libaries are not available, shutting down...";
+        exit(1);
+    }
+
     QString path = "C:\\workspace\\settings.ini";
 
     if(!(QFileInfo::exists(path))) {
