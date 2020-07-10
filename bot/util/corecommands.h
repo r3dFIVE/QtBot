@@ -21,10 +21,10 @@ public:
             commands[name] = qMakePair(name, command);
         };
 
-        addCommand(".reload", [&](const Message &message) -> void {
-            Q_UNUSED(message);
+        addCommand(".reload", [&](const EventContext &context) -> void {
+            Q_UNUSED(context);
 
-            bot.loadRegistrar();
+            QMetaObject::invokeMethod(&bot, &Bot::loadRegistrar, Qt::QueuedConnection);
         });
 
         return commands;

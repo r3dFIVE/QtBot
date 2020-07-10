@@ -1,10 +1,9 @@
 #ifndef ICOMMAND_H
 #define ICOMMAND_H
 
+#include "qml/eventcontext.h"
+
 #include <QByteArray>
-
-#include <payloads/message.h>
-
 
 
 class ICommand {
@@ -12,7 +11,7 @@ class ICommand {
 public:
     typedef QPair<QString, QSharedPointer<ICommand>> CommandMapping;
 
-    virtual void execute(const QByteArray &command, const Message &message) = 0;
+    virtual void execute(const QByteArray &command, const EventContext &context) = 0;
 };
 
 #endif // ICOMMAND_H

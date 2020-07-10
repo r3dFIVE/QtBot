@@ -1,12 +1,9 @@
 #include "qml/botscript.h"
-
 #include "util/serializationutils.h"
-
-#include <payloads/jsonserializable.h>
-#include <payloads/message.h>
+#include "qml/eventcontext.h"
+#include "eventcontext.h"
 
 #include <QQmlComponent>
-
 
 
 void
@@ -15,7 +12,7 @@ BotScript::setCommands(QMap<QString, QVariant> commands) {
 }
 
 QMap<QString, QVariant>
-BotScript::commands() const {
+BotScript::getCommands() const {
     return _commands;
 }
 
@@ -25,12 +22,12 @@ BotScript::setName(const QString &name) {
 }
 
 QString
-BotScript::name() const {
+BotScript::getName() const {
     return _name;
 }
 
 BSqlDatabase
-BotScript::database() const {
+BotScript::getDatabase() const {
     return _database;
 }
 
@@ -45,10 +42,10 @@ BotScript::findMapping(const QString &command) const {
 }
 
 void
-BotScript::execute(const QByteArray &command, const Message &message) {
+BotScript::execute(const QByteArray &command, const EventContext &context) {
     QVariant returnValue;
 
-    QStringList args = message.content.toString().split(" ");
+    QStringList args = context.content.toString().split(" ");
 
     QMetaObject::invokeMethod(this, command,
                               Qt::DirectConnection,
@@ -57,7 +54,7 @@ BotScript::execute(const QByteArray &command, const Message &message) {
 
     Message returned;
     SerializationUtils::fromVariant(returned, returnValue);
-    returned.setChannelId(message.getChannelId());
+    returned.channel_id = context.channel_id;
 
     LogFactory::getLogger()->debug(returned.content.toString());
 

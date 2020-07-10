@@ -60,15 +60,14 @@ EventHandler::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> pay
 
 void
 EventHandler::processMessageCreate(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    Message message;
-    message.fromQJsonObject(payload->d);
+    EventContext context(payload->d);
 
-    QString command = parseCommandToken(message.getContent().toString());
+    QString command = parseCommandToken(context.content.toString());
 
     ICommand::CommandMapping mapping = _scriptRegistrar->getCommand(command);
 
     if (!mapping.first.isEmpty()) {
-        mapping.second->execute(mapping.first.toUtf8(), message);
+        mapping.second->execute(mapping.first.toUtf8(), context);
     }
 }
 

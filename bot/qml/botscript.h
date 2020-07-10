@@ -2,6 +2,7 @@
 #define BOTSCRIPT_H
 
 #include "bsqldatabase.h"
+#include "eventcontext.h"
 
 #include <QMap>
 #include <QObject>
@@ -15,13 +16,13 @@ class BotScript : public QObject, public ICommand
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name READ name WRITE setName REQUIRED)
+    Q_PROPERTY(QString name READ getName WRITE setName REQUIRED)
     QString _name;
 
-    Q_PROPERTY(QMap commands READ commands WRITE setCommands REQUIRED)
+    Q_PROPERTY(QMap commands READ getCommands WRITE setCommands REQUIRED)
     QMap<QString, QVariant> _commands;
 
-    Q_PROPERTY(BSqlDatabase database READ database WRITE setDatabase)
+    Q_PROPERTY(BSqlDatabase database READ getDatabase WRITE setDatabase)
     BSqlDatabase _database;
 
     QSharedPointer<HttpClient> _httpClient;
@@ -32,13 +33,13 @@ public:
         _httpClient = QSharedPointer<HttpClient>(new HttpClient(botToken));
     }
     ~BotScript() {}
-    BotScript(const BotScript &b) { Q_UNUSED(b) }
+    BotScript(const BotScript &other) { Q_UNUSED(other) }
 
     void setCommands(QMap<QString, QVariant> commands);
-    QMap<QString, QVariant> commands() const;
+    QMap<QString, QVariant> getCommands() const;
     void setName(const QString &name);
-    QString name() const;
-    BSqlDatabase database() const;
+    QString getName() const;
+    BSqlDatabase getDatabase() const;
     void setDatabase(const BSqlDatabase &database);
     void postResult(const Message &message);
 
@@ -46,7 +47,7 @@ public:
 
     QString findMapping(const QString &command) const;
 
-    void execute(const QByteArray &command, const Message &message) override;
+    void execute(const QByteArray &command, const EventContext &message) override;
 };
 
 Q_DECLARE_METATYPE(BotScript)
