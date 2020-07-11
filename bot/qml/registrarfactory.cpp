@@ -1,5 +1,4 @@
 #include "qml/botscript.h"
-#include "qml/bsqldatabase.h"
 #include "qml/eventcontext.h"
 #include "registrarfactory.h"
 #include "commandregistrar.h"
@@ -27,18 +26,8 @@ const QString RegistrarFactory::BOT_TYPE_IDENTIFIER = "BotScript";
 void
 RegistrarFactory::initEngine() {
 
-    // TODO engine intitializer/factory?
-
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(), BOT_API_MAJOR_VERSION.toInt(),
                                BOT_API_MINOR_VERSION.toInt(), BOT_TYPE_IDENTIFIER.toUtf8());
-
-    qmlRegisterType<BSqlDatabase>("BSqlDatabase", 0, 1, "BSqlDatabase");
-
-   // QJSValue bsqlDatabase = _engine.newQMetaObject(&BSqlDatabase::staticMetaObject);
-    QJSValue eventContext = _engine.newQMetaObject(&EventContext::staticMetaObject);
-
-   // _engine.globalObject().setProperty("BSqlDatabase", bsqlDatabase);
-    _engine.globalObject().setProperty("EventContext", eventContext);
 
     _engine.installExtensions(QJSEngine::ConsoleExtension);
 }
