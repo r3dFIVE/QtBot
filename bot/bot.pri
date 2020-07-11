@@ -57,7 +57,6 @@ HEADERS += \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
     $$PWD/qml/botscript.h \
-    $$PWD/qml/bsqldatabase.h \
     $$PWD/qml/commandregistrar.h \
     $$PWD/qml/eventcontext.h \
     $$PWD/qml/registrarfactory.h \
@@ -124,7 +123,6 @@ SOURCES += \
     $$PWD/payloads/user.cpp \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/qml/botscript.cpp \
-    $$PWD/qml/bsqldatabase.cpp \
     $$PWD/qml/commandregistrar.cpp \
     $$PWD/qml/eventcontext.cpp \
     $$PWD/qml/registrarfactory.cpp \

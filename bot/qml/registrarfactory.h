@@ -56,7 +56,7 @@ public:
     const static QString BOT_API_MINOR_VERSION;
     const static QString BOT_API_MAJOR_VERSION;
 
-    void init(const QString &botToken, const QString &scriptDir = "./scripts");
+    void init(const QString &botToken, const QString &scriptDir);
 
     QSharedPointer<CommandRegistrar> buildRegistrar(Bot &bot);
 };

@@ -21,7 +21,7 @@ public:
             commands[name] = qMakePair(name, command);
         };
 
-        addCommand(".reload", [&](const EventContext &context) -> void {
+        addCommand(".reload", [&](QSharedPointer<EventContext> context) -> void {
             Q_UNUSED(context);
 
             QMetaObject::invokeMethod(&bot, &Bot::loadRegistrar, Qt::QueuedConnection);

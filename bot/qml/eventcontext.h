@@ -1,12 +1,14 @@
 #ifndef EVENTCONTEXT_H
 #define EVENTCONTEXT_H
 
+#include "payloads/jsonserializable.h"
+
 #include <QObject>
 #include <QJsonValue>
 #include <QJsonObject>
 
 
-class EventContext : public QObject
+class EventContext : public JsonSerializable
 {
     Q_OBJECT
 
@@ -23,7 +25,7 @@ public:
     Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
     QJsonValue guild_id;
 
-    Q_PROPERTY(QJsonValue content_id READ getContent WRITE setContent)
+    Q_PROPERTY(QJsonValue content READ getContent WRITE setContent)
     QJsonValue content;
 
     Q_PROPERTY(QJsonObject author READ getAuthor WRITE setAuthor)
@@ -36,11 +38,15 @@ public:
     QJsonObject target_payload;
 
 
-    EventContext() {}
-    EventContext(const QJsonObject &payload);
-    EventContext(const EventContext &other) { Q_UNUSED(other) }
-    ~EventContext() {}
+    Q_INVOKABLE EventContext() {}
+    Q_INVOKABLE EventContext(const QJsonObject &payload);
+    Q_INVOKABLE EventContext(const EventContext &other) { Q_UNUSED(other) }
+    Q_INVOKABLE ~EventContext() {}
 
+    void read(const QJsonObject &jsonObject) override;
+    void write(QJsonObject &jsonObject) override;
+
+public slots:
     QJsonValue getChannelId() const;
     void setChannelId(const QJsonValue &value);
     QJsonValue getGuildId() const;
@@ -53,8 +59,6 @@ public:
     void setSourcePayload(const QJsonObject &value);
     QJsonObject getTargetPayload() const;
     void setTargetPayload(const QJsonObject &value);
-
-signals:
 
 };
 

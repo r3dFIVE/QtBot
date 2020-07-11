@@ -1,5 +1,7 @@
 #include "eventcontext.h"
 
+#include "util/serializationutils.h"
+
 const QString EventContext::CHANNEL_ID = "channel_id";
 const QString EventContext::GUILD_ID = "guild_id";
 const QString EventContext::CONTENT = "content";
@@ -71,4 +73,12 @@ EventContext::getTargetPayload() const {
 void
 EventContext::setTargetPayload(const QJsonObject &value) {
     target_payload = value;
+}
+
+void EventContext::read(const QJsonObject &jsonObject) {
+    SerializationUtils::readFromJson(*this, jsonObject);
+}
+
+void EventContext::write(QJsonObject &jsonObject) {
+    SerializationUtils::writeToJson(*this, jsonObject);
 }
