@@ -11,7 +11,7 @@ class ICommand {
 public:
     typedef QPair<QString, QSharedPointer<ICommand>> CommandMapping;
 
-    virtual void execute(const QByteArray &command, const EventContext &context) = 0;
+    virtual void execute(const QByteArray &command, QSharedPointer<EventContext> context) = 0;
 };
 
 #endif // ICOMMAND_H

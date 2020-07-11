@@ -60,9 +60,9 @@ EventHandler::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> pay
 
 void
 EventHandler::processMessageCreate(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    EventContext context(payload->d);
+    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->d));
 
-    QString command = parseCommandToken(context.content.toString());
+    QString command = parseCommandToken(context->content.toString());
 
     ICommand::CommandMapping mapping = _scriptRegistrar->getCommand(command);
 

@@ -1,8 +1,9 @@
 #include "qml/botscript.h"
 #include "qml/bsqldatabase.h"
+#include "qml/eventcontext.h"
 #include "registrarfactory.h"
 #include "commandregistrar.h"
-#include "eventcontext.h"
+
 #include "util/corecommands.h"
 
 #include "payloads/message.h"
@@ -27,13 +28,16 @@ void
 RegistrarFactory::initEngine() {
 
     // TODO engine intitializer/factory?
+
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(), BOT_API_MAJOR_VERSION.toInt(),
                                BOT_API_MINOR_VERSION.toInt(), BOT_TYPE_IDENTIFIER.toUtf8());
 
-    QJSValue bsqlDatabase = _engine.newQMetaObject(&BSqlDatabase::staticMetaObject);
+    qmlRegisterType<BSqlDatabase>("BSqlDatabase", 0, 1, "BSqlDatabase");
+
+   // QJSValue bsqlDatabase = _engine.newQMetaObject(&BSqlDatabase::staticMetaObject);
     QJSValue eventContext = _engine.newQMetaObject(&EventContext::staticMetaObject);
 
-    _engine.globalObject().setProperty("BSqlDatabase", bsqlDatabase);
+   // _engine.globalObject().setProperty("BSqlDatabase", bsqlDatabase);
     _engine.globalObject().setProperty("EventContext", eventContext);
 
     _engine.installExtensions(QJSEngine::ConsoleExtension);
@@ -103,15 +107,15 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
         return;
     }
 
-    QString scriptName = botScript->getName();
+    QString scriptName = botScript->getScriptName();
 
-    if (_registeredScriptNames.contains(botScript->getName())) {
+    if (_registeredScriptNames.contains(botScript->getScriptName())) {
         QFileInfo info(fileName);
         _logger->warning(QString("%1 already registered. Please update name property for %2 and reload.")
-                    .arg(botScript->getName()).arg(info.fileName()));
+                    .arg(botScript->getScriptName()).arg(info.fileName()));
     }
 
-    for (QString command : botScript->getCommands().keys()) {
+    for (QString command : botScript->getScriptCommands().keys()) {
         bool namingConflict = true;
 
         if (_coreCommandNames.contains(command)) {
@@ -123,7 +127,7 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
             _logger->warning(QString("Commmand \"%1\" already registered to bot script named: %2")
                         .arg(command).arg(existingScript));
         } else {
-            QString mapping = botScript->findMapping(command);
+            QString mapping = botScript->findCommandMapping(command);
             _registry[command] = qMakePair(mapping, botScript);
             _registeredScriptNames << scriptName;
             namingConflict = false;
