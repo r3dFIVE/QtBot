@@ -1,11 +1,10 @@
 #ifndef COMMANDREGISTRAR_H
 #define COMMANDREGISTRAR_H
 
-#include "util/icommand.h"
-
 #include <QObject>
 #include <QSharedPointer>
 
+#include "util/icommand.h"
 
 class CommandRegistrar : public QObject
 {
@@ -14,7 +13,7 @@ class CommandRegistrar : public QObject
     QMap<QString, ICommand::CommandMapping> _registry;
 
 public:
-    explicit CommandRegistrar(QObject *parent = nullptr);
+    explicit CommandRegistrar();
     ~CommandRegistrar() {}
     CommandRegistrar(const CommandRegistrar &other) { Q_UNUSED(other)}
 

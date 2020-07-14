@@ -79,6 +79,10 @@ SerializationUtils::toQByteArray(const QObject &source) {
     return document.toJson(QJsonDocument::Compact);
 }
 
+QByteArray SerializationUtils::toQByteArray(const QJsonObject &source) {
+    return QJsonDocument(source).toJson();
+}
+
 QJsonDocument
 SerializationUtils::toJsonDocument(const QObject &source) {
     return QJsonDocument(toQJsonObject(source));

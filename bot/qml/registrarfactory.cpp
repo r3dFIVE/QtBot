@@ -34,12 +34,12 @@ RegistrarFactory::initEngine() {
 
 
 QSharedPointer<CommandRegistrar>
-RegistrarFactory::buildRegistrar(Bot &bot) {
+RegistrarFactory::buildRegistrar() {
     _registry.clear();
 
     _registeredScriptNames.clear();
 
-    loadCoreCommands(bot);
+    loadCoreCommands();
 
     loadScripts(_scriptDir);
 
@@ -51,8 +51,8 @@ RegistrarFactory::buildRegistrar(Bot &bot) {
 }
 
 void
-RegistrarFactory::loadCoreCommands(Bot &bot) {
-    QMap<QString, ICommand::CommandMapping > coreCommands = CoreCommands::buildCommands(bot);
+RegistrarFactory::loadCoreCommands() {
+    QMap<QString, ICommand::CommandMapping > coreCommands = CoreCommands::buildCommands(*_bot);
 
     for (QString commandName : coreCommands.keys()) {
         _coreCommandNames << commandName;
@@ -88,8 +88,7 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
 
     QSharedPointer<BotScript> botScript = QSharedPointer<BotScript>(qobject_cast<BotScript*>(comp.create()));
 
-    // TODO remove when httpclient is its own thread
-    botScript->setToken(_botToken);
+    botScript->initAPI(_botToken);
 
     if (comp.errors().size() > 0) {
         _logger->debug(comp.errorString());

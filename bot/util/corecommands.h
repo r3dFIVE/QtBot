@@ -1,11 +1,9 @@
 #ifndef CORECOMMANDS_H
 #define CORECOMMANDS_H
 
-#include "corecommand.h"
-
 #include "bot.h"
-
-#include <logging/logfactory.h>
+#include "corecommand.h"
+#include "logging/logfactory.h"
 
 
 class CoreCommands {

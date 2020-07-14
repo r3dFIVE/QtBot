@@ -8,16 +8,18 @@
 #include "logging/logfactory.h"
 #include "gateway.h"
 #include "qml/registrarfactory.h"
+#include "qml/commandregistrar.h"
 #include "util/settings.h"
 
 class RegistrarFactory;
 
 class Bot : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT    
 
     QThread _gatewayThread;
     QThread _eventHandlerThread;
+
     Logger* _logger;
     RegistrarFactory *_factory;
 

@@ -7,7 +7,17 @@ const QString EventContext::GUILD_ID = "guild_id";
 const QString EventContext::CONTENT = "content";
 const QString EventContext::AUTHOR = "author";
 
+EventContext::EventContext(const QByteArray &payload) {
+    QJsonDocument document = QJsonDocument::fromJson(payload);
+    buildFromJsonObject(document.object());
+}
+
 EventContext::EventContext(const QJsonObject &payload) {
+    buildFromJsonObject(payload);
+}
+
+void
+EventContext::buildFromJsonObject(const QJsonObject &payload) {
     channel_id = payload[CHANNEL_ID];
     guild_id = payload[GUILD_ID];
     content = payload[CONTENT];

@@ -12,6 +12,7 @@ struct SerializationUtils
     static QJsonObject toQJsonObject(const QObject &source);
     static QString toQString(const QObject &source);
     static QByteArray toQByteArray(const QObject &source);
+    static QByteArray toQByteArray(const QJsonObject &source);
     static QJsonDocument toJsonDocument(const QObject &source);
     static QVariant toVariant(const QObject &source);
     static void fromQJsonObject(QObject &target, const QJsonObject &source);

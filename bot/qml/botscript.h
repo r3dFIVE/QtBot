@@ -10,12 +10,13 @@
 #include "eventcontext.h"
 #include "httpclient.h"
 #include "util/icommand.h"
-
+#include "routes/discordapi.h"
 
 class BotScript : public QObject, public ICommand
 {
     Q_OBJECT
 
+    QSharedPointer<DiscordAPI> discordAPI;
     QSqlDatabase _database;
     QSqlQuery _query;
 
@@ -79,27 +80,26 @@ public:
     void setScriptName(const QString &name);
     QString getScriptName() const;
     void postResult(const Message &message);
-    void setToken(const QString &botToken);
+    void initAPI(const QString &botToken);
     QString findCommandMapping(const QString &command) const;
     void execute(const QByteArray &command, QSharedPointer<EventContext> message) override;
 
 public slots:
 
-    /* QSqlDatabase */
+    /*
+     *  QSqlDatabase
+     */
     bool dbOpen();
     bool dbOpen(const QString& user, const QString& dbPassword);
     void dbClose();
     bool dbIsOpen() const;
     bool dbIsOpenError() const;
     QStringList dbTables(TableType type = Tables) const;
-
     QString dbLastDatabaseError() const;
     bool dbIsDatabaseValid() const;
-
     bool dbTransaction();
     bool dbCommit();
     bool dbRollback();
-
     void setDatabaseConnection(const QString &name);
     void dbSetDatabaseName(const QString &name);
     void dbSetUserName(const QString &name);
@@ -107,7 +107,6 @@ public slots:
     void dbSetHostName(const QString &host);
     void dbSetPort(int p);
     void dbSetConnectOptions(const QString &options = QString());
-
     QString dbDatabaseName() const;
     QString dbUserName() const;
     QString dbPassword() const;
@@ -126,8 +125,9 @@ public slots:
     QStringList dbConnectionNames();
     bool dbIsDriverAvailable(const QString &name);
 
-
-    /* QSqlQuery */
+    /*
+     *  QSqlQuery
+     */
     bool qryIsValid() const;
     bool qryIsActive() const;
     bool qryIsNull(int field) const;
@@ -138,31 +138,25 @@ public slots:
     QString qryLastError() const;
     bool qryIsSelect() const;
     int qrySize() const;
-
     bool qryIsForwardOnly() const;
     void qrySetForwardOnly(bool forward);
     bool qryExec(const QString& query);
     QVariant qryValue(int i) const;
     QVariant qryValue(const QString& name) const;
-
     void qrySetNumericalPrecisionPolicy(NumericalPrecisionPolicy precisionPolicy);
     NumericalPrecisionPolicy qryNumericalPrecisionPolicy() const;
-
     bool qrySeek(int i, bool relative = false);
     bool qryNext();
     bool qryPrevious();
     bool qryFirst();
     bool qryLast();
-
     void qryClear();
 
     // prepared query support
     bool qryExec();
-
     bool execBatch(BatchExecutionMode mode = ValuesAsRows);
     bool qryPrepare(const QString& query);
-    void qryBindValue(const QString& placeholder, const QVariant& val,
-                   QSql::ParamType type = QSql::In);
+    void qryBindValue(const QString& placeholder, const QVariant& val, ParamType type = In);
     void qryBindValue(int pos, const QVariant& val, ParamType type = In);
     void qryAddBindValue(const QVariant& val, ParamType type = In);
     QVariant qryBoundValue(const QString& placeholder) const;
@@ -173,6 +167,15 @@ public slots:
     void qryFinish();
     bool qryNextResult();
 
+
+    /*
+     *  DiscordAPI
+     */
+
+    // Channel API functions.
+    // https://discord.com/developers/docs/resources/channel
+
+    QVariant cCreateMessage(QVariant contextVariant);
 };
 
 Q_DECLARE_METATYPE(BotScript)

@@ -1,14 +1,14 @@
 #ifndef SCRIPTFACTORY_H
 #define SCRIPTFACTORY_H
 
-#include "qml/botscript.h"
-#include "logging/logfactory.h"
-#include "commandregistrar.h"
-#include "bot.h"
-
 #include <QObject>
 #include <QVariantMap>
 #include <QQmlApplicationEngine>
+
+#include "bot.h"
+#include "commandregistrar.h"
+#include "logging/logfactory.h"
+#include "qml/botscript.h"
 
 class Bot;
 
@@ -16,13 +16,13 @@ class RegistrarFactory : public QObject
 {
     Q_OBJECT
 
-    QString _scriptDir;
-    QString _botToken;
-
+    Bot *_bot;
+    HttpClient *_httpClient;
     Logger *_logger;
 
     QQmlApplicationEngine _engine;
-
+    QString _scriptDir;
+    QString _botToken;
     QStringList _coreCommandNames;
     QSet<QString> _registeredScriptNames;
     QMap<QString, QPair<QString, QSharedPointer<ICommand>>> _registry;
@@ -30,35 +30,31 @@ class RegistrarFactory : public QObject
 
     bool isBotScript(const QString &fileName);
     void initEngine();
-    void loadCoreCommands(Bot &bot);
+    void loadCoreCommands();
     void loadScripts(const QString &scriptDir);
     void loadScriptComponent(const QString &fileName);
-
-
-public:
-    RegistrarFactory() {
-        _logger = LogFactory::getLogger();
-        initEngine();
-    }
-
-    RegistrarFactory(const QString &botToken, const QString &scriptDir) {
-        _botToken = botToken;
-        _scriptDir = scriptDir;
-        _logger = LogFactory::getLogger();
-        initEngine();
-    }
-
-    RegistrarFactory(const RegistrarFactory &other) { Q_UNUSED(other) }
-    ~RegistrarFactory() {}
 
     const static QString BOT_IMPORT_IDENTIFIER;
     const static QString BOT_TYPE_IDENTIFIER;
     const static QString BOT_API_MINOR_VERSION;
     const static QString BOT_API_MAJOR_VERSION;
 
+public:
+
+    RegistrarFactory() {}
+    RegistrarFactory(Bot *bot, const QString &scriptDir, const QString &botToken) {
+        _bot = bot;
+        _logger = LogFactory::getLogger();
+        _scriptDir = scriptDir;
+        _botToken = botToken;
+        initEngine();
+    }
+    RegistrarFactory(const RegistrarFactory &other) { Q_UNUSED(other) }
+    ~RegistrarFactory() {}
+
     void init(const QString &botToken, const QString &scriptDir);
 
-    QSharedPointer<CommandRegistrar> buildRegistrar(Bot &bot);
+    QSharedPointer<CommandRegistrar> buildRegistrar();
 };
 
 Q_DECLARE_METATYPE(RegistrarFactory)
