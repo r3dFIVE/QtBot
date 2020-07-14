@@ -6,28 +6,25 @@
 #include <QDir>
 #include <QMetaEnum>
 
-
 Bot::Bot()
 {
-    qRegisterMetaType<QSharedPointer<JsonSerializable> >();
-    qRegisterMetaType<QSharedPointer<GatewayPayload::GatewayPayload> >();
-    qRegisterMetaType<LogContext::LogLevel>();
     qRegisterMetaType<QSharedPointer<CommandRegistrar> >();
+    qRegisterMetaType<QSharedPointer<GatewayPayload::GatewayPayload> >();
+    qRegisterMetaType<QSharedPointer<JsonSerializable> >();
+    qRegisterMetaType<QSharedPointer<Route> > ();
+    qRegisterMetaType<LogContext::LogLevel>();
 }
 
 void
 Bot::loadRegistrar() {
-    emit registrarReady(_factory->buildRegistrar(*this));
+    emit registrarReady(_factory->buildRegistrar());
 }
-
 
 void
 Bot::run(QSharedPointer<Settings> settings) {
-
-    QString botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
     QString scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
-
-    _factory = new RegistrarFactory(botToken, scriptDir);
+    QString botToken  = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
+    _factory = new RegistrarFactory(this, scriptDir, botToken);
 
     Gateway *connection = new Gateway(settings);
     connection->moveToThread(&_gatewayThread);
@@ -40,7 +37,8 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(&_eventHandlerThread, &QThread::finished, eventHandler, &QObject::deleteLater);
     connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
-    connect(&_eventHandlerThread, &QThread::started, this, &Bot::loadRegistrar);
+    connect(&_eventHandlerThread, &QThread::started, this, &Bot::loadRegistrar);    
+    //TODO remove when guilds have own script copies
     connect(this, &Bot::registrarReady, eventHandler, &EventHandler::processRegistrar);
     connect(connection, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 

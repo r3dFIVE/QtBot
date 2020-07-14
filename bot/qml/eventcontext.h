@@ -17,6 +17,8 @@ class EventContext : public JsonSerializable
     const static QString CONTENT;
     const static QString AUTHOR;
 
+    void buildFromJsonObject(const QJsonObject &payload);
+
 public:
 
     Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
@@ -38,10 +40,29 @@ public:
     QJsonObject target_payload;
 
 
-    Q_INVOKABLE EventContext() {}
-    Q_INVOKABLE EventContext(const QJsonObject &payload);
-    Q_INVOKABLE EventContext(const EventContext &other) { Q_UNUSED(other) }
-    Q_INVOKABLE ~EventContext() {}
+    EventContext() {}
+    EventContext(const QByteArray &payload);
+    EventContext(const QJsonObject &payload);
+    EventContext(const EventContext &other) {
+        channel_id = other.channel_id;
+        guild_id = other.guild_id;
+        content = other.content;
+        author = other.author;
+        source_payload = other.source_payload;
+        target_payload = other.target_payload;
+    }
+    ~EventContext() {}
+
+    EventContext
+    &operator=(const EventContext &other) {
+        channel_id = other.channel_id;
+        guild_id = other.guild_id;
+        content = other.content;
+        author = other.author;
+        source_payload = other.source_payload;
+        target_payload = other.target_payload;
+        return *this;
+    }
 
     void read(const QJsonObject &jsonObject) override;
     void write(QJsonObject &jsonObject) override;

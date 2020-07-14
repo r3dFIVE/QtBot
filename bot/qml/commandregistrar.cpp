@@ -1,7 +1,6 @@
 #include "commandregistrar.h"
 
-CommandRegistrar::CommandRegistrar(QObject *parent) : QObject(parent)
-{
+CommandRegistrar::CommandRegistrar() {
 
 }
 

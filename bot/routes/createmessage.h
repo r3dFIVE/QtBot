@@ -1,25 +1,30 @@
 #ifndef CREATEMESSAGE_H
 #define CREATEMESSAGE_H
 
-#include "route.h"
+
 
 #include <QObject>
+
+#include "route.h"
+#include "qml/eventcontext.h"
+
 
 
 class CreateMessage : public Route
 {
     Q_OBJECT
 
-    Message _message;
 public:
 
+    CreateMessage() {};
+    CreateMessage(const CreateMessage &other) { Q_UNUSED(other) }
+    CreateMessage(const EventContext &context);
+    ~CreateMessage() {}
 
     virtual QNetworkRequest request() override;
-    virtual QByteArray data() override;
+    virtual QByteArray payload() override;
 
 
-    CreateMessage() {}
-    ~CreateMessage() {}
 };
 
 Q_DECLARE_METATYPE(CreateMessage)

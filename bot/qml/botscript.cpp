@@ -6,6 +6,7 @@
 #include <QQmlComponent>
 #include <QSqlError>
 
+
 const char *BotScript::defaultConnection = const_cast<char *>("qt_sql_default_connection");
 
 BotScript::BotScript(const BotScript &other) {
@@ -341,7 +342,7 @@ BotScript::qryExec(const QString &query) {
 }
 
 void
-BotScript::qryBindValue(const QString &placeholder, const QVariant &value, QSql::ParamType type) {
+BotScript::qryBindValue(const QString &placeholder, const QVariant &value, ParamType type) {
     _query.bindValue(placeholder, value, QSql::ParamType(type));
 }
 
@@ -409,7 +410,26 @@ BotScript::getScriptName() const {
     return _name;
 }
 
+void BotScript::initAPI(const QString &botToken) {
+    discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI(botToken));
+}
 
+QVariant
+BotScript::cCreateMessage(QVariant contextVariant) {
+    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext);
+
+    SerializationUtils::fromVariant(*context.data(), contextVariant);
+
+    QSharedPointer<EventContext> returnContext = discordAPI->channelCreateMessage(context);
+
+    QVariant apiResponse;
+
+    if (returnContext) {
+        apiResponse = SerializationUtils::toVariant(*returnContext);
+    }
+
+    return apiResponse;
+}
 
 QString
 BotScript::findCommandMapping(const QString &command) const {
@@ -420,29 +440,8 @@ void
 BotScript::execute(const QByteArray &command, QSharedPointer<EventContext> context) {
     QVariant returnValue;
 
-
     QMetaObject::invokeMethod(this, command,
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, returnValue),
                               Q_ARG(QVariant, SerializationUtils::toVariant(*context)));
-
-    Message returned;
-    SerializationUtils::fromVariant(returned, returnValue);
-    returned.channel_id = context->channel_id;
-
-    LogFactory::getLogger()->debug(returned.content.toString());
-
-    postResult(returned);
-}
-
-
-// TODO remove when httpclient moved to own event loop
-void
-BotScript::setToken(const QString &botToken) {
-    _httpClient = QSharedPointer<HttpClient>(new HttpClient(botToken));
-}
-
-void
-BotScript::postResult(const Message &message) {
-    _httpClient->post(message, message.content.toString());
 }

@@ -5,7 +5,7 @@
 #include <QMetaEnum>
 #include <QObject>
 
-#include <routes/createmessage.h>
+#include "util/serializationutils.h"
 
 #include <qml/botscript.h>
 

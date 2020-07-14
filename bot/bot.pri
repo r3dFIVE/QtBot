@@ -61,6 +61,7 @@ HEADERS += \
     $$PWD/qml/eventcontext.h \
     $$PWD/qml/registrarfactory.h \
     $$PWD/routes/createmessage.h \
+    $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
     $$PWD/util/corecommand.h \
     $$PWD/util/corecommands.h \
@@ -127,5 +128,6 @@ SOURCES += \
     $$PWD/qml/eventcontext.cpp \
     $$PWD/qml/registrarfactory.cpp \
     $$PWD/routes/createmessage.cpp \
+    $$PWD/routes/discordapi.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp
