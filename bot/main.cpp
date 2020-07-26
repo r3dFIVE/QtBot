@@ -2,7 +2,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QSettings>
-#include <QMetaEnum>
 #include <QObject>
 
 #include "util/serializationutils.h"

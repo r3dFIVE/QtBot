@@ -8,9 +8,9 @@
 #include "logging/logfactory.h"
 #include "gateway.h"
 #include "qml/registrarfactory.h"
-#include "qml/commandregistrar.h"
 #include "util/settings.h"
 
+class GuildEntity;
 class RegistrarFactory;
 
 class Bot : public QObject
@@ -19,6 +19,7 @@ class Bot : public QObject
 
     QThread _gatewayThread;
     QThread _eventHandlerThread;
+    QThread _entityManagerThread;
 
     Logger* _logger;
     RegistrarFactory *_factory;
@@ -30,10 +31,12 @@ public:
     void run(QSharedPointer<Settings> settings);
 
 public slots:
-    void loadRegistrar();
+    void loadCommands(QSharedPointer<GuildEntity> guild);
+    void reloadAllCommands();
 
 signals:
-    void registrarReady(QSharedPointer<CommandRegistrar> registrar);
+    void guildReady(QSharedPointer<GuildEntity> guild);
+    void reloadAllAvailableGuilds();
 };
 
 Q_DECLARE_METATYPE(Bot)

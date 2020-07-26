@@ -89,7 +89,7 @@ private:
     Heartbeat _heartbeat;
     Logger* _logger;
     bool _heartbeatAck;
-    bool _resume;
+    bool _attemptResume;
     int _lastSequenceNumber;
     int _retryCount;
     QUrl _gateway;

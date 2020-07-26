@@ -299,25 +299,25 @@ public:
     void read(const QJsonObject &jsonObject) override;
     void write(QJsonObject &jsonObject) override;
 
-    enum DEFAULT_NOFICATION_LEVEL {
+    enum DefaultNotificationlevel {
         ALL_MESSAGES,
         ONLY_MENTIONS
     };
 
-    enum EXPLICIT_CONTENT_FILTER_LEVEL {
+    enum ExplicitContentFilterLevel {
         DISABLED,
         MEMBERS_WITHOUT_ROLES,
         ALL_MEMBERS
     };
 
-    enum PREMIUM_TIER_LEVEL {
+    enum PremiumTierLevel {
         TIER_0,
         TIER_1,
         TIER_2,
         TIER_3
     };
 
-    enum VERFICATION_LEVEL {
+    enum VerificationLevel {
         NONE,
         LOW,
         MEDIUM,
@@ -326,10 +326,10 @@ public:
     };
 
 
-    Q_ENUM(DEFAULT_NOFICATION_LEVEL)
-    Q_ENUM(EXPLICIT_CONTENT_FILTER_LEVEL)
-    Q_ENUM(PREMIUM_TIER_LEVEL)
-    Q_ENUM(VERFICATION_LEVEL)
+    Q_ENUM(DefaultNotificationlevel)
+    Q_ENUM(ExplicitContentFilterLevel)
+    Q_ENUM(PremiumTierLevel)
+    Q_ENUM(VerificationLevel)
 
 };
 

@@ -55,6 +55,16 @@ EventContext::setContent(const QJsonValue &value) {
     content = value;
 }
 
+QJsonValue
+EventContext::getCommand() const {
+    return command;
+}
+
+void
+EventContext::setCommand(const QJsonValue &value) {
+    command = value;
+}
+
 QJsonObject
 EventContext::getAuthor() const {
     return author;
