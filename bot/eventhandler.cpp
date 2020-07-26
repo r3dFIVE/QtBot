@@ -1,8 +1,4 @@
 #include "eventhandler.h"
-#include "util/corecommand.h"
-#include "util/globals.h"
-#include "qml/botscript.h"
-#include "payloads/message.h"
 
 #include <QJsonDocument>
 #include <QMetaEnum>
@@ -11,9 +7,15 @@
 #include <QSqlDatabase>
 #include <QtSql>
 
+#include "util/globals.h"
+#include "util/enumutils.h"
+#include "qml/botscript.h"
+
+
 
 EventHandler::EventHandler(QSharedPointer<Settings> settings) {
     _settings = settings;
+    _logger = LogFactory::getLogger();
 }
 
 
@@ -44,70 +46,56 @@ EventHandler::parseCommandToken(QString message) {
 }
 
 void
-EventHandler::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    QMetaEnum metaEnum = QMetaEnum::fromType<GatewayEvents::Events>();
-    int enumValue = metaEnum.keyToValue(payload->t.toUtf8());
+EventHandler::processMessageCreate(QSharedPointer<EventContext> context) {
+    QString guildId = context->guild_id.toString();
 
-    switch(enumValue) {
-        //TODO parse message type
-        case GatewayEvents::MESSAGE_CREATE:
-            processMessageCreate(payload);
-            break;
-        default:
-            return;
+    if (!_availableGuilds.contains(guildId)) {
+        _logger->debug(QString("Guild %1 is still initializing.").arg(guildId));
+
+        return;
     }
-}
 
-void
-EventHandler::processMessageCreate(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->d));
+    QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
-    QString command = parseCommandToken(context->content.toString());
+    context->command = parseCommandToken(context->content.toString());
 
-    ICommand::CommandMapping mapping = _scriptRegistrar->getCommand(command);
-
-    if (!mapping.first.isEmpty()) {
-        mapping.second->execute(mapping.first.toUtf8(), context);
-    }
+    guild->invoke(context);
 }
 
 void
 EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
-    switch (payload->op) {
-        case GatewayEvents::DISPATCH:
-            processDispatch(payload);
-            break;
-        case GatewayEvents::HEARTBEAT:
-            //Send/Receive	used for ping checking
-            break;
-        case GatewayEvents::IDENTIFY:
-            //Send	used for client handshake
-            break;
-        case GatewayEvents::STATUS_UPDATE:
-            //Send	used to update the client status
-            break;
-        case GatewayEvents::VOICE_STATUS_UPDATE:
-            //Send	used to join/move/leave voice channels
-            break;
-        case GatewayEvents::RESUME:
-            //Send	used to resume a closed connection
-            break;
-        case GatewayEvents::RECONNECT:
-            //Receive	used to tell clients to reconnect to the gateway
-            break;
-        case GatewayEvents::REQUEST_GUILD_MEMBERS:
-            //Send	used to request guild members
-            break;
-        case GatewayEvents::INVALID_SESSION:
-            //Receive	used to notify client they have an invalid session id
-            break;
-        case GatewayEvents::HEARTBEAT_ACK:
-            //Receive	sent immediately following a client heartbeat that was received
-            break;
+
+    int eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->t.toUtf8());
+
+    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->d));
+
+    switch(eventType) {
+    case GatewayEvents::GUILD_CREATE:
+        processGuildCreate(context);
+        break;
+    //TODO parse message type
+    case GatewayEvents::MESSAGE_CREATE:
+        processMessageCreate(context);
+        break;
+    default:
+        return;
     }
 }
 
 void
-EventHandler::processRegistrar(QSharedPointer<CommandRegistrar> registrar) {
-    _scriptRegistrar = registrar;
+EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
+    _availableGuilds[guild->id()] = guild;
 }
+
+void
+EventHandler::reloadAllAvailableGuilds() {
+    for (auto guild : _availableGuilds.values()) {
+        emit reloadCommands(guild);
+    }
+}
+
+void
+EventHandler::processGuildCreate(QSharedPointer<EventContext> context) {
+    emit guildOnline(context->source_payload["id"].toString());
+}
+

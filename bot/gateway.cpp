@@ -9,6 +9,8 @@
 #include <QSettings>
 #include <QThread>
 
+#include <util/enumutils.h>
+
 
 Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
     QObject(parent),
@@ -18,7 +20,7 @@ Gateway::Gateway(QSharedPointer<Settings> settings, QObject *parent) :
     _lastSequenceNumber = -1;
     _retryCount = 0;
     _heartbeatAck = true;
-    _resume = false;
+    _attemptResume = false;
     _logger = LogFactory::getLogger();
     _gateway = buildConnectionUrl(settings);
 }
@@ -49,10 +51,10 @@ Gateway::init() {
 
 void
 Gateway::onSocketError(QAbstractSocket::SocketError errorCode) {
-    QMetaEnum metaEnum = QMetaEnum::fromType<QAbstractSocket::SocketError>();
-    QString errorReason = metaEnum.valueToKey(errorCode);
 
-    _logger->debug(QString("QSocketError: %1, %2. Shutting down...").arg(errorCode).arg(errorReason));
+    _logger->debug(QString("QSocketError: %1, %2. Shutting down...")
+                   .arg(errorCode)
+                   .arg(EnumUtils::valueToKey(errorCode)));
 
     if (_retryCount++ <= _maxRetries) {
         reconnect(MS_FIVE_SECONDS);
@@ -65,8 +67,7 @@ void
 Gateway::onDisconnected() {
     int closeCode = _socket->closeCode();
 
-    QMetaEnum metaEnum = QMetaEnum::fromType<GatewayCloseCodes>();
-    QString closeReason = metaEnum.valueToKey(closeCode);
+    QString closeReason = EnumUtils::valueToKey(GatewayCloseCodes(closeCode));
 
     _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
 
@@ -160,9 +161,7 @@ void
 Gateway::processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     _lastSequenceNumber = payload->s;
 
-    //TODO MetaUtils::keyToValue( T t, QString key); or something
-    QMetaEnum metaEnum = QMetaEnum::fromType<GatewayEvents::Events>();
-    int eventCode = metaEnum.keyToValue(payload->t.toUtf8());
+    int eventCode = EnumUtils::keyToValue<GatewayEvents::Events>(payload->t.toUtf8());
 
     switch (eventCode) {
     case GatewayEvents::READY:
@@ -182,7 +181,7 @@ Gateway::processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> pa
     if (isResumable) {
         sendResume();
     } else {
-        _resume = false;
+        _attemptResume = false;
         closeConnection(QWebSocketProtocol::CloseCodeAbnormalDisconnection);
     }
 }
@@ -232,11 +231,11 @@ Gateway::processHello(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
     _heartbeatTimer->setInterval(*helloEvent.heartbeat_interval);
     _heartbeatTimer->start();
 
-    if (_resume) {
+    if (_attemptResume) {
         sendResume();
     } else {
         sendIdentify();
-        _resume = true;
+        _attemptResume = true;
     }
 }
 

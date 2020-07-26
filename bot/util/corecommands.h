@@ -3,6 +3,7 @@
 
 #include "bot.h"
 #include "corecommand.h"
+#include "serializationutils.h"
 #include "logging/logfactory.h"
 
 
@@ -22,7 +23,7 @@ public:
         addCommand(".reload", [&](QSharedPointer<EventContext> context) -> void {
             Q_UNUSED(context);
 
-            QMetaObject::invokeMethod(&bot, &Bot::loadRegistrar, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(&bot, &Bot::reloadAllCommands, Qt::QueuedConnection);
         });
 
         return commands;

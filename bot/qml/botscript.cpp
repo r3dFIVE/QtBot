@@ -21,6 +21,32 @@ BotScript
     return *this;
 }
 
+QVariant
+BotScript::buildResponseVariant(QSharedPointer<EventContext> apiResponse) {
+    QVariant repsonseContext;
+
+    if (apiResponse) {
+        repsonseContext = SerializationUtils::toVariant(*apiResponse);
+    }
+
+    return repsonseContext;
+}
+
+QString
+BotScript::findCommandMapping(const QString &command) const {
+    return _commands[command].toString();
+}
+
+void
+BotScript::execute(const QByteArray &command, QSharedPointer<EventContext> context) {
+    QVariant returnValue;
+
+    QMetaObject::invokeMethod(this, command,
+                              Qt::DirectConnection,
+                              Q_RETURN_ARG(QVariant, returnValue),
+                              Q_ARG(QVariant, SerializationUtils::toVariant(*context)));
+}
+
 bool
 BotScript::setDatabaseConnection(const QSqlDatabase &database) {
     if (database.isValid()) {
@@ -420,28 +446,7 @@ BotScript::cCreateMessage(QVariant contextVariant) {
 
     SerializationUtils::fromVariant(*context.data(), contextVariant);
 
-    QSharedPointer<EventContext> returnContext = discordAPI->channelCreateMessage(context);
-
-    QVariant apiResponse;
-
-    if (returnContext) {
-        apiResponse = SerializationUtils::toVariant(*returnContext);
-    }
-
-    return apiResponse;
+    return buildResponseVariant(discordAPI->channelCreateMessage(context));
 }
 
-QString
-BotScript::findCommandMapping(const QString &command) const {
-    return _commands[command].toString();
-}
 
-void
-BotScript::execute(const QByteArray &command, QSharedPointer<EventContext> context) {
-    QVariant returnValue;
-
-    QMetaObject::invokeMethod(this, command,
-                              Qt::DirectConnection,
-                              Q_RETURN_ARG(QVariant, returnValue),
-                              Q_ARG(QVariant, SerializationUtils::toVariant(*context)));
-}

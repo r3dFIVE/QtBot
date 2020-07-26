@@ -6,9 +6,9 @@
 #include <QQmlApplicationEngine>
 
 #include "bot.h"
-#include "commandregistrar.h"
 #include "logging/logfactory.h"
 #include "qml/botscript.h"
+#include "entity/guildentity.h"
 
 class Bot;
 
@@ -17,7 +17,6 @@ class RegistrarFactory : public QObject
     Q_OBJECT
 
     Bot *_bot;
-    HttpClient *_httpClient;
     Logger *_logger;
 
     QQmlApplicationEngine _engine;
@@ -54,7 +53,7 @@ public:
 
     void init(const QString &botToken, const QString &scriptDir);
 
-    QSharedPointer<CommandRegistrar> buildRegistrar();
+    QSharedPointer<GuildEntity> buildCommands(QSharedPointer<GuildEntity> guild);
 };
 
 Q_DECLARE_METATYPE(RegistrarFactory)

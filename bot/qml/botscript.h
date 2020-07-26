@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QTimer>
 #include <QVariantMap>
 
 #include "eventcontext.h"
@@ -31,6 +32,7 @@ class BotScript : public QObject, public ICommand
     static const char *defaultConnection;
 
     bool setDatabaseConnection(const QSqlDatabase &dbDatabase);
+    QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
 
 public:
     enum TableType {

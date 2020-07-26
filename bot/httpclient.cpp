@@ -30,15 +30,13 @@ QMutex HttpClient::_globalLock;
 
 QMap<int, QString> HttpClient::_bucketMap;
 
-HttpClient::HttpClient(const QString &botToken)
+HttpClient::HttpClient(const QString &botToken) :
+    _botAuthHeaderName(QString("Authorization").toUtf8()),
+    _botAuthHeaderValue(QString("Bot %1").arg(botToken).toUtf8())
 {
-    _botAuthHeaderName = QString("Authorization").toUtf8();
-
-    _botAuthHeaderValue = QString("Bot %1").arg(botToken).toUtf8();
-
     _logger = LogFactory::getLogger();
 
-    buildMap();
+    buildBucketMap();
 }
 
 QSharedPointer<EventContext>
@@ -47,7 +45,7 @@ HttpClient::processRoute(Route &route) {
 
     QNetworkReply *reply;
 
-    bool available = true;
+    bool bucketAvailable = true;
     int resetAt = 0;
 
     switch (route.BUCKET) {
@@ -59,7 +57,7 @@ HttpClient::processRoute(Route &route) {
                     || QDateTime::currentSecsSinceEpoch() > _channelRequestResetAt) {
                 reply = executeRoute(networkManager, route);                
             } else {
-                available = false;
+                bucketAvailable = false;
                 resetAt = _channelRequestResetAt;
             }
 
@@ -72,9 +70,8 @@ HttpClient::processRoute(Route &route) {
             if (_guildRequestRemaining != 0
                     || QDateTime::currentSecsSinceEpoch() > _guildRequestResetAt) {
                 reply = executeRoute(networkManager, route);
-                available = true;
             } else {
-                available = false;
+                bucketAvailable = false;
                 resetAt = HttpClient::_guildRequestResetAt;
             }
 
@@ -86,9 +83,8 @@ HttpClient::processRoute(Route &route) {
             if (_webhookRequestRemaining != 0
                     || QDateTime::currentSecsSinceEpoch() > _webhookRequestResetAt) {
                 reply = executeRoute(networkManager, route);
-                available = true;
             } else {
-                available = false;
+                bucketAvailable = false;
                 resetAt = _webhookRequestResetAt;
             }
 
@@ -100,9 +96,8 @@ HttpClient::processRoute(Route &route) {
             if (_globalRequestRemaining != 0
                     || QDateTime::currentSecsSinceEpoch() > _globalRequestResetAt) {
                 reply = executeRoute(networkManager, route);
-                available = true;
             } else {
-                available = false;
+                bucketAvailable = false;
                 resetAt = _globalRequestResetAt;
             }
 
@@ -112,7 +107,7 @@ HttpClient::processRoute(Route &route) {
 
     QSharedPointer<EventContext> context;
 
-    if (available) {
+    if (bucketAvailable) {
         QByteArray response(reply->readAll());
 
         _logger->trace("Discord API Response: " + response);

@@ -1,12 +1,4 @@
-#include "qml/botscript.h"
-#include "qml/eventcontext.h"
 #include "registrarfactory.h"
-#include "commandregistrar.h"
-
-#include "util/corecommands.h"
-
-#include "payloads/message.h"
-#include "util/serializationutils.h"
 
 #include <QDir>
 #include <QFile>
@@ -15,6 +7,12 @@
 #include <QSharedPointer>
 #include <QSqlDatabase>
 #include <QVariant>
+
+#include "qml/botscript.h"
+#include "qml/eventcontext.h"
+#include "util/corecommands.h"
+#include "payloads/message.h"
+#include "util/serializationutils.h"
 
 
 const QString RegistrarFactory::BOT_IMPORT_IDENTIFIER = "BotApi";
@@ -33,8 +31,8 @@ RegistrarFactory::initEngine() {
 }
 
 
-QSharedPointer<CommandRegistrar>
-RegistrarFactory::buildRegistrar() {
+QSharedPointer<GuildEntity>
+RegistrarFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
     _registry.clear();
 
     _registeredScriptNames.clear();
@@ -43,11 +41,9 @@ RegistrarFactory::buildRegistrar() {
 
     loadScripts(_scriptDir);
 
-    QSharedPointer<CommandRegistrar> registrar(new CommandRegistrar);
+    guild->setRegistry(_registry);
 
-    registrar->setRegistry(_registry);
-
-    return registrar;
+    return guild;
 }
 
 void

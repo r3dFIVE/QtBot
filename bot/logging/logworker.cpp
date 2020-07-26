@@ -3,7 +3,6 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
-#include <QMetaEnum>
 #include <QRegularExpression>
 
 
