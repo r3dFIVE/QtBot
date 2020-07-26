@@ -20,9 +20,6 @@ public:
         QMetaEnum metaEnum = QMetaEnum::fromType<T>();
         return metaEnum.keyToValue(key);
     }
-
-signals:
-
 };
 
 #endif // ENUMUTILS_H
