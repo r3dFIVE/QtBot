@@ -7,11 +7,11 @@
 
 #include "logging/logfactory.h"
 #include "gateway.h"
-#include "qml/registrarfactory.h"
+#include "qml/commandfactory.h"
 #include "util/settings.h"
 
 class GuildEntity;
-class RegistrarFactory;
+class CommandFactory;
 
 class Bot : public QObject
 {
@@ -22,11 +22,12 @@ class Bot : public QObject
     QThread _entityManagerThread;
 
     Logger* _logger;
-    RegistrarFactory *_factory;
+    CommandFactory *_factory;
 
 public:
+
     Bot();
-    ~Bot() { delete _factory; }
+    ~Bot();
     Bot(const Bot &other) { Q_UNUSED(other) }
     void run(QSharedPointer<Settings> settings);
 

@@ -10,6 +10,9 @@
 #include "util/globals.h"
 #include "util/enumutils.h"
 #include "qml/botscript.h"
+#include "botjob/botjob.h"
+
+
 
 
 
@@ -47,6 +50,20 @@ EventHandler::parseCommandToken(QString message) {
 
 void
 EventHandler::processMessageCreate(QSharedPointer<EventContext> context) {
+    processPossibleCommands(context);
+
+    // TODO event binding logic
+}
+
+void
+EventHandler::processMessageUpdate(QSharedPointer<EventContext> context) {
+    processPossibleCommands(context);
+
+    // TODO event binding logic
+}
+
+void
+EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
     QString guildId = context->guild_id.toString();
 
     if (!_availableGuilds.contains(guildId)) {
@@ -59,7 +76,11 @@ EventHandler::processMessageCreate(QSharedPointer<EventContext> context) {
 
     context->command = parseCommandToken(context->content.toString());
 
-    guild->invoke(context);
+    BotJob *botJob = guild->getBotJob(context);
+
+    if (botJob) {
+        QThreadPool::globalInstance()->start(botJob);
+    }
 }
 
 void
@@ -75,6 +96,9 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payloa
         break;
     //TODO parse message type
     case GatewayEvents::MESSAGE_CREATE:
+        processMessageCreate(context);
+        break;
+    case GatewayEvents::MESSAGE_UPDATE:
         processMessageCreate(context);
         break;
     default:

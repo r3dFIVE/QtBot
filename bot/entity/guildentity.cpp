@@ -25,23 +25,27 @@ GuildEntity::canInvoke(QString command, QStringList ids) {
     return isInvokable;
 }
 
-void
-GuildEntity::invoke(QSharedPointer<EventContext> context) {
+BotJob*
+GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
     QString command = context->command.toString();
+
+    BotJob *botJob = nullptr; //QThreadPool will auto delete on completion.
 
     if (_registry.contains(command)) {
         QStringList ids;
 
         ids << context->guild_id.toString()
             << context->channel_id.toString()
-            << context->author["id"].toString();
+            << context->author["id"].toString();        
 
         if (canInvoke(command, ids)) {
-            ICommand::CommandMapping mapping = _registry[command];
-
-            mapping.second->execute(mapping.first.toUtf8(), context);
+            botJob = new BotJob;
+            botJob->setContext(*context);
+            botJob->setCommandMapping(_registry[command]);
         }
     }
+
+    return botJob;
 }
 
 QString
@@ -55,6 +59,6 @@ GuildEntity::setId(const QString &id) {
 }
 
 void
-GuildEntity::setRegistry(const QMap<QString, QPair<QString, QSharedPointer<ICommand> > > &registry) {
+GuildEntity::setRegistry(const QMap<QString, QPair<QString, QSharedPointer<IBotJob> > > &registry) {
     _registry = registry;
 }

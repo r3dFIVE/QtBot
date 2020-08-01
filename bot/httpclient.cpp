@@ -187,7 +187,7 @@ HttpClient::updateRateLimit(Route::Bucket bucket, QNetworkReply *reply) {
             break;
     }
 
-    _logger->trace(QString("Rate Limited updated for bucket: %1. Rate Limit reimaining: %2/%3. Rate limit resets at: %3")
+    _logger->trace(QString("Rate Limit updated for bucket: %1. Rate Limit reimaining: %2/%3. Rate limit resets at: %4")
                    .arg(_bucketMap[bucket])
                    .arg(rateLimitRemainingString)
                    .arg(rateLimit)

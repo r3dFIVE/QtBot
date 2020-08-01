@@ -1,4 +1,4 @@
-#include "registrarfactory.h"
+#include "commandfactory.h"
 
 #include <QDir>
 #include <QFile>
@@ -15,24 +15,15 @@
 #include "util/serializationutils.h"
 
 
-const QString RegistrarFactory::BOT_IMPORT_IDENTIFIER = "BotApi";
-const QString RegistrarFactory::BOT_API_MAJOR_VERSION = "0";
-const QString RegistrarFactory::BOT_API_MINOR_VERSION = "1";
-const QString RegistrarFactory::BOT_TYPE_IDENTIFIER = "BotScript";
+const QString CommandFactory::BOT_IMPORT_IDENTIFIER = "BotApi";
+const QString CommandFactory::BOT_API_MAJOR_VERSION = "0";
+const QString CommandFactory::BOT_API_MINOR_VERSION = "1";
+const QString CommandFactory::BOT_TYPE_IDENTIFIER = "BotScript";
 
-
-void
-RegistrarFactory::initEngine() {
-
-    qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(), BOT_API_MAJOR_VERSION.toInt(),
-                               BOT_API_MINOR_VERSION.toInt(), BOT_TYPE_IDENTIFIER.toUtf8());
-
-    _engine.installExtensions(QJSEngine::ConsoleExtension);
-}
 
 
 QSharedPointer<GuildEntity>
-RegistrarFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
+CommandFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
     _registry.clear();
 
     _registeredScriptNames.clear();
@@ -47,8 +38,8 @@ RegistrarFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
 }
 
 void
-RegistrarFactory::loadCoreCommands() {
-    QMap<QString, ICommand::CommandMapping > coreCommands = CoreCommands::buildCommands(*_bot);
+CommandFactory::loadCoreCommands() {
+    QMap<QString, IBotJob::CommandMapping > coreCommands = CoreCommands::buildCommands(*_bot);
 
     for (QString commandName : coreCommands.keys()) {
         _coreCommandNames << commandName;
@@ -58,27 +49,34 @@ RegistrarFactory::loadCoreCommands() {
 }
 
 void
-RegistrarFactory::loadScripts(const QString &scriptDir) {    
+CommandFactory::loadScripts(const QString &scriptDir) {
     QDir directory(scriptDir);
+
     QStringList scripts = directory.entryList(QStringList() << "*.*", QDir::Files);
 
     for (QString fileName : scripts) {
+
         QString fileWithPath = scriptDir + fileName;
+
         if (isBotScript(fileWithPath)) {
+
             _logger->debug(QString("Loading bot script: %1").arg(fileName));
+
             loadScriptComponent(fileWithPath);
         }
     }
 }
 
 void
-RegistrarFactory::loadScriptComponent(const QString &fileName) {
+CommandFactory::loadScriptComponent(const QString &fileName) {
     _engine.clearComponentCache();
 
     QQmlComponent comp(&_engine, fileName);
 
     if (comp.errors().size() > 0) {
+
         _logger->debug(comp.errorString());
+
         return;
     }
 
@@ -87,14 +85,18 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
     botScript->initAPI(_botToken);
 
     if (comp.errors().size() > 0) {
+
         _logger->debug(comp.errorString());
+
         return;
     }
 
     QString scriptName = botScript->getScriptName();
 
     if (_registeredScriptNames.contains(botScript->getScriptName())) {
+
         QFileInfo info(fileName);
+
         _logger->warning(QString("%1 already registered. Please update name property for %2 and reload.")
                     .arg(botScript->getScriptName()).arg(info.fileName()));
     }
@@ -103,17 +105,23 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
         bool namingConflict = true;
 
         if (_coreCommandNames.contains(command)) {
+
             _logger->warning(QString("Commmand \"%1\" already registered as a core bot command.")
                         .arg(command));
-        } else if (_registry.contains(command)) {
+
+        } else if (_registry.contains(command)) {            
             QString existingScript = _registry[command].first;
 
             _logger->warning(QString("Commmand \"%1\" already registered to bot script named: %2")
                         .arg(command).arg(existingScript));
         } else {
+
             QString mapping = botScript->findCommandMapping(command);
+
             _registry[command] = qMakePair(mapping, botScript);
+
             _registeredScriptNames << scriptName;
+
             namingConflict = false;
         }
 
@@ -125,17 +133,19 @@ RegistrarFactory::loadScriptComponent(const QString &fileName) {
 }
 
 bool
-RegistrarFactory::isBotScript(const QString &fileName) {
+CommandFactory::isBotScript(const QString &fileName) {
     QFile scriptCandidate(fileName);
 
     if(!scriptCandidate.open(QIODevice::ReadOnly | QIODevice::Text)) {
         _logger->warning(QString("Failed to open %1, reason: %2")
                     .arg(fileName).arg(scriptCandidate.errorString()));
+
         return false;
     }
 
     while (!scriptCandidate.atEnd()) {
         QString line = scriptCandidate.readLine().simplified();
+
         QStringList lineTokens = line.split(" ");
 
         if (lineTokens[0] != "import") {

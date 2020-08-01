@@ -1,23 +1,27 @@
 #include "qml/botscript.h"
-#include "util/serializationutils.h"
-#include "qml/eventcontext.h"
-#include "eventcontext.h"
 
 #include <QQmlComponent>
 #include <QSqlError>
+
+#include "util/serializationutils.h"
+#include "qml/eventcontext.h"
+#include "eventcontext.h"
 
 
 const char *BotScript::defaultConnection = const_cast<char *>("qt_sql_default_connection");
 
 BotScript::BotScript(const BotScript &other) {
     _database = other._database;
+
     _query = other._query;
 }
 
 BotScript
 &BotScript::operator=(const BotScript &other) {
     _database = other._database;
+
     _query = other._query;
+
     return *this;
 }
 
@@ -32,29 +36,38 @@ BotScript::buildResponseVariant(QSharedPointer<EventContext> apiResponse) {
     return repsonseContext;
 }
 
+bool
+BotScript::running() {
+    return _runLock.tryLock();
+}
+
 QString
 BotScript::findCommandMapping(const QString &command) const {
     return _commands[command].toString();
 }
 
 void
-BotScript::execute(const QByteArray &command, QSharedPointer<EventContext> context) {
+BotScript::execute(const QByteArray &command, const EventContext &context) {
+    QMutexLocker lock(&_runLock);
+
     QVariant returnValue;
 
     QMetaObject::invokeMethod(this, command,
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, returnValue),
-                              Q_ARG(QVariant, SerializationUtils::toVariant(*context)));
+                              Q_ARG(QVariant, SerializationUtils::toVariant(context)));
 }
 
 bool
 BotScript::setDatabaseConnection(const QSqlDatabase &database) {
     if (database.isValid()) {
         _query = QSqlQuery(database);
+
         return true;
     }
 
     qDebug() << database.lastError();
+
     return false;
 }
 

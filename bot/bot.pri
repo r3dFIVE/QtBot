@@ -5,6 +5,8 @@ DEPENDPATH += $$PWD/.
 
 
 HEADERS += \
+    $$PWD/botjob/botjob.h \
+    $$PWD/botjob/jobqueue.h \
     $$PWD/entitymanager.h \
     $$PWD/httpclient.h \
     $$PWD/payloads/activityemoji.h \
@@ -58,15 +60,15 @@ HEADERS += \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
     $$PWD/qml/botscript.h \
+    $$PWD/qml/commandfactory.h \
     $$PWD/qml/eventcontext.h \
-    $$PWD/qml/registrarfactory.h \
     $$PWD/routes/createmessage.h \
     $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
     $$PWD/util/corecommand.h \
     $$PWD/util/corecommands.h \
     $$PWD/util/enumutils.h \
-    $$PWD/util/icommand.h \
+    $$PWD/botjob/ibotjob.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
     $$PWD/util/globals.h \
@@ -78,6 +80,8 @@ DISTFILES += \
 
 SOURCES += \
     $$PWD/bot.cpp \
+    $$PWD/botjob/botjob.cpp \
+    $$PWD/botjob/jobqueue.cpp \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
@@ -127,10 +131,11 @@ SOURCES += \
     $$PWD/payloads/user.cpp \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/qml/botscript.cpp \
+    $$PWD/qml/commandfactory.cpp \
     $$PWD/qml/eventcontext.cpp \
-    $$PWD/qml/registrarfactory.cpp \
     $$PWD/routes/createmessage.cpp \
     $$PWD/routes/discordapi.cpp \
+    $$PWD/util/corecommand.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \
     $$PWD/entity/guildentity.cpp
