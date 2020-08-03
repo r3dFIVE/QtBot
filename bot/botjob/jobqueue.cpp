@@ -52,14 +52,14 @@ JobQueue::getJobFromGuildQueue(int index) {
 
             _jobQueue[guildId].removeAt(i);
 
-             _lastJobGuildIndex = index;
-
-            if (index == _jobQueue.keys().length()) {
-                _lastJobGuildIndex--;
-            }
-
             if (_jobQueue[guildId].size() == 0) {
                 _jobQueue.remove(guildId);
+            }
+
+            _lastJobGuildIndex = index;
+
+            if (_jobQueue.keys().size() > 0 && _lastJobGuildIndex == _jobQueue.keys().size()) {
+                _lastJobGuildIndex = 0;
             }
 
             return readyJob;
