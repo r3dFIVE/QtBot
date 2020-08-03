@@ -4,16 +4,24 @@
 #include <QMap>
 #include <QList>
 
-#include "ibotjob.h"
+#include "job.h"
 
 
 class JobQueue
 {
-    QMap<QString, QList<QSharedPointer<IBotJob>> > _jobQueue;
+    int _lastJobGuildIndex = 0;
 
+    Job *readyJob = nullptr;
+    QMap<QString, QList<Job*>> _jobQueue;
+
+    Job* getJobFromGuildQueue(int index);
 
 public:
-    JobQueue();
+    friend JobQueue& operator<<(JobQueue &jobQueue, Job* job);
+
+    Job* get();
+    void pop();
+    void queue(Job *job);
 };
 
 #endif // JOBQUEUE_H

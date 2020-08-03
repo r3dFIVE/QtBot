@@ -2,6 +2,9 @@
 
 #include "util/corecommand.h"
 
+#include "botjob/ibotjob.h"
+
+
 bool
 GuildEntity::canInvoke(QString command, QStringList ids) {
     bool isInvokable = _scheme;
@@ -25,11 +28,11 @@ GuildEntity::canInvoke(QString command, QStringList ids) {
     return isInvokable;
 }
 
-BotJob*
+Job*
 GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
     QString command = context->command.toString();
 
-    BotJob *botJob = nullptr; //QThreadPool will auto delete on completion.
+    Job *job = nullptr; //QThreadPool will auto delete on completion.
 
     if (_registry.contains(command)) {
         QStringList ids;
@@ -39,13 +42,14 @@ GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
             << context->author["id"].toString();        
 
         if (canInvoke(command, ids)) {
-            botJob = new BotJob;
-            botJob->setContext(*context);
-            botJob->setCommandMapping(_registry[command]);
+            job = new Job;
+            job->setGuildId(_id);
+            job->setContext(*context);
+            job->setCommandMapping(_registry[command]);
         }
     }
 
-    return botJob;
+    return job;
 }
 
 QString

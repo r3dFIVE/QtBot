@@ -10,10 +10,7 @@
 #include "util/globals.h"
 #include "util/enumutils.h"
 #include "qml/botscript.h"
-#include "botjob/botjob.h"
-
-
-
+#include "botjob/job.h"
 
 
 EventHandler::EventHandler(QSharedPointer<Settings> settings) {
@@ -76,10 +73,22 @@ EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
 
     context->command = parseCommandToken(context->content.toString());
 
-    BotJob *botJob = guild->getBotJob(context);
+    Job *botJob = guild->getBotJob(context);
 
     if (botJob) {
-        QThreadPool::globalInstance()->start(botJob);
+        _jobQueue << botJob;
+
+        Job *readyJob = _jobQueue.get();
+
+        while (readyJob) {
+            if (QThreadPool::globalInstance()->tryStart(readyJob)) {
+                _jobQueue.pop();
+
+                readyJob = _jobQueue.get();
+            } else {
+                break;
+            }
+        }
     }
 }
 

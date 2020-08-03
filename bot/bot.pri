@@ -5,7 +5,7 @@ DEPENDPATH += $$PWD/.
 
 
 HEADERS += \
-    $$PWD/botjob/botjob.h \
+    $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
     $$PWD/entitymanager.h \
     $$PWD/httpclient.h \
@@ -80,7 +80,7 @@ DISTFILES += \
 
 SOURCES += \
     $$PWD/bot.cpp \
-    $$PWD/botjob/botjob.cpp \
+    $$PWD/botjob/job.cpp \
     $$PWD/botjob/jobqueue.cpp \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \

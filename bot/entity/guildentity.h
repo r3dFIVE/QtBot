@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QMap>
 
-#include "botjob/botjob.h"
+#include "botjob/job.h"
 #include "qml/eventcontext.h"
 
 class GuildEntity : public QObject
@@ -30,7 +30,7 @@ public:
         _scheme = ENABLED;
     };
 
-    BotJob* getBotJob(QSharedPointer<EventContext> context);
+    Job* getBotJob(QSharedPointer<EventContext> context);
 
     QString id() const;
     void setId(const QString &id);

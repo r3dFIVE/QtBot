@@ -1,14 +1,13 @@
 #ifndef IBOTJOB_H
 #define IBOTJOB_H
 
-#include "qml/eventcontext.h"
-
 #include <QByteArray>
 #include <QMutex>
 
-
+#include "qml/eventcontext.h"
 
 class IBotJob {
+
 public:
     typedef QPair<QString, QSharedPointer<IBotJob> > CommandMapping;
 
