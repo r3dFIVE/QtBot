@@ -2,7 +2,13 @@
 
 bool
 CoreCommand::running() {
-    return _runLock.tryLock();
+    bool canLock = _runLock.tryLock();
+
+    if (canLock) {
+        _runLock.unlock();
+    }
+
+    return !canLock;
 }
 
 void
