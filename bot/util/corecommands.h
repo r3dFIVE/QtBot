@@ -12,15 +12,15 @@ class CoreCommands {
 
 public:
 
-    static QMap<QString, ICommand::CommandMapping > buildCommands(Bot &bot) {
-        QMap<QString, QPair<QString, QSharedPointer<ICommand> > > commands;
+    static QMap<QString, IBotJob::CommandMapping > buildCommands(Bot &bot) {
+        QMap<QString, QPair<QString, QSharedPointer<IBotJob> > > commands;
 
         const auto addCommand = [&](auto name, auto cmd) {
             QSharedPointer<CoreCommand> command = QSharedPointer<CoreCommand>(new CoreCommand(cmd));
             commands[name] = qMakePair(name, command);
         };
 
-        addCommand(".reload", [&](QSharedPointer<EventContext> context) -> void {
+        addCommand(".reload", [&](const EventContext &context) -> void {
             Q_UNUSED(context);
 
             QMetaObject::invokeMethod(&bot, &Bot::reloadAllCommands, Qt::QueuedConnection);

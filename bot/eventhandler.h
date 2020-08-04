@@ -4,20 +4,21 @@
 #include <QObject>
 #include <QSqlQuery>
 
-#include "util/corecommand.h"
+#include "botjob/jobqueue.h"
+#include "entity/guildentity.h"
 #include "payloads/gatewaypayload.h"
 #include "payloads/message.h"
 #include "payloads/guild.h"
-#include "qml/registrarfactory.h"
+#include "qml/commandfactory.h"
 #include "util/settings.h"
 #include "logging/logfactory.h"
-#include "entity/guildentity.h"
-
-
+#include "util/corecommand.h"
 
 class EventHandler : public QObject
 {
     Q_OBJECT
+
+    JobQueue _jobQueue;
 
     QMap<QString, QSharedPointer<GuildEntity> > _availableGuilds;
     QSharedPointer<Settings> _settings;
@@ -30,6 +31,8 @@ class EventHandler : public QObject
     QString parseCommandToken(QString message);
     void processGuildCreate(QSharedPointer<EventContext> context);
     void processMessageCreate(QSharedPointer<EventContext> context);
+    void processMessageUpdate(QSharedPointer<EventContext> context);
+    void processPossibleCommands(QSharedPointer<EventContext> context);
 
 public:
     EventHandler(QSharedPointer<Settings> settings);

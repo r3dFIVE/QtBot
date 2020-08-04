@@ -4,14 +4,14 @@
 #include <QObject>
 #include <QMap>
 
-#include "util/icommand.h"
+#include "botjob/job.h"
 #include "qml/eventcontext.h"
 
 class GuildEntity : public QObject
 {
     Q_OBJECT
 
-    QMap<QString, ICommand::CommandMapping> _registry;
+    QMap<QString, IBotJob::CommandMapping> _registry;
     QMap<QString, QStringList> _mappedIdsByCommand;
     QString _id;
 
@@ -30,11 +30,11 @@ public:
         _scheme = ENABLED;
     };
 
-    void invoke(QSharedPointer<EventContext> context);
+    Job* getBotJob(QSharedPointer<EventContext> context);
 
     QString id() const;
     void setId(const QString &id);
-    void setRegistry(const QMap<QString, QPair<QString, QSharedPointer<ICommand>>> &registry);
+    void setRegistry(const QMap<QString, QPair<QString, QSharedPointer<IBotJob>>> &registry);
 
 private:
     RestrictionScheme _scheme;

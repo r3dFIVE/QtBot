@@ -10,12 +10,14 @@
 
 #include "eventcontext.h"
 #include "httpclient.h"
-#include "util/icommand.h"
+#include "botjob/ibotjob.h"
 #include "routes/discordapi.h"
 
-class BotScript : public QObject, public ICommand
+class BotScript : public QObject, public IBotJob
 {
     Q_OBJECT
+
+    QMutex _runLock;
 
     QSharedPointer<DiscordAPI> discordAPI;
     QSqlDatabase _database;
@@ -26,8 +28,6 @@ class BotScript : public QObject, public ICommand
 
     Q_PROPERTY(QMap commands READ getScriptCommands WRITE setScriptCommands REQUIRED)
     QMap<QString, QVariant> _commands;
-
-    QSharedPointer<HttpClient> _httpClient;
 
     static const char *defaultConnection;
 
@@ -71,20 +71,20 @@ public:
     BotScript &operator=(const BotScript &other);
 
     BotScript() {}
-    BotScript(const QString &botToken) {
-        _httpClient = QSharedPointer<HttpClient>(new HttpClient(botToken));
-    }
     ~BotScript() {}
     BotScript(const BotScript &other);
 
-    void setScriptCommands(QMap<QString, QVariant> commands);
+    bool running() override;
+
     QMap<QString, QVariant> getScriptCommands() const;
-    void setScriptName(const QString &name);
     QString getScriptName() const;
-    void postResult(const Message &message);
-    void initAPI(const QString &botToken);
     QString findCommandMapping(const QString &command) const;
-    void execute(const QByteArray &command, QSharedPointer<EventContext> message) override;
+
+    void execute(const QByteArray &command, const EventContext &message) override;
+    void initAPI(const QString &botToken);
+    void postResult(const Message &message);
+    void setScriptCommands(QMap<QString, QVariant> commands);
+    void setScriptName(const QString &name);
 
 public slots:
 

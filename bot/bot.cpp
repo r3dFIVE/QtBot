@@ -7,13 +7,16 @@
 #include <QDir>
 #include <QMetaEnum>
 
-Bot::Bot()
-{
+Bot::Bot() {
     qRegisterMetaType<QSharedPointer<GatewayPayload::GatewayPayload> >();
     qRegisterMetaType<QSharedPointer<JsonSerializable> >();
     qRegisterMetaType<QSharedPointer<Route> >();
     qRegisterMetaType<QSharedPointer<GuildEntity> >();
     qRegisterMetaType<LogContext::LogLevel>();
+}
+
+Bot::~Bot() {
+    delete _factory;
 }
 
 void
@@ -30,7 +33,7 @@ void
 Bot::run(QSharedPointer<Settings> settings) {
     QString scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
     QString botToken  = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
-    _factory = new RegistrarFactory(this, scriptDir, botToken);
+    _factory = new CommandFactory(this, scriptDir, botToken);
 
     Gateway *connection = new Gateway(settings);
     connection->moveToThread(&_gatewayThread);

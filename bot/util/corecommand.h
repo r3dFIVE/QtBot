@@ -1,30 +1,28 @@
 #ifndef CORECOMMAND_H
 #define CORECOMMAND_H
 
-#include "icommand.h"
+#include <functional>
+
+#include "botjob/ibotjob.h"
 #include "logging/logfactory.h"
 #include "payloads/message.h"
 
-#include <functional>
-
-
-
-class CoreCommand : public QObject, public ICommand {
+class CoreCommand : public QObject, public IBotJob {
     Q_OBJECT
 
-    std::function<void(QSharedPointer<EventContext> context)> _command;
+    std::function<void(const EventContext &context)> _command;
+
+    QMutex _runLock;
 
 public:
     CoreCommand() {}
-    CoreCommand(std::function<void(QSharedPointer<EventContext> context)> command) { _command = command; }
+    CoreCommand(std::function<void(const EventContext &context)> command) { _command = command; }
     CoreCommand(const CoreCommand &other) { Q_UNUSED(other) }
     ~CoreCommand() {}
 
-    void execute(const QByteArray &command, QSharedPointer<EventContext> context) override {
-        LogFactory::getLogger()->trace(QString("Executing core command: %1").arg(QString(command)));
+    bool running() override;
+    void execute(const QByteArray &command, const EventContext &context) override;
 
-        _command(context);
-    }
 };
 
 

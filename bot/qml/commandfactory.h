@@ -1,5 +1,5 @@
-#ifndef SCRIPTFACTORY_H
-#define SCRIPTFACTORY_H
+#ifndef COMMANDFACTORY_H
+#define COMMANDFACTORY_H
 
 #include <QObject>
 #include <QVariantMap>
@@ -12,7 +12,7 @@
 
 class Bot;
 
-class RegistrarFactory : public QObject
+class CommandFactory : public QObject
 {
     Q_OBJECT
 
@@ -24,11 +24,10 @@ class RegistrarFactory : public QObject
     QString _botToken;
     QStringList _coreCommandNames;
     QSet<QString> _registeredScriptNames;
-    QMap<QString, QPair<QString, QSharedPointer<ICommand>>> _registry;
+    QMap<QString, QPair<QString, QSharedPointer<IBotJob>>> _registry;
     QMap<QString, QString> _scriptNameByCommand;
 
     bool isBotScript(const QString &fileName);
-    void initEngine();
     void loadCoreCommands();
     void loadScripts(const QString &scriptDir);
     void loadScriptComponent(const QString &fileName);
@@ -40,22 +39,31 @@ class RegistrarFactory : public QObject
 
 public:
 
-    RegistrarFactory() {}
-    RegistrarFactory(Bot *bot, const QString &scriptDir, const QString &botToken) {
+    CommandFactory() {}
+    CommandFactory(const CommandFactory &other) { Q_UNUSED(other) }
+    ~CommandFactory() {}
+    CommandFactory(Bot *bot, const QString &scriptDir, const QString &botToken) {
         _bot = bot;
+
         _logger = LogFactory::getLogger();
+
         _scriptDir = scriptDir;
+
         _botToken = botToken;
-        initEngine();
+
+        _engine.installExtensions(QJSEngine::ConsoleExtension);
+
+        qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                                   BOT_API_MAJOR_VERSION.toInt(),
+                                   BOT_API_MINOR_VERSION.toInt(),
+                                   BOT_TYPE_IDENTIFIER.toUtf8());
     }
-    RegistrarFactory(const RegistrarFactory &other) { Q_UNUSED(other) }
-    ~RegistrarFactory() {}
 
     void init(const QString &botToken, const QString &scriptDir);
 
     QSharedPointer<GuildEntity> buildCommands(QSharedPointer<GuildEntity> guild);
 };
 
-Q_DECLARE_METATYPE(RegistrarFactory)
+Q_DECLARE_METATYPE(CommandFactory)
 
-#endif // SCRIPT_H
+#endif // COMMANDFACTORY_H
