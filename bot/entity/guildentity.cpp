@@ -44,8 +44,6 @@ GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
         if (canInvoke(command, ids)) {
             job = new Job;
 
-            job->setGuildId(_id);
-
             job->setContext(*context);
 
             job->setCommandMapping(_registry[command]);

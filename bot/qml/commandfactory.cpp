@@ -21,12 +21,13 @@ const QString CommandFactory::BOT_API_MINOR_VERSION = "1";
 const QString CommandFactory::BOT_TYPE_IDENTIFIER = "BotScript";
 
 
-
 QSharedPointer<GuildEntity>
 CommandFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
     _registry.clear();
 
     _registeredScriptNames.clear();
+
+    _guildId = guild->id();
 
     loadCoreCommands();
 
@@ -39,7 +40,7 @@ CommandFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
 
 void
 CommandFactory::loadCoreCommands() {
-    QMap<QString, IBotJob::CommandMapping > coreCommands = CoreCommands::buildCommands(*_bot);
+    QMap<QString, IBotJob::CommandMapping > coreCommands = CoreCommands::buildCommands(*_bot,_guildId);
 
     for (QString commandName : coreCommands.keys()) {
         _coreCommandNames << commandName;
@@ -83,6 +84,8 @@ CommandFactory::loadScriptComponent(const QString &fileName) {
     QSharedPointer<BotScript> botScript = QSharedPointer<BotScript>(qobject_cast<BotScript*>(comp.create()));
 
     botScript->initAPI(_botToken);
+
+    botScript->setGuildId(_guildId);
 
     if (comp.errors().size() > 0) {
 

@@ -8,7 +8,7 @@ Job::commandMapping() const {
 
 QString
 Job::guildId() {
-    return _guildId;
+    return _commandMapping.second->guildId();
 }
 
 
@@ -23,13 +23,8 @@ Job::context() const {
 }
 
 void
-Job::setContext(const EventContext &context) {
+Job::setContext(const EventContext context) {
     _context = context;
-}
-
-void
-Job::setGuildId(const QString &guildId) {
-    _guildId = guildId;
 }
 
 void

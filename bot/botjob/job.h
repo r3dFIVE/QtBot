@@ -10,7 +10,6 @@ class Job : public QRunnable
 
     EventContext _context;
     IBotJob::CommandMapping _commandMapping;
-    QString _guildId;
 
 public:    
     bool invokable() const;
@@ -19,8 +18,7 @@ public:
     QString guildId();
     void run() override;
     void setCommandMapping(const IBotJob::CommandMapping &commandMapping);
-    void setContext(const EventContext &context);
-    void setGuildId(const QString &guildId);
+    void setContext(const EventContext context);
 };
 
 #endif // JOB_H

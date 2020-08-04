@@ -20,8 +20,9 @@ class CommandFactory : public QObject
     Logger *_logger;
 
     QQmlApplicationEngine _engine;
-    QString _scriptDir;
     QString _botToken;
+    QString _guildId;
+    QString _scriptDir;
     QStringList _coreCommandNames;
     QSet<QString> _registeredScriptNames;
     QMap<QString, QPair<QString, QSharedPointer<IBotJob>>> _registry;

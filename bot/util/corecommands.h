@@ -12,11 +12,14 @@ class CoreCommands {
 
 public:
 
-    static QMap<QString, IBotJob::CommandMapping > buildCommands(Bot &bot) {
+    static QMap<QString, IBotJob::CommandMapping > buildCommands(Bot &bot, const QString &guildId) {
         QMap<QString, QPair<QString, QSharedPointer<IBotJob> > > commands;
 
         const auto addCommand = [&](auto name, auto cmd) {
             QSharedPointer<CoreCommand> command = QSharedPointer<CoreCommand>(new CoreCommand(cmd));
+
+            command->setGuildId(guildId);
+
             commands[name] = qMakePair(name, command);
         };
 
