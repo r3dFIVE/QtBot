@@ -20,7 +20,7 @@ public:
     CoreCommand(const CoreCommand &other) { Q_UNUSED(other) }
     ~CoreCommand() {}
 
-    bool running() override;
+    bool invokable() override;
     void execute(const QByteArray &command, const EventContext &context) override;
 
 };

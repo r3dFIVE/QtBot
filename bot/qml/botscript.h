@@ -74,7 +74,7 @@ public:
     ~BotScript() {}
     BotScript(const BotScript &other);
 
-    bool running() override;
+    bool invokable() override;
 
     QMap<QString, QVariant> getScriptCommands() const;
     QString getScriptName() const;

@@ -1,7 +1,7 @@
 #include "corecommand.h"
 
 bool
-CoreCommand::running() {
+CoreCommand::invokable() {
     bool canLock = _runLock.tryLock();
 
     if (canLock) {

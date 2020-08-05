@@ -37,7 +37,7 @@ BotScript::buildResponseVariant(QSharedPointer<EventContext> apiResponse) {
 }
 
 bool
-BotScript::running() {
+BotScript::invokable() {
     bool canLock = _runLock.tryLock();
 
     if (canLock) {
