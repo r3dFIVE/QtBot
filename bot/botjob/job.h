@@ -18,7 +18,7 @@ public:
     QString guildId();
     void run() override;
     void setCommandMapping(const IBotJob::CommandMapping &commandMapping);
-    void setContext(const EventContext context);
+    void setContext(const EventContext &context);
 };
 
 #endif // JOB_H
