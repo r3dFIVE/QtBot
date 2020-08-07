@@ -3,35 +3,31 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class EmbedField : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-
-    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
-    QJsonValue name;
-
-    Q_PROPERTY(QJsonValue value READ getValue WRITE setValue)
-    QJsonValue value;
-
-    Q_PROPERTY(QJsonValue inline READ getInline WRITE setInline)
-    QJsonValue inln;
-
-    QJsonValue getName() const;
-    void setName(const QJsonValue &value);
-    QJsonValue getValue() const;
-    void setValue(const QJsonValue &value);
-    QJsonValue getInline() const;
-    void setInline(const QJsonValue &value);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    static const QString INLINE;
+    static const QString NAME;
+    static const QString VALUE;
 
     EmbedField() {}
-    ~EmbedField() {}
+    EmbedField(const QByteArray &json) : JsonSerializable(json) {}
+    EmbedField(const QJsonObject &json) : JsonSerializable(json) {}
+    EmbedField(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getInline() const;
+    QJsonValue getName() const;
+    QJsonValue getValue() const;
+    void setName(const QJsonValue &name);
+    void setValue(const QJsonValue &value);
+    void setInline(const QJsonValue &inln);
+
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
+    Q_PROPERTY(QJsonValue value READ getValue WRITE setValue)
+    Q_PROPERTY(QJsonValue inline READ getInline WRITE setInline)
 };
 
 Q_DECLARE_METATYPE(EmbedField)

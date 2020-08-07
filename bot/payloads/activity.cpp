@@ -1,199 +1,156 @@
 #include "activity.h"
 
-#include <util/serializationutils.h>
+const QString Activity::NAME = "name";
+const QString Activity::TYPE = "type";
+const QString Activity::URL = "url";
+const QString Activity::CREATED_AT = "created_at";
+const QString Activity::TIMESTAMPS = "timestamps";
+const QString Activity::APPLICATION_ID = "application_id";
+const QString Activity::DETAILS = "details";
+const QString Activity::STATE = "state";
+const QString Activity::EMOJI = "emoji";
+const QString Activity::PARTY = "party";
+const QString Activity::ASSETS = "assets";
+const QString Activity::SECRETS = "secrets";
+const QString Activity::INSTANCE = "instance";
+const QString Activity::FLAGS = "flags";
 
-#include "activitytimestamps.h"
-#include "activityemoji.h"
-
-QString
-Activity::getName() {
-    return name;
+QJsonValue
+Activity::getName() const {
+    return _jsonObject[NAME];
 }
 
 void
-Activity::setName(QString name) {
-    this->name = name;
-}
-
-int
-Activity::getType() {
-    return type;
-}
-
-void
-Activity::setType(int type) {
-    this->type = type;
-}
-
-QString
-Activity::getUrl() {
-    return url;
-}
-
-void
-Activity::setUrl(QString url) {
-    this->url = url;
-}
-
-int
-Activity::getCreatedAt() {
-    return created_at;
-}
-
-void
-Activity::setCreatedAt(int created_at) {
-    this->created_at = created_at;
-}
-
-QJsonObject
-Activity::getTimestamps() {
-    if (timestamps) {
-        return timestamps->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
-}
-
-void
-Activity::setTimestamps(QJsonObject timestamps) {
-    this->timestamps = QSharedPointer<ActivityTimestamps>(new ActivityTimestamps);
-    SerializationUtils::readFromJson(*this->timestamps, timestamps);
-}
-
-QString
-Activity::getApplicationId() {
-    return application_id;
-}
-
-void
-Activity::setApplicationId(QString application_id) {
-    this->application_id = application_id;
-}
-
-QString
-Activity::getDetails() {
-    return details;
-}
-
-void
-Activity::setDetails(QString details) {
-    this->details = details;
-}
-
-QString
-Activity::getState() {
-    return state;
-}
-
-void
-Activity::setState(QString state) {
-    this->state = state;
-}
-
-QJsonObject
-Activity::getEmoji() {
-    if (emoji) {
-        return emoji->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
-}
-
-void
-Activity::setEmoji(QJsonObject emoji) {
-    this->emoji = QSharedPointer<ActivityEmoji>(new ActivityEmoji);
-    SerializationUtils::readFromJson(*this->emoji, emoji);
-}
-
-QJsonObject
-Activity::getParty() {
-    if (party) {
-        return party->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
-}
-
-void
-Activity::setParty(QJsonObject party) {
-    this->party = QSharedPointer<ActivityParty>(new ActivityParty);
-    SerializationUtils::readFromJson(*this->party, party);
-}
-
-QJsonObject
-Activity::getAssets() {
-    if (assets) {
-        return assets->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
-}
-
-void
-Activity::setAssets(QJsonObject assets) {
-    this->assets = QSharedPointer<ActivityAssets>(new ActivityAssets);
-    SerializationUtils::readFromJson(*this->assets, assets);
-}
-
-QJsonObject
-Activity::getSecrets() {
-    if (secrets) {
-        return secrets->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
-}
-
-void
-Activity::setSecrets(QJsonObject secrets) {
-    this->secrets = QSharedPointer<ActivitySecrets>(new ActivitySecrets);
-    SerializationUtils::readFromJson(*this->secrets, secrets);
+Activity::setName(const QJsonValue &name) {
+   _jsonObject[NAME] = name;
 }
 
 QJsonValue
-Activity::getInstance() {
-    if (instance) {
-        return QJsonValue(*instance);
-    }
-    return QJsonValue();
+Activity::getType() const {
+    return _jsonObject[TYPE];
 }
 
 void
-Activity::setInstance(QJsonValue instance) {
-    if (!instance.isNull()) {
-        this->instance = QSharedPointer<bool>(new bool(instance.toBool()));
-    }
+Activity::setType(const QJsonValue &type) {
+    _jsonObject[TYPE] = type;
 }
 
 QJsonValue
-Activity::getFlags() {
-    if (flags) {
-        return QJsonValue(*flags);
-    }
-    return QJsonValue();
+Activity::getUrl() const {
+    return _jsonObject[URL];
 }
 
 void
-Activity::setFlags(QJsonValue flags) {
-    if (!flags.isNull()) {
-        this->flags = QSharedPointer<int>(new int(flags.toInt()));
-    }
+Activity::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
+}
+
+QJsonValue
+Activity::getCreatedAt() const {
+    return _jsonObject[CREATED_AT];
 }
 
 void
-Activity::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+Activity::setCreatedAt(const QJsonValue &created_at) {
+    _jsonObject[CREATED_AT] = created_at;
 }
 
-/*
- * Note Bot can only send fields "name", "type", and "url"
- */
-void
-Activity::write(QJsonObject &jsonObject) {
-    jsonObject[NAME] = name;
-    jsonObject[TYPE] = type;
+QJsonObject
+Activity::getTimestamps() const {
+    return _jsonObject[TIMESTAMPS].toObject();
+}
 
-    if (!url.isEmpty()) {
-        jsonObject[URL] = url;
-    }
+void
+Activity::setTimestamps(const QJsonObject &timestamps) {
+    _jsonObject[TIMESTAMPS] = timestamps;
+}
+
+QJsonValue
+Activity::getApplicationId() const {
+    return _jsonObject[APPLICATION_ID];
+}
+
+void
+Activity::setApplicationId(const QJsonValue &application_id) {
+    _jsonObject[APPLICATION_ID] = application_id;
+}
+
+QJsonValue
+Activity::getDetails() const {
+    return _jsonObject[DETAILS];
+}
+
+void
+Activity::setDetails(const QJsonValue &details) {
+    _jsonObject[DETAILS] = details;
+}
+
+QJsonValue
+Activity::getState() const {
+    return _jsonObject[STATE];
+}
+
+void
+Activity::setState(const QJsonValue &state) {
+    _jsonObject[STATE] = state;
+}
+
+QJsonObject
+Activity::getEmoji() const {
+    return _jsonObject[EMOJI].toObject();
+}
+
+void
+Activity::setEmoji(const QJsonObject &emoji) {
+    _jsonObject[EMOJI] = emoji;
+}
+
+QJsonObject
+Activity::getParty() const {
+    return _jsonObject[PARTY].toObject();
+}
+
+void
+Activity::setParty(const QJsonObject &party) {
+    _jsonObject[PARTY] = party;
+}
+
+QJsonObject
+Activity::getAssets() const {
+    return _jsonObject[ASSETS].toObject();
+}
+
+void
+Activity::setAssets(const QJsonObject &assets) {
+    _jsonObject[ASSETS] = assets;
+}
+
+QJsonObject
+Activity::getSecrets() const {
+    return _jsonObject[SECRETS].toObject();
+}
+
+void
+Activity::setSecrets(const QJsonObject &secrets) {
+    _jsonObject[SECRETS] = secrets;
+}
+
+QJsonValue
+Activity::getInstance() const {
+    return _jsonObject[INSTANCE];
+}
+
+void
+Activity::setInstance(const QJsonValue &instance) {
+     _jsonObject[INSTANCE] = instance;
+}
+
+QJsonValue
+Activity::getFlags() const {
+    return _jsonObject[FLAGS];
+}
+
+void
+Activity::setFlags(const QJsonValue &flags) {
+    _jsonObject[FLAGS] = flags;
 }

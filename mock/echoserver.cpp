@@ -38,17 +38,22 @@ void EchoServer::onNewConnection()
     QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
 
     connect(pSocket, &QWebSocket::textMessageReceived, this, &EchoServer::processTextMessage);
+
     connect(pSocket, &QWebSocket::binaryMessageReceived, this, &EchoServer::processBinaryMessage);
+
     connect(pSocket, &QWebSocket::disconnected, this, &EchoServer::socketDisconnected);
 
     m_clients << pSocket;
 
     Hello hello;
+
     hello.setHeartbeatInterval(5000);
 
-    GatewayPayload::GatewayPayload payload;
-    payload.d = SerializationUtils::toQJsonObject(hello);
-    payload.op = GatewayEvents::HELLO;
+    GatewayPayload payload;
+
+    payload.setD(hello.toQJsonObject());
+
+    payload.setOp(GatewayEvents::HELLO);
 
     pSocket->sendTextMessage(payload.toQString());
 }
@@ -59,21 +64,25 @@ void EchoServer::processTextMessage(QString message)
 {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
 
-    GatewayPayload::GatewayPayload payload;
-    payload.fromQString(message);
+    GatewayPayload payload(message);
 
     qDebug() << "Message received:" << message;
 
-    GatewayPayload::GatewayPayload out;
+    GatewayPayload out;
     if (pClient) {
-        switch (payload.op) {
+        switch (payload.getOp().toInt()) {
             case GatewayEvents::HEARTBEAT:
-                out.op = GatewayEvents::HEARTBEAT_ACK;
-                out.s = s++;
+                out.setOp(GatewayEvents::HEARTBEAT_ACK);
+
+                out.setS(s++);
+
                 break;
         }
+
         QString outString = out.toQString();
+
         qDebug().noquote() << "sent: " + outString;
+
         pClient->sendTextMessage(outString);
     }
 }

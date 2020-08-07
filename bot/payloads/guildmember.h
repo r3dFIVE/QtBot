@@ -2,7 +2,6 @@
 #define GUILDMEMBER_H
 
 #include "jsonserializable.h"
-#include "user.h"
 
 
 class GuildMember : public JsonSerializable
@@ -10,51 +9,41 @@ class GuildMember : public JsonSerializable
     Q_OBJECT
 
 public:
-    const QString USER = "user";
-    const QString NICK = "nick";
-    const QString ROLES = "roles";
-    const QString JOINED_AT = "joined_at";
-    const QString PREMIUM_SINCE = "premium_since";
-    const QString DEAF = "deaf";
-    const QString MUTE = "mute";
+    static const QString USER;
+    static const QString NICK;
+    static const QString ROLES;
+    static const QString JOINED_AT;
+    static const QString PREMIUM_SINCE;
+    static const QString DEAF;
+    static const QString MUTE;
+
+    GuildMember() {}
+    GuildMember(const QByteArray &json) : JsonSerializable(json) {}
+    GuildMember(const QJsonObject &json) : JsonSerializable(json) {}
+    GuildMember(const QString &json) : JsonSerializable(json) {}
+
+    QJsonArray getRoles() const;
+    QJsonObject getUser() const;
+    QJsonValue getDeaf() const;
+    QJsonValue getJoinedAt() const;
+    QJsonValue getMute() const;
+    QJsonValue getNick() const;
+    QJsonValue getPremiumSince() const;
+    void setUser(const QJsonObject &user);
+    void setNick(const QJsonValue &nick);
+    void setRoles(const QJsonArray &roles);
+    void setJoinedAt(const QJsonValue &joinedAt);
+    void setPremiumSince(const QJsonValue &premiumSince);
+    void setDeaf(const QJsonValue &deaf);
+    void setMute(const QJsonValue &mute);
 
     Q_PROPERTY(QJsonObject user READ getUser WRITE setUser)
-    QSharedPointer<User> user;
-
-    Q_PROPERTY(QString nick READ getNick WRITE setNick)
-    QString nick;
-
+    Q_PROPERTY(QJsonValue nick READ getNick WRITE setNick)
     Q_PROPERTY(QJsonArray roles READ getRoles WRITE setRoles)
-    QList<QString> roles;
-
-    Q_PROPERTY(QString joined_at READ getJoinedAt WRITE setJoinedAt)
-    QString joined_at;
-
-    Q_PROPERTY(QString premium_since READ getPremiumSince WRITE setPremiumSince)
-    QString premium_since;
-
-    Q_PROPERTY(bool deaf READ getDeaf WRITE setDeaf)
-    bool deaf;
-
-    Q_PROPERTY(bool mute READ getMute WRITE setDeaf)
-    bool mute;
-
-    QJsonObject getUser();
-    void setUser(QJsonObject user);
-    QString getNick();
-    void setNick(QString nick);
-    QJsonArray getRoles();
-    void setRoles(QJsonArray roles);
-    QString getJoinedAt();
-    void setJoinedAt(QString joined_at);
-    QString getPremiumSince();
-    void setPremiumSince(QString premium_since);
-    bool getDeaf();
-    void setDeaf(bool deaf);
-    bool getMute();
-    void setMute(bool mute);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue joined_at READ getJoinedAt WRITE setJoinedAt)
+    Q_PROPERTY(QJsonValue premium_since READ getPremiumSince WRITE setPremiumSince)
+    Q_PROPERTY(QJsonValue deaf READ getDeaf WRITE setDeaf)
+    Q_PROPERTY(QJsonValue mute READ getMute WRITE setDeaf)
 };
 
 Q_DECLARE_METATYPE(GuildMember)

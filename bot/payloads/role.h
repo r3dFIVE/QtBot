@@ -3,64 +3,51 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class Role : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-    const QString ID = "id";
-    const QString NAME = "name";
-    const QString COLOR = "color";
-    const QString HOIST = "hoist";
-    const QString POSITION = "position";
-    const QString PERMISSIONS = "permissions";
-    const QString MANAGED = "managed";
-    const QString MENTIONABLE = "mentionable";
+    static const QString ID;
+    static const QString NAME;
+    static const QString COLOR;
+    static const QString HOIST;
+    static const QString POSITION;
+    static const QString PERMISSIONS;
+    static const QString MANAGED;
+    static const QString MENTIONABLE;
 
-    Q_PROPERTY(QString id READ getId WRITE setId)
-    QString id;
+    Role() {}
+    Role(const QByteArray &json) : JsonSerializable(json) {}
+    Role(const QJsonObject &json) : JsonSerializable(json) {}
+    Role(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(QString name READ getName WRITE setName)
-    QString name;
+    QJsonValue getColor() const;
+    QJsonValue getHoist() const;
+    QJsonValue getId() const;
+    QJsonValue getManaged() const;
+    QJsonValue getMentionable() const;
+    QJsonValue getName() const;
+    QJsonValue getPermissions() const;
+    QJsonValue getPosition() const;
+    void setColor(const QJsonValue &color);
+    void setHoist(const QJsonValue &hoist);
+    void setId(const QJsonValue &id);
+    void setManaged(const QJsonValue &managed);
+    void setMentionable(const QJsonValue &mentionable);
+    void setName(const QJsonValue &name);
+    void setPermissions(const QJsonValue &permissions);
+    void setPosition(const QJsonValue &position);
 
-    Q_PROPERTY(int color READ getColor WRITE setColor)
-    int color;
-
-    Q_PROPERTY(bool hoist READ getHoist WRITE setHoist)
-    bool hoist;
-
-    Q_PROPERTY(int position READ getPosition WRITE setPosition)
-    int position;
-
-    Q_PROPERTY(int permissions READ getPermissions WRITE setPermissions)
-    int permissions;
-
-    Q_PROPERTY(bool managed READ getManaged WRITE setManaged)
-    bool managed;
-
-    Q_PROPERTY(bool mentionable READ getMentionable WRITE setMentionable)
-    bool mentionable;
-
-    QString getId();
-    void setId(QString id);
-    QString getName();
-    void setName(QString name);
-    int getColor();
-    void setColor(int color);
-    bool getHoist();
-    void setHoist(bool hoist);
-    int getPosition();
-    void setPosition(int position);
-    int getPermissions();
-    void setPermissions(int permissions);
-    bool getManaged();
-    void setManaged(bool managed);
-    bool getMentionable();
-    void setMentionable(bool mentionable);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
+    Q_PROPERTY(QJsonValue color READ getColor WRITE setColor)
+    Q_PROPERTY(QJsonValue hoist READ getHoist WRITE setHoist)
+    Q_PROPERTY(QJsonValue position READ getPosition WRITE setPosition)
+    Q_PROPERTY(QJsonValue permissions READ getPermissions WRITE setPermissions)
+    Q_PROPERTY(QJsonValue managed READ getManaged WRITE setManaged)
+    Q_PROPERTY(QJsonValue mentionable READ getMentionable WRITE setMentionable)
 };
 
 Q_DECLARE_METATYPE(Role)

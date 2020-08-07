@@ -4,11 +4,10 @@
 
 void
 InvalidSessionTest::test_deserialization() {
-    InvalidSession invalidSession;
-    invalidSession.fromQString(PLD_INVALID_SESSION);
+    InvalidSession invalidSession(PLD_INVALID_SESSION);
 
-    QVERIFY(invalidSession.d == true);
-    QVERIFY(invalidSession.op == GatewayEvents::INVALID_SESSION);
+    QVERIFY(invalidSession.getD() == true);
+    QVERIFY(invalidSession.getOP() == GatewayEvents::INVALID_SESSION);
 }
 
 static InvalidSessionTest INVALID_SESSION_TEST;

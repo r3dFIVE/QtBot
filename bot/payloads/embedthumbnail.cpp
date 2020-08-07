@@ -1,54 +1,47 @@
 #include "embedthumbnail.h"
 
-#include "util/serializationutils.h"
 
+const QString EmbedThumbnail::HEIGHT = "height";
+const QString EmbedThumbnail::PROXY_URL = "proxy_url";
+const QString EmbedThumbnail::URL = "url";
+const QString EmbedThumbnail::WIDTH = "width";
 
 QJsonValue
 EmbedThumbnail::getUrl() const {
-    return url;
+    return _jsonObject[URL];
 }
 
 void
-EmbedThumbnail::setUrl(const QJsonValue &value) {
-    url = value;
+EmbedThumbnail::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
 }
 
 QJsonValue
 EmbedThumbnail::getProxyUrl() const {
-    return proxy_url;
+    return _jsonObject[PROXY_URL];
 }
 
 void
-EmbedThumbnail::setProxyUrl(const QJsonValue &value) {
-    proxy_url = value;
+EmbedThumbnail::setProxyUrl(const QJsonValue &proxyUrl) {
+    _jsonObject[PROXY_URL] = proxyUrl;
 }
 
 QJsonValue
 EmbedThumbnail::getHeight() const {
-    return height;
+    return _jsonObject[HEIGHT];
 }
 
 void
-EmbedThumbnail::setHeight(const QJsonValue &value) {
-    height = value;
+EmbedThumbnail::setHeight(const QJsonValue &height) {
+    _jsonObject[HEIGHT] = height;
 }
 
 QJsonValue
 EmbedThumbnail::getWidth() const {
-    return width;
+    return _jsonObject[WIDTH];
 }
 
 void
-EmbedThumbnail::setWidth(const QJsonValue &value) {
-    width = value;
-}
-
-void
-EmbedThumbnail::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedThumbnail::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+EmbedThumbnail::setWidth(const QJsonValue &width) {
+    _jsonObject[WIDTH] = width;
 }

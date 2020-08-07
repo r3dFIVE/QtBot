@@ -1,53 +1,47 @@
 #include "channelmention.h"
 
-#include <util/serializationutils.h>
+const QString ChannelMention::ID = "id";
+const QString ChannelMention::GUILD_ID = "guild_id";
+const QString ChannelMention::TYPE = "type";
+const QString ChannelMention::NAME = "name";
 
 QJsonValue
-ChannelMention::getId() {
-    return id;
+ChannelMention::getId() const {
+    return _jsonObject[ID];
 }
 
 void
-ChannelMention::setId(QJsonValue id) {
-    this->id = id;
-}
-
-QJsonValue
-ChannelMention::getGuildId() {
-    return guild_id;
-}
-
-void
-ChannelMention::setGuildId(QJsonValue guild_id) {
-    this->guild_id = guild_id;
+ChannelMention::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
 }
 
 QJsonValue
-ChannelMention::getType() {
-    return type;
+ChannelMention::getGuildId() const {
+    return _jsonObject[GUILD_ID];
 }
 
 void
-ChannelMention::setType(QJsonValue type) {
-    this->type = type;
+ChannelMention::setGuildId(const QJsonValue &guild_id) {
+    _jsonObject[ID] = guild_id;
 }
 
 QJsonValue
-ChannelMention::getName() {
-    return name;
+ChannelMention::getType() const {
+    return _jsonObject[TYPE];
 }
 
 void
-ChannelMention::setName(QJsonValue name) {
-    this->name = name;
+ChannelMention::setType(const QJsonValue &type) {
+    _jsonObject[TYPE] = type;
+}
+
+QJsonValue
+ChannelMention::getName() const {
+    return _jsonObject[NAME];
 }
 
 void
-ChannelMention::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+ChannelMention::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }
 
-void
-ChannelMention::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-}

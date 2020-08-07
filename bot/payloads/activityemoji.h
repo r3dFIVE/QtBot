@@ -3,34 +3,31 @@
 
 #include "jsonserializable.h"
 
-#include <QSharedPointer>
 
 class ActivityEmoji : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-    const QString NAME = "name";
-    const QString ID = "id";
-    const QString ANIMATED = "animated";
+    static const QString NAME;
+    static const QString ID;
+    static const QString ANIMATED;
 
-    Q_PROPERTY(QString name READ getName WRITE setName)
-    QString name;
+    ActivityEmoji() {}
+    ActivityEmoji(const QByteArray &json) : JsonSerializable(json) {}
+    ActivityEmoji(const QJsonObject &json) : JsonSerializable(json) {}
+    ActivityEmoji(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(QString id READ getId WRITE setId)
-    QString id;
+    QJsonValue getAnimated() const;
+    QJsonValue getId() const;
+    QJsonValue getName() const;
+    void setAnimated(const QJsonValue &animated);
+    void setId(const QJsonValue &id);
+    void setName(const QJsonValue &name);
 
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
     Q_PROPERTY(QJsonValue animated READ getAnimated WRITE setAnimated)
-    QSharedPointer<bool> animated;
-
-    QString getName();
-    void setName(QString name);
-    QString getId();
-    void setId(QString id);
-    QJsonValue getAnimated();
-    void setAnimated(QJsonValue animated);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityEmoji)

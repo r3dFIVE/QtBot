@@ -1,52 +1,46 @@
 #include "activityassets.h"
 
-#include <util/serializationutils.h>
+const QString ActivityAssets::LARGE_IMAGE = "large_image";
+const QString ActivityAssets::LARGE_TEXT = "large_text";
+const QString ActivityAssets::SMALL_IMAGE = "small_image";
+const QString ActivityAssets::SMALL_TEXT = "small_text";
 
-QString
+QJsonValue
 ActivityAssets::getLargeText() {
-    return large_text;
+    return _jsonObject[LARGE_TEXT].toString();
 }
 
 void
-ActivityAssets::setLargeText(QString &value) {
-    large_text = value;
+ActivityAssets::setLargeText(const QJsonValue &largeText) {
+    _jsonObject[LARGE_TEXT] = largeText;
 }
-QString
+
+QJsonValue
 ActivityAssets::getSmallImage() {
-    return small_image;
+    return _jsonObject[SMALL_IMAGE].toString();
 }
 
 void
-ActivityAssets::setSmallImage(QString &value) {
-    small_image = value;
+ActivityAssets::setSmallImage(const QJsonValue &smallImage) {
+    _jsonObject[SMALL_IMAGE] = smallImage;
 }
 
-QString
+QJsonValue
 ActivityAssets::getSmallText() {
-    return small_text;
+    return _jsonObject[SMALL_TEXT].toString();
 }
 
 void
-ActivityAssets::setSmallText(QString &value) {
-    small_text = value;
+ActivityAssets::setSmallText(const QJsonValue &smallText) {
+    _jsonObject[SMALL_TEXT] = smallText;
 }
 
-QString
+QJsonValue
 ActivityAssets::getLargeImage() {
-    return large_image;
+    return _jsonObject[LARGE_IMAGE].toString();
 }
 
 void
-ActivityAssets::setLargeImage(QString &value) {
-    large_image = value;
-}
-
-void
-ActivityAssets::read(const QJsonObject &jsonObject)  {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-ActivityAssets::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+ActivityAssets::setLargeImage(const QJsonValue &largeImage) {
+    _jsonObject[LARGE_IMAGE] = largeImage;
 }

@@ -1,34 +1,25 @@
 #include "embedprovider.h"
 
-#include "util/serializationutils.h"
 
+const QString EmbedProvider::NAME = "name";
+const QString EmbedProvider::URL = "url";
 
 QJsonValue
 EmbedProvider::getUrl() const {
-    return url;
+    return _jsonObject[URL];
 }
 
 void
-EmbedProvider::setUrl(const QJsonValue &value) {
-    url = value;
+EmbedProvider::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
 }
 
 QJsonValue
 EmbedProvider::getName() const {
-    return name;
+    return _jsonObject[NAME];
 }
 
 void
-EmbedProvider::setName(const QJsonValue &value) {
-    name = value;
-}
-
-void
-EmbedProvider::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedProvider::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+EmbedProvider::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }

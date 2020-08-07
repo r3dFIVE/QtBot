@@ -1,39 +1,52 @@
 #include "jsonserializable.h"
 
-#include "util/serializationutils.h"
 
+JsonSerializable::JsonSerializable(const QJsonObject &json) {
+    _jsonObject = json;
+}
+
+JsonSerializable::JsonSerializable(const QString &json) {
+    _jsonObject = fromQString(json);
+}
+
+JsonSerializable::JsonSerializable(const QByteArray &json) {
+    _jsonObject = fromByteArray(json);
+}
+
+void
+JsonSerializable::setQJsonObject(const QJsonObject &jsonObject) {
+    _jsonObject = jsonObject;
+}
 
 QJsonObject
 JsonSerializable::toQJsonObject() {
-    QJsonObject jsonObject;
-    this->write(jsonObject);
-    return jsonObject;
+    return _jsonObject;
 }
 
 QByteArray
 JsonSerializable::toByteArray() {
-    QJsonDocument document(this->toQJsonObject());
+    QJsonDocument document(_jsonObject);
+
     return document.toJson(QJsonDocument::Compact);
 }
 
 QString
 JsonSerializable::toQString() {
-    return QString(this->toByteArray());
+    return QString(toByteArray());
 }
 
-void
-JsonSerializable::fromQJsonObject(const QJsonObject &json) {
-    this->read(json);
-}
-
-void
+QJsonObject
 JsonSerializable::fromQString(const QString &json) {
-    this->fromByteArray(json.toUtf8());
+    return fromByteArray(json.toUtf8());
 }
 
-void
+QJsonObject
 JsonSerializable::fromByteArray(const QByteArray &json) {
     QJsonDocument document = QJsonDocument::fromJson(json);
-    QJsonObject object = document.object();
-    this->read(object);
+
+    QJsonObject jsonObject = document.object();
+
+    _jsonObject = jsonObject;
+
+    return _jsonObject;
 }

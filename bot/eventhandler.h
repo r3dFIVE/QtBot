@@ -28,11 +28,11 @@ class EventHandler : public QObject
     QSqlQuery _query;
     Logger *_logger;
 
-    QString parseCommandToken(QString message);
+    QString parseCommandToken(const QString &message);
     void processGuildCreate(QSharedPointer<EventContext> context);
     void processMessageCreate(QSharedPointer<EventContext> context);
     void processMessageUpdate(QSharedPointer<EventContext> context);
-    void processPossibleCommands(QSharedPointer<EventContext> context);
+    void processCommands(QSharedPointer<EventContext> context);
 
 public:
     EventHandler(QSharedPointer<Settings> settings);
@@ -42,7 +42,7 @@ signals:
     void reloadCommands(QSharedPointer<GuildEntity> guild);
 
 public slots:
-    void processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void processEvent(QSharedPointer<GatewayPayload> payload);
     void guildReady(QSharedPointer<GuildEntity> guild);
     void reloadAllAvailableGuilds();
     void init();

@@ -1,35 +1,34 @@
 #ifndef GATEWAYPAYLOAD_H
 #define GATEWAYPAYLOAD_H
 
-#include <QString>
-#include <QObject>
-
 #include "jsonserializable.h"
 
-namespace GatewayPayload {
-
-static const QString D = "d";
-static const QString T = "t";
-static const QString OP = "op";
-static const QString S = "s";
-static const QString VALUE = "value";
 
 class GatewayPayload : public JsonSerializable
 {
     Q_OBJECT
 
 public:
+    static const QString D;
+    static const QString OP;
+    static const QString S;
+    static const QString T;
 
-    int op = -1;
-    QJsonObject d;    
-    int s= -1;
-    QString t;
+    GatewayPayload() {}
+    GatewayPayload(const QJsonObject &json) : JsonSerializable(json) {}
+    GatewayPayload(const QString &json) : JsonSerializable(json) {}
 
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    QJsonObject getD() const;
+    QJsonValue getV() const;
+    QJsonValue getOp() const;
+    QJsonValue getS() const;
+    QJsonValue getT() const;
+    void setD(const QJsonValue &getD);
+    void setOp(const QJsonValue &getOp);
+    void setS(const QJsonValue &getS);
+    void setT(const QJsonValue &getT);
 };
-}
 
-Q_DECLARE_METATYPE(GatewayPayload::GatewayPayload)
+Q_DECLARE_METATYPE(GatewayPayload)
 
 #endif // GATEWAYPAYLOAD_H

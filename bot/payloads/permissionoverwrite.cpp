@@ -1,53 +1,47 @@
 #include "permissionoverwrite.h"
 
-#include "util/serializationutils.h"
 
-QString
-PermissionOverwrite::getId() {
-    return id;
+const QString PermissionOverwrite::ID = "id";
+const QString PermissionOverwrite::TYPE = "type";
+const QString PermissionOverwrite::ALLOW = "allow";
+const QString PermissionOverwrite::DENY = "deny";
+
+QJsonValue
+PermissionOverwrite::getId() const {
+    return _jsonObject[ID];
 }
 
 void
-PermissionOverwrite::setId(QString id) {
-    this->id = id;
+PermissionOverwrite::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
 }
 
-QString
-PermissionOverwrite::getType() {
-    return type;
-}
-
-void
-PermissionOverwrite::setType(QString type) {
-    this->type = type;
-}
-
-int
-PermissionOverwrite::getAllow() {
-    return allow;
+QJsonValue
+PermissionOverwrite::getType() const {
+    return _jsonObject[TYPE];
 }
 
 void
-PermissionOverwrite::setAllow(int allow) {
-    this->allow = allow;
+PermissionOverwrite::setType(const QJsonValue &type) {
+    _jsonObject[TYPE] = type;
 }
 
-int
-PermissionOverwrite::getDeny() {
-    return deny;
-}
-
-void
-PermissionOverwrite::setDeny(int deny) {
-    this->deny = deny;
+QJsonValue
+PermissionOverwrite::getAllow() const {
+    return _jsonObject[ALLOW];
 }
 
 void
-PermissionOverwrite::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+PermissionOverwrite::setAllow(const QJsonValue &allow) {
+    _jsonObject[ALLOW] = allow;
+}
+
+QJsonValue
+PermissionOverwrite::getDeny() const {
+    return _jsonObject[DENY];
 }
 
 void
-PermissionOverwrite::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+PermissionOverwrite::setDeny(const QJsonValue &deny) {
+    _jsonObject[DENY] = deny;
 }

@@ -1,112 +1,125 @@
 #include "tst_voicestate.h"
 
-#include <payloads/voicestate.h>
+#include "payloads/voicestate.h"
+#include "payloads/guildmember.h"
 
 
 void
 VoiceStateTest::test_deserialization_full() {
-    VoiceState voiceState;
-    voiceState.fromQString(PLD_VOICE_STATE_FULL);
+    VoiceState voiceState(PLD_VOICE_STATE_FULL);
 
-    QVERIFY(voiceState.guild_id == TEST_STRING2);
-    QVERIFY(voiceState.channel_id == TEST_STRING1);
-    QVERIFY(voiceState.user_id == TEST_STRING2);
-    QVERIFY(voiceState.member);
+    QVERIFY(voiceState.getGuildId() == TEST_STRING2);
+    QVERIFY(voiceState.getChannelId() == TEST_STRING1);
+    QVERIFY(voiceState.getUserId() == TEST_STRING2);
 
-    GuildMember member;
-    member.fromQJsonObject(voiceState.member->toQJsonObject());
+    GuildMember member(voiceState.getMember());
 
-    QVERIFY(member.nick == TEST_STRING1);
-    QVERIFY(voiceState.session_id == TEST_STRING1);
-    QVERIFY(voiceState.deaf == true);
-    QVERIFY(voiceState.mute == true);
-    QVERIFY(voiceState.self_deaf == true);
-    QVERIFY(voiceState.self_mute == true);
-    QVERIFY(voiceState.self_stream);
-    QVERIFY(*voiceState.self_stream == true);
-    QVERIFY(voiceState.suppress == true);
+    QVERIFY(member.getNick() == TEST_STRING1);
+    QVERIFY(voiceState.getSessionId() == TEST_STRING1);
+    QVERIFY(voiceState.getDeaf() == true);
+    QVERIFY(voiceState.getMute() == true);
+    QVERIFY(voiceState.getSelfDeaf() == true);
+    QVERIFY(voiceState.getSelfMute() == true);
+    QVERIFY(voiceState.getSelfStream() == true);
+    QVERIFY(voiceState.getSuppress() == true);
 }
 
 void
 VoiceStateTest::test_deserialization_minimal() {
-    VoiceState voiceState;
-    voiceState.fromQString(PLD_VOICE_STATE_MINIMAL);
+    VoiceState voiceState(PLD_VOICE_STATE_MINIMAL);
 
-    QVERIFY(voiceState.guild_id == "");
-    QVERIFY(voiceState.channel_id == TEST_STRING1);
-    QVERIFY(voiceState.user_id == TEST_STRING2);
-    QVERIFY(!voiceState.member);
-    QVERIFY(voiceState.session_id == TEST_STRING1);
-    QVERIFY(voiceState.deaf == true);
-    QVERIFY(voiceState.mute == true);
-    QVERIFY(voiceState.self_deaf == true);
-    QVERIFY(voiceState.self_mute == true);
-    QVERIFY(!voiceState.self_stream);
-    QVERIFY(voiceState.suppress == true);
+    QVERIFY(voiceState.getGuildId().isUndefined());
+    QVERIFY(voiceState.getChannelId() == TEST_STRING1);
+    QVERIFY(voiceState.getUserId() == TEST_STRING2);
+    QVERIFY(voiceState.getMember().isEmpty());
+    QVERIFY(voiceState.getSessionId() == TEST_STRING1);
+    QVERIFY(voiceState.getDeaf() == true);
+    QVERIFY(voiceState.getMute() == true);
+    QVERIFY(voiceState.getSelfDeaf() == true);
+    QVERIFY(voiceState.getSelfMute() == true);
+    QVERIFY(voiceState.getSelfStream().isUndefined());
+    QVERIFY(voiceState.getSuppress() == true);
 }
 
 void
 VoiceStateTest::test_serialization_full() {
     VoiceState voiceState;
+
     voiceState.setGuildId(TEST_STRING1);
+
     voiceState.setChannelId(TEST_STRING2);
+
     voiceState.setUserId(TEST_STRING1);
 
-    GuildMember guildMember;
-    guildMember.fromQString(PLD_GUILD_MEMBER_MINIMAL);
+    GuildMember guildMember(PLD_GUILD_MEMBER_MINIMAL);
 
     voiceState.setMember(guildMember.toQJsonObject());
+
     voiceState.setSessionId(TEST_STRING2);
+
     voiceState.setDeaf(true);
+
     voiceState.setMute(true);
+
     voiceState.setSelfDeaf(true);
+
     voiceState.setSelfMute(true);
+
     voiceState.setSelfStream(true);
+
     voiceState.setSuppress(true);
 
     QJsonObject serializedVoiceState = voiceState.toQJsonObject();
 
-    QVERIFY(serializedVoiceState[voiceState.GUILD_ID] == TEST_STRING1);
-    QVERIFY(serializedVoiceState[voiceState.CHANNEL_ID] == TEST_STRING2);
-    QVERIFY(serializedVoiceState[voiceState.USER_ID] == TEST_STRING1);
+    QVERIFY(serializedVoiceState[VoiceState::GUILD_ID] == TEST_STRING1);
+    QVERIFY(serializedVoiceState[VoiceState::CHANNEL_ID] == TEST_STRING2);
+    QVERIFY(serializedVoiceState[VoiceState::USER_ID] == TEST_STRING1);
 
-    QVERIFY(!serializedVoiceState.contains(voiceState.MEMBER));
-    guildMember.fromQJsonObject(serializedVoiceState[voiceState.MEMBER].toObject());
+    guildMember.setQJsonObject(serializedVoiceState[VoiceState::MEMBER].toObject());
+
     QVERIFY(guildMember.getNick() == TEST_STRING1);
-    QVERIFY(serializedVoiceState[voiceState.SESSION_ID] == TEST_STRING2);
-    QVERIFY(serializedVoiceState[voiceState.DEAF] == true);
-    QVERIFY(serializedVoiceState[voiceState.MUTE] == true);
-    QVERIFY(serializedVoiceState[voiceState.SELF_DEAF] == true);
-    QVERIFY(serializedVoiceState[voiceState.SELF_MUTE] == true);
-    QVERIFY(serializedVoiceState[voiceState.SELF_STREAM] == true);
-    QVERIFY(serializedVoiceState[voiceState.SUPPRESS] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SESSION_ID] == TEST_STRING2);
+    QVERIFY(serializedVoiceState[VoiceState::DEAF] == true);
+    QVERIFY(serializedVoiceState[VoiceState::MUTE] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SELF_DEAF] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SELF_MUTE] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SELF_STREAM] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SUPPRESS] == true);
 }
 
 void
 VoiceStateTest::test_serialization_minimal() {
     VoiceState voiceState;
+
     voiceState.setChannelId(TEST_STRING2);
+
     voiceState.setUserId(TEST_STRING1);
+
     voiceState.setSessionId(TEST_STRING2);
+
     voiceState.setDeaf(true);
+
     voiceState.setMute(true);
+
     voiceState.setSelfDeaf(true);
+
     voiceState.setSelfMute(true);
+
     voiceState.setSuppress(true);
 
     QJsonObject serializedVoiceState = voiceState.toQJsonObject();
 
-    QVERIFY(!serializedVoiceState.contains(voiceState.GUILD_ID));
-    QVERIFY(serializedVoiceState[voiceState.CHANNEL_ID] == TEST_STRING2);
-    QVERIFY(serializedVoiceState[voiceState.USER_ID] == TEST_STRING1);
-    QVERIFY(!serializedVoiceState.contains(voiceState.MEMBER));
-    QVERIFY(serializedVoiceState[voiceState.SESSION_ID] == TEST_STRING2);
-    QVERIFY(serializedVoiceState[voiceState.DEAF] == true);
-    QVERIFY(serializedVoiceState[voiceState.MUTE] == true);
-    QVERIFY(serializedVoiceState[voiceState.SELF_DEAF] == true);
-    QVERIFY(serializedVoiceState[voiceState.SELF_MUTE] == true);
-    QVERIFY(!serializedVoiceState.contains(voiceState.SELF_STREAM));
-    QVERIFY(serializedVoiceState[voiceState.SUPPRESS] == true);
+    QVERIFY(!serializedVoiceState.contains(VoiceState::GUILD_ID));
+    QVERIFY(serializedVoiceState[VoiceState::CHANNEL_ID] == TEST_STRING2);
+    QVERIFY(serializedVoiceState[VoiceState::USER_ID] == TEST_STRING1);
+    QVERIFY(!serializedVoiceState.contains(VoiceState::MEMBER));
+    QVERIFY(serializedVoiceState[VoiceState::SESSION_ID] == TEST_STRING2);
+    QVERIFY(serializedVoiceState[VoiceState::DEAF] == true);
+    QVERIFY(serializedVoiceState[VoiceState::MUTE] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SELF_DEAF] == true);
+    QVERIFY(serializedVoiceState[VoiceState::SELF_MUTE] == true);
+    QVERIFY(!serializedVoiceState.contains(VoiceState::SELF_STREAM));
+    QVERIFY(serializedVoiceState[VoiceState::SUPPRESS] == true);
 }
 
 static VoiceStateTest VOICE_STATE_TEST;

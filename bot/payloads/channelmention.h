@@ -9,33 +9,30 @@ class ChannelMention : public JsonSerializable
 {
     Q_OBJECT
 
-public:  
-    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
-    QJsonValue id;
-
-    Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setId)
-    QJsonValue guild_id;
-
-    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
-    QJsonValue type;
-
-    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
-    QJsonValue name;
-
-    QJsonValue getId();
-    void setId(QJsonValue id);
-    QJsonValue getGuildId();
-    void setGuildId(QJsonValue guild_id);
-    QJsonValue getType();
-    void setType(QJsonValue type);
-    QJsonValue getName();
-    void setName(QJsonValue name);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+public:      
+    static const QString ID;
+    static const QString GUILD_ID;
+    static const QString TYPE;
+    static const QString NAME;
 
     ChannelMention() {}
-    ~ChannelMention() {}
+    ChannelMention(const QByteArray &json) : JsonSerializable(json) {}
+    ChannelMention(const QJsonObject &json) : JsonSerializable(json) {}
+    ChannelMention(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getGuildId() const;
+    QJsonValue getId() const;
+    QJsonValue getName() const;
+    QJsonValue getType() const;
+    void setGuildId(const QJsonValue &guild_id);
+    void setId(const QJsonValue &id);
+    void setName(const QJsonValue &name);
+    void setType(const QJsonValue &type);
+
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
+    Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setId)
+    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
 };
 
 Q_DECLARE_METATYPE(ChannelMention)

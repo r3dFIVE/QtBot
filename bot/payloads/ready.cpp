@@ -1,98 +1,68 @@
 #include "ready.h"
 
-#include "util/serializationutils.h"
+const QString Ready::V = "v";
+const QString Ready::USER = "user";
+const QString Ready::PRIVATE_CHANNELS = "private_channels";
+const QString Ready::GUILDS = "guilds";
+const QString Ready::SESSION_ID = "session_id";
+const QString Ready::SHARD = "shard";
 
-int
-Ready::getV() {
-    return v;
+QJsonValue
+Ready::getV() const {
+    return _jsonObject[V];
 }
 
 void
-Ready::setV(int v) {
-    this->v = v;
+Ready::setV(const QJsonValue &v) {
+    _jsonObject[V] = v;
 }
 
 QJsonObject
-Ready::getUser() {
-    return user.toQJsonObject();
+Ready::getUser() const {
+    return _jsonObject[USER].toObject();
 }
 
 void
-Ready::setUser(QJsonObject user) {
-    if (!user.isEmpty()) {
-        this->user.fromQJsonObject(user);
-    }
+Ready::setUser(const QJsonObject &user) {
+    _jsonObject[USER] = user;
 }
 
 QJsonArray
-Ready::getPrivateChannels() {
-    QJsonArray private_channels;
-    for (Channel channel : this->private_channels) {
-        private_channels.push_back(channel.toQJsonObject());
-    }
-    return private_channels;
+Ready::getPrivateChannels() const {
+    return _jsonObject[PRIVATE_CHANNELS].toArray();
 }
 
 void
-Ready::setPrivateChannels(QJsonArray private_channels) {
-    for (QJsonValue jsonValue : private_channels) {
-        Channel channel;
-        channel.fromQJsonObject(jsonValue.toObject());
-        this->private_channels.push_back(channel);
-    }
+Ready::setPrivateChannels(const QJsonArray &privateChannels) {
+    _jsonObject[PRIVATE_CHANNELS] = privateChannels;
 }
 
 QJsonArray
-Ready::getGuilds() {
-    QJsonArray guilds;
-    for (Guild guild : this->guilds) {
-        guilds.push_back(guild.toQJsonObject());
-    }
-    return guilds;
+Ready::getGuilds() const {
+    return _jsonObject[GUILDS].toArray();
 }
 
 void
-Ready::setGuilds(QJsonArray guilds) {
-    for (QJsonValue jsonValue : guilds) {
-        Guild guild;
-        guild.fromQJsonObject(jsonValue.toObject());
-        this->guilds.push_back(guild);
-    }
+Ready::setGuilds(const QJsonArray &guilds) {
+    _jsonObject[GUILDS] = guilds;
 }
 
-QString
-Ready::getSessionId() {
-    return session_id;
+QJsonValue
+Ready::getSessionId() const {
+    return _jsonObject[SESSION_ID];
 }
 
 void
-Ready::setSessionId(QString session_id) {
-   this->session_id = session_id;
+Ready::setSessionId(const QJsonValue &sessionId) {
+   _jsonObject[SESSION_ID] = sessionId;
 }
 
 QJsonArray
-Ready::getShard() {
-    if (shard[0] && shard[1]) {
-        return QJsonArray { *shard[0], *shard[1] };
-    } else {
-        return QJsonArray();
-    }
+Ready::getShard() const {
+    return _jsonObject[SHARD].toArray();
 }
 
 void
-Ready::setShard(QJsonArray shard) {
-    if (!shard.isEmpty()) {
-        this->shard[0] = QSharedPointer<int>(new int(shard[0].toInt()));
-        this->shard[1] = QSharedPointer<int>(new int(shard[1].toInt()));
-    }
-}
-
-void
-Ready::read(const QJsonObject &jsonObject)  {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Ready::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Ready::setShard(const QJsonArray &shard) {
+    _jsonObject[SHARD] = shard;
 }

@@ -1,8 +1,10 @@
 #include "tst_activity.h"
 #include "testpayloads.h"
 
-#include <payloads/activity.h>
-
+#include "payloads/activity.h"
+#include "payloads/activityassets.h"
+#include "payloads/activitysecrets.h"
+#include "payloads/activityparty.h"
 #include "payloads/activityemoji.h"
 #include "payloads/activitytimestamps.h"
 
@@ -11,50 +13,53 @@ class ActivityEmoji;
 void
 ActivityTest::test_serialization_minimal() {
     Activity activity;
-    activity.name = TEST_STRING1;
-    activity.type = 1;
+
+    activity.setName(TEST_STRING1);
+
+    activity.setType(1);
 
     QJsonObject serializedActivity = activity.toQJsonObject();
 
-    QVERIFY(serializedActivity[activity.NAME] != "");
-    QVERIFY(serializedActivity[activity.NAME] == TEST_STRING1);
+    QVERIFY(serializedActivity[Activity::NAME] != "");
+    QVERIFY(serializedActivity[Activity::NAME] == TEST_STRING1);
 
-    QVERIFY(serializedActivity[activity.TYPE] == 1);
-    QVERIFY(serializedActivity[activity.TYPE] != 0);
+    QVERIFY(serializedActivity[Activity::TYPE] == 1);
+    QVERIFY(serializedActivity[Activity::TYPE] != 0);
 
-    QVERIFY(!serializedActivity.contains(activity.URL));
+    QVERIFY(!serializedActivity.contains(Activity::URL));
 
     /*
      * Note Bot can only send fields "name", "type", and "url"
      */
-    QVERIFY(!serializedActivity.contains(activity.CREATED_AT));
-    QVERIFY(!serializedActivity.contains(activity.TIMESTAMPS));
-    QVERIFY(!serializedActivity.contains(activity.APPLICATION_ID));
-    QVERIFY(!serializedActivity.contains(activity.DETAILS));
-    QVERIFY(!serializedActivity.contains(activity.STATE));
-    QVERIFY(!serializedActivity.contains(activity.EMOJI));
-    QVERIFY(!serializedActivity.contains(activity.PARTY));
-    QVERIFY(!serializedActivity.contains(activity.ASSETS));
-    QVERIFY(!serializedActivity.contains(activity.SECRETS));
-    QVERIFY(!serializedActivity.contains(activity.INSTANCE));
-    QVERIFY(!serializedActivity.contains(activity.FLAGS));
+    QVERIFY(!serializedActivity.contains(Activity::CREATED_AT));
+    QVERIFY(!serializedActivity.contains(Activity::TIMESTAMPS));
+    QVERIFY(!serializedActivity.contains(Activity::APPLICATION_ID));
+    QVERIFY(!serializedActivity.contains(Activity::DETAILS));
+    QVERIFY(!serializedActivity.contains(Activity::STATE));
+    QVERIFY(!serializedActivity.contains(Activity::EMOJI));
+    QVERIFY(!serializedActivity.contains(Activity::PARTY));
+    QVERIFY(!serializedActivity.contains(Activity::ASSETS));
+    QVERIFY(!serializedActivity.contains(Activity::SECRETS));
+    QVERIFY(!serializedActivity.contains(Activity::INSTANCE));
+    QVERIFY(!serializedActivity.contains(Activity::FLAGS));
 }
 
 void
 ActivityTest::test_serialization_full() {
     Activity activity;
-    activity.name = TEST_STRING1;
-    activity.type = 1;
-    activity.url = TEST_STRING2;
+
+    activity.setName(TEST_STRING1);
+
+    activity.setType(1);
+
+    activity.setUrl(TEST_STRING2);
 
     QJsonObject serializedActivity = activity.toQJsonObject();
 
     QVERIFY(serializedActivity[activity.NAME] != "");
     QVERIFY(serializedActivity[activity.NAME] == TEST_STRING1);
-
     QVERIFY(serializedActivity[activity.TYPE] == 1);
     QVERIFY(serializedActivity[activity.TYPE] != 0);
-
     QVERIFY(serializedActivity[activity.URL] != "");
     QVERIFY(serializedActivity[activity.URL] == TEST_STRING2);
 
@@ -76,126 +81,95 @@ ActivityTest::test_serialization_full() {
 
 void
 ActivityTest::test_deserialization_minimal() {
-    Activity activity;
-    activity.fromQString(PLD_ACTIVITY_MINIMAL);
+    Activity activity(PLD_ACTIVITY_MINIMAL);
 
-    QVERIFY(activity.name == TEST_STRING1);
-    QVERIFY(activity.name != TEST_STRING2);
-
-    QVERIFY(activity.type == 1);
-    QVERIFY(activity.type != 0);
-
-    QVERIFY(activity.url != TEST_STRING1);
-    QVERIFY(activity.url == "");
-
-    QVERIFY(activity.created_at == TEST_INT1);
-    QVERIFY(activity.created_at != TEST_INT2);
-
-    QVERIFY(activity.timestamps == nullptr);
-    QVERIFY(activity.emoji == nullptr);
-    QVERIFY(activity.party == nullptr);
-    QVERIFY(activity.assets == nullptr);
-    QVERIFY(activity.secrets == nullptr);
-    QVERIFY(activity.instance == nullptr);
-    QVERIFY(activity.flags == nullptr);
+    QVERIFY(activity.getName() == TEST_STRING1);
+    QVERIFY(activity.getName() != TEST_STRING2);
+    QVERIFY(activity.getType() == 1);
+    QVERIFY(activity.getType() != 0);
+    QVERIFY(activity.getUrl() != TEST_STRING1);
+    QVERIFY(activity.getUrl().isUndefined());
+    QVERIFY(activity.getCreatedAt() == TEST_INT1);
+    QVERIFY(activity.getCreatedAt() != TEST_INT2);
+    QVERIFY(activity.getTimestamps().isEmpty());
+    QVERIFY(activity.getEmoji().isEmpty());
+    QVERIFY(activity.getParty().isEmpty());
+    QVERIFY(activity.getAssets().isEmpty());
+    QVERIFY(activity.getSecrets().isEmpty());
+    QVERIFY(activity.getInstance().isUndefined());
+    QVERIFY(activity.getFlags().isUndefined());
 }
 
 void
 ActivityTest::test_deserialization_full() {
-    Activity activity;
-    activity.fromQString(PLD_ACTIVITY_FULL);
+    Activity activity(PLD_ACTIVITY_FULL);
 
-    QVERIFY(activity.name == TEST_STRING1);
-    QVERIFY(activity.name != TEST_STRING2);
+    QVERIFY(activity.getName() == TEST_STRING1);
+    QVERIFY(activity.getName() != TEST_STRING2);
+    QVERIFY(activity.getType() == 1);
+    QVERIFY(activity.getType() != 0);
+    QVERIFY(activity.getUrl() != TEST_STRING1);
+    QVERIFY(activity.getUrl() == TEST_STRING2);
+    QVERIFY(activity.getCreatedAt() == TEST_INT1);
+    QVERIFY(activity.getCreatedAt() != TEST_INT2);
 
-    QVERIFY(activity.type == 1);
-    QVERIFY(activity.type != 0);
+    ActivityTimestamps timestamps(activity.getTimestamps());
 
-    QVERIFY(activity.url != TEST_STRING1);
-    QVERIFY(activity.url == TEST_STRING2);
+    QVERIFY(!timestamps.getStart().isNull());
+    QVERIFY(timestamps.getStart() == TEST_INT1);
+    QVERIFY(timestamps.getStart() != TEST_INT2);
+    QVERIFY(!timestamps.getEnd().isNull());
+    QVERIFY(timestamps.getEnd() != TEST_INT1);
+    QVERIFY(timestamps.getEnd() == TEST_INT2);
 
-    QVERIFY(activity.created_at == TEST_INT1);
-    QVERIFY(activity.created_at != TEST_INT2);
+    QVERIFY(activity.getApplicationId() == TEST_STRING1);
+    QVERIFY(activity.getApplicationId() != TEST_STRING2);
+    QVERIFY(activity.getDetails() != TEST_STRING1);
+    QVERIFY(activity.getDetails() == TEST_STRING2);
+    QVERIFY(activity.getState() == TEST_STRING1);
+    QVERIFY(activity.getState() != TEST_STRING2);
 
-    ActivityTimestamps timestamps;
-    timestamps.fromQJsonObject(activity.timestamps->toQJsonObject());
-
-    QVERIFY(timestamps.start != nullptr);
-    QVERIFY(*timestamps.start == TEST_INT1);
-    QVERIFY(*timestamps.start != TEST_INT2);
-
-    QVERIFY(timestamps.end != nullptr);
-    QVERIFY(*timestamps.end != TEST_INT1);
-    QVERIFY(*timestamps.end == TEST_INT2);
-
-    QVERIFY(activity.application_id == TEST_STRING1);
-    QVERIFY(activity.application_id != TEST_STRING2);
-
-    QVERIFY(activity.details != TEST_STRING1);
-    QVERIFY(activity.details == TEST_STRING2);
-
-    QVERIFY(activity.state == TEST_STRING1);
-    QVERIFY(activity.state != TEST_STRING2);
-
-    ActivityEmoji emoji;
-    emoji.fromQJsonObject(activity.emoji->toQJsonObject());
+    ActivityEmoji emoji(activity.getEmoji());
 
     QVERIFY(emoji.getName() == TEST_STRING1);
     QVERIFY(emoji.getName() != TEST_STRING2);
-
     QVERIFY(emoji.getId() != TEST_STRING1);
     QVERIFY(emoji.getId() == TEST_STRING2);
+    QVERIFY(!emoji.getAnimated().isNull());
+    QVERIFY(emoji.getAnimated() == true);
 
-    QVERIFY(emoji.animated != nullptr);
-    QVERIFY(emoji.getAnimated() ==  true);
+    ActivityParty party(activity.getParty());
 
+    QVERIFY(party.getId() == TEST_STRING1);
+    QVERIFY(party.getId() != TEST_STRING2);
+    QVERIFY(party.getSize()[0] == TEST_INT1);
+    QVERIFY(party.getSize()[0] != TEST_INT2);
+    QVERIFY(party.getSize()[1] != TEST_INT1);
+    QVERIFY(party.getSize()[1] == TEST_INT2);
 
-    ActivityParty party;
-    party.fromQJsonObject(activity.party->toQJsonObject());
+    ActivityAssets assets(activity.getAssets());
 
-    QVERIFY(party.id == TEST_STRING1);
-    QVERIFY(party.id != TEST_STRING2);
+    QVERIFY(assets.getLargeImage() == TEST_STRING1);
+    QVERIFY(assets.getLargeImage() != TEST_STRING2);
+    QVERIFY(assets.getLargeText() != TEST_STRING1);
+    QVERIFY(assets.getLargeText() == TEST_STRING2);
+    QVERIFY(assets.getSmallImage() == TEST_STRING1);
+    QVERIFY(assets.getSmallImage() != TEST_STRING2);
+    QVERIFY(assets.getSmallText() != TEST_STRING1);
+    QVERIFY(assets.getSmallText() == TEST_STRING2);
 
-    QVERIFY(party.size[0] != nullptr);
-    QVERIFY(*party.size[0] == TEST_INT1);
-    QVERIFY(*party.size[0] != TEST_INT2);
+    ActivitySecrets secrets(activity.getSecrets());
 
-    QVERIFY(party.size[1] != nullptr);
-    QVERIFY(*party.size[1] != TEST_INT1);
-    QVERIFY(*party.size[1] == TEST_INT2);
+    QVERIFY(secrets.getJoin() == TEST_STRING1);
+    QVERIFY(secrets.getJoin() != TEST_STRING2);
+    QVERIFY(secrets.getSpectate() != TEST_STRING1);
+    QVERIFY(secrets.getSpectate() == TEST_STRING2);
+    QVERIFY(secrets.getMatch() == TEST_STRING1);
+    QVERIFY(secrets.getMatch() != TEST_STRING2);
 
-    ActivityAssets assets;
-    assets.fromQJsonObject(activity.assets->toQJsonObject());
-
-    QVERIFY(assets.large_image == TEST_STRING1);
-    QVERIFY(assets.large_image != TEST_STRING2);
-
-    QVERIFY(assets.large_text != TEST_STRING1);
-    QVERIFY(assets.large_text == TEST_STRING2);
-
-    QVERIFY(assets.small_image == TEST_STRING1);
-    QVERIFY(assets.small_image != TEST_STRING2);
-
-    QVERIFY(assets.small_text != TEST_STRING1);
-    QVERIFY(assets.small_text == TEST_STRING2);
-
-    ActivitySecrets secrets;
-    secrets.fromQJsonObject(activity.secrets->toQJsonObject());
-
-    QVERIFY(secrets.join == TEST_STRING1);
-    QVERIFY(secrets.join != TEST_STRING2);
-
-    QVERIFY(secrets.spectate != TEST_STRING1);
-    QVERIFY(secrets.spectate == TEST_STRING2);
-
-    QVERIFY(secrets.match == TEST_STRING1);
-    QVERIFY(secrets.match != TEST_STRING2);
-
-    QVERIFY(activity.instance != nullptr);
-    QVERIFY(*activity.instance == true);
-
-    QVERIFY(activity.flags != nullptr);
-    QVERIFY(*activity.flags == 1);
+    QVERIFY(!activity.getInstance().isNull());
+    QVERIFY(activity.getInstance() == true);
+    QVERIFY(activity.getFlags() == 1);
 }
 
 static ActivityTest ACTIVITY_TEST;

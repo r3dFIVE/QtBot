@@ -4,8 +4,7 @@
 #include <QSqlError>
 
 #include "util/serializationutils.h"
-#include "qml/eventcontext.h"
-#include "eventcontext.h"
+#include "payloads/eventcontext.h"
 
 
 const char *BotScript::defaultConnection = const_cast<char *>("qt_sql_default_connection");
@@ -44,7 +43,7 @@ BotScript::invokable() {
         _runLock.unlock();
     }
 
-    return !canLock; // If we can lock its not running!
+    return canLock;
 }
 
 QString

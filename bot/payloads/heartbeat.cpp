@@ -1,33 +1,26 @@
 #include "heartbeat.h"
 
-#include <util/serializationutils.h>
 
-int
-Heartbeat::getD() {
-    return d;
+const QString Heartbeat::D = "d";
+const QString Heartbeat::OP = "op";
+
+QJsonValue
+Heartbeat::getD() const {
+    return _jsonObject[D].toInt();
 }
 
 void
-Heartbeat::setD(int value) {
-    d = value;
+Heartbeat::setD(const QJsonValue &d) {
+    _jsonObject[D] = d;
 }
 
-int
-Heartbeat::getOp() {
-    return op;
-}
-
-void
-Heartbeat::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+QJsonValue
+Heartbeat::getOp() const {
+    return  _jsonObject[OP];
 }
 
 void
-Heartbeat::write(QJsonObject &jsonObject) {
-    if (d == -1) {
-        jsonObject[D] = QJsonValue::Null;
-    } else {
-        jsonObject[D] = d;
-    }
-    jsonObject[OP] = op;
+Heartbeat::setOp(const QJsonValue &event) {
+    _jsonObject[OP] = event;
 }
+

@@ -1,355 +1,267 @@
 #include "message.h"
 
-#include "util/serializationutils.h"
 
+const QString Message::ID = "id";
+const QString Message::CHANNEL_ID = "channel_id";
+const QString Message::GUILD_ID = "guild_id";
+const QString Message::AUTHOR = "author";
+const QString Message::MEMBER = "member";
+const QString Message::CONTENT = "content";
+const QString Message::TIMESTAMP = "timestamp";
+const QString Message::EDITED_TIMESTAMP = "edited_timestamp";
+const QString Message::TTS = "tts";
+const QString Message::MENTION_EVERYONE = "mention_everyone";
+const QString Message::MENTIONS = "mentions";
+const QString Message::MENTION_ROLES = "mention_roles";
+const QString Message::MENTION_CHANNELS = "mention_channels";
+const QString Message::ATTACHMENTS = "attachments";
+const QString Message::EMBEDS = "embeds";
+const QString Message::REACTIONS = "reactions";
+const QString Message::NONCE = "nonce";
+const QString Message::PINNED = "pinned";
+const QString Message::WEBHOOK_ID = "webhook_id";
+const QString Message::TYPE = "type";
+const QString Message::ACTIVITY = "activity";
+const QString Message::APPLICATION = "application";
+const QString Message::MESSAGE_REFERENCE = "message_reference";
+const QString Message::FLAGS = "flags";
 
 QJsonValue
 Message::getId() const {
-    return id;
+    return _jsonObject[ID];
 }
 
 void
-Message::setId(const QJsonValue &value) {
-    id = value;
+Message::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
 }
 
 QJsonValue
 Message::getChannelId() const {
-    return channel_id;
+    return _jsonObject[CHANNEL_ID];
 }
 
 void
-Message::setChannelId(const QJsonValue &value) {
-    channel_id = value;
+Message::setChannelId(const QJsonValue &channel_id) {
+    _jsonObject[CHANNEL_ID] = channel_id;
 }
 
 QJsonValue
 Message::getGuildId() const {
-    return guild_id;
+    return _jsonObject[GUILD_ID];
 }
 
 void
-Message::setGuildId(const QJsonValue &value) {
-    guild_id = value;
+Message::setGuildId(const QJsonValue &guildId) {
+    _jsonObject[GUILD_ID] = guildId;
 }
 
 QJsonObject
 Message::getAuthor() const {
-    if (author) {
-        return author->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[AUTHOR].toObject();
 }
 
 void
-Message::setAuthor(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        author = QSharedPointer<User>(new User);
-        SerializationUtils::readFromJson(*author, value);
-    }
+Message::setAuthor(const QJsonObject &author) {
+    _jsonObject[AUTHOR] = author;
 }
 
 QJsonObject
 Message::getMember() const {
-    if (member) {
-        return member->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[MEMBER].toObject();
 }
 
 void
-Message::setMember(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        member = QSharedPointer<GuildMember>(new GuildMember);
-        SerializationUtils::readFromJson(*member, value);
-    }
+Message::setMember(const QJsonObject &member) {
+    _jsonObject[MEMBER] = member;
 }
 
 QJsonValue
 Message::getContent() const {
-    return content;
+    return _jsonObject[CONTENT];
 }
 
 void
-Message::setContent(const QJsonValue &value) {
-    content = value;
+Message::setContent(const QJsonValue &content) {
+    _jsonObject[CONTENT] = content;
 }
 
 QJsonValue
 Message::getTimestamp() const {
-    return timestamp;
+    return _jsonObject[TIMESTAMP];
 }
 
 void
-Message::setTimestamp(const QJsonValue &value) {
-    timestamp = value;
+Message::setTimestamp(const QJsonValue &timestamp) {
+    _jsonObject[TIMESTAMP] = timestamp;
 }
 
 QJsonValue
 Message::getEditedTimestamp() const {
-    return edited_timestamp;
+    return _jsonObject[EDITED_TIMESTAMP];
 }
 
 void
-Message::setEditedTimestamp(const QJsonValue &value) {
-    edited_timestamp = value;
+Message::setEditedTimestamp(const QJsonValue &edited_timestamp) {
+    _jsonObject[EDITED_TIMESTAMP] = edited_timestamp;
 }
 
 QJsonValue
-Message::getTts() const {
-    return tts;
+Message::getTTS() const {
+    return _jsonObject[TTS];
 }
 
 void
-Message::setTts(const QJsonValue &value) {
-    tts = value;
+Message::setTTS(const QJsonValue &tts) {
+    _jsonObject[TTS] = tts;
 }
 
 QJsonValue
 Message::getMentionEveryone() const {
-    return mention_everyone;
+    return _jsonObject[MENTION_EVERYONE];
 }
 
 void
-Message::setMentionEveryone(const QJsonValue &value) {
-    mention_everyone = value;
+Message::setMentionEveryone(const QJsonValue &mentionEveryone) {
+    _jsonObject[MENTION_EVERYONE] = mentionEveryone;
 }
 
 QJsonArray
 Message::getMentions() const {
-    QJsonArray mentions;
-    for (QSharedPointer<User> mention : this->mentions) {
-        if (mention) {
-            mentions.push_back(mention->toQJsonObject());
-        }
-    }
-    return mentions;
+    return _jsonObject[MENTIONS].toArray();
 }
 
 void
-Message::setMentions(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        if (!value.isNull()) {
-            QSharedPointer<User> mention = QSharedPointer<User>(new User);
-            SerializationUtils::readFromJson(*mention, value.toObject());
-            mentions.push_back(mention);
-        }
-    }
+Message::setMentions(const QJsonArray &mentions) {
+    _jsonObject[MENTIONS] = mentions;
 }
 
 QJsonArray
 Message::getMentionRoles() const {
-    QJsonArray mention_roles;
-    for (QString roleId : this->mention_roles) {
-        mention_roles.push_back(roleId);
-    }
-    return mention_roles;
+    return _jsonObject[MENTION_ROLES].toArray();
 }
 
 void
-Message::setMentionRoles(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        mention_roles.push_back(value.toString());
-    }
+Message::setMentionRoles(const QJsonArray &mentionRoles) {
+    _jsonObject[MENTION_ROLES] = mentionRoles;
 }
 
 QJsonArray
 Message::getMentionChannels() const {
-    QJsonArray mention_channels;
-    for (QSharedPointer<ChannelMention> channel : this->mention_channels) {
-        if (channel) {
-            mention_channels.push_back(channel->toQJsonObject());
-        }
-    }
-    return mention_channels;
+    return _jsonObject[MENTION_CHANNELS].toArray();
 }
 
 void
-Message::setMentionChannels(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        if (!value.isNull()) {
-            QSharedPointer<ChannelMention> channel = QSharedPointer<ChannelMention>(new ChannelMention);
-            SerializationUtils::readFromJson(*channel, value.toObject());
-            mention_channels.push_back(channel);
-        }
-    }
+Message::setMentionChannels(const QJsonArray &mentionChannels) {
+    _jsonObject[MENTION_CHANNELS] = mentionChannels;
 }
 
 QJsonArray
 Message::getAttachments() const {
-    QJsonArray attachments;
-    for (QSharedPointer<Attachment> attachment : this->attachments) {
-        if (attachment) {
-            attachments.push_back(attachment->toQJsonObject());
-        }
-    }
-    return attachments;
+    return _jsonObject[ATTACHMENTS].toArray();
 }
 
 void
-Message::setAttachments(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        if (!value.isNull()) {
-            QSharedPointer<Attachment> attachment = QSharedPointer<Attachment>(new Attachment);
-            SerializationUtils::readFromJson(*attachment, value.toObject());
-            attachments.push_back(attachment);
-        }
-    }
+Message::setAttachments(const QJsonArray &attachments) {
+    _jsonObject[ATTACHMENTS] = attachments;
 }
 
 QJsonArray
 Message::getEmbeds() const {
-    QJsonArray embeds;
-    for (QSharedPointer<Embed> embed : this->embeds) {
-        if (embed) {
-            embeds.push_back(embed->toQJsonObject());
-        }
-    }
-    return embeds;
+    return _jsonObject[EMBEDS].toArray();
 }
 
 void
-Message::setEmbeds(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        if (!value.isNull()) {
-            QSharedPointer<Embed> embed = QSharedPointer<Embed>(new Embed);
-            SerializationUtils::readFromJson(*embed, value.toObject());
-            embeds.push_back(embed);
-        }
-    }
+Message::setEmbeds(const QJsonArray &embeds) {
+    _jsonObject[EMBEDS] = embeds;
 }
 
 QJsonArray
 Message::getReactions() const {
-    QJsonArray reactions;
-    for (QSharedPointer<Reaction> reaction : this->reactions) {
-        if (reaction) {
-            reactions.push_back(reaction->toQJsonObject());
-        }
-    }
-    return reactions;
+    return _jsonObject[REACTIONS].toArray();
 }
 
 void
-Message::setReactions(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        if (!value.isNull()) {
-            QSharedPointer<Reaction> reaction = QSharedPointer<Reaction>(new Reaction);
-            SerializationUtils::readFromJson(*reaction, value.toObject());
-            reactions.push_back(reaction);
-        }
-    }
+Message::setReactions(const QJsonArray &ractions) {
+    _jsonObject[REACTIONS] = ractions;
 }
 
 QJsonValue
 Message::getNonce() const {
-    return nonce;
+    return _jsonObject[NONCE];
 }
 
 void
-Message::setNonce(const QJsonValue &value) {
-    nonce = value;
+Message::setNonce(const QJsonValue &nonce) {
+    _jsonObject[NONCE] = nonce;
 }
 
 QJsonValue
 Message::getPinned() const {
-    return pinned;
+    return _jsonObject[PINNED];
 }
 
 void
-Message::setPinned(const QJsonValue &value) {
-    pinned = value;
+Message::setPinned(const QJsonValue &pinned) {
+    _jsonObject[PINNED] = pinned;
 }
 
 QJsonValue
 Message::getWebhookId() const {
-    return webhook_id;
+    return _jsonObject[WEBHOOK_ID];
 }
 
 void
-Message::setWebhookId(const QJsonValue &value) {
-    webhook_id = value;
+Message::setWebhookId(const QJsonValue &webhookId) {
+    _jsonObject[WEBHOOK_ID] = webhookId;
 }
 
 QJsonValue
 Message::getType() const {
-    return type;
+    return _jsonObject[TYPE];
 }
 
 void
-Message::setType(const QJsonValue &value) {
-    type = value;
+Message::setType(const QJsonValue &type) {
+    _jsonObject[TYPE] = type;
 }
 
 QJsonObject
 Message::getActivity() const {
-    if (activity) {
-        return activity->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[ACTIVITY].toObject();
 }
 
 void
-Message::setActivity(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        activity = QSharedPointer<MessageActivity>(new MessageActivity);
-        SerializationUtils::readFromJson(*activity, value);
-    }
+Message::setActivity(const QJsonObject &activity) {
+    _jsonObject[ACTIVITY] = activity;
 }
 
 QJsonObject
 Message::getApplication() const {
-    if (application) {
-        return application->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[APPLICATION].toObject();
 }
 
 void
-Message::setApplication(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        application = QSharedPointer<MessageApplication>(new MessageApplication);
-        SerializationUtils::readFromJson(*application, value);
-    }
+Message::setApplication(const QJsonObject &application) {
+    _jsonObject[APPLICATION] = application;
 }
 
 QJsonObject
 Message::getMessageReference() const {
-    if (message_reference) {
-        return message_reference->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[MESSAGE_REFERENCE].toObject();
 }
 
 void
-Message::setMessageReference(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        message_reference = QSharedPointer<MessageReference>(new MessageReference);
-        SerializationUtils::readFromJson(*message_reference, value);
-    }
+Message::setMessageReference(const QJsonObject &messageReference) {
+    _jsonObject[MESSAGE_REFERENCE] = messageReference;
 }
 
 QJsonValue
 Message::getFlags() const {
-    return flags;
+    return _jsonObject[FLAGS];
 }
 
 void
-Message::setFlags(const QJsonValue &value) {
-    flags = value;
-}
-
-void
-Message::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Message::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Message::setFlags(const QJsonValue &flags) {
+    _jsonObject[FLAGS] = flags;
 }

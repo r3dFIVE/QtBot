@@ -1,43 +1,37 @@
 #include "activitysecrets.h"
 
-#include <util/serializationutils.h>
+const QString ActivitySecrets::JOIN = "join";
+const QString ActivitySecrets::MATCH = "match";
+const QString ActivitySecrets::SPECTATE = "spectate";
 
-QString
+QJsonValue
 ActivitySecrets::getJoin() {
-    return join;
+    return _jsonObject[JOIN].toString();
 }
 
 void
-ActivitySecrets::setJoin(QString join) {
-    this->join = join;
+ActivitySecrets::setJoin(const QJsonValue &join) {
+   _jsonObject[JOIN] = join;
 }
 
-QString
+QJsonValue
 ActivitySecrets::getSpectate() {
-    return spectate;
+    return _jsonObject[SPECTATE].toString();
 }
 
 void
-ActivitySecrets::setSpectate(QString spectate) {
-    this->spectate = spectate;
+ActivitySecrets::setSpectate(const QJsonValue &spectate) {
+   _jsonObject[SPECTATE] = spectate;
 }
 
-QString
+QJsonValue
 ActivitySecrets::getMatch() {
-    return match;
+    return _jsonObject[MATCH].toString();
 }
 
 void
-ActivitySecrets::setMatch(QString match) {
-    this->match = match;
+ActivitySecrets::setMatch(const QJsonValue &match) {
+    _jsonObject[MATCH] = match;
 }
 
-void
-ActivitySecrets::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
 
-void
-ActivitySecrets::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-}

@@ -3,29 +3,27 @@
 
 #include "jsonserializable.h"
 
-#include <QSharedPointer>
-#include <util/serializationutils.h>
 
 class ActivityTimestamps : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-    const QString START = "start";
-    const QString END = "end";
+    static const QString START;
+    static const QString END;
+
+    ActivityTimestamps() {}
+    ActivityTimestamps(const QByteArray &json) : JsonSerializable(json) {}
+    ActivityTimestamps(const QJsonObject &json) : JsonSerializable(json) {}
+    ActivityTimestamps(const QString &json) : JsonSerializable(json) {}
+
+    void setEnd(const QJsonValue &end);
+    void setStart(const QJsonValue &start);
+    QJsonValue getEnd() const;
+    QJsonValue getStart() const;
 
     Q_PROPERTY(QJsonValue start READ getStart WRITE setStart)
-    QSharedPointer<int> start;
-
     Q_PROPERTY(QJsonValue end READ getEnd WRITE setEnd)
-    QSharedPointer<int> end;
-
-    QJsonValue getStart();
-    void setStart(QJsonValue start);
-    QJsonValue getEnd();
-    void setEnd(QJsonValue end);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityTimestamps)

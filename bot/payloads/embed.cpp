@@ -1,200 +1,147 @@
 #include "embed.h"
 
-#include <util/serializationutils.h>
 
+const QString Embed::TITLE = "title";
+const QString Embed::TYPE = "type";
+const QString Embed::DESCRIPTION = "description";
+const QString Embed::URL = "url";
+const QString Embed::TIMESTAMP = "timestamp";
+const QString Embed::COLOR = "color";
+const QString Embed::FOOTER = "footer";
+const QString Embed::IMAGE = "image";
+const QString Embed::THUMBNAIL = "thumbnail";
+const QString Embed::VIDEO = "video";
+const QString Embed::PROVIDER = "provider";
+const QString Embed::AUTHOR = "author";
+const QString Embed::FIELDS = "fields";
 
 QJsonValue
 Embed::getTitle() const {
-    return title;
+    return _jsonObject[TITLE];
 }
 
 void
-Embed::setTitle(const QJsonValue &value) {
-    title = value;
+Embed::setTitle(const QJsonValue &title) {
+    _jsonObject[TITLE] = title;
 }
 
 QJsonValue
 Embed::getType() const {
-    return type;
+    return _jsonObject[TYPE];
 }
 
 void
-Embed::setType(const QJsonValue &value) {
-    type = value;
+Embed::setType(const QJsonValue &type) {
+    _jsonObject[TYPE] = type;
 }
 
 QJsonValue
 Embed::getDescription() const {
-    return description;
+    return _jsonObject[DESCRIPTION];
 }
 
 void
-Embed::setDescription(const QJsonValue &value) {
-    description = value;
+Embed::setDescription(const QJsonValue &description) {
+    _jsonObject[DESCRIPTION] = description;
 }
 
 QJsonValue
 Embed::getUrl() const {
-    return url;
+    return _jsonObject[URL];
 }
 
 void
-Embed::setUrl(const QJsonValue &value) {
-    url = value;
+Embed::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
 }
 
 QJsonValue
 Embed::getTimestamp() const {
-    return timestamp;
+    return _jsonObject[TIMESTAMP];
 }
 
 void
-Embed::setTimestamp(const QJsonValue &value) {
-    timestamp = value;
+Embed::setTimestamp(const QJsonValue &timestamp) {
+    _jsonObject[TIMESTAMP] = timestamp;
 }
 
 QJsonValue
 Embed::getColor() const {
-    return color;
+    return _jsonObject[COLOR];
 }
 
 void
-Embed::setColor(const QJsonValue &value) {
-    color = value;
+Embed::setColor(const QJsonValue &color) {
+    _jsonObject[COLOR] = color;
 }
 
 QJsonObject
 Embed::getFooter() const {
-    if (footer) {
-        return footer->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[FOOTER].toObject();
 }
 
 void
-Embed::setFooter(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        footer = QSharedPointer<EmbedFooter>(new EmbedFooter);
-        footer->fromQJsonObject(value);
-    }
+Embed::setFooter(const QJsonObject &footer) {
+    _jsonObject[FOOTER] = footer;
 }
 
 QJsonObject
 Embed::getImage() const {
-    if (image) {
-        return image->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[IMAGE].toObject();
 }
 
 void
-Embed::setImage(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        image = QSharedPointer<EmbedImage>(new EmbedImage);
-        image->fromQJsonObject(value);
-    }
+Embed::setImage(const QJsonObject &image) {
+    _jsonObject[IMAGE] = image;
 }
 
 QJsonObject
 Embed::getThumbnail() const {
-    if (thumbnail) {
-        return thumbnail->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[THUMBNAIL].toObject();
 }
 
 void
-Embed::setThumbnail(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        thumbnail = QSharedPointer<EmbedThumbnail>(new EmbedThumbnail);
-        thumbnail->fromQJsonObject(value);
-    }
+Embed::setThumbnail(const QJsonObject &thumbnail) {
+    _jsonObject[THUMBNAIL] = thumbnail;
 }
 
 QJsonObject
 Embed::getVideo() const {
-    if (video) {
-        return video->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[VIDEO].toObject();
 }
 
 void
-Embed::setVideo(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        video = QSharedPointer<EmbedVideo>(new EmbedVideo);
-        video->fromQJsonObject(value);
-    }
+Embed::setVideo(const QJsonObject &video) {
+    _jsonObject[VIDEO] = video;
 }
 
 QJsonObject
 Embed::getProvider() const {
-    if (provider) {
-        return provider->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[PROVIDER].toObject();
 }
 
 void
-Embed::setProvider(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        provider = QSharedPointer<EmbedProvider>(new EmbedProvider);
-        provider->fromQJsonObject(value);
-    }
+Embed::setProvider(const QJsonObject &provider) {
+    _jsonObject[PROVIDER] = provider;
 }
 
 QJsonObject
 Embed::getAuthor() const {
-    if (author) {
-        return author->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[AUTHOR].toObject();
 }
 
 void
-Embed::setAuthor(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        author = QSharedPointer<EmbedAuthor>(new EmbedAuthor);
-        author->fromQJsonObject(value);
-    }
+Embed::setAuthor(const QJsonObject &author) {
+    _jsonObject[AUTHOR] = author;
 }
 
 
 QJsonArray
-Embed::getFields() const {
-    QJsonArray fields;
-    for (QSharedPointer<EmbedField> field : this->fields) {
-        if (field) {
-            fields.push_back(field->toQJsonObject());
-        }
-    }
-    return fields;
+Embed::getFields() const {    
+    return _jsonObject[FIELDS].toArray();
 }
 
 void
-Embed::setFields(const QJsonArray &values) {
-    for (QJsonValue value : values) {
-        if (!value.isNull()) {
-            QSharedPointer<EmbedField> field = QSharedPointer<EmbedField>(new EmbedField);
-            SerializationUtils::readFromJson(*field, value.toObject());
-            fields.push_back(field);
-        }
-    }
+Embed::setFields(const QJsonArray &fields) {
+    _jsonObject[FIELDS] = fields;
 }
-
-void
-Embed::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Embed::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-}
-

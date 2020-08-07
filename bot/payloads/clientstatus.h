@@ -9,27 +9,25 @@ class ClientStatus : public JsonSerializable
     Q_OBJECT
 
 public:
-    const QString DESKTOP = "desktop";
-    const QString MOBILE = "mobile";
-    const QString WEB = "web";
+    static const QString DESKTOP;
+    static const QString MOBILE;
+    static const QString WEB;
 
-    Q_PROPERTY(QString desktop READ getDesktop WRITE setDesktop)
-    QString desktop;
+    ClientStatus() {}
+    ClientStatus(const QByteArray &json) : JsonSerializable(json) {}
+    ClientStatus(const QJsonObject &json) : JsonSerializable(json) {}
+    ClientStatus(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(QString mobile READ getMobile WRITE setMobile)
-    QString mobile;
+    QJsonValue getDesktop() const;
+    QJsonValue getMobile() const;
+    QJsonValue getWeb() const;
+    void setDesktop(const QJsonValue &desktop);
+    void setMobile(const QJsonValue &mobile);
+    void setWeb(const QJsonValue &web);
 
-    Q_PROPERTY(QString web READ getWeb WRITE setWeb)
-    QString web;
-
-    QString getDesktop();
-    void setDesktop(QString desktop);
-    QString getMobile();
-    void setMobile(QString mobile);
-    QString getWeb();
-    void setWeb(QString web);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue desktop READ getDesktop WRITE setDesktop)
+    Q_PROPERTY(QJsonValue mobile READ getMobile WRITE setMobile)
+    Q_PROPERTY(QJsonValue web READ getWeb WRITE setWeb)
 };
 
 Q_DECLARE_METATYPE(ClientStatus)

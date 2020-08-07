@@ -9,7 +9,7 @@
 #include <QVariant>
 
 #include "qml/botscript.h"
-#include "qml/eventcontext.h"
+#include "payloads/eventcontext.h"
 #include "util/corecommands.h"
 #include "payloads/message.h"
 #include "util/serializationutils.h"
@@ -19,7 +19,6 @@ const QString CommandFactory::BOT_IMPORT_IDENTIFIER = "BotApi";
 const QString CommandFactory::BOT_API_MAJOR_VERSION = "0";
 const QString CommandFactory::BOT_API_MINOR_VERSION = "1";
 const QString CommandFactory::BOT_TYPE_IDENTIFIER = "BotScript";
-
 
 QSharedPointer<GuildEntity>
 CommandFactory::buildCommands(QSharedPointer<GuildEntity> guild) {

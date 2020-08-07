@@ -1,43 +1,34 @@
 #include "embedfield.h"
 
-#include "util/serializationutils.h"
-
+const QString EmbedField::INLINE = "inline";
+const QString EmbedField::NAME = "name";
+const QString EmbedField::VALUE = "value";
 
 QJsonValue
 EmbedField::getValue() const {
-    return value;
+    return _jsonObject[VALUE];
 }
 
 void
 EmbedField::setValue(const QJsonValue &value) {
-    this->value = value;
+    _jsonObject[VALUE] = value;
 }
 
 QJsonValue
 EmbedField::getInline() const {
-    return inln;
+    return _jsonObject[INLINE];
 }
 
 void
-EmbedField::setInline(const QJsonValue &value) {
-    inln = value;
+EmbedField::setInline(const QJsonValue &inln) {
+    _jsonObject[INLINE] = inln;
 }
 
 QJsonValue
 EmbedField::getName() const {
-    return name;
+    return _jsonObject[NAME];
 }
 
-void EmbedField::setName(const QJsonValue &value) {
-    name = value;
-}
-
-void
-EmbedField::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedField::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+void EmbedField::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }

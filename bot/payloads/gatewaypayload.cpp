@@ -1,36 +1,48 @@
 #include "gatewaypayload.h"
 
-namespace GatewayPayload {
-void
-GatewayPayload::read(const QJsonObject &jsonObject) {
-    if (jsonObject[D].isObject()) {
-        d = jsonObject[D].toObject();
-    } else {
-        QJsonObject o;
-        o.insert(VALUE, jsonObject[D]);
-        d = o;
-    }
 
-    t = jsonObject[T].toString();
-    op = jsonObject[OP].toInt();
-    s = jsonObject[S].toInt();
+const QString GatewayPayload::D = "d";
+const QString GatewayPayload::T = "t";
+const QString GatewayPayload::OP = "op";
+const QString GatewayPayload::S = "s";
+
+QJsonObject
+GatewayPayload::getD() const {
+    return _jsonObject[D].toObject();
 }
 
-void
-GatewayPayload::write(QJsonObject &jsonObject) {
-    jsonObject[D] = d;
-    jsonObject[OP] = op;
-
-    if (s > -1) {
-        jsonObject[S] = s;
-    } else {
-        jsonObject[S] = QJsonValue::Null;
-    }
-
-    if (!t.isEmpty()) {
-        jsonObject[T] = t;
-    } else {
-        jsonObject[T] = QJsonValue::Null;
-    }
+QJsonValue
+GatewayPayload::getV() const {
+    return _jsonObject[D];
 }
+
+QJsonValue
+GatewayPayload::getOp() const {
+    return _jsonObject[OP];
+}
+
+QJsonValue
+GatewayPayload::getS() const {
+    return _jsonObject[S];
+}
+
+QJsonValue
+GatewayPayload::getT() const {
+    return _jsonObject[T];
+}
+
+void GatewayPayload::setD(const QJsonValue &d) {
+    _jsonObject[D] = d;
+}
+
+void GatewayPayload::setOp(const QJsonValue &op) {
+    _jsonObject[OP] = op;
+}
+
+void GatewayPayload::setS(const QJsonValue &s) {
+    _jsonObject[S] = s;
+}
+
+void GatewayPayload::setT(const QJsonValue &t) {
+    _jsonObject[T] = t;
 }

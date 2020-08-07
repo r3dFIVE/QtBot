@@ -9,47 +9,44 @@ ActivityTimestampsTest::test_serialization_minimal() {
 
     QJsonObject serializedTimestamps = timestamps.toQJsonObject();
 
-    QVERIFY(!serializedTimestamps.contains(timestamps.START));
-    QVERIFY(!serializedTimestamps.contains(timestamps.END));
+    QVERIFY(!serializedTimestamps.contains(ActivityTimestamps::START));
+    QVERIFY(!serializedTimestamps.contains(ActivityTimestamps::END));
 }
 
 void
 ActivityTimestampsTest::test_serialization_full() {
     ActivityTimestamps timestamps;
-    timestamps.start = QSharedPointer<int>(new int(TEST_INT1));
-    timestamps.end = QSharedPointer<int>(new int(TEST_INT2));
+
+    timestamps.setStart(TEST_INT1);
+
+    timestamps.setEnd(TEST_INT2);
+
     QJsonObject serializedTimestamps = timestamps.toQJsonObject();
 
-    QVERIFY(serializedTimestamps.contains(timestamps.START));
-    QVERIFY(serializedTimestamps[timestamps.START] == TEST_INT1);
-    QVERIFY(serializedTimestamps[timestamps.START] != TEST_INT2);
-
-    QVERIFY(serializedTimestamps.contains(timestamps.END));
-    QVERIFY(serializedTimestamps[timestamps.END] != TEST_INT1);
-    QVERIFY(serializedTimestamps[timestamps.END] == TEST_INT2);
+    QVERIFY(serializedTimestamps.contains(ActivityTimestamps::START));
+    QVERIFY(serializedTimestamps[ActivityTimestamps::START] == TEST_INT1);
+    QVERIFY(serializedTimestamps[ActivityTimestamps::START] != TEST_INT2);
+    QVERIFY(serializedTimestamps.contains(ActivityTimestamps::END));
+    QVERIFY(serializedTimestamps[ActivityTimestamps::END] != TEST_INT1);
+    QVERIFY(serializedTimestamps[ActivityTimestamps::END] == TEST_INT2);
 }
 
 void
 ActivityTimestampsTest::test_deserialization_minimal() {
-    ActivityTimestamps timestamps;
-    timestamps.fromQString(PLD_ACTIVITY_TIMESTAMPS_MINIMAL);
+    ActivityTimestamps timestamps(PLD_ACTIVITY_TIMESTAMPS_MINIMAL);
 
-    QVERIFY(timestamps.start == nullptr);
-    QVERIFY(timestamps.end == nullptr);
+    QVERIFY(timestamps.getStart().isUndefined());
+    QVERIFY(timestamps.getEnd().isUndefined());
 }
 
 void
 ActivityTimestampsTest::test_deserialization_full() {
-    ActivityTimestamps timestamps;
-    timestamps.fromQString(PLD_ACTIVITY_TIMESTAMPS_FULL);
+    ActivityTimestamps timestamps(PLD_ACTIVITY_TIMESTAMPS_FULL);
 
-    QVERIFY(timestamps.start != nullptr);
-    QVERIFY(*timestamps.start == TEST_INT1);
-    QVERIFY(*timestamps.start != TEST_INT2);
-
-    QVERIFY(timestamps.end != nullptr);
-    QVERIFY(*timestamps.end != TEST_INT1);
-    QVERIFY(*timestamps.end == TEST_INT2);
+    QVERIFY(timestamps.getStart() == TEST_INT1);
+    QVERIFY(timestamps.getStart() != TEST_INT2);
+    QVERIFY(timestamps.getEnd() != TEST_INT1);
+    QVERIFY(timestamps.getEnd() == TEST_INT2);
 }
 
 static ActivityTimestampsTest ACTIVITY_TIMESTAMPS_TEST;

@@ -1,93 +1,91 @@
 #include "role.h"
 
-#include "util/serializationutils.h"
 
-QString
-Role::getId() {
-    return id;
+const QString Role::ID = "id";
+const QString Role::NAME = "name";
+const QString Role::COLOR = "color";
+const QString Role::HOIST = "hoist";
+const QString Role::POSITION = "position";
+const QString Role::PERMISSIONS = "permissions";
+const QString Role::MANAGED = "managed";
+const QString Role::MENTIONABLE = "mentionable";
+
+QJsonValue
+Role::getId() const {
+    return _jsonObject[ID];
 }
 
 void
-Role::setId(QString id) {
-    this->id = id;
+Role::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
 }
 
-QString
-Role::getName() {
-    return name;
-}
-
-void
-Role::setName(QString name) {
-    this->name = name;
-}
-
-int
-Role::getColor() {
-    return color;
+QJsonValue
+Role::getName() const {
+    return _jsonObject[NAME];
 }
 
 void
-Role::setColor(int color) {
-    this->color = color;
+Role::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }
 
-bool
-Role::getHoist() {
-    return hoist;
-}
-
-void
-Role::setHoist(bool hoist) {
-    this->hoist = hoist;
-}
-
-int
-Role::getPosition() {
-    return position;
+QJsonValue
+Role::getColor() const {
+    return _jsonObject[COLOR];
 }
 
 void
-Role::setPosition(int position) {
-    this->position = position;
+Role::setColor(const QJsonValue &color) {
+    _jsonObject[COLOR] = color;
 }
 
-int
-Role::getPermissions() {
-    return permissions;
-}
-
-void
-Role::setPermissions(int permissions) {
-    this->permissions = permissions;
-}
-
-bool
-Role::getManaged() {
-    return managed;
+QJsonValue
+Role::getHoist() const {
+    return _jsonObject[HOIST];
 }
 
 void
-Role::setManaged(bool managed) {
-    this->managed = managed;
+Role::setHoist(const QJsonValue &hoist) {
+    _jsonObject[HOIST] = hoist;
 }
 
-bool
-Role::getMentionable() {
-    return mentionable;
-}
-
-void
-Role::setMentionable(bool mentionable) {
-    this->mentionable = mentionable;
+QJsonValue
+Role::getPosition() const {
+    return _jsonObject[POSITION];
 }
 
 void
-Role::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+Role::setPosition(const QJsonValue &position) {
+    _jsonObject[POSITION] = position;
+}
+
+QJsonValue
+Role::getPermissions() const {
+    return _jsonObject[PERMISSIONS];
 }
 
 void
-Role::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Role::setPermissions(const QJsonValue &permissions) {
+    _jsonObject[PERMISSIONS] = permissions;
+}
+
+QJsonValue
+Role::getManaged() const {
+    return _jsonObject[MANAGED];
+}
+
+void
+Role::setManaged(const QJsonValue &managed) {
+    _jsonObject[MANAGED] = managed;
+}
+
+QJsonValue
+Role::getMentionable() const {
+    return _jsonObject[MENTIONABLE];
+}
+
+void
+Role::setMentionable(const QJsonValue &mentionable) {
+    _jsonObject[MENTIONABLE] = mentionable;
 }

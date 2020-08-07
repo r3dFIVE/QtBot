@@ -8,7 +8,7 @@ CoreCommand::invokable() {
         _runLock.unlock();
     }
 
-    return !canLock;
+    return canLock;
 }
 
 void

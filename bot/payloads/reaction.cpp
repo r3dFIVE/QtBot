@@ -1,52 +1,35 @@
 #include "reaction.h"
 
-#include "util/serializationutils.h"
-
+const QString Reaction::COUNT = "count";
+const QString Reaction::EMOJI = "emoji";
+const QString Reaction::ME = "me";
 
 QJsonValue
 Reaction::getCount() const {
-    return count;
+    return _jsonObject[COUNT];
 }
 
 void
-Reaction::setCount(const QJsonValue &value) {
-    count = value;
+Reaction::setCount(const QJsonValue &count) {
+    _jsonObject[COUNT] = count;
 }
 
 QJsonValue
 Reaction::getMe() const {
-    return me;
+    return _jsonObject[ME];
 }
 
 void
-Reaction::setMe(const QJsonValue &value) {
-    me = value;
+Reaction::setMe(const QJsonValue &me) {
+    _jsonObject[ME] = me;
 }
 
 QJsonObject
 Reaction::getEmoji() const {
-    if (emoji) {
-        return emoji->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+    return _jsonObject[EMOJI].toObject();
 }
 
 void
-Reaction::setEmoji(const QJsonObject &value) {
-    if (!value.isEmpty()) {
-        emoji = QSharedPointer<Emoji>(new Emoji);
-        SerializationUtils::readFromJson(*emoji, value);
-    }
+Reaction::setEmoji(const QJsonObject &emoji) {
+    _jsonObject[EMOJI] = emoji;
 }
-
-void
-Reaction::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Reaction::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-}
-

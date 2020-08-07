@@ -3,30 +3,27 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class MessageActivity : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-
-    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
-    QJsonValue type;
-
-    Q_PROPERTY(QJsonValue party_id READ getPartyId WRITE setPartyId)
-    QJsonValue party_id;
-
-    QJsonValue getType() const;
-    void setType(const QJsonValue &value);
-    QJsonValue getPartyId() const;
-    void setPartyId(const QJsonValue &value);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    static const QString PARTY_ID;
+    static const QString TYPE;
 
     MessageActivity() {}
-    ~MessageActivity() {}
+    MessageActivity(const QByteArray &json) : JsonSerializable(json) {}
+    MessageActivity(const QJsonObject &json) : JsonSerializable(json) {}
+    MessageActivity(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getPartyId() const;
+    QJsonValue getType() const;
+    void setPartyId(const QJsonValue &partyId);
+    void setType(const QJsonValue &type);
+
+    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
+    Q_PROPERTY(QJsonValue party_id READ getPartyId WRITE setPartyId)
 };
 
 Q_DECLARE_METATYPE(MessageActivity)

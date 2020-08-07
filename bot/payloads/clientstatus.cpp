@@ -1,44 +1,35 @@
 #include "clientstatus.h"
 
-#include <util/serializationutils.h>
+const QString ClientStatus::DESKTOP = "desktop";
+const QString ClientStatus::MOBILE = "mobile";
+const QString ClientStatus::WEB = "web";
 
-QString
-ClientStatus::getDesktop() {
-    return desktop;
+QJsonValue
+ClientStatus::getDesktop() const {
+    return _jsonObject[DESKTOP];
 }
 
 void
-ClientStatus::setDesktop(QString desktop) {
-    this->desktop = desktop;
+ClientStatus::setDesktop(const QJsonValue &desktop) {
+    _jsonObject[DESKTOP] = desktop;
 }
 
-QString
-ClientStatus::getMobile() {
-    return mobile;
-}
-
-void
-ClientStatus::setMobile(QString mobile) {
-    this->mobile = mobile;
-}
-
-QString
-ClientStatus::getWeb() {
-    return web;
+QJsonValue
+ClientStatus::getMobile() const {
+    return _jsonObject[MOBILE];
 }
 
 void
-ClientStatus::setWeb(QString web) {
-    this->web = web;
+ClientStatus::setMobile(const QJsonValue &mobile) {
+    _jsonObject[MOBILE] = mobile;
+}
+
+QJsonValue
+ClientStatus::getWeb() const {
+    return _jsonObject[WEB];
 }
 
 void
-ClientStatus::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+ClientStatus::setWeb(const QJsonValue &web) {
+    _jsonObject[WEB] = web;
 }
-
-void
-ClientStatus::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-}
-

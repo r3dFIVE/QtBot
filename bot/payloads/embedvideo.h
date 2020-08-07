@@ -3,35 +3,31 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class EmbedVideo : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-
-    Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
-    QJsonValue url;
-
-    Q_PROPERTY(QJsonValue height READ getHeight WRITE setHeight)
-    QJsonValue height;
-
-    Q_PROPERTY(QJsonValue width READ getWidth WRITE setWidth)
-    QJsonValue width;
-
-    QJsonValue getUrl() const;
-    void setUrl(const QJsonValue &value);
-    QJsonValue getHeight() const;
-    void setHeight(const QJsonValue &value);
-    QJsonValue getWidth() const;
-    void setWidth(const QJsonValue &value);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    static const QString HEIGHT;
+    static const QString URL;
+    static const QString WIDTH;
 
     EmbedVideo() {}
-    ~EmbedVideo() {}
+    EmbedVideo(const QByteArray &json) : JsonSerializable(json) {}
+    EmbedVideo(const QJsonObject &json) : JsonSerializable(json) {}
+    EmbedVideo(const QString &json) : JsonSerializable(json) {}
+
+    void setHeight(const QJsonValue &height);
+    void setUrl(const QJsonValue &url);
+    void setWidth(const QJsonValue &width);
+    QJsonValue getHeight() const;
+    QJsonValue getUrl() const;
+    QJsonValue getWidth() const;
+
+    Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
+    Q_PROPERTY(QJsonValue height READ getHeight WRITE setHeight)
+    Q_PROPERTY(QJsonValue width READ getWidth WRITE setWidth)
 };
 
 Q_DECLARE_METATYPE(EmbedVideo)

@@ -7,28 +7,27 @@
 class Resume : public JsonSerializable
 {   
     Q_OBJECT
+
 public:
-    const QString TOKEN = "token";
-    const QString SESSION_ID = "session_id";
-    const QString SEQ = "seq";
+    static const QString TOKEN;
+    static const QString SESSION_ID;
+    static const QString SEQ;
 
-    Q_PROPERTY(QString token READ getToken WRITE setToken)
-    QString token;
+    Resume() {}
+    Resume(const QByteArray &json) : JsonSerializable(json) {}
+    Resume(const QJsonObject &json) : JsonSerializable(json) {}
+    Resume(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(QString session_id READ getSessionId WRITE setSessionId)
-    QString session_id;
+    QJsonValue getSeq()const;
+    QJsonValue getSessionId() const;
+    QJsonValue getToken() const;
+    void setSeq(const QJsonValue &seq);
+    void setSessionId(const QJsonValue &sessionId);
+    void setToken(const QJsonValue &token);
 
-    Q_PROPERTY(int seq READ getSeq WRITE setSeq)
-    int seq;
-
-    QString getToken();
-    void setToken(QString token);
-    QString getSessionId();
-    void setSessionId(QString session_id);
-    int getSeq();
-    void setSeq(int seq);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue token READ getToken WRITE setToken)
+    Q_PROPERTY(QJsonValue session_id READ getSessionId WRITE setSessionId)
+    Q_PROPERTY(QJsonValue seq READ getSeq WRITE setSeq)
 };
 
 Q_DECLARE_METATYPE(Resume)

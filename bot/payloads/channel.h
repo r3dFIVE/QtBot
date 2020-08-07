@@ -2,125 +2,92 @@
 #define CHANNEL_H
 
 #include "jsonserializable.h"
-#include "permissionoverwrite.h"
-#include "user.h"
+
 
 class Channel : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-    const QString ID = "id";
-    const QString TYPE = "type";
-    const QString GUILD_ID = "guild_id";
-    const QString POSITION = "position";
-    const QString PERMISSION_OVERWRITES = "permission_overwrites" ;
-    const QString NAME = "name";
-    const QString TOPIC = "topic";
-    const QString NSFW = "nsfw";
-    const QString LAST_MESSAGE_ID = "last_message_id";
-    const QString BITRATE = "bitrate";
-    const QString USER_LIMIT = "user_limit";
-    const QString RATE_LIMIT_PER_USER = "rate_limit_per_user";
-    const QString RECIPIENTS = "recipients";
-    const QString ICON = "icon";
-    const QString OWNER_ID = "owner_id";
-    const QString APPLICATION_ID = "application_id";
-    const QString PARENT_ID = "parent_id";
-    const QString LAST_PIN_TIMESTAMP = "last_pin_timestamp";
+    static const QString ID;
+    static const QString TYPE;
+    static const QString GUILD_ID;
+    static const QString POSITION;
+    static const QString PERMISSION_OVERWRITES ;
+    static const QString NAME;
+    static const QString TOPIC;
+    static const QString NSFW;
+    static const QString LAST_MESSAGE_ID;
+    static const QString BITRATE;
+    static const QString USER_LIMIT;
+    static const QString RATE_LIMIT_PER_USER;
+    static const QString RECIPIENTS;
+    static const QString ICON;
+    static const QString OWNER_ID;
+    static const QString APPLICATION_ID;
+    static const QString PARENT_ID;
+    static const QString LAST_PIN_TIMESTAMP;
 
-    Q_PROPERTY(QString id READ getId WRITE setId)
-    QString id;
+    Channel() {}
+    Channel(const QByteArray &json) : JsonSerializable(json) {}
+    Channel(const QJsonObject &json) : JsonSerializable(json) {}
+    Channel(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(int type READ getType WRITE setType)
-    int type;
-
-    Q_PROPERTY(QString guild_id READ getGuildId WRITE setGuildId)
-    QString guild_id;
-
-    Q_PROPERTY(QJsonValue position READ getPosition WRITE setPosition)
-    QSharedPointer<int> position;
-
-    Q_PROPERTY(QJsonArray permission_overwrites READ getPermissionOverwrites WRITE setPermissionOverwrites)
-    QList<PermissionOverwrite> permission_overwrites;
-
-    Q_PROPERTY(QString name READ getName WRITE setName)
-    QString name;
-
-    Q_PROPERTY(QString topic READ getTopic WRITE setTopic)
-    QString topic;
-
-    Q_PROPERTY(QJsonValue nsfw READ getNsfw WRITE setNsfw)
-    QSharedPointer<bool> nsfw;
-
-    Q_PROPERTY(QString last_message_id READ getLastMessageId WRITE setLastMessageId)
-    QString last_message_id;
-
-    Q_PROPERTY(QJsonValue bitrate READ getBitrate WRITE setBitrate)
-    QSharedPointer<int> bitrate;
-
-    Q_PROPERTY(QJsonValue user_limit READ getUserLimit WRITE setUserLimit)
-    QSharedPointer<int> user_limit;
-
-    Q_PROPERTY(QJsonValue rate_limit_per_user READ getRateLimitPerUser WRITE setRateLimitPerUser)
-    QSharedPointer<int> rate_limit_per_user;
-
-    Q_PROPERTY(QJsonArray recipients READ getRecipients WRITE setRecipients)
-    QList<User> recipients;
-
-    Q_PROPERTY(QString icon READ getIcon WRITE setIcon)
-    QString icon;
-
-    Q_PROPERTY(QString owner_id READ getOwnerId WRITE setOwnerId)
-    QString owner_id;
-
-    Q_PROPERTY(QString application_id READ getApplicationId WRITE setApplicationId)
-    QString application_id;
-
-    Q_PROPERTY(QString parent_id READ getParentId WRITE setParentId)
-    QString parent_id;
-
-    Q_PROPERTY(QString last_pin_timestamp READ getLastPinTimestamp WRITE setLastPinTimestamp)
-    QString last_pin_timestamp;
-
-    QString getId();
-    void setId(QString id);
-    int getType();
-    void setType(int type);
-    QString getGuildId();
-    void setGuildId(QString guild_id);
-    QJsonValue getPosition();
-    void setPosition(QJsonValue position);
-    QJsonArray getPermissionOverwrites();
-    void setPermissionOverwrites(QJsonArray permission_overwrites);
-    QString getName();
-    void setName(QString name);
-    QString getTopic();
-    void setTopic(QString topic);
-    QJsonValue getNsfw();
-    void setNsfw(QJsonValue nsfw);
-    QString getLastMessageId();
-    void setLastMessageId(QString last_message_id);
+    QJsonValue getApplicationId();
     QJsonValue getBitrate();
-    void setBitrate(QJsonValue bitrate);
-    QJsonValue getUserLimit();
-    void setUserLimit(QJsonValue user_limit);
+    QJsonValue getGuildId();
+    QJsonValue getIcon();
+    QJsonValue getId();
+    QJsonValue getLastMessageId();
+    QJsonValue getLastPinTimestamp();
+    QJsonValue getOwnerId();
+    QJsonValue getName();
+    QJsonValue getNsfw();
+    QJsonValue getParentId();
+    QJsonValue getPosition();
     QJsonValue getRateLimitPerUser();
-    void setRateLimitPerUser(QJsonValue rate_limit_per_user);
+    QJsonValue getTopic();
+    QJsonValue getType();
+    QJsonValue getUserLimit();
     QJsonArray getRecipients();
-    void setRecipients(QJsonArray recipients);
-    QString getIcon();
-    void setIcon(QString icon);
-    QString getOwnerId();
-    void setOwnerId(QString owner_id);
-    QString getApplicationId();
-    void setApplicationId(QString application_id);
-    QString getParentId();
-    void  setParentId(QString parent_id);
-    QString getLastPinTimestamp();
-    void setLastPinTimestamp(QString last_pin_timestamp);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    QJsonArray getPermissionOverwrites();
+    void setId(const QJsonValue &id);
+    void setType(const QJsonValue &type);
+    void setGuildId(const QJsonValue &guildId);
+    void setPosition(const QJsonValue &position);
+    void setPermissionOverwrites(const QJsonArray &permissionOverwrites);
+    void setName(const QJsonValue &name);
+    void setTopic(const QJsonValue &topic);
+    void setNsfw(const QJsonValue &nsfw);
+    void setLastMessageId(const QJsonValue &lastMessageId);
+    void setBitrate(const QJsonValue &bitrate);
+    void setUserLimit(const QJsonValue &userLimit);
+    void setRateLimitPerUser(const QJsonValue &rateLimitPerUser);
+    void setRecipients(const QJsonArray &recipients);
+    void setIcon(const QJsonValue &icon);
+    void setOwnerId(const QJsonValue &ownerId);
+    void setApplicationId(const QJsonValue &applicationId);
+    void  setParentId(const QJsonValue &parentId);
+    void setLastPinTimestamp(const QJsonValue &lastPinTimestamp);
+
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
+    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
+    Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
+    Q_PROPERTY(QJsonValue position READ getPosition WRITE setPosition)
+    Q_PROPERTY(QJsonArray permission_overwrites READ getPermissionOverwrites WRITE setPermissionOverwrites)
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
+    Q_PROPERTY(QJsonValue topic READ getTopic WRITE setTopic)
+    Q_PROPERTY(QJsonValue nsfw READ getNsfw WRITE setNsfw)
+    Q_PROPERTY(QJsonValue last_message_id READ getLastMessageId WRITE setLastMessageId)
+    Q_PROPERTY(QJsonValue bitrate READ getBitrate WRITE setBitrate)
+    Q_PROPERTY(QJsonValue user_limit READ getUserLimit WRITE setUserLimit)
+    Q_PROPERTY(QJsonValue rate_limit_per_user READ getRateLimitPerUser WRITE setRateLimitPerUser)
+    Q_PROPERTY(QJsonArray recipients READ getRecipients WRITE setRecipients)
+    Q_PROPERTY(QJsonValue icon READ getIcon WRITE setIcon)
+    Q_PROPERTY(QJsonValue owner_id READ getOwnerId WRITE setOwnerId)
+    Q_PROPERTY(QJsonValue application_id READ getApplicationId WRITE setApplicationId)
+    Q_PROPERTY(QJsonValue parent_id READ getParentId WRITE setParentId)
+    Q_PROPERTY(QJsonValue last_pin_timestamp READ getLastPinTimestamp WRITE setLastPinTimestamp)
 };
 
 Q_DECLARE_METATYPE(Channel)

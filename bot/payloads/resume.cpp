@@ -1,43 +1,36 @@
 #include "resume.h"
 
-#include "util/serializationutils.h"
 
-QString
-Resume::getToken() {
-    return token;
+const QString Resume::TOKEN = "token";
+const QString Resume::SESSION_ID = "session_id";
+const QString Resume::SEQ = "seq";
+
+QJsonValue
+Resume::getToken() const {
+    return _jsonObject[TOKEN];
 }
 
 void
-Resume::setToken(QString token) {
-    this->token = token;
+Resume::setToken(const QJsonValue &token) {
+    _jsonObject[TOKEN] = token;
 }
 
-QString
-Resume::getSessionId() {
-    return session_id;
-}
-
-void
-Resume::setSessionId(QString session_id) {
-    this->session_id = session_id;
-}
-
-int
-Resume::getSeq() {
-    return seq;
+QJsonValue
+Resume::getSessionId() const {
+    return _jsonObject[SESSION_ID];
 }
 
 void
-Resume::setSeq(int seq) {
-    this->seq = seq;
+Resume::setSessionId(const QJsonValue &sessionId) {
+    _jsonObject[SESSION_ID] = sessionId;
+}
+
+QJsonValue
+Resume::getSeq() const {
+    return _jsonObject[SEQ];
 }
 
 void
-Resume::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Resume::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Resume::setSeq(const QJsonValue &seq) {
+    _jsonObject[SEQ] = seq;
 }

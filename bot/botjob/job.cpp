@@ -34,5 +34,5 @@ Job::run() {
 
 bool
 Job::invokable() const {
-    return !_commandMapping.second->running();
+    return _commandMapping.second->invokable();
 }

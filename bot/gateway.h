@@ -17,7 +17,7 @@ class Gateway : public QObject
     Q_OBJECT
 
 public:
-    Gateway(QSharedPointer<Settings> settings, QObject *parent = nullptr);
+    Gateway(QSharedPointer<Settings> settings);
     ~Gateway();
 
     enum GatewayCloseCodes {
@@ -74,24 +74,24 @@ public:
     void init();
 
 public slots:
-    void sendTextMessage(QSharedPointer<GatewayPayload::GatewayPayload> payload);
-    void sendBinaryMessage(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void sendTextMessage(QSharedPointer<GatewayPayload> payload);
+    void sendBinaryMessage(QSharedPointer<GatewayPayload> payload);
 
 Q_SIGNALS:
-    void dispatchEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void dispatchEvent(QSharedPointer<GatewayPayload> payload);
 
 private:
     QSharedPointer<QWebSocket> _socket;
     QSharedPointer<QTimer> _heartbeatTimer;
-
-    const int _maxRetries;
 
     Heartbeat _heartbeat;
     Logger* _logger;
     bool _heartbeatAck;
     bool _attemptResume;
     int _lastSequenceNumber;
+    int _maxRetries;
     int _retryCount;
+
     QUrl _gateway;
     QString _botToken;
     QString _sessionId;
@@ -99,23 +99,23 @@ private:
     void closeConnection(QWebSocketProtocol::CloseCode closeCode);
     QUrl buildConnectionUrl(QSharedPointer<Settings> settings);
     void processAck();
-    void processDispatch(QSharedPointer<GatewayPayload::GatewayPayload> payload);
-    void processHello(QSharedPointer<GatewayPayload::GatewayPayload> payload);
-    void processInvalidSession(QSharedPointer<GatewayPayload::GatewayPayload> payload);
-    void processPayload(QSharedPointer<GatewayPayload::GatewayPayload> payload);
-    void processReady(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void processDispatch(QSharedPointer<GatewayPayload> payload);
+    void processHello(QSharedPointer<GatewayPayload> payload);
+    void processInvalidSession(QSharedPointer<GatewayPayload> payload);
+    void processPayload(QSharedPointer<GatewayPayload> payload);
+    void processReady(QSharedPointer<GatewayPayload> payload);
     void processReconnect();
-    void processResumed(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void processResumed(QSharedPointer<GatewayPayload> payload);
     void onBinaryMessageReceived(QByteArray messageArray);
     void onDisconnected();
     void tooManyReconnects();
     void onSocketError(QAbstractSocket::SocketError errorCode);
-    void onTextMessageReceived(QString message);
+    void onTextMessageReceived(const QString &message);
     void reconnect(int mSleep);
     void sendHeartbeat();
     void sendIdentify();
     void sendResume();
-    void sendTextPayload(QString payload);
+    void sendTextPayload(const QString &payload);
 };
 
 #endif // GATEWAYCONNECTION_H

@@ -1,614 +1,509 @@
 #include "guild.h"
 
-#include "util/serializationutils.h"
 
-class Emoji;
-class PresenceUpdate;
+const QString Guild::ID = "id";
+const QString Guild::NAME = "name";
+const QString Guild::ICON = "icon";
+const QString Guild::SPLASH = "splash";
+const QString Guild::DISCOVERY_SPLASH = "discovery_splash";
+const QString Guild::OWNER = "owner";
+const QString Guild::OWNER_ID = "owner_id";
+const QString Guild::PERMISSIONS = "permission";
+const QString Guild::REGION = "region";
+const QString Guild::AFK_CHANNEL_ID = "afk_channel_id";
+const QString Guild::AFK_TIMEOUT = "afk_timeout";
+const QString Guild::EMBED_ENABLED = "embed_enabled";
+const QString Guild::EMBED_CHANNEL_ID = "embed_channel_id";
+const QString Guild::VERIFICATION_LEVEL = "verification_level";
+const QString Guild::DEFAULT_MESSAGE_NOTIFICATIONS = "default_message_notifications";
+const QString Guild::EXPLICIT_CONTENT_FILTER = "explicit_content_filter";
+const QString Guild::ROLES = "roles";
+const QString Guild::EMOJIS = "emojis";
+const QString Guild::FEATURES = "features";
+const QString Guild::MFA_LEVEL = "mfa_level";
+const QString Guild::APPLICATION_ID = "application_id";
+const QString Guild::WIDGET_ENABLED = "widget_enabled";
+const QString Guild::WIDGET_CHANNEL_ID = "widget_channel_id";
+const QString Guild::SYSTEM_CHANNEL_ID = "system_channel_id";
+const QString Guild::SYSTEM_CHANNEL_FLAGS = "system_channel_flags";
+const QString Guild::RULES_CHANNEL_ID = "rules_channel_id";
+const QString Guild::JOINED_AT = "joined_at";
+const QString Guild::LARGE = "large";
+const QString Guild::UNAVAILABLE = "unavailable";
+const QString Guild::MEMBER_COUNT = "member_count";
+const QString Guild::VOICE_STATES = "voice_states";
+const QString Guild::MEMBERS = "members";
+const QString Guild::CHANNELS = "channels";
+const QString Guild::PRESENCES = "presences";
+const QString Guild::MAX_PRESENCES = "max_presences";
+const QString Guild::MAX_MEMBERS = "max_members";
+const QString Guild::VANITY_URL_CODE = "vanity_url_code";
+const QString Guild::DESCRIPTION = "description";
+const QString Guild::BANNER = "banner";
+const QString Guild::PREMIUM_TIER = "premium_tier";
+const QString Guild::PREMIUM_SUBSCRIPTION_COUNT = "premium_subscription_count";
+const QString Guild::PREFERRED_LOCALE = "preferred_locale";
+const QString Guild::PUBLIC_UPDATES_CHANNEL_ID = "public_update_channel_id";
+const QString Guild::MAX_VIDEO_CHANNEL_USERS = "max_video_channel_users";
+const QString Guild::APPROXIMATE_MEMBER_COUNT = "approximate_member_count";
+const QString Guild::APPROXIMATE_PRESENCE_COUNT = "approximate_user_count";
 
-QString
-Guild::getId() {
-    return id;
+QJsonValue
+Guild::getId() const {
+    return _jsonObject[ID];
 }
 
 void
-Guild::setId(QString id) {
-    this->id = id;
-}
-
-QString
-Guild::getName() {
-    return name;
-}
-
-void
-Guild::setName(QString name) {
-    this->name = name;
-}
-
-QString
-Guild::getIcon() {
-    return icon;
-}
-
-void
-Guild::setIcon(QString icon) {
-    this->icon = icon;
-}
-
-QString
-Guild::getSplash() {
-    return splash;
-}
-
-void
-Guild::setSplash(QString splash) {
-    this->splash = splash;
-}
-
-QString
-Guild::getDiscoverySplash() {
-    return discovery_splash;
-}
-
-void
-Guild::setDiscoverySplash(QString discovery_splash) {
-    this->discovery_splash = discovery_splash;
+Guild::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
 }
 
 QJsonValue
-Guild::getOwner() {
-    if (owner) {
-        return QJsonValue(*owner);
-    } else {
-        return QJsonValue();
-    }
+Guild::getName() const {
+    return _jsonObject[NAME];
 }
 
 void
-Guild::setOwner(QJsonValue owner) {
-    if (!owner.isNull()) {
-        this->owner = QSharedPointer<bool>(new bool(owner.toBool()));
-    }
-}
-
-QString
-Guild::getOwnerId() {
-    return owner_id;
-}
-
-void
-Guild::setOwnerId(QString owner_id) {
-    this->owner_id = owner_id;
+Guild::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }
 
 QJsonValue
-Guild::getPermissions() {
-    if (permissions) {
-        return QJsonValue(*permissions);
-    } else {
-        return QJsonValue();
-    }
+Guild::getIcon() const {
+    return _jsonObject[ICON];
 }
 
 void
-Guild::setPermissions(QJsonValue permissions) {
-    if (!permissions.isNull()) {
-        this->permissions = QSharedPointer<int>(new int(permissions.toInt()));
-    }
-}
-
-QString
-Guild::getRegion() {
-    return region;
-}
-
-void
-Guild::setRegion(QString region) {
-    this->region = region;
-}
-
-QString
-Guild::getAfkChannelId() {
-    return afk_channel_id;
-}
-
-void
-Guild::setAfkChannelId(QString afk_channel_id) {
-    this->afk_channel_id = afk_channel_id;
-}
-
-int
-Guild::getAfkTimeout() {
-    return afk_timeout;
-}
-
-void
-Guild::setAfkTimeout(int afk_timeout) {
-    this->afk_timeout = afk_timeout;
+Guild::setIcon(const QJsonValue &icon) {
+    _jsonObject[ICON] = icon;
 }
 
 QJsonValue
-Guild::getEmbedEnabled() {
-    if (embed_enabled) {
-        return QJsonValue(*embed_enabled);
-    } else {
-        return QJsonValue();
-    }
+Guild::getSplash() const {
+    return _jsonObject[SPLASH];
 }
 
 void
-Guild::setEmbedEnabled(QJsonValue embed_enabled) {
-    if (!embed_enabled.isNull()) {
-        this->embed_enabled = QSharedPointer<bool>(new bool(embed_enabled.toBool()));
-    }
+Guild::setSplash(const QJsonValue &splash) {
+    _jsonObject[SPLASH] = splash;
 }
 
-QString
-Guild::getEmbedChannelId() {
-    return embed_channel_id;
-}
-
-void
-Guild::setEmbedChannelId(QString embed_channel_id) {
-    this->embed_channel_id = embed_channel_id;
-}
-
-int
-Guild::getVerificationLevel() {
-    return verification_level;
+QJsonValue
+Guild::getDiscoverySplash() const {
+    return _jsonObject[DISCOVERY_SPLASH];
 }
 
 void
-Guild::setVerificationLevel(int verification_level) {
-    this->verification_level = verification_level;
+Guild::setDiscoverySplash(const QJsonValue &discoverySplash) {
+    _jsonObject[DISCOVERY_SPLASH] = discoverySplash;
 }
 
-int
-Guild::getDefaultMessageNotifications() {
-    return default_message_notifications;
-}
-
-void
-Guild::setDefaultMessageNotifications(int default_message_notifications) {
-    this->default_message_notifications = default_message_notifications;
-}
-
-int
-Guild::getExplicitContentFilter() {
-    return explicit_content_filter;
+QJsonValue
+Guild::getOwner() const {
+    return _jsonObject[OWNER];
 }
 
 void
-Guild::setExplicitContentFilter(int explicit_content_filter) {
-    this->explicit_content_filter = explicit_content_filter;
+Guild::setOwner(const QJsonValue &owner) {
+    _jsonObject[OWNER] = owner;
+}
+
+QJsonValue
+Guild::getOwnerId() const {
+    return _jsonObject[OWNER_ID];
+}
+
+void
+Guild::setOwnerId(const QJsonValue &ownerId) {
+    _jsonObject[OWNER_ID] = ownerId;
+}
+
+QJsonValue
+Guild::getPermissions() const {
+    return _jsonObject[PERMISSIONS];
+}
+
+void
+Guild::setPermissions(const QJsonValue &permissions) {
+    _jsonObject[PERMISSIONS] = permissions;
+}
+
+QJsonValue
+Guild::getRegion() const {
+    return _jsonObject[REGION];
+}
+
+void
+Guild::setRegion(const QJsonValue &region) {
+    _jsonObject[REGION] = region;
+}
+
+QJsonValue
+Guild::getAfkChannelId() const {
+    return _jsonObject[AFK_CHANNEL_ID];
+}
+
+void
+Guild::setAfkChannelId(const QJsonValue &afkChannelId) {
+    _jsonObject[AFK_CHANNEL_ID] = afkChannelId;
+}
+
+QJsonValue
+Guild::getAfkTimeout() const {
+    return _jsonObject[AFK_TIMEOUT];
+}
+
+void
+Guild::setAfkTimeout(const QJsonValue &afkTimeout) {
+    _jsonObject[AFK_TIMEOUT] = afkTimeout;
+}
+
+QJsonValue
+Guild::getEmbedEnabled() const {
+    return _jsonObject[EMBED_ENABLED];
+}
+
+void
+Guild::setEmbedEnabled(const QJsonValue &embedEnabled) {
+    _jsonObject[EMBED_ENABLED] = embedEnabled;
+}
+
+QJsonValue
+Guild::getEmbedChannelId() const {
+    return _jsonObject[EMBED_CHANNEL_ID];
+}
+
+void
+Guild::setEmbedChannelId(const QJsonValue &embedChannelId) {
+    _jsonObject[EMBED_CHANNEL_ID]= embedChannelId;
+}
+
+QJsonValue
+Guild::getVerificationLevel() const {
+    return _jsonObject[VERIFICATION_LEVEL];
+}
+
+void
+Guild::setVerificationLevel(const QJsonValue &verificationLevel) {
+    _jsonObject[VERIFICATION_LEVEL] = verificationLevel;
+}
+
+QJsonValue
+Guild::getDefaultMessageNotifications() const {
+    return _jsonObject[DEFAULT_MESSAGE_NOTIFICATIONS];
+}
+
+void
+Guild::setDefaultMessageNotifications(const QJsonValue &defaultMessageNotifications) {
+    _jsonObject[DEFAULT_MESSAGE_NOTIFICATIONS] = defaultMessageNotifications;
+}
+
+QJsonValue
+Guild::getExplicitContentFilter() const {
+    return _jsonObject[EXPLICIT_CONTENT_FILTER];
+}
+
+void
+Guild::setExplicitContentFilter(const QJsonValue &explicitContentFilter) {
+    _jsonObject[EXPLICIT_CONTENT_FILTER] = explicitContentFilter;
 }
 
 QJsonArray
-Guild::getRoles() {
-    QJsonArray roles;
-    for (Role role : this->roles) {
-        roles.push_back(role.toQJsonObject());
-    }
-    return roles;
+Guild::getRoles() const {
+    return _jsonObject[ROLES].toArray();
 }
 
 void
-Guild::setRoles(QJsonArray roles) {
-    for (QJsonValue jsonValue : roles) {
-        Role role;
-        SerializationUtils::readFromJson(role, jsonValue.toObject());
-        this->roles.push_back(role);
-    }
+Guild::setRoles(const QJsonArray &roles) {
+    _jsonObject[ROLES] = roles;
 }
 
 QJsonArray
-Guild::getEmojis() {
-    QJsonArray emojis;
-    for (QSharedPointer<Emoji> emoji : this->emojis) {
-        emojis.push_back(emoji->toQJsonObject());
-    }
-    return emojis;
+Guild::getEmojis() const {
+    return _jsonObject[EMOJIS].toArray();
 }
 
 void
-Guild::setEmojis(QJsonArray emojis) {
-    for (QJsonValue jsonValue : emojis) {
-        QSharedPointer<Emoji> emoji = QSharedPointer<Emoji>(new Emoji);
-        SerializationUtils::readFromJson(*emoji, jsonValue.toObject());
-        this->emojis.push_back(emoji);
-    }
+Guild::setEmojis(const QJsonArray &emojis) {
+    _jsonObject[EMOJIS] = emojis;
 }
 
 QJsonArray
-Guild::getFeatures() {
-    QJsonArray roles;
-    for (Role role : this->roles) {
-        roles.push_back(role.toQJsonObject());
-    }
-    return roles;
+Guild::getFeatures() const {
+    return _jsonObject[FEATURES].toArray();
 }
 
 void
-Guild::setFeatures(QJsonArray features) {
-    for (QJsonValue feature : features) {
-        this->features.push_back(feature.toString());
-    }
-}
-
-int
-Guild::getMfaLevel() {
-    return mfa_level;
-}
-
-void
-Guild::setMfaLevel(int mfa_level) {
-    this->mfa_level = mfa_level;
-}
-
-QString
-Guild::getApplicationId() {
-    return application_id;
-}
-
-void
-Guild::setApplicationId(QString application_id) {
-    this->application_id = application_id;
+Guild::setFeatures(const QJsonArray &features) {
+    _jsonObject[FEATURES] = features;
 }
 
 QJsonValue
-Guild::getWidgetEnabled() {
-    if (widget_enabled) {
-        return QJsonValue(*widget_enabled);
-    } else {
-        return QJsonValue();
-    }
+Guild::getMfaLevel() const {
+    return _jsonObject[MFA_LEVEL];
 }
 
 void
-Guild::setWidgetEnabled(QJsonValue widget_enabled) {
-    if (!widget_enabled.isNull()) {
-        this->widget_enabled = QSharedPointer<bool>(new bool(widget_enabled.toBool()));
-    }
-}
-
-QString
-Guild::getWidgetChannelId() {
-    return widget_channel_id;
-}
-
-void
-Guild::setWidgetChannelId(QString widget_channel_id) {
-    this->widget_channel_id = widget_channel_id;
-}
-
-QString
-Guild::getSystemChannelId() {
-    return system_channel_id;
-}
-
-void
-Guild::setSystemChannelId(QString system_channel_id) {
-    this->system_channel_id = system_channel_id;
+Guild::setMfaLevel(const QJsonValue &mfaLevel) {
+    _jsonObject[MFA_LEVEL] = mfaLevel;
 }
 
 QJsonValue
-Guild::getSystemChannelFlags() {
-    if (system_channel_flags) {
-        return QJsonValue(*system_channel_flags);
-    } else {
-        return QJsonValue();
-    }
+Guild::getApplicationId() const {
+    return _jsonObject[APPLICATION_ID];
 }
 
 void
-Guild::setSystemChannelFlags(QJsonValue system_channel_flags) {
-    if (!system_channel_flags.isNull()) {
-        this->system_channel_flags = QSharedPointer<int>(new int(system_channel_flags.toInt()));
-    }
-}
-
-QString
-Guild::getRulesChannelId() {
-    return rules_channel_id;
-}
-
-void
-Guild::setRulesChannelId(QString rules_channel_id) {
-    this->rules_channel_id = rules_channel_id;
-}
-
-QString
-Guild::getJoinedAt() {
-    return joined_at;
-}
-
-void
-Guild::setJoinedAt(QString joined_at) {
-    this->joined_at = joined_at;
+Guild::setApplicationId(const QJsonValue &applicationId) {
+    _jsonObject[APPLICATION_ID] = applicationId;
 }
 
 QJsonValue
-Guild::getLarge() {
-    if (large) {
-        return QJsonValue(*large);
-    } else {
-        return QJsonValue();
-    }
+Guild::getWidgetEnabled() const {
+    return _jsonObject[WIDGET_ENABLED];
 }
 
 void
-Guild::setLarge(QJsonValue large) {
-    if (!large.isNull()) {
-        this->large = QSharedPointer<bool>(new bool(large.toBool()));
-    }
+Guild::setWidgetEnabled(const QJsonValue &widgetEnabled) {
+    _jsonObject[WIDGET_ENABLED] = widgetEnabled;
 }
 
 QJsonValue
-Guild::getUnavailable() {
-    if (unavailable) {
-        return QJsonValue(*unavailable);
-    } else {
-        return QJsonValue();
-    }
+Guild::getWidgetChannelId() const {
+    return _jsonObject[WIDGET_CHANNEL_ID];
 }
 
 void
-Guild::setUnavailable(QJsonValue unavailable) {
-    if (!unavailable.isNull()) {
-        this->unavailable = QSharedPointer<bool>(new bool(unavailable.toBool()));
-    }
+Guild::setWidgetChannelId(const QJsonValue &widgetChannelId) {
+    _jsonObject[WIDGET_CHANNEL_ID] = widgetChannelId;
 }
 
 QJsonValue
-Guild::getMemberCount() {
-    if (member_count) {
-        return QJsonValue(*member_count);
-    } else {
-        return QJsonValue();
-    }
+Guild::getSystemChannelId() const {
+    return _jsonObject[PERMISSIONS];
 }
 
 void
-Guild::setMemberCount(QJsonValue member_count) {
-    if (!member_count.isNull()) {
-        this->member_count = QSharedPointer<int>(new int(member_count.toInt()));
-    }
+Guild::setSystemChannelId(const QJsonValue &systemChannelId) {
+    _jsonObject[SYSTEM_CHANNEL_ID] = systemChannelId;
+}
+
+QJsonValue
+Guild::getSystemChannelFlags() const {
+    return _jsonObject[SYSTEM_CHANNEL_FLAGS];
+}
+
+void
+Guild::setSystemChannelFlags(const QJsonValue &systemChannelFlags) {
+    _jsonObject[SYSTEM_CHANNEL_FLAGS] = systemChannelFlags;
+}
+
+QJsonValue
+Guild::getRulesChannelId() const {
+    return _jsonObject[RULES_CHANNEL_ID];
+}
+
+void
+Guild::setRulesChannelId(const QJsonValue &rulesChannelId) {
+    _jsonObject[RULES_CHANNEL_ID] = rulesChannelId;
+}
+
+QJsonValue
+Guild::getJoinedAt() const {
+    return _jsonObject[JOINED_AT];
+}
+
+void
+Guild::setJoinedAt(const QJsonValue &joinedAt) {
+    _jsonObject[JOINED_AT] = joinedAt;
+}
+
+QJsonValue
+Guild::getLarge() const {
+    return _jsonObject[LARGE];
+}
+
+void
+Guild::setLarge(const QJsonValue &large) {
+    _jsonObject[LARGE] = large;
+}
+
+QJsonValue
+Guild::getUnavailable() const {
+    return _jsonObject[UNAVAILABLE];
+}
+
+void
+Guild::setUnavailable(const QJsonValue &unavailable) {
+    _jsonObject[UNAVAILABLE] = unavailable;
+}
+
+QJsonValue
+Guild::getMemberCount() const {
+    return _jsonObject[MEMBER_COUNT];
+}
+
+void
+Guild::setMemberCount(const QJsonValue &memberCount) {
+    _jsonObject[MEMBER_COUNT] = memberCount;
 }
 
 QJsonArray
-Guild::getVoiceStates() {
-    QJsonArray voice_states;
-    for (VoiceState voiceState : this->voice_states) {
-        voice_states.push_back(voiceState.toQJsonObject());
-    }
-    return voice_states;
+Guild::getVoiceStates() const {
+    return _jsonObject[VOICE_STATES].toArray();
 }
 
 void
-Guild::setVoiceStates(QJsonArray voice_states) {
-    for (QJsonValue jsonValue : voice_states) {
-        VoiceState voiceState;
-        SerializationUtils::readFromJson(voiceState, jsonValue.toObject());
-        this->voice_states.push_back(voiceState);
-    }
+Guild::setVoiceStates(const QJsonArray &voiceStates) {
+    _jsonObject[VOICE_STATES] = voiceStates;
 }
 
 QJsonArray
-Guild::getMembers() {
-    QJsonArray members;
-    for (GuildMember guildMember : this->members) {
-        members.push_back(guildMember.toQJsonObject());
-    }
-    return members;
+Guild::getMembers() const {
+    return _jsonObject[MEMBERS].toArray();
 }
 
 void
-Guild::setMembers(QJsonArray members) {
-    for (QJsonValue jsonValue : members) {
-        GuildMember guildMember;
-        SerializationUtils::readFromJson(guildMember, jsonValue.toObject());
-        this->members.push_back(guildMember);
-    }
+Guild::setMembers(const QJsonArray &members) {
+    _jsonObject[MEMBERS] = members;
 }
 
 QJsonArray
-Guild::getChannels() {
-    QJsonArray channels;
-    for (Channel channel : this->channels) {
-        channels.push_back(channel.toQJsonObject());
-    }
-    return channels;
+Guild::getChannels() const {
+    return _jsonObject[CHANNELS].toArray();
 }
 
 void
-Guild::setChannels(QJsonArray channels) {
-    for (QJsonValue jsonValue : channels) {
-        Channel channel;
-        SerializationUtils::readFromJson(channel, jsonValue.toObject());
-        this->channels.push_back(channel);
-    }
+Guild::setChannels(const QJsonArray &channels) {
+    _jsonObject[CHANNELS] = channels;
 }
 
 QJsonArray
-Guild::getPresences() {
-    QJsonArray presences;
-    for (QSharedPointer<PresenceUpdate> presenceUpdate : this->presences) {
-        presences.push_back(presenceUpdate->toQJsonObject());
-    }
-    return presences;
+Guild::getPresences() const {
+    return _jsonObject[PRESENCES].toArray();
 }
 
 void
-Guild::setPresences(QJsonArray presences) {
-    for (QJsonValue jsonValue : presences) {
-        QSharedPointer<PresenceUpdate> presenceUpdate = QSharedPointer<PresenceUpdate>();
-        SerializationUtils::readFromJson(*presenceUpdate, jsonValue.toObject());
-        this->presences.push_back(presenceUpdate);
-    }
+Guild::setPresences(const QJsonArray &presences) {
+    _jsonObject[PRESENCES] = presences;
 }
 
 QJsonValue
-Guild::getMaxPresences() {
-    if (max_presences) {
-        return QJsonValue(*max_presences);
-    } else {
-        return QJsonValue();
-    }
+Guild::getMaxPresences() const {
+    return _jsonObject[MAX_PRESENCES];
 }
 
 void
-Guild::setMaxPresences(QJsonValue max_presences) {
-    if (!max_presences.isNull()) {
-        this->max_presences = QSharedPointer<int>(new int(max_presences.toInt()));
-    }
+Guild::setMaxPresences(const QJsonValue &maxPresences) {
+    _jsonObject[MAX_PRESENCES] = maxPresences;
 }
 
 QJsonValue
-Guild::getMaxMembers() {
-    if (max_members) {
-        return QJsonValue(*max_members);
-    } else {
-        return QJsonValue();
-    }
+Guild::getMaxMembers() const {
+    return _jsonObject[MAX_MEMBERS];
 }
 
 void
-Guild::setMaxMembers(QJsonValue max_members) {
-    if (!max_members.isNull()) {
-        this->max_members = QSharedPointer<int>(new int(max_members.toInt()));
-    }
-}
-
-QString
-Guild::getVanityUrlCode() {
-    return vanity_url_code;
-}
-
-void
-Guild::setVanityUrlCode(QString vanity_url_code) {
-    this->vanity_url_code = vanity_url_code;
-}
-
-QString
-Guild::getDescription() {
-    return description;
-}
-
-void
-Guild::setDescription(QString description) {
-    this->description = description;
-}
-
-QString
-Guild::getBanner() {
-    return banner;
-}
-
-void
-Guild::setBanner(QString banner) {
-    this->banner = banner;
-}
-
-int
-Guild::getPremiumTier() {
-    return premium_tier;
-}
-
-void
-Guild::setPremiumTier(int premium_tier) {
-    this->premium_tier = premium_tier;
+Guild::setMaxMembers(const QJsonValue &maxMembers) {
+    _jsonObject[MAX_MEMBERS] = maxMembers;
 }
 
 QJsonValue
-Guild::getPremiumSubscriptionCount() {
-    if (premium_subscription_count) {
-        return QJsonValue(*premium_subscription_count);
-    } else {
-        return QJsonValue();
-    }
+Guild::getVanityUrlCode() const {
+    return _jsonObject[VANITY_URL_CODE];
 }
 
 void
-Guild::setPremiumSubscriptionCount(QJsonValue premium_subscription_count) {
-    if (!premium_subscription_count.isNull()) {
-        this->premium_subscription_count = QSharedPointer<int>(new int(premium_subscription_count.toInt()));
-    }
-}
-
-QString
-Guild::getPreferredLocale() {
-    return preferred_locale;
-}
-
-void
-Guild::setPreferredLocale(QString preferred_locale) {
-    this->preferred_locale = preferred_locale;
-}
-
-QString
-Guild::getPublicUpdatesChannelId() {
-    return public_updates_channel_id;
-}
-
-void
-Guild::setPublicUpdatesChannelId(QString public_updates_channel_id) {
-    this->public_updates_channel_id = public_updates_channel_id;
+Guild::setVanityUrlCode(const QJsonValue &vanityUrlCode) {
+    _jsonObject[VANITY_URL_CODE] = vanityUrlCode;
 }
 
 QJsonValue
-Guild::getMaxVideoChannelUsers() {
-    if (max_video_channel_users) {
-        return QJsonValue(*max_video_channel_users);
-    } else {
-        return QJsonValue();
-    }
+Guild::getDescription() const {
+    return _jsonObject[DESCRIPTION];
 }
 
 void
-Guild::setMaxVideoChannelUsers(QJsonValue max_video_channel_users) {
-    if (!max_video_channel_users.isNull()) {
-        this->premium_subscription_count = QSharedPointer<int>(new int(max_video_channel_users.toInt()));
-    }
+Guild::setDescription(const QJsonValue &description) {
+    _jsonObject[DESCRIPTION] = description;
 }
 
 QJsonValue
-Guild::getApproximateMemberCount() {
-    if (approximate_member_count) {
-        return QJsonValue(*approximate_member_count);
-    } else {
-        return QJsonValue();
-    }
+Guild::getBanner() const {
+    return _jsonObject[BANNER];
 }
 
 void
-Guild::setApproximateMemberCount(QJsonValue approximate_member_count) {
-    if (!approximate_member_count.isNull()) {
-        this->approximate_member_count = QSharedPointer<int>(new int(approximate_member_count.toInt()));
-    }
+Guild::setBanner(const QJsonValue &banner) {
+    _jsonObject[BANNER] = banner;
 }
 
 QJsonValue
-Guild::getApproximatePresenceCount() {
-    if (approximate_presence_count) {
-        return QJsonValue(*approximate_presence_count);
-    } else {
-        return QJsonValue();
-    }
+Guild::getPremiumTier() const {
+    return _jsonObject[PREMIUM_TIER];
 }
 
 void
-Guild::setApproximatePresenceCount(QJsonValue approximate_presence_count) {
-    if (!premium_subscription_count.isNull()) {
-        this->approximate_presence_count = QSharedPointer<int>(new int(approximate_presence_count.toInt()));
-    }
+Guild::setPremiumTier(const QJsonValue &premiumTier) {
+    _jsonObject[PREMIUM_TIER] = premiumTier;
+}
+
+QJsonValue
+Guild::getPremiumSubscriptionCount() const {
+    return _jsonObject[PREMIUM_SUBSCRIPTION_COUNT];
 }
 
 void
-Guild::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
+Guild::setPremiumSubscriptionCount(const QJsonValue &premiumSubscriptionCount) {
+    _jsonObject[PREMIUM_SUBSCRIPTION_COUNT] = premiumSubscriptionCount;
+}
+
+QJsonValue
+Guild::getPreferredLocale() const {
+    return _jsonObject[PREFERRED_LOCALE];
 }
 
 void
-Guild::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Guild::setPreferredLocale(const QJsonValue &preferredLocale) {
+    _jsonObject[PREFERRED_LOCALE] = preferredLocale;
+}
+
+QJsonValue
+Guild::getPublicUpdatesChannelId() const {
+    return _jsonObject[PUBLIC_UPDATES_CHANNEL_ID];
+}
+
+void
+Guild::setPublicUpdatesChannelId(const QJsonValue &publicUpdatesChannelId) {
+    _jsonObject[PUBLIC_UPDATES_CHANNEL_ID] = publicUpdatesChannelId;
+}
+
+QJsonValue
+Guild::getMaxVideoChannelUsers() const {
+    return _jsonObject[MAX_VIDEO_CHANNEL_USERS];
+}
+
+void
+Guild::setMaxVideoChannelUsers(const QJsonValue &maxVideoChannelUsers) {
+    _jsonObject[MAX_VIDEO_CHANNEL_USERS] = maxVideoChannelUsers;
+}
+
+QJsonValue
+Guild::getApproximateMemberCount() const {
+    return _jsonObject[APPROXIMATE_MEMBER_COUNT];
+}
+
+void
+Guild::setApproximateMemberCount(const QJsonValue &approximateMemberCount) {
+    _jsonObject[APPROXIMATE_MEMBER_COUNT] = approximateMemberCount;
+}
+
+QJsonValue
+Guild::getApproximatePresenceCount() const {
+    return _jsonObject[APPROXIMATE_PRESENCE_COUNT];
+}
+
+void
+Guild::setApproximatePresenceCount(const QJsonValue &approximatePresenceCount) {
+    _jsonObject[APPROXIMATE_PRESENCE_COUNT] = approximatePresenceCount;
 }
