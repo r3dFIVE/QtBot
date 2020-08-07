@@ -11,6 +11,8 @@
 
 #include <util/enumutils.h>
 
+#include <payloads/identifyproperties.h>
+
 
 Gateway::Gateway(QSharedPointer<Settings> settings)
 {    
@@ -289,6 +291,10 @@ Gateway::sendIdentify() {
     identify.setToken(_botToken);
 
     identify.setIntents(intents);
+
+    IdentifyProperties properties;
+
+    identify.setProperties(properties.toQJsonObject());
 
     GatewayPayload payload;
 

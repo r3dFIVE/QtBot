@@ -1,5 +1,6 @@
 #include "identify.h"
 
+
 const QString Identify::TOKEN = "token";
 const QString Identify::PROPERTIES = "properties";
 const QString Identify::COMPRESS = "compress";
