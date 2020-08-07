@@ -1,54 +1,47 @@
 #include "embedimage.h"
 
-#include "util/serializationutils.h"
 
+const QString EmbedImage::HEIGHT = "height";
+const QString EmbedImage::PROXY_URL = "proxy_url";
+const QString EmbedImage::URL = "url";
+const QString EmbedImage::WIDTH = "width";
 
 QJsonValue
 EmbedImage::getUrl() const {
-    return url;
+    return _jsonObject[URL];
 }
 
 void
-EmbedImage::setUrl(const QJsonValue &value) {
-    url = value;
+EmbedImage::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
 }
 
 QJsonValue
 EmbedImage::getProxyUrl() const {
-    return proxy_url;
+    return _jsonObject[PROXY_URL];
 }
 
 void
-EmbedImage::setProxyUrl(const QJsonValue &value) {
-    proxy_url = value;
+EmbedImage::setProxyUrl(const QJsonValue &proxyUrl) {
+    _jsonObject[PROXY_URL] = proxyUrl;
 }
 
 QJsonValue
 EmbedImage::getHeight() const {
-    return height;
+    return _jsonObject[HEIGHT];
 }
 
 void
-EmbedImage::setHeight(const QJsonValue &value) {
-    height = value;
+EmbedImage::setHeight(const QJsonValue &height) {
+    _jsonObject[HEIGHT] = height;
 }
 
 QJsonValue
 EmbedImage::getWidth() const {
-    return width;
+    return _jsonObject[WIDTH];
 }
 
 void
-EmbedImage::setWidth(const QJsonValue &value) {
-    width = value;
-}
-
-void
-EmbedImage::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedImage::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+EmbedImage::setWidth(const QJsonValue &width) {
+    _jsonObject[WIDTH] = width;
 }

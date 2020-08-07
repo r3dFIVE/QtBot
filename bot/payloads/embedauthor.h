@@ -3,41 +3,35 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class EmbedAuthor : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-
-    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
-    QJsonValue name;
-
-    Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
-    QJsonValue url;
-
-    Q_PROPERTY(QJsonValue icon_url READ getIconUrl WRITE setIconUrl)
-    QJsonValue icon_url;
-
-    Q_PROPERTY(QJsonValue proxy_icon_url READ getProxyIconUrl WRITE setProxyIconUrl)
-    QJsonValue proxy_icon_url;
-
-
-    QJsonValue getName() const;
-    void setName(const QJsonValue &value);
-    QJsonValue getUrl() const;
-    void setUrl(const QJsonValue &value);
-    QJsonValue getIconUrl() const;
-    void setIconUrl(const QJsonValue &value);
-    QJsonValue getProxyIconUrl() const;
-    void setProxyIconUrl(const QJsonValue &value);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    const static QString ICON_URL;
+    const static QString NAME;
+    const static QString PROXY_ICON_URL;
+    const static QString URL;
 
     EmbedAuthor() {}
-    ~EmbedAuthor() {}
+    EmbedAuthor(const QByteArray &json) : JsonSerializable(json) {}
+    EmbedAuthor(const QJsonObject &json) : JsonSerializable(json) {}
+    EmbedAuthor(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getIconUrl() const;
+    QJsonValue getName() const;
+    QJsonValue getProxyIconUrl() const;
+    QJsonValue getUrl() const;
+    void setIconUrl(const QJsonValue &iconUrl);
+    void setName(const QJsonValue &name);
+    void setProxyIconUrl(const QJsonValue &proxyIconUrl);
+    void setUrl(const QJsonValue &url);
+
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
+    Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
+    Q_PROPERTY(QJsonValue icon_url READ getIconUrl WRITE setIconUrl)
+    Q_PROPERTY(QJsonValue proxy_icon_url READ getProxyIconUrl WRITE setProxyIconUrl)
 };
 
 Q_DECLARE_METATYPE(EmbedAuthor)

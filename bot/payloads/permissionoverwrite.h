@@ -9,33 +9,29 @@ class PermissionOverwrite : public JsonSerializable
     Q_OBJECT
 
 public:
-    const QString ID = "id";
-    const QString TYPE = "type";
-    const QString ALLOW = "allow";
-    const QString DENY = "deny";
+    static const QString ID;
+    static const QString TYPE;
+    static const QString ALLOW;
+    static const QString DENY;
 
-    Q_PROPERTY(QString id READ getId WRITE setId)
-    QString id;
+    PermissionOverwrite() {}
+    PermissionOverwrite(const QByteArray &json) : JsonSerializable(json) {}
+    PermissionOverwrite(const QJsonObject &json) : JsonSerializable(json) {}
+    PermissionOverwrite(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(QString type READ getType WRITE setType)
-    QString type;
+    QJsonValue getAllow() const;
+    QJsonValue getDeny() const;
+    QJsonValue getId() const;
+    QJsonValue getType() const;
+    void setAllow(const QJsonValue &allow);
+    void setDeny(const QJsonValue &deny);
+    void setId(const QJsonValue &id);
+    void setType(const QJsonValue &type);
 
-    Q_PROPERTY(int allow READ getAllow WRITE setAllow)
-    int allow;
-
-    Q_PROPERTY(int deny READ getDeny WRITE setDeny)
-    int deny;
-
-    QString getId();
-    void setId(QString id);
-    QString getType();
-    void setType(QString type);
-    int getAllow();
-    void setAllow(int allow);
-    int getDeny();
-    void setDeny(int deny);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
+    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
+    Q_PROPERTY(QJsonValue allow READ getAllow WRITE setAllow)
+    Q_PROPERTY(QJsonValue deny READ getDeny WRITE setDeny)
 };
 
 Q_DECLARE_METATYPE(PermissionOverwrite)

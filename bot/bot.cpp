@@ -8,7 +8,7 @@
 #include <QMetaEnum>
 
 Bot::Bot() {
-    qRegisterMetaType<QSharedPointer<GatewayPayload::GatewayPayload> >();
+    qRegisterMetaType<QSharedPointer<GatewayPayload> >();
     qRegisterMetaType<QSharedPointer<JsonSerializable> >();
     qRegisterMetaType<QSharedPointer<Route> >();
     qRegisterMetaType<QSharedPointer<GuildEntity> >();

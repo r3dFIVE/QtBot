@@ -1,8 +1,9 @@
 #include "guildentity.h"
 
+#include "botjob/ibotjob.h"
+#include "payloads/user.h"
 #include "util/corecommand.h"
 
-#include "botjob/ibotjob.h"
 
 
 bool
@@ -30,16 +31,16 @@ GuildEntity::canInvoke(QString command, QStringList ids) {
 
 Job*
 GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
-    QString command = context->command.toString();
+    QString command = context->getCommand().toString();
 
     Job *job = nullptr; //QThreadPool will auto delete on completion.
 
     if (_registry.contains(command)) {
         QStringList ids;
 
-        ids << context->guild_id.toString()
-            << context->channel_id.toString()
-            << context->author["id"].toString();        
+        ids << context->getGuildId().toString()
+            << context->getChannelId().toString()
+            << context->getAuthor()[User::ID].toString();
 
         if (canInvoke(command, ids)) {
             job = new Job;

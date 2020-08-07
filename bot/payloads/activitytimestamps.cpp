@@ -1,43 +1,24 @@
 #include "activitytimestamps.h"
 
+const QString ActivityTimestamps::START = "start";
+const QString ActivityTimestamps::END = "end";
+
 QJsonValue
-ActivityTimestamps::getStart() {
-    if (start) {
-        return QJsonValue(*start);
-    } else {
-        return QJsonValue();
-    }
+ActivityTimestamps::getStart() const {
+    return _jsonObject[START];
 }
 
 void
-ActivityTimestamps::setStart(QJsonValue start) {
-    if (!start.isNull()) {
-        this->start = QSharedPointer<int>(new int(start.toInt()));
-    }
+ActivityTimestamps::setStart(const QJsonValue &start) {
+     _jsonObject[START] = start;
 }
 
 QJsonValue
-ActivityTimestamps::getEnd() {
-    if (end) {
-        return QJsonValue(*end);
-    } else {
-        return QJsonValue();
-    }
+ActivityTimestamps::getEnd() const {
+     return _jsonObject[END];
 }
 
 void
-ActivityTimestamps::setEnd(QJsonValue end) {
-    if (!end.isNull()) {
-        this->end = QSharedPointer<int>(new int(end.toInt()));
-    }
-}
-
-void
-ActivityTimestamps::read(const QJsonObject &jsonObject)  {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-ActivityTimestamps::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+ActivityTimestamps::setEnd(const QJsonValue &end) {
+     _jsonObject[END] = end;
 }

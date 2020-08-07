@@ -1,44 +1,36 @@
 #include "embedvideo.h"
 
-#include "util/serializationutils.h"
 
+const QString EmbedVideo::HEIGHT = "height";
+const QString EmbedVideo::URL = "url";
+const QString EmbedVideo::WIDTH = "width";
 
 QJsonValue
 EmbedVideo::getUrl() const {
-    return url;
+    return _jsonObject[URL];
 }
 
 void
-EmbedVideo::setUrl(const QJsonValue &value) {
-    url = value;
+EmbedVideo::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
 }
 
 QJsonValue
 EmbedVideo::getHeight() const {
-    return height;
+    return _jsonObject[HEIGHT];
 }
 
 void
-EmbedVideo::setHeight(const QJsonValue &value) {
-    height = value;
+EmbedVideo::setHeight(const QJsonValue &height) {
+    _jsonObject[HEIGHT] = height;
 }
 
 QJsonValue
 EmbedVideo::getWidth() const {
-    return width;
+    return _jsonObject[WIDTH];
 }
 
 void
-EmbedVideo::setWidth(const QJsonValue &value) {
-    width = value;
-}
-
-void
-EmbedVideo::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedVideo::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+EmbedVideo::setWidth(const QJsonValue &width) {
+    _jsonObject[WIDTH] = width;
 }

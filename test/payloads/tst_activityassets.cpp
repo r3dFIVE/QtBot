@@ -8,69 +8,62 @@ ActivityAssetsTest::test_serialization_minimal() {
 
     QJsonObject serializedAssets = assets.toQJsonObject();
 
-    QVERIFY(!serializedAssets.contains(assets.LARGE_IMAGE));
-    QVERIFY(!serializedAssets.contains(assets.LARGE_TEXT));
-    QVERIFY(!serializedAssets.contains(assets.SMALL_IMAGE));
-    QVERIFY(!serializedAssets.contains(assets.SMALL_TEXT));
+    QVERIFY(!serializedAssets.contains(ActivityAssets::LARGE_IMAGE));
+    QVERIFY(!serializedAssets.contains(ActivityAssets::LARGE_TEXT));
+    QVERIFY(!serializedAssets.contains(ActivityAssets::SMALL_IMAGE));
+    QVERIFY(!serializedAssets.contains(ActivityAssets::SMALL_TEXT));
 }
 
 void
 ActivityAssetsTest::test_serialization_full() {
     ActivityAssets assets;
-    assets.large_image = TEST_STRING1;
-    assets.large_text = TEST_STRING2;
-    assets.small_image = TEST_STRING1;
-    assets.small_text = TEST_STRING2;
+
+    assets.setLargeImage(TEST_STRING1);
+
+    assets.setLargeText(TEST_STRING2);
+
+    assets.setSmallImage(TEST_STRING1);
+
+    assets.setSmallText(TEST_STRING2);
 
     QJsonObject serializedAssets = assets.toQJsonObject();
 
-    QVERIFY(serializedAssets[assets.LARGE_IMAGE] == TEST_STRING1);
-    QVERIFY(serializedAssets[assets.LARGE_IMAGE] != TEST_STRING2);
-
-    QVERIFY(serializedAssets[assets.LARGE_TEXT] != TEST_STRING1);
-    QVERIFY(serializedAssets[assets.LARGE_TEXT] == TEST_STRING2);
-
-    QVERIFY(serializedAssets[assets.SMALL_IMAGE] == TEST_STRING1);
-    QVERIFY(serializedAssets[assets.SMALL_IMAGE] != TEST_STRING2);
-
-    QVERIFY(serializedAssets[assets.SMALL_TEXT] != TEST_STRING1);
-    QVERIFY(serializedAssets[assets.SMALL_TEXT] == TEST_STRING2);
+    QVERIFY(serializedAssets[ActivityAssets::LARGE_IMAGE] == TEST_STRING1);
+    QVERIFY(serializedAssets[ActivityAssets::LARGE_IMAGE] != TEST_STRING2);
+    QVERIFY(serializedAssets[ActivityAssets::LARGE_TEXT] != TEST_STRING1);
+    QVERIFY(serializedAssets[ActivityAssets::LARGE_TEXT] == TEST_STRING2);
+    QVERIFY(serializedAssets[ActivityAssets::SMALL_IMAGE] == TEST_STRING1);
+    QVERIFY(serializedAssets[ActivityAssets::SMALL_IMAGE] != TEST_STRING2);
+    QVERIFY(serializedAssets[ActivityAssets::SMALL_TEXT] != TEST_STRING1);
+    QVERIFY(serializedAssets[ActivityAssets::SMALL_TEXT] == TEST_STRING2);
 }
 
 void
 ActivityAssetsTest::test_deserialization_minimal() {
-    ActivityAssets assets;
-    assets.fromQString(PLD_ACTIVITY_ASSETS_MINIMAL);
+    ActivityAssets assets(PLD_ACTIVITY_ASSETS_MINIMAL);
 
-    QVERIFY(assets.large_image == "");
-    QVERIFY(assets.large_image != TEST_STRING1);
-
-    QVERIFY(assets.large_text == "");
-    QVERIFY(assets.large_text != TEST_STRING2);
-
-    QVERIFY(assets.small_image == "");
-    QVERIFY(assets.small_image != TEST_STRING1);
-
-    QVERIFY(assets.small_text == "");
-    QVERIFY(assets.small_text != TEST_STRING2);
+    QVERIFY(assets.getLargeImage() == "");
+    QVERIFY(assets.getLargeImage() != TEST_STRING1);
+    QVERIFY(assets.getLargeText() == "");
+    QVERIFY(assets.getLargeText() != TEST_STRING2);
+    QVERIFY(assets.getSmallImage() == "");
+    QVERIFY(assets.getSmallImage() != TEST_STRING1);
+    QVERIFY(assets.getSmallText() == "");
+    QVERIFY(assets.getSmallText() != TEST_STRING2);
 }
 
 void
 ActivityAssetsTest::test_deserialization_full() {
-    ActivityAssets assets;
-    assets.fromQString(PLD_ACTIVITY_ASSETS_FULL);
+    ActivityAssets assets(PLD_ACTIVITY_ASSETS_FULL);
 
-    QVERIFY(assets.large_image == TEST_STRING1);
-    QVERIFY(assets.large_image != TEST_STRING2);
-
-    QVERIFY(assets.large_text != TEST_STRING1);
-    QVERIFY(assets.large_text == TEST_STRING2);
-
-    QVERIFY(assets.small_image == TEST_STRING1);
-    QVERIFY(assets.small_image != TEST_STRING2);
-
-    QVERIFY(assets.small_text != TEST_STRING1);
-    QVERIFY(assets.small_text == TEST_STRING2);
+    QVERIFY(assets.getLargeImage() == TEST_STRING1);
+    QVERIFY(assets.getLargeImage() != TEST_STRING2);
+    QVERIFY(assets.getLargeText() != TEST_STRING1);
+    QVERIFY(assets.getLargeText() == TEST_STRING2);
+    QVERIFY(assets.getSmallImage() == TEST_STRING1);
+    QVERIFY(assets.getSmallImage() != TEST_STRING2);
+    QVERIFY(assets.getSmallText() != TEST_STRING1);
+    QVERIFY(assets.getSmallText() == TEST_STRING2);
 }
 
 static ActivityAssetsTest ACTIVITY_ASSETS_TEST;

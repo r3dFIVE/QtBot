@@ -42,7 +42,7 @@ signals:
     void reloadCommands(QSharedPointer<GuildEntity> guild);
 
 public slots:
-    void processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload);
+    void processEvent(QSharedPointer<GatewayPayload> payload);
     void guildReady(QSharedPointer<GuildEntity> guild);
     void reloadAllAvailableGuilds();
     void init();

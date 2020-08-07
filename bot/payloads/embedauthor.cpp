@@ -1,54 +1,46 @@
 #include "embedauthor.h"
 
-#include "util/serializationutils.h"
-
+const QString EmbedAuthor::ICON_URL = "icon_url";
+const QString EmbedAuthor::NAME = "name";
+const QString EmbedAuthor::PROXY_ICON_URL = "proxy_icon_url";
+const QString EmbedAuthor::URL = "url";
 
 QJsonValue
 EmbedAuthor::getName() const {
-    return name;
+    return _jsonObject[NAME];
 }
 
 void
-EmbedAuthor::setName(const QJsonValue &value) {
-    name = value;
+EmbedAuthor::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }
 
 QJsonValue
 EmbedAuthor::getUrl() const {
-    return url;
+    return _jsonObject[URL];
 }
 
 void
-EmbedAuthor::setUrl(const QJsonValue &value) {
-    url = value;
+EmbedAuthor::setUrl(const QJsonValue &url) {
+    _jsonObject[URL] = url;
 }
 
 QJsonValue
 EmbedAuthor::getIconUrl() const {
-    return icon_url;
+    return _jsonObject[ICON_URL];
 }
 
 void
-EmbedAuthor::setIconUrl(const QJsonValue &value) {
-    icon_url = value;
+EmbedAuthor::setIconUrl(const QJsonValue &iconUrl) {
+    _jsonObject[ICON_URL] = iconUrl;
 }
 
 QJsonValue
 EmbedAuthor::getProxyIconUrl() const {
-    return proxy_icon_url;
+    return _jsonObject[PROXY_ICON_URL];
 }
 
 void
-EmbedAuthor::setProxyIconUrl(const QJsonValue &value) {
-    proxy_icon_url = value;
-}
-
-void
-EmbedAuthor::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedAuthor::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+EmbedAuthor::setProxyIconUrl(const QJsonValue &proxyIconUrl) {
+    _jsonObject[PROXY_ICON_URL] = proxyIconUrl;
 }

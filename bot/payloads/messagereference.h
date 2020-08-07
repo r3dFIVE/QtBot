@@ -3,35 +3,31 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class MessageReference : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-
-    Q_PROPERTY(QJsonValue message_id READ getMessageId WRITE setMessageId)
-    QJsonValue message_id;
-
-    Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
-    QJsonValue channel_id;
-
-    Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
-    QJsonValue guild_id;
-
-    QJsonValue getMessageId() const;
-    void setMessageId(const QJsonValue &value);
-    QJsonValue getChannelId() const;
-    void setChannelId(const QJsonValue &value);
-    QJsonValue getGuildId() const;
-    void setGuildId(const QJsonValue &value);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    static const QString CHANNEL_ID;
+    static const QString GUILD_ID;
+    static const QString MESSAGE_ID;
 
     MessageReference() {}
-    ~MessageReference() {}
+    MessageReference(const QByteArray &json) : JsonSerializable(json) {}
+    MessageReference(const QJsonObject &json) : JsonSerializable(json) {}
+    MessageReference(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getChannelId() const;
+    QJsonValue getGuildId() const;
+    QJsonValue getMessageId() const;
+    void setChannelId(const QJsonValue &channelId);
+    void setGuildId(const QJsonValue &guildId);
+    void setMessageId(const QJsonValue &messageId);
+
+    Q_PROPERTY(QJsonValue message_id READ getMessageId WRITE setMessageId)
+    Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
+    Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
 };
 
 Q_DECLARE_METATYPE(MessageReference)

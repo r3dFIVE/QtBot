@@ -1,130 +1,91 @@
 #include "emoji.h"
 
-#include <util/serializationutils.h>
 
-QString
-Emoji::getId() {
-    return id;
+const QString Emoji::ID = "id";
+const QString Emoji::NAME = "name";
+const QString Emoji::ROLES = "roles";
+const QString Emoji::USER = "user";
+const QString Emoji::REQUIRE_COLONS = "require_colons";
+const QString Emoji::MANAGED = "managed";
+const QString Emoji::ANIMATED = "animated";
+const QString Emoji::AVAILABLE = "available";
+
+QJsonValue
+Emoji::getId() const {
+    return _jsonObject[ID];
 }
 
 void
-Emoji::setId(QString id) {
-    this->id = id;
+Emoji::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
 }
 
-QString
-Emoji::getName() {
-    return name;
+QJsonValue
+Emoji::getName() const {
+    return _jsonObject[NAME];
 }
 
 void
-Emoji::setName(QString name) {
-    this->name = name;
+Emoji::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }
 
 QJsonArray
-Emoji::getRoles() {
-    QJsonArray roles;
-    for (QString role : this->roles) {
-        roles.push_back(role);
-    }
-    return roles;
+Emoji::getRoles() const {
+    return _jsonObject[ROLES].toArray();
 }
 
 void
-Emoji::setRoles(QJsonArray roles) {
-    for (QJsonValue roleId : roles) {
-        this->roles.push_back(roleId.toString());
-    }
+Emoji::setRoles(const QJsonArray &roles) {
+    _jsonObject[ROLES] = roles;
 }
 
 QJsonObject
-Emoji::getUser() {
-    if (user) {
-        return (user->toQJsonObject());
-    } else {
-        return QJsonObject();
-    }
+Emoji::getUser() const {
+    return _jsonObject[USER].toObject();
 }
 
 void
-Emoji::setUser(QJsonObject user) {
-    if (!user.isEmpty()) {
-        this->user = QSharedPointer<User>(new User);
-        SerializationUtils::readFromJson(*this->user, user);
-    }
+Emoji::setUser(const QJsonObject &user) {
+    _jsonObject[USER] = user;
 }
 
 QJsonValue
-Emoji::getRequireColons() {
-    if (require_colons) {
-        return QJsonValue(*require_colons);
-    } else {
-        return QJsonValue();
-    }
+Emoji::getRequireColons() const {
+    return _jsonObject[REQUIRE_COLONS];
 }
 
 void
-Emoji::setRequireColons(QJsonValue require_colons) {
-    if (!require_colons.isNull()) {
-        this->require_colons = QSharedPointer<bool>(new bool(require_colons.toBool()));
-    }
+Emoji::setRequireColons(const QJsonValue &requireColons) {
+    _jsonObject[REQUIRE_COLONS] = requireColons;
 }
 
 QJsonValue
-Emoji::getManaged() {
-    if (managed) {
-        return QJsonValue(*managed);
-    } else {
-        return QJsonValue();
-    }
+Emoji::getManaged() const {
+    return _jsonObject[MANAGED];
 }
 
 void
-Emoji::setManaged(QJsonValue managed) {
-    if (!managed.isNull()) {
-        this->managed = QSharedPointer<bool>(new bool(managed.toBool()));
-    }
+Emoji::setManaged(const QJsonValue &managed) {
+    _jsonObject[MANAGED] = managed;
 }
 
 QJsonValue
-Emoji::getAnimated() {
-    if (animated) {
-        return QJsonValue(*animated);
-    } else {
-        return QJsonValue();
-    }
+Emoji::getAnimated() const {
+    return _jsonObject[ANIMATED];
 }
 
 void
-Emoji::setAnimated(QJsonValue animated) {
-    if (!animated.isNull()) {
-        this->animated = QSharedPointer<bool>(new bool(animated.toBool()));
-    }
+Emoji::setAnimated(const QJsonValue &animated) {
+    _jsonObject[ANIMATED] = animated;
 }
 
 QJsonValue
-Emoji::getAvailable() {
-    if (require_colons) {
-        return QJsonValue(*require_colons);
-    } else {
-        return QJsonValue();
-    }
+Emoji::getAvailable() const {
+    return _jsonObject[AVAILABLE];
 }
 
 void
-Emoji::setAvailable(QJsonValue available) {
-    if (!available.isNull()) {
-        this->available = QSharedPointer<bool>(new bool(available.toBool()));
-    }
-}
-
-void
-Emoji::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Emoji::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Emoji::setAvailable(const QJsonValue &available) {
+    _jsonObject[AVAILABLE] = available;
 }

@@ -1,12 +1,10 @@
 #ifndef CREATEMESSAGE_H
 #define CREATEMESSAGE_H
 
-
-
 #include <QObject>
 
 #include "route.h"
-#include "qml/eventcontext.h"
+#include "payloads/eventcontext.h"
 
 
 
@@ -23,8 +21,6 @@ public:
 
     virtual QNetworkRequest request() override;
     virtual QByteArray payload() override;
-
-
 };
 
 Q_DECLARE_METATYPE(CreateMessage)

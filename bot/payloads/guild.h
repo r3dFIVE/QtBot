@@ -3,14 +3,6 @@
 
 #include "jsonserializable.h"
 
-class Emoji;
-class PresenceUpdate;
-
-#include "emoji.h"
-#include "presenceupdate.h"
-#include "channel.h"
-#include "role.h"
-#include "voicestate.h"
 
 class Guild : public JsonSerializable
 {
@@ -19,296 +11,18 @@ class Guild : public JsonSerializable
 
 public:
 
-    const QString ID = "id";
-    const QString NAME = "name";
-    const QString ICON = "icon";
-    const QString SPLASH = "splash";
-    const QString DISCOVERY_SPLASH = "discovery_splash";
-    const QString OWNER = "owner";
-    const QString OWNER_ID = "owner_id";
-    const QString PERMISSIONS = "permission";
-    const QString REGION = "region";
-    const QString AFK_CHANNEL_ID = "afk_channel_id";
-    const QString AFK_TIMEOUT = "afk_timeout";
-    const QString EMBED_ENABLED = "embed_enabled";
-    const QString EMBED_CHANNEL_ID = "embed_channel_id";
-    const QString VERIFICATION_LEVEL = "verification_level";
-    const QString DEFAULT_MESSAGE_NOTIFICATIONS = "default_message_notifications";
-    const QString EXPLICIT_CONTENT_FILTER = "explicit_content_filter";
-    const QString ROLES = "roles";
-    const QString EMOJIS = "emojis";
-    const QString FEATURES = "features";
-    const QString MFA_LEVEL = "mfa_level";
-    const QString APPLICATION_ID = "application_id";
-    const QString WIDGET_ENABLED = "widget_enabled";
-    const QString WIDGET_CHANNEL_ID = "widget_channel_id";
-    const QString SYSTEM_CHANNEL_ID = "system_channel_id";
-    const QString SYSTEM_CHANNEL_FLAGS = "system_channel_flags";
-    const QString RULES_CHANNEL_ID = "rules_channel_id";
-    const QString JOINED_AT = "joined_at";
-    const QString LARGE = "large";
-    const QString UNAVAILABLE = "unavailable";
-    const QString MEMBER_COUNT = "member_count";
-    const QString VOICE_STATES = "voice_states";
-    const QString MEMBERS = "members";
-    const QString CHANNELS = "channels";
-    const QString PRESENCES = "presences";
-    const QString MAX_PRESENCES = "max_presences";
-    const QString MAX_MEMBERS = "max_members";
-    const QString VANITY_URL_CODE = "vanity_url_code";
-    const QString DESCRIPTION = "description";
-    const QString BANNER = "banner";
-    const QString PREMIUM_TIER = "premium_tier";
-    const QString PREMIUM_SUBSCRIPTION_COUNT = "premium_subscription_count";
-    const QString PREFERRED_LOCALE = "preferred_locale";
-    const QString PUBLIC_UPDATES_CHANNEL_ID = "public_update_channel_id";
-    const QString MAX_VIDEO_CHANNEL_USERS = "max_video_channel_users";
-    const QString APPROXIMATE_MEMBER_COUNT = "approximate_member_count";
-    const QString APPROXIMATE_PRESENCE_COUNT = "approximate_user_count";
-
-    Q_PROPERTY(QString id READ getId WRITE setId)
-    QString id;
-
-    Q_PROPERTY(QString name READ getName WRITE setName)
-    QString name;
-
-    Q_PROPERTY(QString icon READ getIcon WRITE setIcon)
-    QString icon;
-
-    Q_PROPERTY(QString splash READ getSplash WRITE setSplash)
-    QString splash;
-
-    Q_PROPERTY(QString discovery_splash READ getDiscoverySplash WRITE setDiscoverySplash)
-    QString discovery_splash;
-
-    Q_PROPERTY(QJsonValue owner READ getOwner WRITE setOwner)
-    QSharedPointer<bool> owner;
-
-    Q_PROPERTY(QString owner_id READ getOwnerId WRITE setOwnerId)
-    QString owner_id;
-
-    Q_PROPERTY(QJsonValue permissions READ getPermissions WRITE setPermissions)
-    QSharedPointer<int> permissions;
-
-    Q_PROPERTY(QString region READ getRegion WRITE setRegion)
-    QString region;
-
-    Q_PROPERTY(QString afk_channel_id READ getAfkChannelId WRITE setAfkChannelId)
-    QString afk_channel_id;
-
-    Q_PROPERTY(int afk_timeout READ getAfkTimeout WRITE setAfkTimeout)
-    int afk_timeout;
-
-    Q_PROPERTY(QJsonValue embed_enabled READ getEmbedEnabled WRITE setEmbedEnabled)
-    QSharedPointer<bool> embed_enabled;
-
-    Q_PROPERTY(QString embed_channel_id READ getEmbedChannelId WRITE setEmbedChannelId)
-    QString embed_channel_id;
-
-    Q_PROPERTY(int verification_level READ getVerificationLevel WRITE setVerificationLevel)
-    int verification_level;
-
-    Q_PROPERTY(int default_message_notifications READ getDefaultMessageNotifications WRITE setDefaultMessageNotifications)
-    int default_message_notifications;
-
-    Q_PROPERTY(int explicit_content_filter READ getExplicitContentFilter WRITE setExplicitContentFilter)
-    int explicit_content_filter;
-
-    Q_PROPERTY(QJsonArray roles READ getRoles WRITE setRoles)
-    QList<Role> roles;
-
-    Q_PROPERTY(QJsonArray emojis READ getEmojis WRITE setEmojis)
-    QList<QSharedPointer<Emoji> > emojis;
-
-    Q_PROPERTY(QJsonArray features READ getFeatures WRITE setFeatures)
-    QList<QString> features;
-
-    Q_PROPERTY(int mfa_level READ getMfaLevel WRITE setMfaLevel)
-    int mfa_level;
-
-    Q_PROPERTY(QString application_id READ getApplicationId WRITE setApplicationId)
-    QString application_id;
-
-    Q_PROPERTY(QJsonValue widget_enabled READ getWidgetEnabled WRITE setWidgetEnabled)
-    QSharedPointer<bool> widget_enabled;
-
-    Q_PROPERTY(QString widget_channel_id READ getWidgetChannelId WRITE setWidgetChannelId)
-    QString widget_channel_id;
-
-    Q_PROPERTY(QString system_channel_id READ getSystemChannelId WRITE setSystemChannelId)
-    QString system_channel_id;
-
-    Q_PROPERTY(QJsonValue system_channel_flags READ getSystemChannelFlags WRITE setSystemChannelFlags)
-    QSharedPointer<int> system_channel_flags;
-
-    Q_PROPERTY(QString rules_channel_id READ getRulesChannelId WRITE setRulesChannelId)
-    QString rules_channel_id;
-
-    Q_PROPERTY(QString joined_at READ getJoinedAt WRITE setJoinedAt)
-    QString joined_at;
-
-    Q_PROPERTY(QJsonValue large READ getLarge WRITE setLarge)
-    QSharedPointer<bool> large;
-
-    Q_PROPERTY(QJsonValue unavailable READ getUnavailable WRITE setUnavailable)
-    QSharedPointer<bool> unavailable;
-
-    Q_PROPERTY(QJsonValue member_count READ getMemberCount WRITE setMemberCount)
-    QSharedPointer<int> member_count;
-
-    Q_PROPERTY(QJsonArray voice_states READ getVoiceStates WRITE setVoiceStates)
-    QList<VoiceState> voice_states;
-
-    Q_PROPERTY(QJsonArray members READ getMembers WRITE setMembers)
-    QList<GuildMember> members;
-
-    Q_PROPERTY(QJsonArray channels READ getChannels WRITE setChannels)
-    QList<Channel> channels;
-
-    Q_PROPERTY(QJsonArray presences READ getPresences WRITE setPresences)
-    QList<QSharedPointer<PresenceUpdate> > presences;
-
-    Q_PROPERTY(QJsonValue max_presences READ getMaxPresences WRITE setMaxPresences)
-    QSharedPointer<int> max_presences;
-
-    Q_PROPERTY(QJsonValue max_members READ getMaxMembers WRITE setMaxMembers)
-    QSharedPointer<int> max_members;
-
-    Q_PROPERTY(QString vanity_url_code READ getVanityUrlCode WRITE setVanityUrlCode)
-    QString vanity_url_code;
-
-    Q_PROPERTY(QString description READ getDescription WRITE setDescription)
-    QString description;
-
-    Q_PROPERTY(QString banner READ getBanner WRITE setBanner)
-    QString banner;
-
-    Q_PROPERTY(int premium_tier READ getPremiumTier WRITE setPremiumTier)
-    int premium_tier;
-
-    Q_PROPERTY(QJsonValue premium_subscription_count READ getPremiumSubscriptionCount WRITE setPremiumSubscriptionCount)
-    QSharedPointer<int> premium_subscription_count;
-
-    Q_PROPERTY(QString preferred_locale READ getPreferredLocale WRITE setPreferredLocale)
-    QString preferred_locale;
-
-    Q_PROPERTY(QString public_updates_channel_id READ getPublicUpdatesChannelId WRITE setPublicUpdatesChannelId)
-    QString public_updates_channel_id;
-
-    Q_PROPERTY(QJsonValue max_video_channel_users READ getMaxVideoChannelUsers WRITE setMaxVideoChannelUsers)
-    QSharedPointer<int> max_video_channel_users;
-
-    Q_PROPERTY(QJsonValue approximate_member_count READ getApproximateMemberCount WRITE setApproximateMemberCount)
-    QSharedPointer<int> approximate_member_count;
-
-    Q_PROPERTY(QJsonValue approximate_presence_count READ getApproximatePresenceCount WRITE setApproximatePresenceCount)
-    QSharedPointer<int> approximate_presence_count;
-
-    QString getId();
-    void setId(QString id);
-    QString getName();
-    void setName(QString name);
-    QString getIcon();
-    void setIcon(QString icon);
-    QString getSplash();
-    void setSplash(QString splash);
-    QString getDiscoverySplash();
-    void setDiscoverySplash(QString discovery_splash);
-    QJsonValue getOwner();
-    void setOwner(QJsonValue owner);
-    QString getOwnerId();
-    void setOwnerId(QString owner_id);
-    QJsonValue getPermissions();
-    void setPermissions(QJsonValue permissions);
-    QString getRegion();
-    void setRegion(QString region);
-    QString getAfkChannelId();
-    void setAfkChannelId(QString afk_channel_id);
-    int getAfkTimeout();
-    void setAfkTimeout(int afk_timeout);
-    QJsonValue getEmbedEnabled();
-    void setEmbedEnabled(QJsonValue embed_enabled);
-    QString getEmbedChannelId();
-    void setEmbedChannelId(QString embed_channel_id);
-    int getVerificationLevel();
-    void setVerificationLevel(int verification_level);
-    int getDefaultMessageNotifications();
-    void setDefaultMessageNotifications(int default_message_notifications);
-    int getExplicitContentFilter();
-    void setExplicitContentFilter(int explicit_content_filter);
-    QJsonArray getRoles();
-    void setRoles(QJsonArray roles) ;
-    QJsonArray getEmojis();
-    void setEmojis(QJsonArray emojis);
-    QJsonArray getFeatures();
-    void setFeatures(QJsonArray features);
-    int getMfaLevel();
-    void setMfaLevel(int mfa_level);
-    QString getApplicationId() ;
-    void setApplicationId(QString application_id);
-    QJsonValue getWidgetEnabled();
-    void setWidgetEnabled(QJsonValue widget_enabled);
-    QString getWidgetChannelId();
-    void setWidgetChannelId(QString widget_channel_id);
-    QString getSystemChannelId();
-    void setSystemChannelId(QString system_channel_id);
-    QJsonValue getSystemChannelFlags();
-    void setSystemChannelFlags(QJsonValue system_channel_flags);
-    QString getRulesChannelId();
-    void setRulesChannelId(QString rules_channel_id);
-    QString getJoinedAt();
-    void setJoinedAt(QString joined_at);
-    QJsonValue getLarge();
-    void setLarge(QJsonValue large);
-    QJsonValue getUnavailable();
-    void setUnavailable(QJsonValue unavailable);
-    QJsonValue getMemberCount();
-    void setMemberCount(QJsonValue member_count);
-    QJsonArray getVoiceStates();
-    void setVoiceStates(QJsonArray voice_states);
-    QJsonArray getMembers();
-    void setMembers(QJsonArray members);
-    QJsonArray getChannels();
-    void setChannels(QJsonArray channels);
-    QJsonArray getPresences();
-    void setPresences(QJsonArray presences);
-    QJsonValue getMaxPresences();
-    void setMaxPresences(QJsonValue max_presences);
-    QJsonValue getMaxMembers();
-    void setMaxMembers(QJsonValue max_members);
-    QString getVanityUrlCode();
-    void setVanityUrlCode(QString vanity_url_code);
-    QString getDescription();
-    void setDescription(QString description);
-    QString getBanner();
-    void setBanner(QString banner);
-    int getPremiumTier();
-    void setPremiumTier(int premium_tier);
-    QJsonValue getPremiumSubscriptionCount();
-    void setPremiumSubscriptionCount(QJsonValue premium_subscription_count);
-    QString getPreferredLocale();
-    void setPreferredLocale(QString preferred_locale);
-    QString getPublicUpdatesChannelId();
-    void setPublicUpdatesChannelId(QString public_updates_channel_id);
-    QJsonValue getMaxVideoChannelUsers();
-    void setMaxVideoChannelUsers(QJsonValue max_video_channel_users);
-    QJsonValue getApproximateMemberCount();
-    void setApproximateMemberCount(QJsonValue approximate_member_count);
-    QJsonValue getApproximatePresenceCount();
-    void setApproximatePresenceCount(QJsonValue approximate_presence_count);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
-
     enum DefaultNotificationlevel {
         ALL_MESSAGES,
         ONLY_MENTIONS
     };
+    Q_ENUM(DefaultNotificationlevel)
 
     enum ExplicitContentFilterLevel {
         DISABLED,
         MEMBERS_WITHOUT_ROLES,
         ALL_MEMBERS
     };
+    Q_ENUM(ExplicitContentFilterLevel)
 
     enum PremiumTierLevel {
         TIER_0,
@@ -316,6 +30,7 @@ public:
         TIER_2,
         TIER_3
     };
+    Q_ENUM(PremiumTierLevel)
 
     enum VerificationLevel {
         NONE,
@@ -324,13 +39,199 @@ public:
         HIGH,
         VERY_HIGH
     };
-
-
-    Q_ENUM(DefaultNotificationlevel)
-    Q_ENUM(ExplicitContentFilterLevel)
-    Q_ENUM(PremiumTierLevel)
     Q_ENUM(VerificationLevel)
 
+    static const QString ID;
+    static const QString NAME;
+    static const QString ICON;
+    static const QString SPLASH;
+    static const QString DISCOVERY_SPLASH;
+    static const QString OWNER;
+    static const QString OWNER_ID;
+    static const QString PERMISSIONS;
+    static const QString REGION;
+    static const QString AFK_CHANNEL_ID;
+    static const QString AFK_TIMEOUT;
+    static const QString EMBED_ENABLED;
+    static const QString EMBED_CHANNEL_ID;
+    static const QString VERIFICATION_LEVEL;
+    static const QString DEFAULT_MESSAGE_NOTIFICATIONS;
+    static const QString EXPLICIT_CONTENT_FILTER;
+    static const QString ROLES;
+    static const QString EMOJIS;
+    static const QString FEATURES;
+    static const QString MFA_LEVEL;
+    static const QString APPLICATION_ID;
+    static const QString WIDGET_ENABLED;
+    static const QString WIDGET_CHANNEL_ID;
+    static const QString SYSTEM_CHANNEL_ID;
+    static const QString SYSTEM_CHANNEL_FLAGS;
+    static const QString RULES_CHANNEL_ID;
+    static const QString JOINED_AT;
+    static const QString LARGE;
+    static const QString UNAVAILABLE;
+    static const QString MEMBER_COUNT;
+    static const QString VOICE_STATES;
+    static const QString MEMBERS;
+    static const QString CHANNELS;
+    static const QString PRESENCES;
+    static const QString MAX_PRESENCES;
+    static const QString MAX_MEMBERS;
+    static const QString VANITY_URL_CODE;
+    static const QString DESCRIPTION;
+    static const QString BANNER;
+    static const QString PREMIUM_TIER;
+    static const QString PREMIUM_SUBSCRIPTION_COUNT;
+    static const QString PREFERRED_LOCALE;
+    static const QString PUBLIC_UPDATES_CHANNEL_ID;
+    static const QString MAX_VIDEO_CHANNEL_USERS;
+    static const QString APPROXIMATE_MEMBER_COUNT;
+    static const QString APPROXIMATE_PRESENCE_COUNT;
+
+    Guild() {}
+    Guild(const QByteArray &json) : JsonSerializable(json) {}
+    Guild(const QJsonObject &json) : JsonSerializable(json) {}
+    Guild(const QString &json) : JsonSerializable(json) {}
+
+    QJsonArray getChannels() const;
+    QJsonArray getEmojis() const;
+    QJsonArray getFeatures() const;
+    QJsonArray getMembers() const;
+    QJsonArray getPresences() const;
+    QJsonArray getRoles() const;
+    QJsonArray getVoiceStates() const;
+    QJsonValue getAfkChannelId() const;
+    QJsonValue getAfkTimeout() const;
+    QJsonValue getApplicationId() const;
+    QJsonValue getBanner() const;
+    QJsonValue getDefaultMessageNotifications() const;
+    QJsonValue getDescription() const;
+    QJsonValue getDiscoverySplash() const;
+    QJsonValue getEmbedChannelId() const;
+    QJsonValue getEmbedEnabled() const;
+    QJsonValue getExplicitContentFilter() const;
+    QJsonValue getIcon() const;
+    QJsonValue getId() const;
+    QJsonValue getJoinedAt() const;
+    QJsonValue getLarge() const;
+    QJsonValue getApproximateMemberCount() const;
+    QJsonValue getApproximatePresenceCount() const;
+    QJsonValue getMaxMembers() const;
+    QJsonValue getMaxPresences() const;
+    QJsonValue getMaxVideoChannelUsers() const;
+    QJsonValue getMfaLevel() const;
+    QJsonValue getName() const;
+    QJsonValue getMemberCount() const;
+    QJsonValue getOwner() const;
+    QJsonValue getOwnerId() const;
+    QJsonValue getPermissions() const;
+    QJsonValue getPreferredLocale() const;
+    QJsonValue getPremiumTier() const;
+    QJsonValue getPremiumSubscriptionCount() const;
+    QJsonValue getPublicUpdatesChannelId() const;
+    QJsonValue getRegion() const;
+    QJsonValue getRulesChannelId() const;
+    QJsonValue getSplash() const;
+    QJsonValue getSystemChannelId() const;
+    QJsonValue getSystemChannelFlags() const;
+    QJsonValue getUnavailable() const;
+    QJsonValue getVanityUrlCode() const;
+    QJsonValue getVerificationLevel() const;
+    QJsonValue getWidgetChannelId() const;
+    QJsonValue getWidgetEnabled() const;
+    void setId(const QJsonValue &id);
+    void setName(const QJsonValue &name);
+    void setIcon(const QJsonValue &icon);
+    void setSplash(const QJsonValue &splash);
+    void setDiscoverySplash(const QJsonValue &discoverySplash);
+    void setOwner(const QJsonValue &owner);
+    void setOwnerId(const QJsonValue &owner_id);
+    void setPermissions(const QJsonValue &permissions);
+    void setRegion(const QJsonValue &region);
+    void setAfkChannelId(const QJsonValue &afkChannelId);
+    void setAfkTimeout(const QJsonValue &afkTimeout);
+    void setEmbedEnabled(const QJsonValue &embedEnabled);
+    void setEmbedChannelId(const QJsonValue &embedChannelId);
+    void setVerificationLevel(const QJsonValue &verificationLevel);
+    void setDefaultMessageNotifications(const QJsonValue &defaultMessageNotifications);
+    void setExplicitContentFilter(const QJsonValue &explicitContentFilter);
+    void setRoles(const QJsonArray &roles) ;
+    void setEmojis(const QJsonArray &emojis);
+    void setFeatures(const QJsonArray &features);
+    void setMfaLevel(const QJsonValue &mfaLevel);
+    void setApplicationId(const QJsonValue &applicationId);
+    void setWidgetEnabled(const QJsonValue &widgetEnabled);
+    void setWidgetChannelId(const QJsonValue &widgetChannelId);
+    void setSystemChannelId(const QJsonValue &systemChannelId);
+    void setSystemChannelFlags(const QJsonValue &systemChannelFlags);
+    void setRulesChannelId(const QJsonValue &rulesChannelId);
+    void setJoinedAt(const QJsonValue &joinedAt);
+    void setLarge(const QJsonValue &large);
+    void setUnavailable(const QJsonValue &unavailable);
+    void setMemberCount(const QJsonValue &memberCount);
+    void setVoiceStates(const QJsonArray &voice_states);
+    void setMembers(const QJsonArray &members);
+    void setChannels(const QJsonArray &channels);
+    void setPresences(const QJsonArray &presences);
+    void setMaxPresences(const QJsonValue &maxPresences);
+    void setMaxMembers(const QJsonValue &maxMembers);
+    void setVanityUrlCode(const QJsonValue &vanityUrlCode);
+    void setDescription(const QJsonValue &description);
+    void setBanner(const QJsonValue &banner);
+    void setPremiumTier(const QJsonValue &premium_tier);
+    void setPremiumSubscriptionCount(const QJsonValue &premiumSubscriptionCount);
+    void setPreferredLocale(const QJsonValue &preferredLocale);
+    void setPublicUpdatesChannelId(const QJsonValue &publicUpdatesChannelId);
+    void setMaxVideoChannelUsers(const QJsonValue &maxVideoChannelUsers);
+    void setApproximateMemberCount(const QJsonValue &approximateMemberCount);
+    void setApproximatePresenceCount(const QJsonValue &approximatePresenceCount);
+
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
+    Q_PROPERTY(QJsonValue icon READ getIcon WRITE setIcon)
+    Q_PROPERTY(QJsonValue splash READ getSplash WRITE setSplash)
+    Q_PROPERTY(QJsonValue discovery_splash READ getDiscoverySplash WRITE setDiscoverySplash)
+    Q_PROPERTY(QJsonValue owner READ getOwner WRITE setOwner)
+    Q_PROPERTY(QJsonValue owner_id READ getOwnerId WRITE setOwnerId)
+    Q_PROPERTY(QJsonValue permissions READ getPermissions WRITE setPermissions)
+    Q_PROPERTY(QJsonValue region READ getRegion WRITE setRegion)
+    Q_PROPERTY(QJsonValue afk_channel_id READ getAfkChannelId WRITE setAfkChannelId)
+    Q_PROPERTY(QJsonValue afk_timeout READ getAfkTimeout WRITE setAfkTimeout)
+    Q_PROPERTY(QJsonValue embed_enabled READ getEmbedEnabled WRITE setEmbedEnabled)
+    Q_PROPERTY(QJsonValue embed_channel_id READ getEmbedChannelId WRITE setEmbedChannelId)
+    Q_PROPERTY(QJsonValue verification_level READ getVerificationLevel WRITE setVerificationLevel)
+    Q_PROPERTY(QJsonValue default_message_notifications READ getDefaultMessageNotifications WRITE setDefaultMessageNotifications)
+    Q_PROPERTY(QJsonValue explicit_content_filter READ getExplicitContentFilter WRITE setExplicitContentFilter)
+    Q_PROPERTY(QJsonArray roles READ getRoles WRITE setRoles)
+    Q_PROPERTY(QJsonArray emojis READ getEmojis WRITE setEmojis)
+    Q_PROPERTY(QJsonArray features READ getFeatures WRITE setFeatures)
+    Q_PROPERTY(QJsonValue mfa_level READ getMfaLevel WRITE setMfaLevel)
+    Q_PROPERTY(QJsonValue application_id READ getApplicationId WRITE setApplicationId)
+    Q_PROPERTY(QJsonValue widget_enabled READ getWidgetEnabled WRITE setWidgetEnabled)
+    Q_PROPERTY(QJsonValue widget_channel_id READ getWidgetChannelId WRITE setWidgetChannelId)
+    Q_PROPERTY(QJsonValue system_channel_id READ getSystemChannelId WRITE setSystemChannelId)
+    Q_PROPERTY(QJsonValue system_channel_flags READ getSystemChannelFlags WRITE setSystemChannelFlags)
+    Q_PROPERTY(QJsonValue rules_channel_id READ getRulesChannelId WRITE setRulesChannelId)
+    Q_PROPERTY(QJsonValue joined_at READ getJoinedAt WRITE setJoinedAt)
+    Q_PROPERTY(QJsonValue large READ getLarge WRITE setLarge)
+    Q_PROPERTY(QJsonValue unavailable READ getUnavailable WRITE setUnavailable)
+    Q_PROPERTY(QJsonValue member_count READ getMemberCount WRITE setMemberCount)
+    Q_PROPERTY(QJsonArray voice_states READ getVoiceStates WRITE setVoiceStates)
+    Q_PROPERTY(QJsonArray members READ getMembers WRITE setMembers)
+    Q_PROPERTY(QJsonArray channels READ getChannels WRITE setChannels)
+    Q_PROPERTY(QJsonArray presences READ getPresences WRITE setPresences)
+    Q_PROPERTY(QJsonValue max_presences READ getMaxPresences WRITE setMaxPresences)
+    Q_PROPERTY(QJsonValue max_members READ getMaxMembers WRITE setMaxMembers)
+    Q_PROPERTY(QJsonValue vanity_url_code READ getVanityUrlCode WRITE setVanityUrlCode)
+    Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
+    Q_PROPERTY(QJsonValue banner READ getBanner WRITE setBanner)
+    Q_PROPERTY(QJsonValue premium_tier READ getPremiumTier WRITE setPremiumTier)
+    Q_PROPERTY(QJsonValue premium_subscription_count READ getPremiumSubscriptionCount WRITE setPremiumSubscriptionCount)
+    Q_PROPERTY(QJsonValue preferred_locale READ getPreferredLocale WRITE setPreferredLocale)
+    Q_PROPERTY(QJsonValue public_updates_channel_id READ getPublicUpdatesChannelId WRITE setPublicUpdatesChannelId)
+    Q_PROPERTY(QJsonValue max_video_channel_users READ getMaxVideoChannelUsers WRITE setMaxVideoChannelUsers)
+    Q_PROPERTY(QJsonValue approximate_member_count READ getApproximateMemberCount WRITE setApproximateMemberCount)
+    Q_PROPERTY(QJsonValue approximate_presence_count READ getApproximatePresenceCount WRITE setApproximatePresenceCount)
 };
 
 

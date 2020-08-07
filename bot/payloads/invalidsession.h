@@ -2,22 +2,27 @@
 #define INVALIDSESSION_H
 
 #include "jsonserializable.h"
-#include "util/serializationutils.h"
 
-#include <QObject>
 
 class InvalidSession : public JsonSerializable
 {
     Q_OBJECT
 public:
-    const QString D = "d";
-    const QString OP = "op";
+    static const QString D;
+    static const QString OP;
 
-    int op;
-    bool d;
+    InvalidSession() {}
+    InvalidSession(const QByteArray &json) : JsonSerializable(json) {}
+    InvalidSession(const QJsonObject &json) : JsonSerializable(json) {}
+    InvalidSession(const QString &json) : JsonSerializable(json) {}
 
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    QJsonValue getD() const;
+    QJsonValue getOP() const;
+    void setD(const QJsonValue &d);
+    void setOP(const QJsonValue &op);
+
+    Q_PROPERTY(QJsonValue d READ getD WRITE setD)
+    Q_PROPERTY(QJsonValue op READ getOP WRITE setOP)
 };
 
 #endif // INVALIDSESSION_H

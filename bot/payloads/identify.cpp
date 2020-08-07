@@ -1,138 +1,90 @@
 #include "identify.h"
 
-#include "util/serializationutils.h"
+const QString Identify::TOKEN = "token";
+const QString Identify::PROPERTIES = "properties";
+const QString Identify::COMPRESS = "compress";
+const QString Identify::LARGE_THRESHOLD = "large_threshold";
+const QString Identify::SHARD = "shard";
+const QString Identify::PRESENCE = "presence";
+const QString Identify::GUILD_SUBSCRIPTIONS = "guild_subscriptions";
+const QString Identify::INTENTS = "intents";
 
-QString
-Identify::getToken() {
-    return token;
+QJsonValue
+Identify::getToken() const {
+    return _jsonObject[TOKEN];
 }
 
 void
-Identify::setToken (QString token) {
-    this->token = token;
+Identify::setToken (const QJsonValue &token) {
+    _jsonObject[TOKEN] = token;
 }
 
 QJsonObject
-Identify::getProperties() {
-    if (properties) {
-        return properties->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+Identify::getProperties() const {
+    return _jsonObject[PROPERTIES].toObject();
 }
 
 void
-Identify::setProperties(QJsonObject properties) {
-    if (!properties.isEmpty()) {
-        this->properties = QSharedPointer<IdentifyProperties>(new IdentifyProperties);
-        SerializationUtils::readFromJson(*this->properties, properties);
-    }
+Identify::setProperties(const QJsonObject &properties) {
+    _jsonObject[PROPERTIES] = properties;
 }
 
 QJsonValue
-Identify::getCompress() {
-    if (compress) {
-        return QJsonValue(*compress);
-    } else {
-        return QJsonValue();
-    }
+Identify::getCompress() const {
+    return _jsonObject[COMPRESS];
 }
 
 void
-Identify::setCompress(QJsonValue compress) {
-    if (!compress.isNull()) {
-        this->compress = QSharedPointer<bool>(new bool(compress.toBool()));
-    }
+Identify::setCompress(const QJsonValue &compress) {
+    _jsonObject[COMPRESS] = compress;
 }
 
 QJsonValue
-Identify::getLargeThreshold() {
-    if (large_threshold) {
-        return QJsonValue(*large_threshold);
-    } else {
-        return QJsonValue();
-    }
+Identify::getLargeThreshold() const {
+   return _jsonObject[LARGE_THRESHOLD];
 }
 
 void
-Identify::setLargeThreshold(QJsonValue large_threshold) {
-    if (!large_threshold.isNull()) {
-        this->large_threshold = QSharedPointer<int>(new int(large_threshold.toInt()));
-    }
+Identify::setLargeThreshold(const QJsonValue &largeThreshold) {
+    _jsonObject[LARGE_THRESHOLD] = largeThreshold;
 }
 
 QJsonArray
-Identify::getShard() {
-    if (shard[0] && shard[1]) {
-        return QJsonArray { *shard[0], *shard[1] };
-    } else {
-        return QJsonArray();
-    }
+Identify::getShard() const {
+    return _jsonObject[SHARD].toArray();
 }
 
 void
-Identify::setShard(QJsonArray shard) {
-    if (!shard.isEmpty()) {
-        this->shard[0] = QSharedPointer<int>(new int(shard[0].toInt()));
-        this->shard[1] = QSharedPointer<int>(new int(shard[1].toInt()));
-    }
+Identify::setShard(const QJsonArray &shard) {
+    _jsonObject[SHARD] = shard;
 }
 
 QJsonObject
-Identify::getPresence() {
-    if (presence) {
-        return presence->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+Identify::getPresence() const {
+    return _jsonObject[PRESENCE].toObject();
 }
 
 void
-Identify::setPresence(QJsonObject presence) {
-    if (!this->presence) {
-        this->presence = QSharedPointer<UpdateStatus>(new UpdateStatus);
-    }
-    SerializationUtils::readFromJson(*this->presence, presence);
+Identify::setPresence(const QJsonObject &presence) {
+    _jsonObject[PRESENCE] = presence;
 }
 
 QJsonValue
-Identify::getGuildSubscriptions() {
-    if (guild_subscriptions) {
-        return QJsonValue(*guild_subscriptions);
-    } else {
-        return QJsonValue();
-    }
+Identify::getGuildSubscriptions() const {
+    return _jsonObject[GUILD_SUBSCRIPTIONS];
 }
 
 void
-Identify::setGuildSubscriptions(QJsonValue guild_subscriptions) {
-    if (!guild_subscriptions.isNull()) {
-        this->guild_subscriptions = QSharedPointer<bool>(new bool(guild_subscriptions.toBool()));
-    }
+Identify::setGuildSubscriptions(const QJsonValue &guildSubscriptions) {
+    _jsonObject[GUILD_SUBSCRIPTIONS] = guildSubscriptions;
 }
 
 QJsonValue
-Identify::getIntents() {
-    if (intents) {
-        return QJsonValue(*intents);
-    } else {
-        return QJsonValue();
-    }
+Identify::getIntents() const {
+    return _jsonObject[INTENTS];
 }
 
 void
-Identify::setIntents(QJsonValue intents) {
-    if (!intents.isNull()) {
-        this->intents = QSharedPointer<int>(new int(intents.toInt()));
-    }
-}
-
-void
-Identify::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-Identify::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+Identify::setIntents(const QJsonValue &intents) {
+    _jsonObject[INTENTS] = intents;
 }

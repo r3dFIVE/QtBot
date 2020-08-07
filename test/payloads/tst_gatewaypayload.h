@@ -2,7 +2,8 @@
 #define TESTGATEWAYPAYLOAD_H
 
 #include <QObject>
-#include <testsuite.h>
+
+#include "testsuite.h"
 
 class GatewayPayloadTest : TestSuite
 {
@@ -13,9 +14,7 @@ public:
 
 private slots:
     void test_serialization_minimal();
-    void test_serialization_full();
     void test_deserialization_minimal();
-    void test_deserialization_full();
     void test_single_value();
 };
 

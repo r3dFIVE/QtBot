@@ -10,21 +10,22 @@ class Heartbeat : public JsonSerializable
 {
     Q_OBJECT
 
-public:
-    const QString D = "d";
-    const QString OP = "op";
+public:    
+    static const QString D;
+    static const QString OP;
 
-    Q_PROPERTY(int op READ getOp)
-    int op = GatewayEvents::HEARTBEAT;
+    Heartbeat() {}
+    Heartbeat(const QJsonObject &json) : JsonSerializable(json) {}
+    Heartbeat(const QString &json) : JsonSerializable(json) {}
+    Heartbeat(const QByteArray &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(int d READ getD WRITE setD)
-    int d = -1;
+    QJsonValue getD() const;
+    QJsonValue getOp() const;
+    void setD(const QJsonValue &d);
+    void setOp(const QJsonValue &op);
 
-    int getD();
-    void setD(int value);
-    int getOp();
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue op READ getOp)
+    Q_PROPERTY(QJsonValue d READ getD WRITE setD)
 };
 
 Q_DECLARE_METATYPE(Heartbeat)

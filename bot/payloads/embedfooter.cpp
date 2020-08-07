@@ -1,46 +1,38 @@
 #include "embedfooter.h"
 
-#include "util/serializationutils.h"
+
+const QString EmbedFooter::ICON_URL = "icon_url";
+const QString EmbedFooter::PROXY_ICON_URL = "proxy_icon_url";
+const QString EmbedFooter::TEXT = "text";
 
 QJsonValue
 EmbedFooter::getText() const {
-    return text;
+    return _jsonObject[TEXT];
 }
 
 void
-EmbedFooter::setText(const QJsonValue &value) {
-    text = value;
+EmbedFooter::setText(const QJsonValue &text) {
+    _jsonObject[TEXT] = text;
 }
 
 
 QJsonValue
 EmbedFooter::getIconUrl() const {
-    return icon_url;
+    return _jsonObject[ICON_URL];
 }
 
 void
-EmbedFooter::setIconUrl(const QJsonValue &value) {
-    icon_url = value;
+EmbedFooter::setIconUrl(const QJsonValue &iconUrl) {
+    _jsonObject[TEXT] = iconUrl;
 }
 
 
 QJsonValue
 EmbedFooter::getProxyIconUrl() const {
-    return proxy_icon_url;
+    return _jsonObject[PROXY_ICON_URL];
 }
 
 void
-EmbedFooter::setProxyIconUrl(const QJsonValue &value) {
-    proxy_icon_url = value;
-}
-
-void
-EmbedFooter::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-EmbedFooter::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-
+EmbedFooter::setProxyIconUrl(const QJsonValue &proxyIconUrl) {
+    _jsonObject[PROXY_ICON_URL] = proxyIconUrl;
 }

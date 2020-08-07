@@ -3,54 +3,47 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class Attachment : public JsonSerializable
 {
     Q_OBJECT
 
-public:
-    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
-    QJsonValue id;
-
-    Q_PROPERTY(QJsonValue filename READ getFilename WRITE setFilename)
-    QJsonValue filename;
-
-    Q_PROPERTY(QJsonValue size READ getSize WRITE setSize)
-    QJsonValue size;
-
-    Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
-    QJsonValue url;
-
-    Q_PROPERTY(QJsonValue proxy_url READ getProxyUrl WRITE setProxyUrl)
-    QJsonValue proxy_url;
-
-    Q_PROPERTY(QJsonValue height READ getHeight WRITE setHeight)
-    QJsonValue height;
-
-    Q_PROPERTY(QJsonValue width READ getWidth WRITE setWidth)
-    QJsonValue width;
-
-    QJsonValue getId();
-    void setId(QJsonValue id);
-    QJsonValue getFilename();
-    void setFilename(QJsonValue filename);
-    QJsonValue getSize();
-    void setSize(QJsonValue size);
-    QJsonValue getUrl();
-    void setUrl(QJsonValue url);
-    QJsonValue getProxyUrl();
-    void setProxyUrl(QJsonValue proxy_url);
-    QJsonValue getHeight();
-    void setHeight(QJsonValue height);
-    QJsonValue getWidth();
-    void setWidth(QJsonValue width);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+public: 
+    static const QString ID;
+    static const QString FILENAME;
+    static const QString SIZE;
+    static const QString PROXY_URL;
+    static const QString HEIGHT;
+    static const QString WIDTH;
+    static const QString URL;
 
     Attachment() {}
-    ~Attachment() {}
+    Attachment(const QByteArray &json) : JsonSerializable(json) {}
+    Attachment(const QJsonObject &json) : JsonSerializable(json) {}
+    Attachment(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getFilename();
+    QJsonValue getHeight();
+    QJsonValue getId();
+    QJsonValue getProxyUrl();
+    QJsonValue getSize();
+    QJsonValue getUrl();
+    QJsonValue getWidth();
+    void setFilename(QJsonValue filename);
+    void setHeight(QJsonValue height);
+    void setId(QJsonValue id);
+    void setProxyUrl(QJsonValue proxy_url);
+    void setSize(QJsonValue size);
+    void setUrl(QJsonValue url);
+    void setWidth(QJsonValue width);
+
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
+    Q_PROPERTY(QJsonValue filename READ getFilename WRITE setFilename)
+    Q_PROPERTY(QJsonValue size READ getSize WRITE setSize)
+    Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
+    Q_PROPERTY(QJsonValue proxy_url READ getProxyUrl WRITE setProxyUrl)
+    Q_PROPERTY(QJsonValue height READ getHeight WRITE setHeight)
+    Q_PROPERTY(QJsonValue width READ getWidth WRITE setWidth)
 };
 
 Q_DECLARE_METATYPE(Attachment)

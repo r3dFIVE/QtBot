@@ -3,28 +3,27 @@
 
 #include "jsonserializable.h"
 
-#include <QSharedPointer>
-#include <QJsonArray>
 
 class ActivityParty : public JsonSerializable
 {
     Q_OBJECT
+
 public:
-    const QString ID = "id";
-    const QString SIZE = "size";
+    static const QString ID;
+    static const QString SIZE;
 
-    Q_PROPERTY(QString id READ getId WRITE setId)
-    QString id;
+    ActivityParty() {}
+    ActivityParty(const QByteArray &json) : JsonSerializable(json) {}
+    ActivityParty(const QJsonObject &json) : JsonSerializable(json) {}
+    ActivityParty(const QString &json) : JsonSerializable(json) {}
 
+    QJsonArray getSize() const;
+    QJsonValue getId() const;
+    void setId(const QJsonValue &id);
+    void setSize(const QJsonArray &size);
+
+    Q_PROPERTY(QJsonValue id READ getId WRITE setId)
     Q_PROPERTY(QJsonArray size READ getSize WRITE setSize)
-    QSharedPointer<int> size[2];
-
-    QString getId();
-    void setId(QString id);
-    QJsonArray getSize();
-    void setSize(QJsonArray size);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
 };
 
 Q_DECLARE_METATYPE(ActivityParty)

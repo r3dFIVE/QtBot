@@ -5,14 +5,22 @@
 void
 RoleTest::test_serialization() {
     Role role;
-    role.id = TEST_STRING1;
-    role.name = TEST_STRING2;
-    role.color = TEST_INT1;
-    role.hoist = true;
-    role.position = 1;
-    role.permissions = TEST_INT2;
-    role.managed = true;
-    role.mentionable = true;
+
+    role.setId(TEST_STRING1);
+
+    role.setName(TEST_STRING2);
+
+    role.setColor(TEST_INT1);
+
+    role.setHoist(true);
+
+    role.setPosition(1);
+
+    role.setPermissions(TEST_INT2);
+
+    role.setManaged(true);
+
+    role.setMentionable(true);
 
     QJsonObject serializedRole = role.toQJsonObject();
 
@@ -28,17 +36,16 @@ RoleTest::test_serialization() {
 
 void
 RoleTest::test_deserialization() {
-    Role role;
-    role.fromQString(PLD_ROLE);
+    Role role(PLD_ROLE);
 
-    QVERIFY(role.id == TEST_STRING1);
-    QVERIFY(role.name == TEST_STRING2);
-    QVERIFY(role.color == TEST_INT1);
-    QVERIFY(role.hoist == true);
-    QVERIFY(role.position == 1);
-    QVERIFY(role.permissions == TEST_INT2);
-    QVERIFY(role.managed == true);
-    QVERIFY(role.mentionable == true);
+    QVERIFY(role.getId() == TEST_STRING1);
+    QVERIFY(role.getName() == TEST_STRING2);
+    QVERIFY(role.getColor() == TEST_INT1);
+    QVERIFY(role.getHoist() == true);
+    QVERIFY(role.getPosition() == 1);
+    QVERIFY(role.getPermissions() == TEST_INT2);
+    QVERIFY(role.getManaged() == true);
+    QVERIFY(role.getMentionable() == true);
 }
 
 static RoleTest ROLE_TEST;

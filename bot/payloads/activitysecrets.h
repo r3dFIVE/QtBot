@@ -3,31 +3,31 @@
 
 #include "jsonserializable.h"
 
+
 class ActivitySecrets : public JsonSerializable
 {
     Q_OBJECT
+
 public:    
-    const QString JOIN = "join";
-    const QString SPECTATE = "spectate";
-    const QString MATCH = "match";
+    static const QString JOIN;
+    static const QString MATCH;
+    static const QString SPECTATE;
 
-    Q_PROPERTY(QString join READ getJoin WRITE setJoin)
-    QString join;
+    ActivitySecrets() {}
+    ActivitySecrets(const QByteArray &json) : JsonSerializable(json) {}
+    ActivitySecrets(const QJsonObject &json) : JsonSerializable(json) {}
+    ActivitySecrets(const QString &json) : JsonSerializable(json) {}
 
-    Q_PROPERTY(QString spectate READ getSpectate WRITE setSpectate)
-    QString spectate;
+    QJsonValue getJoin();
+    QJsonValue getMatch();
+    QJsonValue getSpectate();
+    void setJoin(const QJsonValue &join);
+    void setMatch(const QJsonValue &match);
+    void setSpectate(const QJsonValue &spectate);
 
-    Q_PROPERTY(QString match READ getMatch WRITE setMatch)
-    QString match;
-
-    QString getJoin();
-    void setJoin(QString join);
-    QString getSpectate();
-    void setSpectate(QString spectate);
-    QString getMatch();
-    void setMatch(QString match);
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    Q_PROPERTY(QJsonValue join READ getJoin WRITE setJoin)
+    Q_PROPERTY(QJsonValue spectate READ getSpectate WRITE setSpectate)
+    Q_PROPERTY(QJsonValue match READ getMatch WRITE setMatch)
 };
 
 Q_DECLARE_METATYPE(ActivitySecrets)

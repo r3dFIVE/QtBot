@@ -3,44 +3,39 @@
 
 #include "jsonserializable.h"
 
-#include <QObject>
 
 class MessageApplication : public JsonSerializable
 {
     Q_OBJECT
 
 public:
-    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
-    QJsonValue type;
-
-    Q_PROPERTY(QJsonValue cover_image READ getCoverImage WRITE setCoverImage)
-    QJsonValue cover_image;
-
-    Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
-    QJsonValue description;
-
-    Q_PROPERTY(QJsonValue icon READ getIcon WRITE setIcon)
-    QJsonValue icon;
-
-    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
-    QJsonValue name;
-
-    QJsonValue getType() const;
-    void setType(const QJsonValue &value);
-    QJsonValue getCoverImage() const;
-    void setCoverImage(const QJsonValue &value);
-    QJsonValue getDescription() const;
-    void setDescription(const QJsonValue &value);
-    QJsonValue getIcon() const;
-    void setIcon(const QJsonValue &value);
-    QJsonValue getName() const;
-    void setName(const QJsonValue &value);
-
-    void read(const QJsonObject &jsonObject) override;
-    void write(QJsonObject &jsonObject) override;
+    static const QString TYPE;
+    static const QString COVER_IMAGE;
+    static const QString DESCRIPTION;
+    static const QString NAME;
+    static const QString ICON;
 
     MessageApplication() {}
-    ~MessageApplication() {}
+    MessageApplication(const QByteArray &json) : JsonSerializable(json) {}
+    MessageApplication(const QJsonObject &json) : JsonSerializable(json) {}
+    MessageApplication(const QString &json) : JsonSerializable(json) {}
+
+    QJsonValue getCoverImage() const;
+    QJsonValue getDescription() const;
+    QJsonValue getIcon() const;
+    QJsonValue getName() const;
+    QJsonValue getType() const;
+    void setCoverImage(const QJsonValue &coverImage);
+    void setDescription(const QJsonValue &description);
+    void setIcon(const QJsonValue &icon);
+    void setName(const QJsonValue &name);
+    void setType(const QJsonValue &type);
+
+    Q_PROPERTY(QJsonValue type READ getType WRITE setType)
+    Q_PROPERTY(QJsonValue cover_image READ getCoverImage WRITE setCoverImage)
+    Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
+    Q_PROPERTY(QJsonValue icon READ getIcon WRITE setIcon)
+    Q_PROPERTY(QJsonValue name READ getName WRITE setName)
 };
 
 Q_DECLARE_METATYPE(MessageApplication)

@@ -61,7 +61,7 @@ HEADERS += \
     $$PWD/payloads/voicestate.h \
     $$PWD/qml/botscript.h \
     $$PWD/qml/commandfactory.h \
-    $$PWD/qml/eventcontext.h \
+    $$PWD/payloads/eventcontext.h \
     $$PWD/routes/createmessage.h \
     $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
@@ -132,7 +132,7 @@ SOURCES += \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/qml/botscript.cpp \
     $$PWD/qml/commandfactory.cpp \
-    $$PWD/qml/eventcontext.cpp \
+    $$PWD/payloads/eventcontext.cpp \
     $$PWD/routes/createmessage.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/util/corecommand.cpp \

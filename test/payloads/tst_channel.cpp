@@ -1,20 +1,19 @@
 #include "tst_channel.h"
 
-#include <payloads/channel.h>
-
+#include "payloads/channel.h"
+#include "payloads/user.h"
+#include "payloads/permissionoverwrite.h"
 
 void
 ChannelTest::test_deserialization_full() {
-    Channel channel;
-    qDebug() << PLD_CHANNEL_FULL;
-    channel.fromQString(PLD_CHANNEL_FULL);
+    Channel channel(PLD_CHANNEL_FULL);
 
     QVERIFY(channel.getId() == TEST_STRING1);
     QVERIFY(channel.getType() == TEST_INT1);
     QVERIFY(channel.getGuildId() == TEST_STRING2);
     QVERIFY(channel.getPosition() == TEST_INT2);
     QVERIFY(channel.getPermissionOverwrites().size() == 1);
-    QVERIFY(channel.permission_overwrites[0].getId() == TEST_STRING1);
+    QVERIFY(channel.getPermissionOverwrites()[0].toObject()[PermissionOverwrite::ID] == TEST_STRING1);
     QVERIFY(channel.getName() == TEST_STRING1);
     QVERIFY(channel.getTopic() == TEST_STRING2);
     QVERIFY(channel.getNsfw() == true);
@@ -23,7 +22,10 @@ ChannelTest::test_deserialization_full() {
     QVERIFY(channel.getUserLimit() == TEST_INT2);
     QVERIFY(channel.getRateLimitPerUser() == TEST_INT1);
     QVERIFY(channel.getRecipients().size() == 1);
-    QVERIFY(channel.recipients[0].getUsername() == TEST_STRING2);
+
+    User recipient(channel.getRecipients()[0].toObject());
+
+    QVERIFY(recipient.getUsername() == TEST_STRING2);
     QVERIFY(channel.getIcon() == TEST_STRING2);
     QVERIFY(channel.getOwnerId() == TEST_STRING1);
     QVERIFY(channel.getApplicationId() == TEST_STRING2);
@@ -33,56 +35,74 @@ ChannelTest::test_deserialization_full() {
 
 void
 ChannelTest::test_deserialization_minimal() {
-    Channel channel;
-    qDebug() << PLD_CHANNEL_MINIMAL;
-    channel.fromQString(PLD_CHANNEL_MINIMAL);
+    Channel channel(PLD_CHANNEL_MINIMAL);
 
     QVERIFY(channel.getId() == TEST_STRING1);
     QVERIFY(channel.getType() == TEST_INT1);
-    QVERIFY(channel.getGuildId().isEmpty());
-    QVERIFY(channel.getPosition() == QJsonValue::Null);
-    QVERIFY(channel.permission_overwrites.size() == 0);
-    QVERIFY(channel.getName().isEmpty());
-    QVERIFY(channel.getTopic().isEmpty());
-    QVERIFY(channel.getNsfw() == QJsonValue::Null);
-    QVERIFY(channel.getLastMessageId().isEmpty());
-    QVERIFY(channel.getBitrate() == QJsonValue::Null);
-    QVERIFY(channel.getUserLimit() == QJsonValue::Null);
-    QVERIFY(channel.getRateLimitPerUser() == QJsonValue::Null);
+    QVERIFY(channel.getGuildId().isNull());
+    QVERIFY(channel.getPosition().isNull());
+    QVERIFY(channel.getPermissionOverwrites().size() == 0);
+    QVERIFY(channel.getName().isNull());
+    QVERIFY(channel.getTopic().isNull());
+    QVERIFY(channel.getNsfw().isNull());
+    QVERIFY(channel.getLastMessageId().isNull());
+    QVERIFY(channel.getBitrate().isNull());
+    QVERIFY(channel.getUserLimit().isNull());
+    QVERIFY(channel.getRateLimitPerUser().isNull());
     QVERIFY(channel.getRecipients().size() == 0);
-    QVERIFY(channel.getIcon().isEmpty());
-    QVERIFY(channel.getOwnerId().isEmpty());
-    QVERIFY(channel.getApplicationId().isEmpty());
-    QVERIFY(channel.getParentId().isEmpty());
-    QVERIFY(channel.getLastPinTimestamp().isEmpty());
+    QVERIFY(channel.getIcon().isNull());
+    QVERIFY(channel.getOwnerId().isNull());
+    QVERIFY(channel.getApplicationId().isNull());
+    QVERIFY(channel.getParentId().isNull());
+    QVERIFY(channel.getLastPinTimestamp().isNull());
 }
 
 void
 ChannelTest::test_serialization_full() {
     Channel channel;
+
     channel.setId(TEST_STRING1);
+
     channel.setType(TEST_INT1);
+
     channel.setGuildId(TEST_STRING2);
+
     channel.setPosition(TEST_INT2);
-    PermissionOverwrite permissionOverwrite;
-    permissionOverwrite.fromQString(PLD_PERMISSION_OVERWRITE);
+
+    PermissionOverwrite permissionOverwrite(PLD_PERMISSION_OVERWRITE);
+
     QJsonArray permissionOverwrites = { permissionOverwrite.toQJsonObject() };
+
     channel.setPermissionOverwrites(permissionOverwrites);
+
     channel.setName(TEST_STRING1);
+
     channel.setTopic(TEST_STRING2);
+
     channel.setNsfw(true);
+
     channel.setLastMessageId(TEST_STRING1);
+
     channel.setBitrate(TEST_INT1);
+
     channel.setUserLimit(TEST_INT2);
+
     channel.setRateLimitPerUser(TEST_INT1);
-    User user;
-    user.fromQString(PLD_USER_MINIMAL);
+
+    User user(PLD_USER_MINIMAL);
+
     QJsonArray recipients = { user.toQJsonObject() };
+
     channel.setRecipients(recipients);
+
     channel.setIcon(TEST_STRING2);
+
     channel.setOwnerId(TEST_STRING1);
+
     channel.setApplicationId(TEST_STRING2);
+
     channel.setParentId(TEST_STRING1);
+
     channel.setLastPinTimestamp(TEST_STRING2);
 
     QJsonObject serializedChannel = channel.toQJsonObject();
@@ -110,7 +130,9 @@ ChannelTest::test_serialization_full() {
 void
 ChannelTest::test_serialization_minimal() {
     Channel channel;
+
     channel.setId(TEST_STRING1);
+
     channel.setType(TEST_INT1);
 
     QJsonObject serializedChannel = channel.toQJsonObject();

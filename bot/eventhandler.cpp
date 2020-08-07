@@ -61,7 +61,7 @@ EventHandler::processMessageUpdate(QSharedPointer<EventContext> context) {
 
 void
 EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
-    QString guildId = context->guild_id.toString();
+    QString guildId = context->getGuildId().toString();
 
     if (!_availableGuilds.contains(guildId)) {
         _logger->debug(QString("Guild %1 is still initializing.").arg(guildId));
@@ -71,7 +71,7 @@ EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
 
     QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
-    context->command = parseCommandToken(context->content.toString());
+    context->setCommand(parseCommandToken(context->getContent().toString()));
 
     Job *botJob = guild->getBotJob(context);
 
@@ -93,11 +93,11 @@ EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
 }
 
 void
-EventHandler::processEvent(QSharedPointer<GatewayPayload::GatewayPayload> payload) {
+EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
-    int eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->t.toUtf8());
+    int eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT().toInt());
 
-    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->d));
+    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->getD()));
 
     switch(eventType) {
     case GatewayEvents::GUILD_CREATE:
@@ -129,6 +129,6 @@ EventHandler::reloadAllAvailableGuilds() {
 
 void
 EventHandler::processGuildCreate(QSharedPointer<EventContext> context) {
-    emit guildOnline(context->source_payload["id"].toString());
+    emit guildOnline(context->getSourcePayload()[Guild::ID].toString());
 }
 

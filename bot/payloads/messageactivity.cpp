@@ -1,34 +1,25 @@
 #include "messageactivity.h"
 
-#include "util/serializationutils.h"
 
+const QString MessageActivity::PARTY_ID = "party_id";
+const QString MessageActivity::TYPE = "type";
 
 QJsonValue
 MessageActivity::getPartyId() const {
-    return party_id;
+    return _jsonObject[PARTY_ID];
 }
 
 void
-MessageActivity::setPartyId(const QJsonValue &value) {
-    party_id = value;
+MessageActivity::setPartyId(const QJsonValue &partyId) {
+    _jsonObject[PARTY_ID] = partyId;
 }
 
 QJsonValue
 MessageActivity::getType() const {
-    return type;
+    return _jsonObject[TYPE];
 }
 
 void
-MessageActivity::setType(const QJsonValue &value) {
-    type = value;
-}
-
-void
-MessageActivity::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-MessageActivity::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+MessageActivity::setType(const QJsonValue &type) {
+    _jsonObject[TYPE] = type;
 }

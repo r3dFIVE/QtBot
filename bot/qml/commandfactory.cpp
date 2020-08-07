@@ -9,7 +9,7 @@
 #include <QVariant>
 
 #include "qml/botscript.h"
-#include "qml/eventcontext.h"
+#include "payloads/eventcontext.h"
 #include "util/corecommands.h"
 #include "payloads/message.h"
 #include "util/serializationutils.h"

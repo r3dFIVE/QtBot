@@ -1,48 +1,35 @@
 #include "activityemoji.h"
 
-#include <util/serializationutils.h>
+const QString ActivityEmoji::NAME = "name";
+const QString ActivityEmoji::ID = "id";
+const QString ActivityEmoji::ANIMATED = "animated";
 
-QString
-ActivityEmoji::getName() {
-    return name;
+QJsonValue
+ActivityEmoji::getName() const {
+    return _jsonObject[NAME];
 }
 
 void
-ActivityEmoji::setName(QString name) {
-    this->name = name;
-}
-
-QString
-ActivityEmoji::getId() {
-    return id;
-}
-
-void
-ActivityEmoji::setId(QString id) {
-    this->id = id;
+ActivityEmoji::setName(const QJsonValue &name) {
+    _jsonObject[NAME] = name;
 }
 
 QJsonValue
-ActivityEmoji::getAnimated() {
-    if (animated) {
-        return QJsonValue(*animated);
-    }
-    return QJsonValue();
+ActivityEmoji::getId() const {
+    return _jsonObject[ID];
 }
 
 void
-ActivityEmoji::setAnimated(QJsonValue animated) {
-    if (!animated.isNull()) {
-        this->animated = QSharedPointer<bool>(new bool(animated.toBool()));
-    }
+ActivityEmoji::setId(const QJsonValue &id) {
+    _jsonObject[ID] = id;
+}
+
+QJsonValue
+ActivityEmoji::getAnimated() const {
+    return _jsonObject[ANIMATED];
 }
 
 void
-ActivityEmoji::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-ActivityEmoji::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
+ActivityEmoji::setAnimated(const QJsonValue &animated) {
+    _jsonObject[ANIMATED] = animated;
 }

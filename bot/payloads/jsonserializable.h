@@ -11,21 +11,25 @@ class JsonSerializable : public QObject
 {
     Q_OBJECT
 
-    virtual void read(const QJsonObject &jsonObject) = 0;
-    virtual void write(QJsonObject &jsonObject) = 0;
+protected:
+    QJsonObject _jsonObject;
 
 public:
     JsonSerializable() {}
-    JsonSerializable(const JsonSerializable &serializeable) { Q_UNUSED(serializeable) }
+    JsonSerializable(const JsonSerializable &other) {
+        _jsonObject = other._jsonObject;
+    }
+    JsonSerializable(const QByteArray &json);
+    JsonSerializable(const QJsonObject &json);
+    JsonSerializable(const QString &json);
     ~JsonSerializable() {}
 
-
-    QJsonObject toQJsonObject();
     QByteArray toByteArray();
-    QString toQString();
-    void fromQJsonObject(const QJsonObject &json);
-    void fromQString(const QString &json);
-    void fromByteArray(const QByteArray &json);
+    QJsonObject fromQString(const QString &json);
+    QJsonObject fromByteArray(const QByteArray &json);
+    QJsonObject toQJsonObject();
+    QString toQString();    
+    void setQJsonObject(const QJsonObject &jsonObject);
 };
 
 Q_DECLARE_METATYPE(JsonSerializable*)

@@ -1,72 +1,47 @@
 #include "updatestatus.h"
 
-#include "util/serializationutils.h"
+
+const QString UpdateStatus::SINCE = "since";
+const QString UpdateStatus::GAME = "game";
+const QString UpdateStatus::STATUS = "status";
+const QString UpdateStatus::AFK = "afk";
 
 QJsonValue
-UpdateStatus::getSince() {
-    if (since) {
-        return QJsonValue(*since);
-    } else {
-        return QJsonValue();
-    }
+UpdateStatus::getSince() const {
+    return _jsonObject[SINCE];
 }
 
 void
-UpdateStatus::setSince(QJsonValue since) {
-    if (!since.isNull()) {
-        this->since = QSharedPointer<int>(new int(since.toInt()));
-    }
+UpdateStatus::setSince(const QJsonValue &since) {
+    _jsonObject[SINCE] = since;
 }
 
 QJsonObject
-UpdateStatus::getGame() {
-    if (game) {
-        return game->toQJsonObject();
-    } else {
-        return QJsonObject();
-    }
+UpdateStatus::getGame() const {
+    return _jsonObject[GAME].toObject();
 }
 
 void
-UpdateStatus::setGame(QJsonObject game) {
-    this->game = QSharedPointer<Activity>(new Activity);
-    SerializationUtils::readFromJson(*this->game, game);
+UpdateStatus::setGame(const QJsonObject &game) {
+    _jsonObject[GAME] = game;
 }
 
-QString
-UpdateStatus::getStatus() {
-    return status;
-}
-
-void
-UpdateStatus::setStatus(QString status) {
-    this->status = status;
-}
-
-bool
-UpdateStatus::getAfk() {
-    return afk;
+QJsonValue
+UpdateStatus::getStatus() const {
+    return _jsonObject[STATUS];
 }
 
 void
-UpdateStatus::setAfk(bool afk) {
-    this->afk = afk;
+UpdateStatus::setStatus(const QJsonValue &status) {
+    _jsonObject[STATUS] = status;
+}
+
+QJsonValue
+UpdateStatus::getAfk() const {
+    return _jsonObject[AFK];
 }
 
 void
-UpdateStatus::read(const QJsonObject &jsonObject) {
-    SerializationUtils::readFromJson(*this, jsonObject);
-}
-
-void
-UpdateStatus::write(QJsonObject &jsonObject) {
-    SerializationUtils::writeToJson(*this, jsonObject);
-
-    if (!jsonObject.contains(SINCE)) {
-        jsonObject[SINCE] = QJsonValue::Null;
-    }
-
-    if (!jsonObject.contains(GAME)) {
-        jsonObject[GAME] = QJsonValue::Null;
-    }
+UpdateStatus::setAfk(const QJsonValue &afk) {
+    _jsonObject[AFK] = afk;
 }
