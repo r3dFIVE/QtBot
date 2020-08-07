@@ -8,6 +8,8 @@ class EventContext : public JsonSerializable
 {
     Q_OBJECT
 
+    void buildContext(const QJsonObject &json);
+
 public:
 
     static const QString CHANNEL_ID;
@@ -19,8 +21,8 @@ public:
     static const QString TARGET_PAYLOAD;
 
     EventContext() {}
-    EventContext(const QByteArray &json) : JsonSerializable(json) {}
-    EventContext(const QJsonObject &json) : JsonSerializable(json) {}
+    EventContext(const QByteArray &json);
+    EventContext(const QJsonObject &json);
     EventContext(const EventContext &other) {
         _jsonObject = other._jsonObject;
     }

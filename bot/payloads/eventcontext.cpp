@@ -9,6 +9,24 @@ const QString EventContext::COMMAND = "command";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
 const QString EventContext::TARGET_PAYLOAD = "target_payload";
 
+EventContext::EventContext(const QByteArray &json) {
+    buildContext(QJsonDocument::fromJson(json).object());
+}
+
+EventContext::EventContext(const QJsonObject &json) {
+    buildContext(json);
+}
+
+void
+EventContext::buildContext(const QJsonObject &json) {
+    _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
+    _jsonObject[GUILD_ID] = json[GUILD_ID];
+    _jsonObject[CONTENT] = json[CONTENT];
+    _jsonObject[AUTHOR] = json[AUTHOR];
+    _jsonObject[COMMAND] = json[COMMAND];
+    _jsonObject[SOURCE_PAYLOAD] = json;
+}
+
 QJsonValue
 EventContext::getChannelId() const {
     return _jsonObject[CHANNEL_ID];
@@ -45,9 +63,10 @@ EventContext::getCommand() const {
 }
 
 void
-EventContext::setCommand(const QJsonValue &value) {
-    _jsonObject[COMMAND] = value;
+EventContext::setCommand(const QJsonValue &command) {
+    _jsonObject[COMMAND] = command;
 }
+
 
 QJsonObject
 EventContext::getAuthor() const {

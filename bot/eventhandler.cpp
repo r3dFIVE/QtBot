@@ -25,9 +25,10 @@ EventHandler::init() {
 }
 
 QString
-EventHandler::parseCommandToken(QString message) {
+EventHandler::parseCommandToken(const QString &message) {
     int start = -1;
     int i;
+
     for (i = 0; i < message.size(); i++) {
         if (start < 0 && message[i].isSpace()) {
             continue;
@@ -46,21 +47,7 @@ EventHandler::parseCommandToken(QString message) {
 }
 
 void
-EventHandler::processMessageCreate(QSharedPointer<EventContext> context) {
-    processPossibleCommands(context);
-
-    // TODO event binding logic
-}
-
-void
-EventHandler::processMessageUpdate(QSharedPointer<EventContext> context) {
-    processPossibleCommands(context);
-
-    // TODO event binding logic
-}
-
-void
-EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
+EventHandler::processCommands(QSharedPointer<EventContext> context) {
     QString guildId = context->getGuildId().toString();
 
     if (!_availableGuilds.contains(guildId)) {
@@ -95,7 +82,7 @@ EventHandler::processPossibleCommands(QSharedPointer<EventContext> context) {
 void
 EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
-    int eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT().toInt());
+    int eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
 
     QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->getD()));
 
@@ -105,10 +92,10 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
         break;
     //TODO parse message type
     case GatewayEvents::MESSAGE_CREATE:
-        processMessageCreate(context);
+        processCommands(context);
         break;
     case GatewayEvents::MESSAGE_UPDATE:
-        processMessageCreate(context);
+        processCommands(context);
         break;
     default:
         return;

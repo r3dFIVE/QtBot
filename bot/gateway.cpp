@@ -1,17 +1,16 @@
 #include "gateway.h"
+
+#include <QSettings>
+#include <QThread>
+
+#include "util/enumutils.h"
+#include "payloads/identifyproperties.h"
 #include "util/globals.h"
 #include "payloads/hello.h"
 #include "logging/logfactory.h"
 #include "payloads/resume.h"
 #include "payloads/identify.h"
 #include "payloads/ready.h"
-
-#include <QSettings>
-#include <QThread>
-
-#include <util/enumutils.h>
-
-#include <payloads/identifyproperties.h>
 
 
 Gateway::Gateway(QSharedPointer<Settings> settings)
@@ -82,7 +81,7 @@ Gateway::onDisconnected() {
 
     _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
 
-    if (_retryCount++ <= _maxRetries) {
+    if (++_retryCount <= _maxRetries) {
         switch (closeCode) {
         case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
         case QWebSocketProtocol::CloseCodeGoingAway:
@@ -192,7 +191,7 @@ void
 Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
     _lastSequenceNumber = payload->getS().toInt();
 
-    int eventCode = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT().toInt());
+    int eventCode = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
 
     switch (eventCode) {
     case GatewayEvents::READY:
@@ -341,8 +340,6 @@ Gateway::sendHeartbeat() {
 
 void
 Gateway::sendTextPayload(const QString &payload) {
-    qDebug().noquote() << payload;
-
     _socket->sendTextMessage(payload);
 
     _logger->trace(QString("Payload sent: %1").arg(payload));

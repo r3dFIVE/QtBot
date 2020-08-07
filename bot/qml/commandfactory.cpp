@@ -20,7 +20,6 @@ const QString CommandFactory::BOT_API_MAJOR_VERSION = "0";
 const QString CommandFactory::BOT_API_MINOR_VERSION = "1";
 const QString CommandFactory::BOT_TYPE_IDENTIFIER = "BotScript";
 
-
 QSharedPointer<GuildEntity>
 CommandFactory::buildCommands(QSharedPointer<GuildEntity> guild) {
     _registry.clear();

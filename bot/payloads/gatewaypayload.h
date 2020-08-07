@@ -14,14 +14,9 @@ public:
     static const QString S;
     static const QString T;
 
-    GatewayPayload() { setNullFields(); }
-    GatewayPayload(const QJsonObject &json) : JsonSerializable(json) { setNullFields(); }
-    GatewayPayload(const QString &json) : JsonSerializable(json) { setNullFields(); }
-
-    void setNullFields() {
-        _jsonObject[S] = QJsonValue::Null;
-        _jsonObject[T] = QJsonValue::Null;
-    }
+    GatewayPayload() {}
+    GatewayPayload(const QJsonObject &json) : JsonSerializable(json) {}
+    GatewayPayload(const QString &json) : JsonSerializable(json) {}
 
     QJsonObject getD() const;
     QJsonValue getV() const;
