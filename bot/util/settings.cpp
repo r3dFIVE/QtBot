@@ -3,8 +3,7 @@
 #include <QMetaEnum>
 #include <QDir>
 
-#include <logging/logcontext.h>
-
+#include "logging/logcontext.h"
 #include "settings.h"
 #include "globals.h"
 
@@ -79,17 +78,17 @@ Settings::validateScriptSettings() {
 void
 Settings::validateDatabaseSettings() {
     if (_settings[SettingsParam::Database::DATABASE_TYPE].toString().isEmpty()) {
-        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseTypes::SQLITE;
+        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseType::QSQLITE;
     }
 
-    QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseTypes>();
+    QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
     QString databaseType = _settings[SettingsParam::Database::DATABASE_TYPE].toString();
     int typeValue = metaEnum.keyToValue(databaseType.toUpper().toStdString().c_str());
     if (typeValue < 0) {
         invalidEnumValue(SettingsParam::Database::DATABASE_TYPE, databaseType, metaEnum);
     }
 
-    if (typeValue != SettingsParam::Database::DatabaseTypes::SQLITE) {
+    if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
         if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_HOST);
         }
@@ -104,6 +103,10 @@ Settings::validateDatabaseSettings() {
 
         if (_settings[SettingsParam::Database::DATABASE_PASSWORD].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_PASSWORD);
+        }
+
+        if (_settings[SettingsParam::Database::DATABASE_NAME].toString().isEmpty()) {
+            invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
         }
     }
 }

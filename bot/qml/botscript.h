@@ -11,28 +11,28 @@
 #include "payloads/eventcontext.h"
 #include "httpclient.h"
 #include "botjob/ibotjob.h"
+#include "botjob/databasecontext.h"
+#include "util/globals.h"
 #include "routes/discordapi.h"
+
 
 class BotScript : public QObject, public IBotJob
 {
     Q_OBJECT
 
+    DatabaseContext _databaseContext;
+    QMap<QString, QVariant> _commands;
     QMutex _runLock;
-
     QSharedPointer<DiscordAPI> discordAPI;
     QSqlDatabase _database;
-    QSqlQuery _query;
+    QSqlQuery _query;    
+    QString _scriptName;
+
+    QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
+    void closeExistingConnection();
 
     Q_PROPERTY(QString name READ getScriptName WRITE setScriptName REQUIRED)
-    QString _name;
-
     Q_PROPERTY(QMap commands READ getScriptCommands WRITE setScriptCommands REQUIRED)
-    QMap<QString, QVariant> _commands;
-
-    static const char *defaultConnection;
-
-    bool setDatabaseConnection(const QSqlDatabase &dbDatabase);
-    QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
 
 public:
     enum TableType {
@@ -68,23 +68,27 @@ public:
     };
     Q_ENUM(ParamType)
 
-    BotScript &operator=(const BotScript &other);
-
     BotScript() {}
+    BotScript(QSharedPointer<Settings> settings);
     ~BotScript() {}
     BotScript(const BotScript &other);
 
-    bool invokable() override;
+    BotScript &operator=(const BotScript &other);
 
+    DatabaseContext getDatabaseContext() const;
     QMap<QString, QVariant> getScriptCommands() const;
     QString getScriptName() const;
     QString findCommandMapping(const QString &command) const;
-
-    void execute(const QByteArray &command, const EventContext &message) override;
     void initAPI(const QString &botToken);
     void postResult(const Message &message);
-    void setScriptCommands(QMap<QString, QVariant> commands);
-    void setScriptName(const QString &name);
+    void setConnectionName();
+    void setConnectionName(const QString &scriptName, const QString &guildId);
+    void setDatabaseContext(const DatabaseContext &databaseContext);
+    void setScriptCommands(const QMap<QString, QVariant> &commands);
+    void setScriptName(const QString &scriptName);
+
+    bool invokable() override;
+    void execute(const QByteArray &command, const EventContext &message) override;
 
 public slots:
 
@@ -92,7 +96,6 @@ public slots:
      *  QSqlDatabase
      */
     bool dbOpen();
-    bool dbOpen(const QString& user, const QString& dbPassword);
     void dbClose();
     bool dbIsOpen() const;
     bool dbIsOpenError() const;
@@ -102,7 +105,6 @@ public slots:
     bool dbTransaction();
     bool dbCommit();
     bool dbRollback();
-    void setDatabaseConnection(const QString &name);
     void dbSetDatabaseName(const QString &name);
     void dbSetUserName(const QString &name);
     void dbSetPassword(const QString &dbPassword);
@@ -111,20 +113,15 @@ public slots:
     void dbSetConnectOptions(const QString &options = QString());
     QString dbDatabaseName() const;
     QString dbUserName() const;
-    QString dbPassword() const;
     QString dbHostName() const;
     QString dbDriverName() const;
     int dbPort() const;
-    QString dbCconnectOptions() const;
+    QString dbConnectOptions() const;
     QString dbConnectionName() const;
-    void dbSetNumericalPrecisionPolicy(NumericalPrecisionPolicy precisionPolicy);
+    void dbSetNumericalPrecisionPolicy(const NumericalPrecisionPolicy &precisionPolicy);
     NumericalPrecisionPolicy dbNumericalPrecisionPolicy() const;
-    bool dbAddDatabase(const QString &type, const QString &dbConnectionName = QLatin1String(defaultConnection));
-    bool dbDatabase(const QString& dbConnectionName = QLatin1String(defaultConnection), bool dbOpen = true);
-    void dbRemoveDatabase(const QString& dbConnectionName);
-    bool dbContains(const QString& dbConnectionName = QLatin1String(defaultConnection));
+    void dbSetType(const QString &type);
     QStringList dbDrivers();
-    QStringList dbConnectionNames();
     bool dbIsDriverAvailable(const QString &name);
 
     /*
@@ -177,7 +174,7 @@ public slots:
     // Channel API functions.
     // https://discord.com/developers/docs/resources/channel
 
-    QVariant cCreateMessage(QVariant contextVariant);
+    QVariant cCreateMessage(const QVariant &contextVariant);
 };
 
 Q_DECLARE_METATYPE(BotScript)

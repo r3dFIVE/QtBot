@@ -31,9 +31,8 @@ Bot::reloadAllCommands() {
 
 void
 Bot::run(QSharedPointer<Settings> settings) {
-    QString scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
-    QString botToken  = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
-    _factory = new CommandFactory(this, scriptDir, botToken);
+
+    _factory = new CommandFactory(this, settings);
 
     Gateway *connection = new Gateway(settings);
     connection->moveToThread(&_gatewayThread);

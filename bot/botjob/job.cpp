@@ -7,7 +7,7 @@ Job::commandMapping() const {
 }
 
 QString
-Job::guildId() {
+Job::guildId() const {
     return _commandMapping.second->guildId();
 }
 

@@ -5,6 +5,7 @@ DEPENDPATH += $$PWD/.
 
 
 HEADERS += \
+    $$PWD/botjob/databasecontext.h \
     $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
     $$PWD/entitymanager.h \
@@ -81,6 +82,7 @@ DISTFILES += \
 
 SOURCES += \
     $$PWD/bot.cpp \
+    $$PWD/botjob/databasecontext.cpp \
     $$PWD/botjob/job.cpp \
     $$PWD/botjob/jobqueue.cpp \
     $$PWD/entitymanager.cpp \

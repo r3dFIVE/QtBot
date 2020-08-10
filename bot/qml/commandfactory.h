@@ -19,6 +19,7 @@ class CommandFactory : public QObject
     Bot *_bot;
     Logger *_logger;
 
+    DatabaseContext _defaultDatabaseContext;
     QQmlApplicationEngine _engine;
     QString _botToken;
     QString _guildId;
@@ -43,14 +44,16 @@ public:
     CommandFactory() {}
     CommandFactory(const CommandFactory &other) { Q_UNUSED(other) }
     ~CommandFactory() {}
-    CommandFactory(Bot *bot, const QString &scriptDir, const QString &botToken) {
+    CommandFactory(Bot *bot, QSharedPointer<Settings> settings)
+        : _defaultDatabaseContext(settings) {
+
         _bot = bot;
 
         _logger = LogFactory::getLogger();
 
-        _scriptDir = scriptDir;
+        _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
 
-        _botToken = botToken;
+        _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
 
         _engine.installExtensions(QJSEngine::ConsoleExtension);
 

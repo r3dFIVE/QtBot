@@ -117,6 +117,9 @@ CommandFactory::loadScriptComponent(const QString &fileName) {
             _logger->warning(QString("Commmand \"%1\" already registered to bot script named: %2")
                         .arg(command).arg(existingScript));
         } else {
+            botScript->setDatabaseContext(_defaultDatabaseContext);
+
+            botScript->setConnectionName();
 
             QString mapping = botScript->findCommandMapping(command);
 
