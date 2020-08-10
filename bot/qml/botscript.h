@@ -91,9 +91,13 @@ public:
     void execute(const QByteArray &command, const EventContext &message) override;
 
 public slots:
+    /*
+     *  General API related functions
+     */
+    void pause(int ms);
 
     /*
-     *  QSqlDatabase
+     *  QSqlDatabase related functions
      */
     bool dbOpen();
     void dbClose();
@@ -125,7 +129,7 @@ public slots:
     bool dbIsDriverAvailable(const QString &name);
 
     /*
-     *  QSqlQuery
+     *  QSqlQuery related functions
      */
     bool qryIsValid() const;
     bool qryIsActive() const;
@@ -168,7 +172,7 @@ public slots:
 
 
     /*
-     *  DiscordAPI
+     *  DiscordAPI related functions
      */
 
     // Channel API functions.

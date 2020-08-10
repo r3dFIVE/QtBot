@@ -19,6 +19,7 @@ class JobQueue
 public:
     friend JobQueue& operator<<(JobQueue &jobQueue, Job* job);
 
+    bool hasJobs() const;
     Job* get();
     void pop();
     void queue(Job *job);
