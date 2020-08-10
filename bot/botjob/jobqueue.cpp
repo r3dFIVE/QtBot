@@ -78,3 +78,8 @@ void
 JobQueue::queue(Job *job) {
     _jobQueue[job->guildId()] << job;
 }
+
+bool
+JobQueue::hasJobs() const {
+    return !_jobQueue.isEmpty();
+}

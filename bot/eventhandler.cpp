@@ -65,17 +65,27 @@ EventHandler::processCommands(QSharedPointer<EventContext> context) {
     if (botJob) {
         _jobQueue << botJob;
 
-        Job *readyJob = _jobQueue.get();
+        processJobQueue();
+    }
+}
 
-        while (readyJob) {
-            if (QThreadPool::globalInstance()->tryStart(readyJob)) {
-                _jobQueue.pop();
+void
+EventHandler::processJobQueue() {
+    Job *readyJob = _jobQueue.get();
 
-                readyJob = _jobQueue.get();
-            } else {
-                break;
-            }
+    while (readyJob) {
+        if (QThreadPool::globalInstance()->tryStart(readyJob)) {
+            _jobQueue.pop();
+
+            readyJob = _jobQueue.get();
+        } else {
+            // No available threads in pool
+            break;
         }
+    }
+
+    if (_jobQueue.hasJobs()) {
+        QTimer::singleShot(1000, this, &EventHandler::processJobQueue);
     }
 }
 

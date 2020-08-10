@@ -33,6 +33,7 @@ class EventHandler : public QObject
     void processMessageCreate(QSharedPointer<EventContext> context);
     void processMessageUpdate(QSharedPointer<EventContext> context);
     void processCommands(QSharedPointer<EventContext> context);
+    void processJobQueue();
 
 public:
     EventHandler(QSharedPointer<Settings> settings);

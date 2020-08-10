@@ -1,6 +1,7 @@
 #include "qml/botscript.h"
 
 #include <QSqlError>
+#include <QThread>
 
 #include "util/serializationutils.h"
 #include "util/enumutils.h"
@@ -78,6 +79,11 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, returnValue),
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
+}
+
+void
+BotScript::pause(int ms) {
+    QThread::msleep(ms);
 }
 
 bool
