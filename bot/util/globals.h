@@ -52,14 +52,15 @@ static const QString DATABASE_USER = "database_user";
 //TODO PASSWORD HASH?
 static const QString DATABASE_PASSWORD = "database_password";
 static const QString DATABASE_TYPE = "database_type";
+static const QString DATABASE_NAME = "database_name";
 
-enum DatabaseTypes {
-    SQLITE = 0,
-    MSSQLSERVER,
-    MYSQL,
-    POSTGRES
+enum DatabaseType {
+    QSQLITE = 0,
+    QODBC,
+    QMYSQL,
+    QPSQL
 };
-Q_ENUM_NS(DatabaseTypes)
+Q_ENUM_NS(DatabaseType)
 }
 }
 

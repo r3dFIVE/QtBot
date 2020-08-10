@@ -1,13 +1,9 @@
 #include "qml/botscript.h"
 
-#include <QQmlComponent>
 #include <QSqlError>
 
 #include "util/serializationutils.h"
-#include "payloads/eventcontext.h"
-
-
-const char *BotScript::defaultConnection = const_cast<char *>("qt_sql_default_connection");
+#include "util/enumutils.h"
 
 BotScript::BotScript(const BotScript &other) {
     _database = other._database;
@@ -22,6 +18,17 @@ BotScript
     _query = other._query;
 
     return *this;
+}
+
+DatabaseContext
+BotScript::getDatabaseContext() const
+{
+    return _databaseContext;
+}
+
+void
+BotScript::setDatabaseContext(const DatabaseContext &databaseContext) {
+    _databaseContext = databaseContext;
 }
 
 QVariant
@@ -52,6 +59,16 @@ BotScript::findCommandMapping(const QString &command) const {
 }
 
 void
+BotScript::setScriptName(const QString &scriptName) {
+    _scriptName = scriptName;
+}
+
+void
+BotScript::setScriptCommands(const QMap<QString, QVariant> &commands) {
+    _commands = commands;
+}
+
+void
 BotScript::execute(const QByteArray &command, const EventContext &context) {
     QMutexLocker lock(&_runLock);
 
@@ -64,32 +81,35 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
 }
 
 bool
-BotScript::setDatabaseConnection(const QSqlDatabase &database) {
-    if (database.isValid()) {
-        _query = QSqlQuery(database);
-
-        return true;
-    }
-
-    qDebug() << database.lastError();
-
-    return false;
-}
-
-void
-BotScript::setDatabaseConnection(const QString &name) {
-    setDatabaseConnection(QSqlDatabase::database(name));
-}
-
-
-bool
 BotScript::dbOpen() {
+    closeExistingConnection();
+
+    _database = QSqlDatabase::addDatabase(_databaseContext.driverName, _databaseContext.getConnectionName());
+
+    _database.setHostName(_databaseContext.hostName);
+
+    _database.setUserName(_databaseContext.userName);
+
+    _database.setPassword(_databaseContext.password);
+
+    _database.setDatabaseName(_databaseContext.databaseName);
+
+    _query = QSqlQuery(_database);
+
     return _database.open();
 }
 
-bool
-BotScript::dbOpen(const QString &userName, const QString &password) {
-    return _database.open(userName, password);
+void
+BotScript::closeExistingConnection() {
+    if (QSqlDatabase::contains(_databaseContext.getConnectionName())) {
+        _query.clear();
+
+        _database.close();
+
+        _database = QSqlDatabase();
+
+        QSqlDatabase::removeDatabase(_databaseContext.getConnectionName());
+    }
 }
 
 void
@@ -141,28 +161,28 @@ BotScript::dbRollback() {
 
 void
 BotScript::dbSetDatabaseName(const QString &databaseName) {
-    _database.setDatabaseName(databaseName);
+    _databaseContext.databaseName = databaseName;
 }
 
 void
 BotScript::dbSetUserName(const QString &userName) {
-    _database.setUserName(userName);
+    _databaseContext.userName = userName;
 }
 
 void
 BotScript::dbSetPassword(const QString &password) {
-    _database.setPassword(password);
+    _databaseContext.password = password;
 }
 
 
 void
 BotScript::dbSetHostName(const QString &hostName) {
-    _database.setHostName(hostName);
+    _databaseContext.hostName = hostName;
 }
 
 void
 BotScript::dbSetPort(int port) {
-    _database.setPort(port);
+    _databaseContext.port = port;
 }
 
 void
@@ -172,46 +192,41 @@ BotScript::dbSetConnectOptions(const QString &options) {
 
 QString
 BotScript::dbDatabaseName() const {
-    return _database.databaseName();
+    return _databaseContext.databaseName;
 }
 
 QString
 BotScript::dbUserName() const {
-    return _database.userName();
-}
-
-QString
-BotScript::dbPassword() const {
-    return _database.password();
+    return _databaseContext.userName;
 }
 
 QString
 BotScript::dbHostName() const {
-    return _database.hostName();
+    return _databaseContext.hostName;
 }
 
 QString
 BotScript::dbDriverName() const {
-    return _database.driverName();
+    return _databaseContext.driverName;
 }
 
 int
 BotScript::dbPort() const {
-    return _database.port();
+    return _databaseContext.port;
 }
 
 QString
-BotScript::dbCconnectOptions() const {
+BotScript::dbConnectOptions() const {
     return _database.connectOptions();
 }
 
 QString
 BotScript::dbConnectionName() const {
-    return _database.connectionName();
+    return _databaseContext.getConnectionName();
 }
 
 void
-BotScript::dbSetNumericalPrecisionPolicy(NumericalPrecisionPolicy precisionPolicy) {
+BotScript::dbSetNumericalPrecisionPolicy(const NumericalPrecisionPolicy &precisionPolicy) {
     _database.setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy(precisionPolicy));
 }
 
@@ -220,36 +235,14 @@ BotScript::dbNumericalPrecisionPolicy() const {
     return NumericalPrecisionPolicy(_database.numericalPrecisionPolicy());
 }
 
-bool
-BotScript::dbAddDatabase(const QString &type, const QString &connectionName) {
-    _database = QSqlDatabase::addDatabase(type, connectionName);
-    return setDatabaseConnection(_database);
-}
-
-bool
-BotScript::dbDatabase(const QString &connectionName, bool open) {
-    _database = QSqlDatabase::database(connectionName, open);
-    return setDatabaseConnection(_database);
-}
-
 void
-BotScript::dbRemoveDatabase(const QString &connectionName) {
-    QSqlDatabase::removeDatabase(connectionName);
-}
-
-bool
-BotScript::dbContains(const QString &connectionName) {
-    return QSqlDatabase::contains(connectionName);
+BotScript::dbSetType(const QString &type) {
+    _databaseContext.type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(type);
 }
 
 QStringList
 BotScript::dbDrivers() {
     return QSqlDatabase::drivers();
-}
-
-QStringList
-BotScript::dbConnectionNames() {
-    return QSqlDatabase::connectionNames();
 }
 
 bool
@@ -434,32 +427,32 @@ BotScript::qryNextResult() {
     return _query.nextResult();
 }
 
-void
-BotScript::setScriptCommands(QMap<QString, QVariant> commands) {
-    _commands = commands;
-}
-
 QMap<QString, QVariant>
 BotScript::getScriptCommands() const {
     return _commands;
 }
 
-void
-BotScript::setScriptName(const QString &name) {
-    _name = name;
-}
-
 QString
 BotScript::getScriptName() const {
-    return _name;
+    return _scriptName;
 }
 
 void BotScript::initAPI(const QString &botToken) {
     discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI(botToken));
 }
 
+void
+BotScript::setConnectionName() {
+    _databaseContext.setConnectionName(_scriptName, _guildId);
+}
+
+void
+BotScript::setConnectionName(const QString &scriptName, const QString &guildId) {
+    _databaseContext.setConnectionName(scriptName, guildId);
+}
+
 QVariant
-BotScript::cCreateMessage(QVariant contextVariant) {
+BotScript::cCreateMessage(const QVariant &contextVariant) {
     QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext);
 
     SerializationUtils::fromVariant(*context.data(), contextVariant);

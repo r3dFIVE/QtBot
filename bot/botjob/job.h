@@ -15,7 +15,7 @@ public:
     bool invokable() const;
     EventContext context() const;
     IBotJob::CommandMapping commandMapping() const;
-    QString guildId();
+    QString guildId() const;
     void run() override;
     void setCommandMapping(const IBotJob::CommandMapping &commandMapping);
     void setContext(const EventContext &context);

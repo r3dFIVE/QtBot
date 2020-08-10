@@ -7,6 +7,8 @@
 #include "payloads/eventcontext.h"
 
 class IBotJob {
+
+protected:
     QString _guildId;
 
 public:
