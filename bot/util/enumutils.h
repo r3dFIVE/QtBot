@@ -30,19 +30,19 @@ public:
     }
 
     template <class T>
-    static int keyToValue(const QByteArray &key) {
+    static T keyToValue(const QByteArray &key) {
         QMetaEnum metaEnum = QMetaEnum::fromType<T>();
 
-        return metaEnum.keyToValue(key);
+        return (T) metaEnum.keyToValue(key);
     }
 
     template <class T>
-    static int keyToValue(const QJsonValue &json) {
+    static T keyToValue(const QJsonValue &json) {
         QByteArray key = json.toString().toUtf8();
 
         QMetaEnum metaEnum = QMetaEnum::fromType<T>();
 
-        return metaEnum.keyToValue(key);
+        return (T) metaEnum.keyToValue(key);
     }
 };
 

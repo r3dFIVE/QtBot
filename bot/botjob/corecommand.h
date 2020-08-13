@@ -7,12 +7,13 @@
 #include "logging/logfactory.h"
 #include "payloads/message.h"
 
-class CoreCommand : public QObject, public IBotJob {
+class CoreCommand : public IBotJob {
     Q_OBJECT
 
     std::function<void(const EventContext &context)> _command;
 
     QMutex _runLock;
+    QString _commandName;
 
 public:
     CoreCommand() {}
@@ -22,7 +23,6 @@ public:
 
     bool invokable() override;
     void execute(const QByteArray &command, const EventContext &context) override;
-
 };
 
 

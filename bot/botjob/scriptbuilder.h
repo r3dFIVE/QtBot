@@ -1,18 +1,19 @@
-#ifndef COMMANDFACTORY_H
-#define COMMANDFACTORY_H
+#ifndef SCRIPTBUILDER_H
+#define SCRIPTBUILDER_H
 
 #include <QObject>
 #include <QVariantMap>
 #include <QQmlApplicationEngine>
 
 #include "bot.h"
+#include "commandbinding.h"
 #include "logging/logfactory.h"
-#include "qml/botscript.h"
+#include "botjob/botscript.h"
 #include "entity/guildentity.h"
 
 class Bot;
 
-class CommandFactory : public QObject
+class ScriptBuilder : public QObject
 {
     Q_OBJECT
 
@@ -25,26 +26,27 @@ class CommandFactory : public QObject
     QString _guildId;
     QString _scriptDir;
     QStringList _coreCommandNames;
-    QSet<QString> _registeredScriptNames;
-    QMap<QString, QPair<QString, QSharedPointer<IBotJob>>> _registry;
+    QList<CommandBinding> _commandBindings;
+//    QList<GatewayBinding> _gatewayBindings;
+//    QList<TimedBinding> _timedBindings;
     QMap<QString, QString> _scriptNameByCommand;
 
     bool isBotScript(const QString &fileName);
     void loadCoreCommands();
-    void loadScripts(const QString &scriptDir);
-    void loadScriptComponent(const QString &fileName);
+    void builldBotScripts(const QString &scriptDir);
+    void buildBotScript(const QString &fileName);
+    void namingConflict(const QString &command, const QString &fileName);
+    void validateScriptName(QSharedPointer<BotScript> botscript, const QString &fileName);
+    void validateScriptCommands(QSharedPointer<BotScript> botscript, const QString &fileName);
+    void validateEventBindings(QSharedPointer<BotScript> botscript, const QString &fileName);
 
+public:
     const static QString BOT_IMPORT_IDENTIFIER;
     const static QString BOT_TYPE_IDENTIFIER;
     const static QString BOT_API_MINOR_VERSION;
     const static QString BOT_API_MAJOR_VERSION;
 
-public:
-
-    CommandFactory() {}
-    CommandFactory(const CommandFactory &other) { Q_UNUSED(other) }
-    ~CommandFactory() {}
-    CommandFactory(Bot *bot, QSharedPointer<Settings> settings)
+    ScriptBuilder(Bot *bot, QSharedPointer<Settings> settings)
         : _defaultDatabaseContext(settings) {
 
         _bot = bot;
@@ -63,11 +65,8 @@ public:
                                    BOT_TYPE_IDENTIFIER.toUtf8());
     }
 
-    void init(const QString &botToken, const QString &scriptDir);
-
     QSharedPointer<GuildEntity> buildCommands(QSharedPointer<GuildEntity> guild);
+    void init(const QString &botToken, const QString &scriptDir);
 };
 
-Q_DECLARE_METATYPE(CommandFactory)
-
-#endif // COMMANDFACTORY_H
+#endif // SCRIPTBUILDER_H

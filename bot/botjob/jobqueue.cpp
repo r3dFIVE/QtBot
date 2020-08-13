@@ -18,7 +18,7 @@ JobQueue::get() {
     }
 
     for(int i = _lastJobGuildIndex; i < _jobQueue.keys().length(); ++i) {
-        Job *availableJob = getJobFromGuildQueue(i);
+        Job *availableJob = getJobFromQueue(i);
 
         if (availableJob) {
             readyJob = availableJob;
@@ -28,7 +28,7 @@ JobQueue::get() {
     }
 
     for(int i = 0; i < _lastJobGuildIndex; ++i) {
-        Job *availableJob = getJobFromGuildQueue(i);
+        Job *availableJob = getJobFromQueue(i);
 
         if (availableJob) {
             readyJob = availableJob;
@@ -41,7 +41,7 @@ JobQueue::get() {
 }
 
 Job*
-JobQueue::getJobFromGuildQueue(int index) {
+JobQueue::getJobFromQueue(int index) {
     QString guildId =  _jobQueue.keys().at(index);
 
     for (int i = 0; i < _jobQueue[guildId].length(); ++i) {

@@ -5,7 +5,7 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#include "httpclient.h"
+#include "botjob/httpclient.h"
 
 
 class DiscordAPI : public QObject

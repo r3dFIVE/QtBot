@@ -1,20 +1,20 @@
 #include "botjob/job.h"
 
 
-IBotJob::CommandMapping
-Job::commandMapping() const {
+IBotJob::FunctionMapping
+Job::getFunctionMapping() const {
     return _commandMapping;
 }
 
 QString
 Job::guildId() const {
-    return _commandMapping.second->guildId();
+    return _commandMapping.second->getGuildId();
 }
 
 
 void
-Job::setCommandMapping(const IBotJob::CommandMapping &commandMapping) {
-    _commandMapping = commandMapping;
+Job::setFunctionMapping(const IBotJob::FunctionMapping &functionMapping) {
+    _commandMapping = functionMapping;
 }
 
 EventContext

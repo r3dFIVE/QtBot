@@ -2,7 +2,7 @@
 
 #include "botjob/ibotjob.h"
 #include "payloads/user.h"
-#include "util/corecommand.h"
+#include "botjob/corecommand.h"
 
 
 
@@ -35,7 +35,7 @@ GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
 
     Job *job = nullptr; //QThreadPool will auto delete on completion.
 
-    if (_registry.contains(command)) {
+    if (_commandBindings.contains(command)) {
         QStringList ids;
 
         ids << context->getGuildId().toString()
@@ -47,7 +47,7 @@ GuildEntity::getBotJob(QSharedPointer<EventContext> context) {
 
             job->setContext(*context);
 
-            job->setCommandMapping(_registry[command]);
+            job->setFunctionMapping(_commandBindings[command].getFunctionMapping());
         }
     }
 
@@ -65,6 +65,8 @@ GuildEntity::setId(const QString &id) {
 }
 
 void
-GuildEntity::setRegistry(const QMap<QString, QPair<QString, QSharedPointer<IBotJob> > > &registry) {
-    _registry = registry;
+GuildEntity::setCommandBindings(const QList<CommandBinding> &commandBindings) {
+    for (auto binding : commandBindings) {
+        _commandBindings[binding.getCommandName()] = binding;
+    }
 }

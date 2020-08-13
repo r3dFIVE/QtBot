@@ -1,28 +1,13 @@
 #include "eventhandler.h"
 
-#include <QJsonDocument>
-#include <QMetaEnum>
 #include <QDebug>
-#include <QMap>
-#include <QSqlDatabase>
-#include <QtSql>
+#include <QThreadPool>
 
 #include "util/globals.h"
 #include "util/enumutils.h"
-#include "qml/botscript.h"
+#include "botjob/botscript.h"
 #include "botjob/job.h"
 
-
-EventHandler::EventHandler(QSharedPointer<Settings> settings) {
-    _settings = settings;
-    _logger = LogFactory::getLogger();
-}
-
-
-void
-EventHandler::init() {
-
-}
 
 QString
 EventHandler::parseCommandToken(const QString &message) {
@@ -91,8 +76,7 @@ EventHandler::processJobQueue() {
 
 void
 EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
-
-    int eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
+    GatewayEvents::Events eventType = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
 
     QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->getD()));
 
@@ -128,4 +112,3 @@ void
 EventHandler::processGuildCreate(QSharedPointer<EventContext> context) {
     emit guildOnline(context->getSourcePayload()[Guild::ID].toString());
 }
-

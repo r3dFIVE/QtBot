@@ -9,15 +9,15 @@ class Job : public QRunnable
 {
 
     EventContext _context;
-    IBotJob::CommandMapping _commandMapping;
+    IBotJob::FunctionMapping _commandMapping;
 
 public:    
     bool invokable() const;
     EventContext context() const;
-    IBotJob::CommandMapping commandMapping() const;
+    IBotJob::FunctionMapping getFunctionMapping() const;
     QString guildId() const;
     void run() override;
-    void setCommandMapping(const IBotJob::CommandMapping &commandMapping);
+    void setFunctionMapping(const IBotJob::FunctionMapping &functionMapping);
     void setContext(const EventContext &context);
 };
 

@@ -191,9 +191,9 @@ void
 Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
     _lastSequenceNumber = payload->getS().toInt();
 
-    int eventCode = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
+    GatewayEvents::Events gatewayEvent = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
 
-    switch (eventCode) {
+    switch (gatewayEvent) {
     case GatewayEvents::READY:
         processReady(payload);
         break;

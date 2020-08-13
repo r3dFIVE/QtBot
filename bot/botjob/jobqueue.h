@@ -14,7 +14,7 @@ class JobQueue
     Job *readyJob = nullptr;
     QMap<QString, QList<Job*>> _jobQueue;
 
-    Job* getJobFromGuildQueue(int index);
+    Job* getJobFromQueue(int index);
 
 public:
     friend JobQueue& operator<<(JobQueue &jobQueue, Job* job);
