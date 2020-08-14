@@ -1,4 +1,4 @@
-#include "qml/botscript.h"
+#include "botjob/botscript.h"
 
 #include <QSqlError>
 #include <QThread>
@@ -30,6 +30,8 @@ BotScript::getDatabaseContext() const
 void
 BotScript::setDatabaseContext(const DatabaseContext &databaseContext) {
     _databaseContext = databaseContext;
+
+    setConnectionName();
 }
 
 QVariant
@@ -41,6 +43,16 @@ BotScript::buildResponseVariant(QSharedPointer<EventContext> apiResponse) {
     }
 
     return repsonseContext;
+}
+
+void
+BotScript::setEventBindingsJson(const QJsonArray &eventBindingsJson) {
+    _eventBindingsJson = eventBindingsJson;
+}
+
+QJsonArray
+BotScript::getEventBindingsJson() const {
+    return _eventBindingsJson;
 }
 
 bool
@@ -55,7 +67,7 @@ BotScript::invokable() {
 }
 
 QString
-BotScript::findCommandMapping(const QString &command) const {
+BotScript::findFunctionMapping(const QString &command) const {
     return _commands[command].toString();
 }
 
@@ -444,7 +456,7 @@ BotScript::getScriptName() const {
 }
 
 void BotScript::initAPI(const QString &botToken) {
-    discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI(botToken));
+    _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI(botToken));
 }
 
 void
@@ -463,7 +475,7 @@ BotScript::cCreateMessage(const QVariant &contextVariant) {
 
     SerializationUtils::fromVariant(*context.data(), contextVariant);
 
-    return buildResponseVariant(discordAPI->channelCreateMessage(context));
+    return buildResponseVariant(_discordAPI->channelCreateMessage(context));
 }
 
 

@@ -2,11 +2,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QSettings>
-#include <QObject>
-
-#include "util/serializationutils.h"
-
-#include <qml/botscript.h>
 
 #include "bot.h"
 

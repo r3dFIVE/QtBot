@@ -7,11 +7,11 @@
 
 #include "logging/logfactory.h"
 #include "gateway.h"
-#include "qml/commandfactory.h"
+#include "botjob/scriptbuilder.h"
 #include "util/settings.h"
 
 class GuildEntity;
-class CommandFactory;
+class ScriptBuilder;
 
 class Bot : public QObject
 {
@@ -22,7 +22,7 @@ class Bot : public QObject
     QThread _entityManagerThread;
 
     Logger* _logger;
-    CommandFactory *_factory;
+    ScriptBuilder *_factory;
 
 public:
 

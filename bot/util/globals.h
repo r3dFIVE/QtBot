@@ -64,10 +64,13 @@ Q_ENUM_NS(DatabaseType)
 }
 }
 
-namespace GatewayEvents {
+namespace GatewayEvent {
 Q_NAMESPACE
 
-enum Events {
+enum Event {
+    /* Invalid Event */
+    INVALID = -1,
+
     /* Gateway Opcodes */
     DISPATCH = 0,
     HEARTBEAT = 1,
@@ -118,7 +121,7 @@ enum Events {
     VOICE_SERVER_UPDATE,
     WEBHOOKS_UPDATE
 };
-Q_ENUM_NS(Events)
+Q_ENUM_NS(Event)
 }
 
 #endif // GLOBALS_H

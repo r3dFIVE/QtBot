@@ -6,6 +6,7 @@
 #include <QtWebSockets/QWebSocket>
 #include <QSharedPointer>
 
+#include "payloads/eventcontext.h"
 #include "payloads/heartbeat.h"
 #include "payloads/gatewaypayload.h"
 #include "logging/logfactory.h"
@@ -16,11 +17,48 @@ class Gateway : public QObject
 {
     Q_OBJECT
 
+    QSharedPointer<QWebSocket> _socket;
+    QSharedPointer<QTimer> _heartbeatTimer;
+
+    Heartbeat _heartbeat;
+    Logger* _logger;
+    bool _heartbeatAck;
+    bool _attemptResume;
+    int _lastSequenceNumber;
+    int _maxRetries;
+    int _retryCount;
+
+    QUrl _gateway;
+    QString _botToken;
+    QString _sessionId;
+
+    void closeConnection(QWebSocketProtocol::CloseCode closeCode);
+    QUrl buildConnectionUrl(QSharedPointer<Settings> settings);
+    void processAck();
+    void processDispatch(QSharedPointer<GatewayPayload> payload);
+    void processGuildCreate(QSharedPointer<GatewayPayload> payload);
+    void processHello(QSharedPointer<GatewayPayload> payload);
+    void processInvalidSession(QSharedPointer<GatewayPayload> payload);
+    void processPayload(QSharedPointer<GatewayPayload> payload);
+    void processReady(QSharedPointer<GatewayPayload> payload);
+    void processReconnect();
+    void processResumed(QSharedPointer<GatewayPayload> payload);
+    void onBinaryMessageReceived(QByteArray messageArray);
+    void onDisconnected();
+    void tooManyReconnects();
+    void onSocketError(QAbstractSocket::SocketError errorCode);
+    void onTextMessageReceived(const QString &message);
+    void reconnect(int mSleep);
+    void sendHeartbeat();
+    void sendIdentify();
+    void sendResume();
+    void sendTextPayload(const QString &payload);
+
 public:
     Gateway(QSharedPointer<Settings> settings);
-    ~Gateway();
+    ~Gateway();    
 
-    enum GatewayCloseCodes {
+    enum CloseCodes {
         CLOSE_NORMAL = 1000, //Unresumable! Considered a graceful shutdown not meant to resume!!
         CLOSE_GOING_AWAY = 1001, //Unresumable! Considered a graceful shutdown not meant to resume!!
         CLOSE_PROTOCOL_ERROR = 1002,
@@ -50,9 +88,9 @@ public:
         INVALID_INTENTS = 4013,
         DISALLOWED_INTENTS = 4014
     };
-    Q_ENUM(GatewayCloseCodes)
+    Q_ENUM(CloseCodes)
 
-    enum GatewayIntents {
+    enum Intents {
         GUILDS = 0,
         GUILD_MEMBERS = 1,
         GUILD_BANS = 2,
@@ -69,7 +107,7 @@ public:
         DIRECT_MESSAGE_REACTIONS = 13,
         DIRECT_MESSAGE_TYPING = 14
     };
-    Q_ENUM(GatewayIntents)
+    Q_ENUM(Intents)
 
     void init();
 
@@ -79,43 +117,7 @@ public slots:
 
 Q_SIGNALS:
     void dispatchEvent(QSharedPointer<GatewayPayload> payload);
-
-private:
-    QSharedPointer<QWebSocket> _socket;
-    QSharedPointer<QTimer> _heartbeatTimer;
-
-    Heartbeat _heartbeat;
-    Logger* _logger;
-    bool _heartbeatAck;
-    bool _attemptResume;
-    int _lastSequenceNumber;
-    int _maxRetries;
-    int _retryCount;
-
-    QUrl _gateway;
-    QString _botToken;
-    QString _sessionId;
-
-    void closeConnection(QWebSocketProtocol::CloseCode closeCode);
-    QUrl buildConnectionUrl(QSharedPointer<Settings> settings);
-    void processAck();
-    void processDispatch(QSharedPointer<GatewayPayload> payload);
-    void processHello(QSharedPointer<GatewayPayload> payload);
-    void processInvalidSession(QSharedPointer<GatewayPayload> payload);
-    void processPayload(QSharedPointer<GatewayPayload> payload);
-    void processReady(QSharedPointer<GatewayPayload> payload);
-    void processReconnect();
-    void processResumed(QSharedPointer<GatewayPayload> payload);
-    void onBinaryMessageReceived(QByteArray messageArray);
-    void onDisconnected();
-    void tooManyReconnects();
-    void onSocketError(QAbstractSocket::SocketError errorCode);
-    void onTextMessageReceived(const QString &message);
-    void reconnect(int mSleep);
-    void sendHeartbeat();
-    void sendIdentify();
-    void sendResume();
-    void sendTextPayload(const QString &payload);
+    void guildOnline(const QString &guildId);
 };
 
 #endif // GATEWAYCONNECTION_H

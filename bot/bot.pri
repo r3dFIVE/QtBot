@@ -5,11 +5,15 @@ DEPENDPATH += $$PWD/.
 
 
 HEADERS += \
+    $$PWD/botjob/commandbinding.h \
     $$PWD/botjob/databasecontext.h \
+    $$PWD/botjob/gatewaybinding.h \
+    $$PWD/botjob/ibinding.h \
     $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
+    $$PWD/botjob/scriptbuilder.h \
     $$PWD/entitymanager.h \
-    $$PWD/httpclient.h \
+    $$PWD/botjob/httpclient.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
@@ -61,20 +65,18 @@ HEADERS += \
     $$PWD/payloads/updatestatus.h \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
-    $$PWD/qml/botscript.h \
-    $$PWD/qml/commandfactory.h \
+    $$PWD/botjob/botscript.h \
     $$PWD/payloads/eventcontext.h \
     $$PWD/routes/createmessage.h \
     $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
-    $$PWD/util/corecommand.h \
-    $$PWD/util/corecommands.h \
+    $$PWD/botjob/corecommand.h \
+    $$PWD/botjob/corecommands.h \
     $$PWD/util/enumutils.h \
     $$PWD/botjob/ibotjob.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
     $$PWD/util/globals.h \
-    $$PWD/util/lockingdeque.h \
     $$PWD/entity/guildentity.h
 
 DISTFILES += \
@@ -82,13 +84,17 @@ DISTFILES += \
 
 SOURCES += \
     $$PWD/bot.cpp \
+    $$PWD/botjob/commandbinding.cpp \
     $$PWD/botjob/databasecontext.cpp \
+    $$PWD/botjob/gatewaybinding.cpp \
+    $$PWD/botjob/ibinding.cpp \
     $$PWD/botjob/job.cpp \
     $$PWD/botjob/jobqueue.cpp \
+    $$PWD/botjob/scriptbuilder.cpp \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
-    $$PWD/httpclient.cpp \
+    $$PWD/botjob/httpclient.cpp \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
     $$PWD/logging/logworker.cpp \
@@ -134,12 +140,11 @@ SOURCES += \
     $$PWD/payloads/updatestatus.cpp \
     $$PWD/payloads/user.cpp \
     $$PWD/payloads/voicestate.cpp \
-    $$PWD/qml/botscript.cpp \
-    $$PWD/qml/commandfactory.cpp \
+    $$PWD/botjob/botscript.cpp \
     $$PWD/payloads/eventcontext.cpp \
     $$PWD/routes/createmessage.cpp \
     $$PWD/routes/discordapi.cpp \
-    $$PWD/util/corecommand.cpp \
+    $$PWD/botjob/corecommand.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \
     $$PWD/entity/guildentity.cpp

@@ -12,11 +12,11 @@ class EventContext : public JsonSerializable
 
 public:
 
+    static const QString EVENT_NAME;
     static const QString CHANNEL_ID;
     static const QString GUILD_ID;
     static const QString CONTENT;
     static const QString AUTHOR;
-    static const QString COMMAND;
     static const QString SOURCE_PAYLOAD;
     static const QString TARGET_PAYLOAD;
 
@@ -37,7 +37,7 @@ public:
     Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
     Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
     Q_PROPERTY(QJsonValue content READ getContent WRITE setContent)
-    Q_PROPERTY(QJsonValue command READ getCommand WRITE setCommand)
+    Q_PROPERTY(QJsonValue event_name READ getEventName WRITE setEventName)
     Q_PROPERTY(QJsonObject author READ getAuthor WRITE setAuthor)
     Q_PROPERTY(QJsonObject source_payload READ getSourcePayload WRITE setSourcePayload)
     Q_PROPERTY(QJsonObject target_payload READ getTargetPayload WRITE setTargetPayload)
@@ -47,13 +47,13 @@ public slots:
     QJsonObject getSourcePayload() const;
     QJsonObject getTargetPayload() const;
     QJsonValue getChannelId() const;
-    QJsonValue getCommand() const;
     QJsonValue getContent() const;
+    QJsonValue getEventName() const;
     QJsonValue getGuildId() const;
     void setAuthor(const QJsonObject &author);
     void setChannelId(const QJsonValue &channelId);
-    void setCommand(const QJsonValue &command);
     void setContent(const QJsonValue &content);
+    void setEventName(const QJsonValue &eventName);
     void setGuildId(const QJsonValue &guildId);
     void setSourcePayload(const QJsonObject &sourcePayload);
     void setTargetPayload(const QJsonObject &targetPayload);

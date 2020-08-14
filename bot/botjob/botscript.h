@@ -8,31 +8,37 @@
 #include <QTimer>
 #include <QVariantMap>
 
-#include "payloads/eventcontext.h"
+#include "databasecontext.h"
+#include "ibinding.h"
+#include "ibotjob.h"
 #include "httpclient.h"
-#include "botjob/ibotjob.h"
-#include "botjob/databasecontext.h"
-#include "util/globals.h"
+#include "payloads/eventcontext.h"
 #include "routes/discordapi.h"
+#include "util/globals.h"
 
 
-class BotScript : public QObject, public IBotJob
+class BotScript : public IBotJob
 {
     Q_OBJECT
 
     DatabaseContext _databaseContext;
+    QJsonArray _eventBindingsJson;
     QMap<QString, QVariant> _commands;
     QMutex _runLock;
-    QSharedPointer<DiscordAPI> discordAPI;
+    QSharedPointer<DiscordAPI> _discordAPI;
     QSqlDatabase _database;
     QSqlQuery _query;    
     QString _scriptName;
 
     QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
     void closeExistingConnection();
+    void setConnectionName();
+    void setScriptCommands(const QMap<QString, QVariant> &commands);
+    void setEventBindingsJson(const QJsonArray &eventBindings);
 
     Q_PROPERTY(QString name READ getScriptName WRITE setScriptName REQUIRED)
-    Q_PROPERTY(QMap commands READ getScriptCommands WRITE setScriptCommands REQUIRED)
+    Q_PROPERTY(QMap commands READ getScriptCommands WRITE setScriptCommands)
+    Q_PROPERTY(QJsonArray event_bindings READ getEventBindingsJson WRITE setEventBindingsJson)
 
 public:
     enum TableType {
@@ -77,14 +83,14 @@ public:
 
     DatabaseContext getDatabaseContext() const;
     QMap<QString, QVariant> getScriptCommands() const;
+    QJsonArray getEventBindingsJson() const;
     QString getScriptName() const;
-    QString findCommandMapping(const QString &command) const;
+    QString findFunctionMapping(const QString &command) const;
     void initAPI(const QString &botToken);
     void postResult(const Message &message);
-    void setConnectionName();
-    void setConnectionName(const QString &scriptName, const QString &guildId);
+    void setConnectionName(const QString &scriptName, const QString &getGuildId);
     void setDatabaseContext(const DatabaseContext &databaseContext);
-    void setScriptCommands(const QMap<QString, QVariant> &commands);
+
     void setScriptName(const QString &scriptName);
 
     bool invokable() override;
