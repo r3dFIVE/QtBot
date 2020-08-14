@@ -3,15 +3,15 @@
 #include <QSettings>
 #include <QThread>
 
-#include "payloads/guild.h"
-#include "util/enumutils.h"
-#include "payloads/identifyproperties.h"
-#include "util/globals.h"
-#include "payloads/hello.h"
 #include "logging/logfactory.h"
-#include "payloads/resume.h"
+#include "payloads/guild.h"
+#include "payloads/hello.h"
 #include "payloads/identify.h"
+#include "payloads/identifyproperties.h"
 #include "payloads/ready.h"
+#include "payloads/resume.h"
+#include "util/globals.h"
+#include "util/enumutils.h"
 
 
 
@@ -85,8 +85,10 @@ Gateway::onDisconnected() {
 
     if (++_retryCount <= _maxRetries) {
         switch (closeCode) {
-        case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
+        case QWebSocketProtocol::CloseCodeNormal:
         case QWebSocketProtocol::CloseCodeGoingAway:
+        case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
+        case QWebSocketProtocol::CloseCodeTooMuchData:
             reconnect(MS_FIVE_SECONDS);
 
             break;
@@ -98,7 +100,7 @@ Gateway::onDisconnected() {
             _logger->fatal(QString("Bot has received an unrecoverable close code %1 (%2), shutting down...")
                     .arg(closeCode).arg(closeReason));
 
-            break;
+            exit(EXIT_FAILURE);
         }
     } else {
         tooManyReconnects();
@@ -110,7 +112,7 @@ Gateway::tooManyReconnects() {
     _logger->fatal(QString("Bot has reached maxium number of recconect attempts (%1), shutting down...")
             .arg(_maxRetries));
 
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 void
