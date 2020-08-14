@@ -31,6 +31,8 @@ ScriptBuilder::buildCommands(QSharedPointer<GuildEntity> guildEntity) {
 
     _scriptNameByCommand.clear();
 
+    _functionNameByEventNameByScriptName.clear();
+
     _guildId = guildEntity->id();
 
     loadCoreCommands();

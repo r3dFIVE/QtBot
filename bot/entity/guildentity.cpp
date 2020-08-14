@@ -126,6 +126,8 @@ GuildEntity::setId(const QString &id) {
 
 void
 GuildEntity::setCommandBindings(const QList<CommandBinding> &commandBindings) {
+    _commandBindings.clear();
+
     for (auto binding : commandBindings) {
         _commandBindings[binding.getCommandName()] = binding;
     }
@@ -133,9 +135,12 @@ GuildEntity::setCommandBindings(const QList<CommandBinding> &commandBindings) {
 
 void
 GuildEntity::setGatewayBindings(const QList<GatewayBinding> &gatewayBindings) {
+    _gatewayBindings.clear();
+
     for (auto binding : gatewayBindings) {
         if (_gatewayBindings.contains(binding.getEventName())) {
             _gatewayBindings[binding.getEventName()] << binding;
+
         } else {
             _gatewayBindings[binding.getEventName()] = QList<GatewayBinding>() << binding;
         }
