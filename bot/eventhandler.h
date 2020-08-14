@@ -24,18 +24,14 @@ class EventHandler : public QObject
 
     Logger *_logger;
 
-    QString parseCommandToken(const QString &message);
-    void processGuildCreate(QSharedPointer<EventContext> context);
     void processMessageCreate(QSharedPointer<EventContext> context);
     void processMessageUpdate(QSharedPointer<EventContext> context);
-    void processCommands(QSharedPointer<EventContext> context);
     void processJobQueue();
 
 public:
     EventHandler() { _logger = LogFactory::getLogger(); }
 
 signals:
-    void guildOnline(const QString &guildId);
     void reloadCommands(QSharedPointer<GuildEntity> guild);
 
 public slots:

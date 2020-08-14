@@ -1,11 +1,11 @@
 #include "eventcontext.h"
 
 
+const QString EventContext::EVENT_NAME = "event_name";
 const QString EventContext::CHANNEL_ID = "channel_id";
 const QString EventContext::GUILD_ID = "guild_id";
 const QString EventContext::CONTENT = "content";
 const QString EventContext::AUTHOR = "author";
-const QString EventContext::COMMAND = "command";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
 const QString EventContext::TARGET_PAYLOAD = "target_payload";
 
@@ -19,12 +19,22 @@ EventContext::EventContext(const QJsonObject &json) {
 
 void
 EventContext::buildContext(const QJsonObject &json) {
+    _jsonObject[EVENT_NAME] = json[EVENT_NAME];
     _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
     _jsonObject[GUILD_ID] = json[GUILD_ID];
     _jsonObject[CONTENT] = json[CONTENT];
     _jsonObject[AUTHOR] = json[AUTHOR];
-    _jsonObject[COMMAND] = json[COMMAND];
     _jsonObject[SOURCE_PAYLOAD] = json;
+}
+
+QJsonValue
+EventContext::getEventName() const {
+    return _jsonObject[EVENT_NAME];
+}
+
+void
+EventContext::setEventName(const QJsonValue &eventName) {
+    _jsonObject[EVENT_NAME] = eventName;
 }
 
 QJsonValue
@@ -56,17 +66,6 @@ void
 EventContext::setContent(const QJsonValue &content) {
     _jsonObject[CONTENT] = content;
 }
-
-QJsonValue
-EventContext::getCommand() const {
-    return _jsonObject[COMMAND];
-}
-
-void
-EventContext::setCommand(const QJsonValue &command) {
-    _jsonObject[COMMAND] = command;
-}
-
 
 QJsonObject
 EventContext::getAuthor() const {

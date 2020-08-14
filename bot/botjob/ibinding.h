@@ -1,8 +1,6 @@
 #ifndef IBINDING_H
 #define IBINDING_H
 
-#include <QJsonObject>
-
 #include "botscript.h"
 #include "ibotjob.h"
 #include "logging/logfactory.h"
@@ -12,19 +10,23 @@
 class IBinding : public QObject
 {
 
-
 public:    
+    enum BindingType {
+        COMMAND,
+        GATEWAY,
+        TIMED
+    };
+    Q_ENUM(BindingType);
+
     static const QString BINDING_TYPE;
+    static const QString BINDING_TYPE_COMMAND;
+    static const QString BINDING_TYPE_GATEWAY;
+    static const QString BINDING_TYPE_TIMED;
     static const QString FUNCTION;
-    static const QString GATEWAY_EVENT;
     static const QString REPEAT_AFTER;
+    static const QString DESCRIPTION;
 
-
-    IBinding() {}
-    IBinding(const QString &commandName,
-             const IBotJob::FunctionMapping &functionMapping,
-             const QString &scriptName);
-
+    bool validateFunctionMapping(const QMetaObject &metaObject) const;
     IBotJob::FunctionMapping getFunctionMapping() const;
     QString getDescription() const;
     QString getScriptName() const;
@@ -35,15 +37,14 @@ public:
 
     virtual bool isValid(const QMetaObject &metaObject) const = 0;
 
-    void setGatewayEvent(const GatewayEvents::Events &gatewayEvent);
+    void setGatewayEvent(const GatewayEvent::Event &gatewayEvent);
     void setRepeatAfter(int seconds);
 
 protected:
 
     IBotJob::FunctionMapping _functionMapping;
-    Logger *_logger;
+    Logger *_logger = LogFactory::getLogger();
     QString _description;
-    QString _scriptName;
 
     QByteArray buildFunctionSearchString() const;
 };

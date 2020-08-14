@@ -14,10 +14,10 @@ public:
     static const QString D;
     static const QString OP;
 
-    Heartbeat() { setOp(GatewayEvents::HEARTBEAT); }
-    Heartbeat(const QJsonObject &json) : JsonSerializable(json) { setOp(GatewayEvents::HEARTBEAT); }
-    Heartbeat(const QString &json) : JsonSerializable(json) { setOp(GatewayEvents::HEARTBEAT); }
-    Heartbeat(const QByteArray &json) : JsonSerializable(json) { setOp(GatewayEvents::HEARTBEAT); }
+    Heartbeat() { setOp(GatewayEvent::HEARTBEAT); }
+    Heartbeat(const QJsonObject &json) : JsonSerializable(json) { setOp(GatewayEvent::HEARTBEAT); }
+    Heartbeat(const QString &json) : JsonSerializable(json) { setOp(GatewayEvent::HEARTBEAT); }
+    Heartbeat(const QByteArray &json) : JsonSerializable(json) { setOp(GatewayEvent::HEARTBEAT); }
 
 
     QJsonValue getD() const;

@@ -18,6 +18,7 @@ class JobQueue
 
 public:
     friend JobQueue& operator<<(JobQueue &jobQueue, Job* job);
+    friend JobQueue& operator<<(JobQueue &jobQueue, QList<Job*> job);
 
     bool hasJobs() const;
     Job* get();

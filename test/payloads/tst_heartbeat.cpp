@@ -4,7 +4,7 @@ void
 HeartbeatTest::test_serialization() {
     Heartbeat heartbeat;
 
-    heartbeat.setOp(GatewayEvents::HEARTBEAT);
+    heartbeat.setOp(GatewayEvent::HEARTBEAT);
 
     heartbeat.setD(42);
 
@@ -20,8 +20,8 @@ HeartbeatTest::test_deserialization() {
 
     QVERIFY(heartbeat.getD() == 42);
     QVERIFY(heartbeat.getD() != 24);
-    QVERIFY(heartbeat.getOp() == GatewayEvents::HEARTBEAT);
-    QVERIFY(heartbeat.getOp() != GatewayEvents::HEARTBEAT_ACK);
+    QVERIFY(heartbeat.getOp() == GatewayEvent::HEARTBEAT);
+    QVERIFY(heartbeat.getOp() != GatewayEvent::HEARTBEAT_ACK);
 }
 
 static HeartbeatTest HEARTBEAT_TEST;

@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QThread>
 
+#include "payloads/guild.h"
 #include "util/enumutils.h"
 #include "payloads/identifyproperties.h"
 #include "util/globals.h"
@@ -11,6 +12,7 @@
 #include "payloads/resume.h"
 #include "payloads/identify.h"
 #include "payloads/ready.h"
+
 
 
 Gateway::Gateway(QSharedPointer<Settings> settings)
@@ -77,7 +79,7 @@ void
 Gateway::onDisconnected() {
     int closeCode = _socket->closeCode();
 
-    QString closeReason = EnumUtils::valueToKey(GatewayCloseCodes(closeCode));
+    QString closeReason = EnumUtils::valueToKey(CloseCodes(closeCode));
 
     _logger->debug(QString("Socket closed with code: %1 %2").arg(closeCode).arg(closeReason));
 
@@ -88,7 +90,7 @@ Gateway::onDisconnected() {
             reconnect(MS_FIVE_SECONDS);
 
             break;
-        case QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART):
+        case QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART):
             reconnect(IMMEDIATE);
 
             break;
@@ -145,30 +147,30 @@ Gateway::onBinaryMessageReceived(QByteArray messageArray) {
 void
 Gateway::processPayload(QSharedPointer<GatewayPayload> payload) {
     switch(payload->getOp().toInt()) {
-        case GatewayEvents::HELLO:
-            processHello(payload);
+    case GatewayEvent::HELLO:
+        processHello(payload);
 
-            break;
-        case GatewayEvents::HEARTBEAT:
-            sendHeartbeat();
+        break;
+    case GatewayEvent::HEARTBEAT:
+        sendHeartbeat();
 
-            break;
-        case GatewayEvents::HEARTBEAT_ACK:
-            processAck();
+        break;
+    case GatewayEvent::HEARTBEAT_ACK:
+        processAck();
 
-            break;
-        case GatewayEvents::DISPATCH:
-            processDispatch(payload);
+        break;
+    case GatewayEvent::DISPATCH:
+        processDispatch(payload);
 
-            break;
-        case GatewayEvents::INVALID_SESSION:
-            processInvalidSession(payload);
+        break;
+    case GatewayEvent::INVALID_SESSION:
+        processInvalidSession(payload);
 
-            break;
-        case GatewayEvents::RECONNECT:
-            processReconnect();
+        break;
+    case GatewayEvent::RECONNECT:
+        processReconnect();
 
-            break;
+        break;
     }
 }
 
@@ -183,7 +185,7 @@ void
 Gateway::processReconnect() {
     _logger->debug("RECONNECT event dispatched, attemping to reconnect...");
 
-    closeConnection(QWebSocketProtocol::CloseCode(GatewayCloseCodes::SERVER_RESTART));
+    closeConnection(QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART));
 }
 
 
@@ -191,15 +193,18 @@ void
 Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
     _lastSequenceNumber = payload->getS().toInt();
 
-    GatewayEvents::Events gatewayEvent = EnumUtils::keyToValue<GatewayEvents::Events>(payload->getT());
+    GatewayEvent::Event gatewayEvent = EnumUtils::keyToValue<GatewayEvent::Event>(payload->getT());
 
     switch (gatewayEvent) {
-    case GatewayEvents::READY:
+    case GatewayEvent::READY:
         processReady(payload);
-        break;
-    case GatewayEvents::RESUMED:
+        return;
+    case GatewayEvent::RESUMED:
         processResumed(payload);
-        break;
+        return;
+    case GatewayEvent::GUILD_CREATE:
+        processGuildCreate(payload);
+        return;
     }
 
     emit dispatchEvent(payload);
@@ -297,7 +302,7 @@ Gateway::sendIdentify() {
 
     GatewayPayload payload;
 
-    payload.setOp(GatewayEvents::IDENTIFY);
+    payload.setOp(GatewayEvent::IDENTIFY);
 
     payload.setD(identify.toQJsonObject());
 
@@ -316,7 +321,7 @@ Gateway::sendResume() {
 
     GatewayPayload payload;
 
-    payload.setOp(GatewayEvents::RESUME);
+    payload.setOp(GatewayEvent::RESUME);
 
     payload.setD(resume.toQJsonObject());
 
@@ -362,3 +367,7 @@ Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
                 .arg(zlibParameter));
 }
 
+void
+Gateway::processGuildCreate(QSharedPointer<GatewayPayload> payload) {
+    emit guildOnline(payload->getD()[Guild::ID].toString());
+}

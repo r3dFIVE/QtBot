@@ -1,11 +1,13 @@
 #include "bot.h"
+
+#include <QDir>
+#include <QMetaEnum>
+
 #include "entitymanager.h"
 #include "eventhandler.h"
 #include "util/globals.h"
 #include "logging/logfactory.h"
 
-#include <QDir>
-#include <QMetaEnum>
 
 Bot::Bot() {
     qRegisterMetaType<QSharedPointer<GatewayPayload> >();
@@ -33,13 +35,13 @@ void
 Bot::run(QSharedPointer<Settings> settings) {
     _factory = new ScriptBuilder(this, settings);
 
-    Gateway *connection = new Gateway(settings);
+    Gateway *gateway = new Gateway(settings);
 
-    connection->moveToThread(&_gatewayThread);
+    gateway->moveToThread(&_gatewayThread);
 
-    connect(&_gatewayThread, &QThread::finished, connection, &QObject::deleteLater);
+    connect(&_gatewayThread, &QThread::finished, gateway, &QObject::deleteLater);
 
-    connect(&_gatewayThread, &QThread::started, connection, &Gateway::init);
+    connect(&_gatewayThread, &QThread::started, gateway, &Gateway::init);
 
     EventHandler *eventHandler = new EventHandler;
 
@@ -53,9 +55,9 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(this, &Bot::guildReady, eventHandler, &EventHandler::guildReady);
 
-    connect(connection, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
+    connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 
-    connect(eventHandler, &EventHandler::guildOnline, entityManager, &EntityManager::initGuild);
+    connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuild);
 
     connect(eventHandler, &EventHandler::reloadCommands, this, &Bot::loadCommands);
 

@@ -53,7 +53,7 @@ void EchoServer::onNewConnection()
 
     payload.setD(hello.toQJsonObject());
 
-    payload.setOp(GatewayEvents::HELLO);
+    payload.setOp(GatewayEvent::HELLO);
 
     pSocket->sendTextMessage(payload.toQString());
 }
@@ -71,8 +71,8 @@ void EchoServer::processTextMessage(QString message)
     GatewayPayload out;
     if (pClient) {
         switch (payload.getOp().toInt()) {
-            case GatewayEvents::HEARTBEAT:
-                out.setOp(GatewayEvents::HEARTBEAT_ACK);
+            case GatewayEvent::HEARTBEAT:
+                out.setOp(GatewayEvent::HEARTBEAT_ACK);
 
                 out.setS(s++);
 

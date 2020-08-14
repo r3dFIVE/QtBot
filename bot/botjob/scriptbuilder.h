@@ -7,6 +7,7 @@
 
 #include "bot.h"
 #include "commandbinding.h"
+#include "gatewaybinding.h"
 #include "logging/logfactory.h"
 #include "botjob/botscript.h"
 #include "entity/guildentity.h"
@@ -23,22 +24,28 @@ class ScriptBuilder : public QObject
     DatabaseContext _defaultDatabaseContext;
     QQmlApplicationEngine _engine;
     QString _botToken;
+    QString _fileName;
     QString _guildId;
     QString _scriptDir;
     QStringList _coreCommandNames;
     QList<CommandBinding> _commandBindings;
-//    QList<GatewayBinding> _gatewayBindings;
+    QList<GatewayBinding> _gatewayBindings;
 //    QList<TimedBinding> _timedBindings;
     QMap<QString, QString> _scriptNameByCommand;
+    QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 
     bool isBotScript(const QString &fileName);
+    bool validateScriptCommandName(const QString &command);
     void loadCoreCommands();
     void builldBotScripts(const QString &scriptDir);
-    void buildBotScript(const QString &fileName);
-    void namingConflict(const QString &command, const QString &fileName);
-    void validateScriptName(QSharedPointer<BotScript> botscript, const QString &fileName);
-    void validateScriptCommands(QSharedPointer<BotScript> botscript, const QString &fileName);
-    void validateEventBindings(QSharedPointer<BotScript> botscript, const QString &fileName);
+    void buildBotScript();
+    void namingConflict(const QString &command);
+    void validateScriptName(QSharedPointer<BotScript> botScript);
+    void resgisterScriptCommands(QSharedPointer<BotScript> botScript);
+    void registerCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding);
+    void registerGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding);
+    void registerTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding);
+    void registerEventBindings(QSharedPointer<BotScript> botScript);
 
 public:
     const static QString BOT_IMPORT_IDENTIFIER;

@@ -1,12 +1,34 @@
 #include "ibinding.h"
 
-#include "util/enumutils.h"
-
 
 const QString IBinding::BINDING_TYPE = "binding_type";
+const QString IBinding::BINDING_TYPE_COMMAND = "command";
+const QString IBinding::BINDING_TYPE_GATEWAY = "gateway";
+const QString IBinding::BINDING_TYPE_TIMED = "timed";
 const QString IBinding::FUNCTION = "function";
-const QString IBinding::GATEWAY_EVENT = "gateway_event";
 const QString IBinding::REPEAT_AFTER = "repeat_after";
+const QString IBinding::DESCRIPTION = "description";
+
+bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
+    if (_functionMapping.first.isEmpty() || _functionMapping.second.isNull()) {
+        _logger->warning(QString("Invalid command mapping. First: %1, Second: %2... Discarding binding.")
+                         .arg(_functionMapping.first.isEmpty() )
+                         .arg(_functionMapping.second.isNull() ? "nullptr" : _functionMapping.second->objectName()));
+
+        return false;
+    }
+
+    QByteArray functionName = buildFunctionSearchString();
+
+    if (metaObject.indexOfMethod(functionName) < 0) {
+        _logger->warning(QString("\"%1\" function was not defined in this script... Discarding binding.")
+                         .arg(_functionMapping.first));
+
+        return false;
+    }
+
+    return true;
+}
 
 IBotJob::FunctionMapping
 IBinding::getFunctionMapping() const {

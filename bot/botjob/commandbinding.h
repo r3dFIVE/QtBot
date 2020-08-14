@@ -5,12 +5,13 @@
 
 class CommandBinding : public IBinding
 {
-    static const QString COMMAND;
 
     QString _commandName;
 
 public:
-    CommandBinding() {}
+    static const QString COMMAND;
+
+    CommandBinding() { }
     CommandBinding(const QString &commandName, const IBotJob::FunctionMapping &functionMapping);
     CommandBinding(const CommandBinding &other);
     ~CommandBinding() {}

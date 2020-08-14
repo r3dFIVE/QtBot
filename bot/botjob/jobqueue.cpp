@@ -7,6 +7,16 @@ operator<<(JobQueue &jobQueue, Job *job) {
     return jobQueue;
 }
 
+JobQueue&
+operator<<(JobQueue &jobQueue, QList<Job *> jobs) {
+    for (auto job : jobs) {
+        jobQueue.queue(job);
+    }
+
+    return jobQueue;
+}
+
+
 Job*
 JobQueue::get() {
     if (readyJob) {
