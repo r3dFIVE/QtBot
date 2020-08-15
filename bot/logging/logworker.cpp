@@ -6,7 +6,7 @@
 #include <QRegularExpression>
 
 
-LogWorker::LogWorker(LogContext ctx, QObject *parent)
+LogWorker::LogWorker(const LogContext &ctx, QObject *parent)
     : QObject(parent), _ctx(ctx) {
 
     if (_ctx.fileLoggingEnabled(LogContext::LogLevel::OFF)) {
@@ -24,6 +24,7 @@ LogWorker::initLogFile() {
     _logFile.setFileName(_ctx.getPathWithName());
     if (!_logFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
         disableFileLogging();
+
         return;
     } else {
         checkLogFile();
@@ -33,7 +34,9 @@ LogWorker::initLogFile() {
 void
 LogWorker::disableFileLogging() {
     qDebug() << "Error opening " + _ctx.fileName;
+
     qDebug() << "Disabling file logging.";
+
     _ctx.fileLogLevel = LogContext::LogLevel::OFF;
 }
 
@@ -51,29 +54,39 @@ LogWorker::checkLogFile() {
 void
 LogWorker::rolloverLog() {
     _logFile.close();
+
     QDir logDir(_ctx.directoryPath);
+
     QMap<int, QStringList> logNameByNumber;
+
     int maxFilesRegex = QString::number(_ctx.maxRolloverFiles).length();
 
     for ( auto entry : logDir.entryList()) {
         QRegularExpression logExpression(QString("^%1$").arg(_ctx.fileName));
+
         QRegularExpression logWithNumberExpression(QString("^%1.[0-9]{1,%2}$").arg(_ctx.fileName).arg(maxFilesRegex));
 
         if (logExpression.match(entry).hasMatch() || logWithNumberExpression.match(entry).hasMatch()) {
             QStringList logTokens = entry.split(".");
+
             int logNumber = logTokens.back().toInt();
+
             logNameByNumber[logNumber] = logTokens;
         }
     }
 
     QMapIterator<int, QStringList> logIterator(logNameByNumber);
+
     logIterator.toBack();
 
     while (logIterator.hasPrevious()) {
         logIterator.previous();
         int logNumber = logIterator.key();
+
         QStringList logTokens = logIterator.value();
+
         QString partialFileName = logTokens.front();
+
         QString suffix = logTokens.size() > 1 ? logTokens.back() : "";
 
         //Rebuild the fileName if it has multiple dots (.) eg. some.log.file
@@ -82,11 +95,14 @@ LogWorker::rolloverLog() {
         }
 
         QString fullFileName = logTokens.size() > 1 ? partialFileName + "." + logTokens.back() : partialFileName;
+
         QFile existingLogFile(_ctx.directoryPath + "/" + fullFileName);
 
         if (!existingLogFile.open(QIODevice::ReadWrite | QIODevice::ExistingOnly)) {
             qDebug() << "Cant open file for renaming.";
+
             disableFileLogging();
+
             return;
         }
 
@@ -94,6 +110,7 @@ LogWorker::rolloverLog() {
 
         if (logNumber == 0) {
             if (suffix.isEmpty()) {
+
                 newFileName += ".1";
             } else {
                 newFileName += QString(".%1.1").arg(suffix);
@@ -106,6 +123,7 @@ LogWorker::rolloverLog() {
             existingLogFile.remove();
         } else {
             existingLogFile.rename(_ctx.directoryPath + "/" + newFileName);
+
             existingLogFile.close();
         }
     }
@@ -116,13 +134,13 @@ LogWorker::rolloverLog() {
 }
 
 void
-LogWorker::logEvent(LogContext::LogLevel level, QString event) {
+LogWorker::logEvent(LogContext::LogLevel level, QString message) {
     if (_ctx.loggingEnabled()) {
-        event += "\n";
+        message += "\n";
 
         QString logLevel = QVariant::fromValue(level).toString();
         QString dateTime = QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz");
-        QString logString = QString("[%1][%2]: %3").arg(dateTime).arg(logLevel).arg(event);
+        QString logString = QString("[%1][%2]: %3").arg(dateTime).arg(logLevel).arg(message);
 
         if (_ctx.consoleLoggingEnabled(level)) {
             fprintf(stderr, "%s", logString.toUtf8().data());

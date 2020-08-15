@@ -10,15 +10,15 @@ class Logger : public QObject
     Q_OBJECT
 
 public:
-    void trace(QString event);
-    void info(QString event);
-    void debug(QString event);
-    void warning(QString event);
-    void critical(QString event);
-    void fatal(QString event);
+    void trace(QString message);
+    void info(QString message);
+    void debug(QString message);
+    void warning(QString message);
+    void critical(QString message);
+    void fatal(QString message);
 
 signals:
-    void logEvent(LogContext::LogLevel level, QString event);
+    void logEvent(LogContext::LogLevel level, QString message);
 
 private:
     explicit Logger(LogContext ctx, QObject *parent = nullptr);

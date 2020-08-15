@@ -21,6 +21,8 @@ class BotScript : public IBotJob
 {
     Q_OBJECT
 
+    Logger *_logger;
+
     DatabaseContext _databaseContext;
     QJsonArray _eventBindingsJson;
     QMap<QString, QVariant> _commands;
@@ -74,7 +76,7 @@ public:
     };
     Q_ENUM(ParamType)
 
-    BotScript() {}
+    BotScript() { _logger = LogFactory::getLogger(); }
     BotScript(QSharedPointer<Settings> settings);
     ~BotScript() {}
     BotScript(const BotScript &other);
@@ -101,6 +103,12 @@ public slots:
      *  General API related functions
      */
     void pause(int ms);
+    void logTrace(QString event);
+    void logInfo(QString event);
+    void logDebug(QString event);
+    void logWarning(QString event);
+    void logCritical(QString event);
+    void logFatal(QString event);
 
     /*
      *  QSqlDatabase related functions
