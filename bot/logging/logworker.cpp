@@ -139,7 +139,9 @@ LogWorker::logEvent(LogContext::LogLevel level, QString message) {
         message += "\n";
 
         QString logLevel = QVariant::fromValue(level).toString();
+
         QString dateTime = QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz");
+
         QString logString = QString("[%1][%2]: %3").arg(dateTime).arg(logLevel).arg(message);
 
         if (_ctx.consoleLoggingEnabled(level)) {
@@ -148,7 +150,9 @@ LogWorker::logEvent(LogContext::LogLevel level, QString message) {
 
         if (_ctx.fileLoggingEnabled(level)) {
             checkLogFile();
+
             _logFile.write(logString.toUtf8().data());
+
             _logFile.flush();
         }
     }
