@@ -98,6 +98,36 @@ BotScript::pause(int ms) {
     QThread::msleep(ms);
 }
 
+void
+BotScript::logTrace(QString event) {
+    _logger->trace(event);
+}
+
+void
+BotScript::logInfo(QString event) {
+    _logger->info(event);
+}
+
+void
+BotScript::logDebug(QString event) {
+    _logger->debug(event);
+}
+
+void
+BotScript::logWarning(QString event) {
+    _logger->warning(event);
+}
+
+void
+BotScript::logCritical(QString event) {
+    _logger->critical(event);
+}
+
+void
+BotScript::logFatal(QString event) {
+    _logger->fatal(event);
+}
+
 bool
 BotScript::dbOpen() {
     closeExistingConnection();
