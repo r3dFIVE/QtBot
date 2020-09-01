@@ -10,6 +10,19 @@
 
 
 void
+EventHandler::init() {
+    _logger = LogFactory::getLogger();
+
+    _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
+
+    connect(_jobQueueTimer.data(), &QTimer::timeout, this, &EventHandler::processJobQueue);
+
+    _timedJobTimer = QSharedPointer<QTimer>(new QTimer);
+
+    connect(_timedJobTimer.data(), &QTimer::timeout, this, &EventHandler::processTimedJobs);
+}
+
+void
 EventHandler::processJobQueue() {
     Job *readyJob = _jobQueue.get();
 
@@ -24,8 +37,26 @@ EventHandler::processJobQueue() {
         }
     }
 
-    if (_jobQueue.hasJobs()) {
-        QTimer::singleShot(1000, this, &EventHandler::processJobQueue);
+    if (_jobQueue.hasJobs() && !_jobQueueTimer->isActive()) {
+        _jobQueueTimer->start(1000);
+    } else {
+        _jobQueueTimer->stop();
+    }
+}
+
+void
+EventHandler::processTimedJobs() {
+    QList<Job *> readyTimedJobs = _timedJobs.getReadyJobs();
+
+
+    if (!readyTimedJobs.isEmpty()) {
+        _jobQueue << readyTimedJobs;
+
+        processJobQueue();
+    }
+
+    if (!_timedJobs.hasJobs()) {
+        _timedJobTimer->stop();
     }
 }
 
@@ -47,9 +78,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
     QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
-    QList<Job *> botJobs = guild->getBotJobs(context);
-
-    _jobQueue << botJobs;
+    _jobQueue << guild->getBotJobs(context);;
 
     processJobQueue();
 }
@@ -57,6 +86,12 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 void
 EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
     _availableGuilds[guild->id()] = guild;
+
+    _timedJobs.registerTimedBindings(guild);
+
+    if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
+        _timedJobTimer->start(1000);
+    }
 }
 
 void

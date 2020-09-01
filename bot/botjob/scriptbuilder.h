@@ -8,6 +8,7 @@
 #include "bot.h"
 #include "commandbinding.h"
 #include "gatewaybinding.h"
+#include "timedbinding.h"
 #include "logging/logfactory.h"
 #include "botjob/botscript.h"
 #include "entity/guildentity.h"
@@ -22,7 +23,7 @@ class ScriptBuilder : public QObject
     Logger *_logger;
 
     DatabaseContext _defaultDatabaseContext;
-    QQmlApplicationEngine _engine;
+    QQmlEngine _engine;
     QString _botToken;
     QString _fileName;
     QString _guildId;
@@ -30,7 +31,7 @@ class ScriptBuilder : public QObject
     QStringList _coreCommandNames;
     QList<CommandBinding> _commandBindings;
     QList<GatewayBinding> _gatewayBindings;
-//    QList<TimedBinding> _timedBindings;
+    QList<TimedBinding> _timedBindings;
     QMap<QString, QString> _scriptNameByCommand;
     QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 

@@ -53,6 +53,8 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(&_eventHandlerThread, &QThread::finished, eventHandler, &QObject::deleteLater);
 
+    connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
+
     connect(this, &Bot::guildReady, eventHandler, &EventHandler::guildReady);
 
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
@@ -60,6 +62,7 @@ Bot::run(QSharedPointer<Settings> settings) {
     connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuild);
 
     connect(eventHandler, &EventHandler::reloadCommands, this, &Bot::loadCommands);
+
 
     connect(entityManager, &EntityManager::guildInitialized, this, &Bot::loadCommands);
 

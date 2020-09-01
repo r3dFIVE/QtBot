@@ -72,11 +72,21 @@ GuildEntity::getBotJobs(QSharedPointer<EventContext> context) {
     return jobs << getGatewayEventJobs(context);
 }
 
+QList<TimedBinding>
+GuildEntity::getTimedBindings() const {
+    return _timedBindings;
+}
+
+void
+GuildEntity::setTimedBindings(const QList<TimedBinding> &timedBindings) {
+    _timedBindings = timedBindings;
+}
+
 Job*
 GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
     QString command = parseCommandToken(context->getContent().toString());
 
-    Job *job = nullptr;
+    Job *commandJob = nullptr;
 
     if (_commandBindings.contains(command)) {
        QStringList ids;
@@ -86,15 +96,15 @@ GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
            << context->getAuthor()[User::ID].toString();
 
        if (canInvoke(command, ids)) {
-           job = new Job;
+           commandJob = new Job;
 
-           job->setContext(*context);
+           commandJob->setContext(*context);
 
-           job->setFunctionMapping(_commandBindings[command].getFunctionMapping());
+           commandJob->setFunctionMapping(_commandBindings[command].getFunctionMapping());
        }
     }
 
-    return job;
+    return commandJob;
 }
 
 QList<Job *>

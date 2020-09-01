@@ -59,6 +59,8 @@ Gateway::init() {
     connect(_heartbeatTimer.data(), &QTimer::timeout, this, &Gateway::sendHeartbeat);
 
     _socket->open(_gateway);
+
+    emit guildOnline(DEFAULT_GUILD_ID);
 }
 
 void

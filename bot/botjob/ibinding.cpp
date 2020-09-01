@@ -6,7 +6,6 @@ const QString IBinding::BINDING_TYPE_COMMAND = "command";
 const QString IBinding::BINDING_TYPE_GATEWAY = "gateway";
 const QString IBinding::BINDING_TYPE_TIMED = "timed";
 const QString IBinding::FUNCTION = "function";
-const QString IBinding::REPEAT_AFTER = "repeat_after";
 const QString IBinding::DESCRIPTION = "description";
 
 bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
@@ -18,7 +17,7 @@ bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
         return false;
     }
 
-    QByteArray functionName = buildFunctionSearchString();
+    QByteArray functionName = QString(_functionMapping.first + "(QVariant)").toUtf8();
 
     if (metaObject.indexOfMethod(functionName) < 0) {
         _logger->warning(QString("\"%1\" function was not defined in this script... Discarding binding.")
@@ -48,9 +47,4 @@ IBinding::setDescription(const QString &description) {
 void
 IBinding::setFunctionMapping(const IBotJob::FunctionMapping &functionMapping) {
     _functionMapping = functionMapping;
-}
-
-QByteArray
-IBinding::buildFunctionSearchString() const {
-    return _functionMapping.first.toUtf8() + "(QVariant)";
 }

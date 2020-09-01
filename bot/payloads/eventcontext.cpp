@@ -1,5 +1,5 @@
 #include "eventcontext.h"
-
+#include "util/globals.h"
 
 const QString EventContext::EVENT_NAME = "event_name";
 const QString EventContext::CHANNEL_ID = "channel_id";
@@ -20,10 +20,19 @@ EventContext::EventContext(const QJsonObject &json) {
 void
 EventContext::buildContext(const QJsonObject &json) {
     _jsonObject[EVENT_NAME] = json[EVENT_NAME];
+
     _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
-    _jsonObject[GUILD_ID] = json[GUILD_ID];
+
+    if (json.contains(GUILD_ID)) {
+        _jsonObject[GUILD_ID] = json[GUILD_ID];
+    } else {
+        _jsonObject[GUILD_ID] = DEFAULT_GUILD_ID;
+    }
+
     _jsonObject[CONTENT] = json[CONTENT];
+
     _jsonObject[AUTHOR] = json[AUTHOR];
+
     _jsonObject[SOURCE_PAYLOAD] = json;
 }
 

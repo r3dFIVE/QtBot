@@ -6,6 +6,7 @@
 
 #include "botjob/commandbinding.h"
 #include "botjob/gatewaybinding.h"
+#include "botjob/timedbinding.h"
 #include "botjob/job.h"
 #include "payloads/eventcontext.h"
 
@@ -14,6 +15,7 @@ class GuildEntity : public QObject
 {
     Q_OBJECT
 
+    QList<TimedBinding> _timedBindings;
     QMap<QString, QList<GatewayBinding> > _gatewayBindings;
     QMap<QString, CommandBinding> _commandBindings;
     QMap<QString, QStringList> _mappedSchemeIdsByCommand;
@@ -38,11 +40,12 @@ public:
     };
 
     QList<Job *> getBotJobs(QSharedPointer<EventContext> context);
-
+    QList<TimedBinding> getTimedBindings() const;
     QString id() const;
     void setId(const QString &id);
     void setCommandBindings(const QList<CommandBinding> &commandBindings);
     void setGatewayBindings(const QList<GatewayBinding> &gatewayBindings);
+    void setTimedBindings(const QList<TimedBinding> &timedBindings);
 
 private:
     RestrictionScheme _scheme;

@@ -4,9 +4,10 @@
 
 
 const QString GatewayBinding::GATEWAY_EVENT = "gateway_event";
+const QString GatewayBinding::SINGLETON = "singleton";
 
-GatewayBinding::GatewayBinding(const QString &eventType) {
-    setEventName(eventType);
+GatewayBinding::GatewayBinding(const QString &eventName) {
+    _eventName = eventName;
 }
 
 GatewayBinding::GatewayBinding(const GatewayBinding &other) {
