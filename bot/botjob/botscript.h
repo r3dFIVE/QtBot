@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QObject>
+#include <QQmlEngine>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QTimer>
@@ -28,6 +29,7 @@ class BotScript : public IBotJob
     QMap<QString, QVariant> _commands;
     QMutex _runLock;
     QSharedPointer<DiscordAPI> _discordAPI;
+    QSharedPointer<QQmlEngine> _engine;
     QSqlDatabase _database;
     QSqlQuery _query;    
     QString _scriptName;
@@ -92,7 +94,7 @@ public:
     void postResult(const Message &message);
     void setConnectionName(const QString &scriptName, const QString &getGuildId);
     void setDatabaseContext(const DatabaseContext &databaseContext);
-
+    void setEngine(QSharedPointer<QQmlEngine> engine);
     void setScriptName(const QString &scriptName);
 
     bool invokable() override;

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QQmlEngine>
 
 #include "botjob/commandbinding.h"
 #include "botjob/gatewaybinding.h"

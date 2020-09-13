@@ -13,7 +13,10 @@ class TimedJobs
 public:
     bool hasJobs() const;
     QList<Job *> getReadyJobs();
+    QList<TimedBinding> getAllJobs(const QString &guildId);
+    void clear();
     void registerTimedBindings(QSharedPointer<GuildEntity> guild);
+    void registerTimedBinding(const QString &guildId, TimedBinding &timedBinding);
 };
 
 #endif // TIMEDJOBS_H

@@ -2,7 +2,6 @@
 
 #include <QDir>
 #include <QFile>
-#include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QMutableListIterator>
 #include <QSharedPointer>
@@ -82,9 +81,11 @@ ScriptBuilder::builldBotScripts(const QString &scriptDir) {
 
 void
 ScriptBuilder::buildBotScript() {
-    _engine.clearComponentCache();
+    QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
 
-    QQmlComponent comp(&_engine, _fileName);
+    engine->installExtensions(QQmlEngine::ConsoleExtension);
+
+    QQmlComponent comp(engine.data(), _fileName);
 
     if (comp.errors().size() > 0) {
         _logger->debug(comp.errorString());
@@ -118,6 +119,8 @@ ScriptBuilder::buildBotScript() {
     botScript->setGuildId(_guildId);
 
     botScript->setDatabaseContext(_defaultDatabaseContext);
+
+    botScript->setEngine(engine);
 }
 
 void
@@ -281,7 +284,9 @@ ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const Q
 
     timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
 
-    timedBinding.setSourcePayload(binding[TimedBinding::SOURCE_PAYLOAD].toObject());
+    timedBinding.setEventContext(binding[TimedBinding::EVENT_CONTEXT].toObject());
+
+    timedBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
 
     if (timedBinding.isValid(*botScript->metaObject())) {
         _timedBindings << timedBinding;

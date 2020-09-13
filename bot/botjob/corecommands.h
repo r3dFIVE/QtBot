@@ -30,6 +30,13 @@ public:
             QMetaObject::invokeMethod(&bot, &Bot::reloadAllCommands, Qt::QueuedConnection);
         });
 
+        addCommand(".timed", [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&bot,
+                                     "displayTimedJobs",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(EventContext, context));
+        });
+
         return commands;
     }
 };

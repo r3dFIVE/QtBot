@@ -7,14 +7,22 @@
 #include "util/enumutils.h"
 
 BotScript::BotScript(const BotScript &other) {
+    _commands = other._commands;
+
     _database = other._database;
+
+    _discordAPI = other._discordAPI;
 
     _query = other._query;
 }
 
 BotScript
 &BotScript::operator=(const BotScript &other) {
+    _commands = other._commands;
+
     _database = other._database;
+
+    _discordAPI = other._discordAPI;
 
     _query = other._query;
 
@@ -22,8 +30,7 @@ BotScript
 }
 
 DatabaseContext
-BotScript::getDatabaseContext() const
-{
+BotScript::getDatabaseContext() const {
     return _databaseContext;
 }
 
@@ -32,6 +39,11 @@ BotScript::setDatabaseContext(const DatabaseContext &databaseContext) {
     _databaseContext = databaseContext;
 
     setConnectionName();
+}
+
+void
+BotScript::setEngine(QSharedPointer<QQmlEngine> engine) {
+    _engine = engine;
 }
 
 QVariant

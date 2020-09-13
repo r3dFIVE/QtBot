@@ -1,10 +1,14 @@
 #include "timedbinding.h"
 
 
+const QString TimedBinding::EVENT_CONTEXT = "event_context";
 const QString TimedBinding::REPEAT_AFTER = "repeat_after";
 const QString TimedBinding::SINGLE_SHOT = "single_shot";
 const QString TimedBinding::SINGLETON = "singleton";
-const QString TimedBinding::SOURCE_PAYLOAD = "source_payload";
+
+TimedBinding::TimedBinding() {
+    _logger = LogFactory::getLogger();
+}
 
 TimedBinding::TimedBinding(const TimedBinding &other) {
     _functionMapping = other._functionMapping;
@@ -19,9 +23,9 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
 
     _scriptName = other._scriptName;
 
-    _sourcePayload = other._sourcePayload;
+    _eventContext = other._eventContext;
 
-    _registeredAt = other._registeredAt;
+    _startedAt = other._startedAt;
 }
 
 TimedBinding
@@ -38,9 +42,9 @@ TimedBinding
 
     _scriptName = other._scriptName;
 
-    _sourcePayload = other._sourcePayload;
+    _eventContext = other._eventContext;
 
-    _registeredAt = other._registeredAt;
+    _startedAt = other._startedAt;
 
     return *this;
 }
@@ -75,26 +79,25 @@ TimedBinding::setSingleShot(bool singleShot) {
     _singleShot = singleShot;
 }
 
-QJsonValue
-TimedBinding::getSourcePayload() const {
-    return _sourcePayload;
+EventContext
+TimedBinding::getEventContext() const {
+    return _eventContext;
 }
 
 void
-TimedBinding::setSourcePayload(const QJsonValue &sourcePayload) {
-    _sourcePayload = sourcePayload;
+TimedBinding::setEventContext(const EventContext &eventContext) {
+    _eventContext = eventContext;
 }
 
 qint64
-TimedBinding::getRegsteredAt() const {
-    return _registeredAt;
+TimedBinding::getStartedAt() const {
+    return _startedAt;
 }
 
 void
-TimedBinding::setRegisteredAt(const qint64 registeredAt) {
-    _registeredAt = registeredAt;
+TimedBinding::setStartedAt(const qint64 startedAt) {
+    _startedAt = startedAt;
 }
-
 
 bool
 TimedBinding::isValid(const QMetaObject &metaObject) const {

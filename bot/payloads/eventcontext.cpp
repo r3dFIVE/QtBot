@@ -33,6 +33,8 @@ EventContext::buildContext(const QJsonObject &json) {
 
     _jsonObject[AUTHOR] = json[AUTHOR];
 
+    _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
+
     _jsonObject[SOURCE_PAYLOAD] = json;
 }
 

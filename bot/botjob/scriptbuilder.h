@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QQmlApplicationEngine>
 
 #include "bot.h"
 #include "commandbinding.h"
@@ -23,7 +22,6 @@ class ScriptBuilder : public QObject
     Logger *_logger;
 
     DatabaseContext _defaultDatabaseContext;
-    QQmlEngine _engine;
     QString _botToken;
     QString _fileName;
     QString _guildId;
@@ -64,8 +62,6 @@ public:
         _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
 
         _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
-
-        _engine.installExtensions(QJSEngine::ConsoleExtension);
 
         qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                    BOT_API_MAJOR_VERSION.toInt(),
