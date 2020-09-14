@@ -26,6 +26,12 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
     _eventContext = other._eventContext;
 
     _startedAt = other._startedAt;
+
+    _remainder = other._remainder;
+
+    _running = other._running;
+
+    _stoppedAt = other._stoppedAt;
 }
 
 TimedBinding
@@ -45,6 +51,12 @@ TimedBinding
     _eventContext = other._eventContext;
 
     _startedAt = other._startedAt;
+
+    _remainder = other._remainder;
+
+    _running = other._running;
+
+    _stoppedAt = other._stoppedAt;
 
     return *this;
 }
@@ -69,6 +81,40 @@ TimedBinding::setRepeatAfter(int repeatAfter) {
     _repeatAfter = repeatAfter;
 }
 
+void
+TimedBinding::resume() {
+    _stoppedAt = 0;
+
+    _startedAt = QDateTime::currentSecsSinceEpoch();
+
+    _running = true;
+}
+
+void
+TimedBinding::start() {
+    _remainder = 0;
+
+    _running = true;
+
+    _startedAt = QDateTime::currentSecsSinceEpoch();
+
+    _stoppedAt = 0;
+}
+
+void
+TimedBinding::stop() {
+    _stoppedAt = QDateTime::currentSecsSinceEpoch();
+
+    _remainder = ((_stoppedAt - _startedAt) - _repeatAfter) * -1;
+
+    _running = false;
+}
+
+bool
+TimedBinding::isRunning() const {
+    return _running;
+}
+
 bool
 TimedBinding::isSingleShot() const {
     return _singleShot;
@@ -82,6 +128,19 @@ TimedBinding::setSingleShot(bool singleShot) {
 EventContext
 TimedBinding::getEventContext() const {
     return _eventContext;
+}
+
+qint64
+TimedBinding::getReimaining() {
+    if (_remainder > 0) {
+        if (_stoppedAt > 0) {
+            return ((_stoppedAt - _startedAt) - _remainder);
+        } else {
+            return ((QDateTime::currentSecsSinceEpoch() - _startedAt) - _remainder) * -1;
+        }
+    } else {
+        return ((QDateTime::currentSecsSinceEpoch() - _startedAt) - _repeatAfter) * -1;
+    }
 }
 
 void

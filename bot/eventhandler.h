@@ -21,6 +21,7 @@ class EventHandler : public QObject
 {
     Q_OBJECT
 
+    QSharedPointer<DiscordAPI> _discordAPI;
     JobQueue _jobQueue;
     QMap<QString, QSharedPointer<GuildEntity> > _availableGuilds;
     QSharedPointer<QTimer> _timedJobTimer;
@@ -29,20 +30,29 @@ class EventHandler : public QObject
 
     Logger *_logger;
 
+    int getJobNumber(const EventContext &context);
     void processMessageCreate(QSharedPointer<EventContext> context);
     void processMessageUpdate(QSharedPointer<EventContext> context);
 
-
 signals:
-    void reloadCommands(QSharedPointer<GuildEntity> guild);
+    void reloadScripts(QSharedPointer<GuildEntity> guild);
+
+public:
+    EventHandler(QSharedPointer<Settings> settings);
 
 public slots:
+    void displayTimedJobs(EventContext context);
     void guildReady(QSharedPointer<GuildEntity> guild);
     void init();
     void processEvent(QSharedPointer<GatewayPayload> payload);
-    void reloadAllAvailableGuilds();
     void processJobQueue();
     void processTimedJobs();
+    void reloadAllAvailableGuilds();
+    void registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
+    void removeTimedJob(const EventContext &context);
+    void resumeTimedJob(const EventContext &context);
+    void startTimedJob(const EventContext &context);
+    void stopTimedJob(const EventContext &context);
 };
 
 #endif // MESSAGEHANDLER_H

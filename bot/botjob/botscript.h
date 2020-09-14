@@ -10,13 +10,13 @@
 #include <QVariantMap>
 
 #include "databasecontext.h"
-#include "ibinding.h"
 #include "ibotjob.h"
 #include "httpclient.h"
 #include "payloads/eventcontext.h"
 #include "routes/discordapi.h"
 #include "util/globals.h"
 
+class TimedBinding;
 
 class BotScript : public IBotJob
 {
@@ -28,10 +28,12 @@ class BotScript : public IBotJob
     QJsonArray _eventBindingsJson;
     QMap<QString, QVariant> _commands;
     QMutex _runLock;
+
+    QSharedPointer<BotScript> _this;
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlDatabase _database;
-    QSqlQuery _query;    
+    QSqlQuery _query;
     QString _scriptName;
 
     QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
@@ -79,15 +81,15 @@ public:
     Q_ENUM(ParamType)
 
     BotScript() { _logger = LogFactory::getLogger(); }
-    BotScript(QSharedPointer<Settings> settings);
     ~BotScript() {}
     BotScript(const BotScript &other);
 
-    BotScript &operator=(const BotScript &other);
+    //BotScript &operator=(const BotScript &other);
 
     DatabaseContext getDatabaseContext() const;
     QMap<QString, QVariant> getScriptCommands() const;
     QJsonArray getEventBindingsJson() const;
+    QSharedPointer<BotScript> getSharedPointer();
     QString getScriptName() const;
     QString findFunctionMapping(const QString &command) const;
     void initAPI(const QString &botToken);
@@ -96,6 +98,7 @@ public:
     void setDatabaseContext(const DatabaseContext &databaseContext);
     void setEngine(QSharedPointer<QQmlEngine> engine);
     void setScriptName(const QString &scriptName);
+    void setSharedPointer(QSharedPointer<BotScript> self);
 
     bool invokable() override;
     void execute(const QByteArray &command, const EventContext &message) override;
@@ -104,13 +107,15 @@ public slots:
     /*
      *  General API related functions
      */
-    void pause(int ms);
+
+    void queueTimedEvent(const QVariant &timedBindingVariant);
     void logTrace(QString event);
     void logInfo(QString event);
     void logDebug(QString event);
     void logWarning(QString event);
     void logCritical(QString event);
     void logFatal(QString event);
+    void pause(int ms);
 
     /*
      *  QSqlDatabase related functions
@@ -195,6 +200,9 @@ public slots:
     // https://discord.com/developers/docs/resources/channel
 
     QVariant cCreateMessage(const QVariant &contextVariant);
+
+signals:
+    void timedBindingReady(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
 };
 
 Q_DECLARE_METATYPE(BotScript)

@@ -6,12 +6,13 @@
 #include "corecommand.h"
 #include "logging/logfactory.h"
 #include "botjob/ibotjob.h"
+#include "eventhandler.h"
 
 class CoreCommands {
 
 public:
 
-    static QList<CommandBinding> buildCoreCommandBindings(Bot &bot, const QString &guildId) {
+    static QList<CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
         QList<CommandBinding> commands;
 
         const auto addCommand = [&](auto commandName, auto cmd) {
@@ -27,14 +28,42 @@ public:
         addCommand(".reload", [&](const EventContext &context) -> void {
             Q_UNUSED(context);            
 
-            QMetaObject::invokeMethod(&bot, &Bot::reloadAllCommands, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(&eventHandler, &EventHandler::reloadAllAvailableGuilds, Qt::QueuedConnection);
         });
 
         addCommand(".timed", [&](const EventContext &context) -> void {
-            QMetaObject::invokeMethod(&bot,
+            QMetaObject::invokeMethod(&eventHandler,
                                      "displayTimedJobs",
                                      Qt::QueuedConnection,
                                      Q_ARG(EventContext, context));
+        });
+
+        addCommand(".timedremove", [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "removeTimedJob",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
+        addCommand(".timedresume", [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "resumeTimedJob",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
+        addCommand(".timedstart", [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "startTimedJob",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
+        addCommand(".timedstop", [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "stopTimedJob",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
         });
 
         return commands;

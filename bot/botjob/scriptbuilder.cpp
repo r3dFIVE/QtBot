@@ -15,6 +15,7 @@
 #include "payloads/message.h"
 #include "util/enumutils.h"
 #include "util/serializationutils.h"
+#include "timedbinding.h"
 
 
 const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
@@ -22,8 +23,26 @@ const QString ScriptBuilder::BOT_API_MAJOR_VERSION = "0";
 const QString ScriptBuilder::BOT_API_MINOR_VERSION = "1";
 const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
 
-QSharedPointer<GuildEntity>
-ScriptBuilder::buildCommands(QSharedPointer<GuildEntity> guildEntity) {
+
+ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
+    : _defaultDatabaseContext(settings) {
+
+    _eventHandler = eventHandler;
+
+    _logger = LogFactory::getLogger();
+
+    _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
+
+    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
+
+    qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                               BOT_API_MAJOR_VERSION.toInt(),
+                               BOT_API_MINOR_VERSION.toInt(),
+                               BOT_TYPE_IDENTIFIER.toUtf8());
+}
+
+void
+ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
     _commandBindings.clear();
 
     _gatewayBindings.clear();
@@ -46,12 +65,12 @@ ScriptBuilder::buildCommands(QSharedPointer<GuildEntity> guildEntity) {
 
     guildEntity->setTimedBindings(_timedBindings);
 
-    return guildEntity;
+    emit guildReady(guildEntity);
 }
 
 void
 ScriptBuilder::loadCoreCommands() {
-    QList<CommandBinding> coreCommands = CoreCommands::buildCoreCommandBindings(*_bot, _guildId);
+    QList<CommandBinding> coreCommands = CoreCommands::buildCoreCommandBindings(*_eventHandler, _guildId);
 
     for (auto coreCommand : coreCommands) {
         _coreCommandNames << coreCommand.getCommandName();
@@ -120,7 +139,11 @@ ScriptBuilder::buildBotScript() {
 
     botScript->setDatabaseContext(_defaultDatabaseContext);
 
+    botScript->setSharedPointer(botScript);
+
     botScript->setEngine(engine);
+
+    QObject::connect(botScript.data(), &BotScript::timedBindingReady, _eventHandler, &EventHandler::registerTimedBinding);
 }
 
 void

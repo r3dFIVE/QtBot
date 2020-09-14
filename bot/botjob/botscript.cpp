@@ -1,32 +1,28 @@
-#include "botjob/botscript.h"
+#include "botscript.h"
 
 #include <QSqlError>
 #include <QThread>
 
 #include "util/serializationutils.h"
 #include "util/enumutils.h"
+#include "timedbinding.h"
 
 BotScript::BotScript(const BotScript &other) {
-    _commands = other._commands;
+    _guildId = other._guildId;
 
     _database = other._database;
 
-    _discordAPI = other._discordAPI;
+    _logger = other._logger;
 
-    _query = other._query;
-}
+    _databaseContext = other._databaseContext;
 
-BotScript
-&BotScript::operator=(const BotScript &other) {
     _commands = other._commands;
 
-    _database = other._database;
-
     _discordAPI = other._discordAPI;
 
-    _query = other._query;
+    _scriptName = other._scriptName;
 
-    return *this;
+    _query = other._query;
 }
 
 DatabaseContext
@@ -67,6 +63,17 @@ BotScript::getEventBindingsJson() const {
     return _eventBindingsJson;
 }
 
+//TODO - revisit this, feels wrong
+QSharedPointer<BotScript>
+BotScript::getSharedPointer() {
+    return _this;
+}
+
+void
+BotScript::setSharedPointer(QSharedPointer<BotScript> self) {
+    _this = self;
+}
+
 bool
 BotScript::invokable() {
     bool canLock = _runLock.tryLock();
@@ -103,6 +110,29 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, returnValue),
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
+}
+
+void
+BotScript::queueTimedEvent(const QVariant &timedBindingVariant) {
+    QJsonObject binding = QJsonObject::fromVariantMap(timedBindingVariant.toMap());
+
+    QSharedPointer<TimedBinding> timedBinding = QSharedPointer<TimedBinding>(new TimedBinding);
+
+    timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), _this));
+
+    timedBinding->setScriptName(_scriptName);
+
+    timedBinding->setRepeatAfter(binding[TimedBinding::REPEAT_AFTER].toInt());
+
+    timedBinding->setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+
+    timedBinding->setEventContext(binding[TimedBinding::EVENT_CONTEXT].toObject());
+
+    timedBinding->setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    if (timedBinding->isValid(*this->metaObject())) {
+       emit timedBindingReady(_guildId, timedBinding);
+    }
 }
 
 void
@@ -513,11 +543,9 @@ BotScript::setConnectionName(const QString &scriptName, const QString &guildId) 
 
 QVariant
 BotScript::cCreateMessage(const QVariant &contextVariant) {
-    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext);
+    EventContext context;
 
-    SerializationUtils::fromVariant(*context.data(), contextVariant);
+    SerializationUtils::fromVariant(context, contextVariant);
 
     return buildResponseVariant(_discordAPI->channelCreateMessage(context));
 }
-
-

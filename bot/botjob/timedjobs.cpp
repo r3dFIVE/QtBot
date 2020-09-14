@@ -12,31 +12,29 @@ TimedJobs::getReadyJobs() {
 
     for (QString guildId : _timedBindings.keys()) {
         for (int i = 0; i < _timedBindings[guildId].length(); ++i) {
-            TimedBinding binding = _timedBindings[guildId].at(i);
+            TimedBinding timedBinding = _timedBindings[guildId][i];
 
-            qint64 currentEpochTime = QDateTime::currentSecsSinceEpoch();
-
-            if (currentEpochTime == binding.getStartedAt()) {
+            if (QDateTime::currentSecsSinceEpoch() == timedBinding.getStartedAt()) {
                 continue;
 
-            } else if ((currentEpochTime - binding.getStartedAt()) - binding.getRepeatAfter() >= 0) {
-                EventContext context = binding.getEventContext();
+            } else if (timedBinding.isRunning() && timedBinding.getReimaining() <= 0) {
+                EventContext context = timedBinding.getEventContext();
 
                 context.setGuildId(guildId);
 
                 Job *timedJob = new Job;
 
-                timedJob->setContext(binding.getEventContext());
+                timedJob->setContext(timedBinding.getEventContext());
 
-                timedJob->setFunctionMapping(binding.getFunctionMapping());
+                timedJob->setFunctionMapping(timedBinding.getFunctionMapping());
 
                 readyJobs << timedJob;
 
-                if (binding.isSingleShot()) {
+                if (timedBinding.isSingleShot()) {
                     _timedBindings[guildId].removeAt(i);
 
                 } else {
-                    binding.setStartedAt(currentEpochTime);
+                    _timedBindings[guildId][i].start();
                 }
             }
         }
@@ -79,4 +77,53 @@ TimedJobs::registerTimedBinding(const QString &guildId, TimedBinding &timedBindi
 void
 TimedJobs::clear() {
     _timedBindings.clear();
+}
+
+bool
+TimedJobs::validateJobIndex(const QString &guildId, const int index) {
+    if (index >= 0 && index <= _timedBindings[guildId].size()) {
+        return true;
+    }
+
+    _logger->debug(QString("Index (%1) is out of bounds for timed bindings for GuildId: %2")
+                   .arg(index)
+                   .arg(guildId));
+
+    return false;
+}
+
+void
+TimedJobs::removeJob(const QString &guildId, const int index) {
+    if (!validateJobIndex(guildId, index)) {
+        return;
+    }
+
+    _timedBindings[guildId].removeAt(index);
+}
+
+void
+TimedJobs::resumeJob(const QString &guildId, const int index) {
+    if (!validateJobIndex(guildId, index)) {
+        return;
+    }
+
+    _timedBindings[guildId][index].resume();
+}
+
+void
+TimedJobs::startJob(const QString &guildId, const int index) {
+    if (!validateJobIndex(guildId, index)) {
+        return;
+    }
+
+    _timedBindings[guildId][index].start();
+}
+
+void
+TimedJobs::stopJob(const QString &guildId, const int index) {
+    if (!validateJobIndex(guildId, index)) {
+        return;
+    }
+
+    _timedBindings[guildId][index].stop();
 }
