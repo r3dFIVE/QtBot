@@ -12,6 +12,8 @@ HEADERS += \
     $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
     $$PWD/botjob/scriptbuilder.h \
+    $$PWD/botjob/timedbinding.h \
+    $$PWD/botjob/timedjobs.h \
     $$PWD/entitymanager.h \
     $$PWD/botjob/httpclient.h \
     $$PWD/payloads/activityemoji.h \
@@ -91,6 +93,8 @@ SOURCES += \
     $$PWD/botjob/job.cpp \
     $$PWD/botjob/jobqueue.cpp \
     $$PWD/botjob/scriptbuilder.cpp \
+    $$PWD/botjob/timedbinding.cpp \
+    $$PWD/botjob/timedjobs.cpp \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \

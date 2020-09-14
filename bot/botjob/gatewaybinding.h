@@ -4,14 +4,15 @@
 #include "ibinding.h"
 #include "util/globals.h"
 
+
 class GatewayBinding : public IBinding
 {
-
     QString _eventName;
 
 public:
 
     static const QString GATEWAY_EVENT;
+    static const QString SINGLETON;
 
     GatewayBinding() {}
     GatewayBinding(const QString &eventType);
@@ -19,10 +20,9 @@ public:
 
     GatewayBinding &operator=(const GatewayBinding &other);
 
-    QString getEventName() const;
-    void setEventName(const QString &eventType);
-
     bool isValid(const QMetaObject &metaObject) const override;
+    QString getEventName() const;
+    void setEventName(const QString &eventType);    
 };
 
 #endif // GATEWAYBINDING_H

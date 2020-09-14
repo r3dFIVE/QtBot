@@ -2,7 +2,6 @@
 
 #include <QDir>
 #include <QFile>
-#include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QMutableListIterator>
 #include <QSharedPointer>
@@ -16,6 +15,7 @@
 #include "payloads/message.h"
 #include "util/enumutils.h"
 #include "util/serializationutils.h"
+#include "timedbinding.h"
 
 
 const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
@@ -23,13 +23,33 @@ const QString ScriptBuilder::BOT_API_MAJOR_VERSION = "0";
 const QString ScriptBuilder::BOT_API_MINOR_VERSION = "1";
 const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
 
-QSharedPointer<GuildEntity>
-ScriptBuilder::buildCommands(QSharedPointer<GuildEntity> guildEntity) {
+
+ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
+    : _defaultDatabaseContext(settings) {
+
+    _eventHandler = eventHandler;
+
+    _logger = LogFactory::getLogger();
+
+    _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
+
+    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
+
+    qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                               BOT_API_MAJOR_VERSION.toInt(),
+                               BOT_API_MINOR_VERSION.toInt(),
+                               BOT_TYPE_IDENTIFIER.toUtf8());
+}
+
+void
+ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
     _commandBindings.clear();
 
     _gatewayBindings.clear();
 
     _scriptNameByCommand.clear();
+
+    _timedBindings.clear();
 
     _functionNameByEventNameByScriptName.clear();
 
@@ -43,12 +63,14 @@ ScriptBuilder::buildCommands(QSharedPointer<GuildEntity> guildEntity) {
 
     guildEntity->setGatewayBindings(_gatewayBindings);
 
-    return guildEntity;
+    guildEntity->setTimedBindings(_timedBindings);
+
+    emit guildReady(guildEntity);
 }
 
 void
 ScriptBuilder::loadCoreCommands() {
-    QList<CommandBinding> coreCommands = CoreCommands::buildCoreCommandBindings(*_bot, _guildId);
+    QList<CommandBinding> coreCommands = CoreCommands::buildCoreCommandBindings(*_eventHandler, _guildId);
 
     for (auto coreCommand : coreCommands) {
         _coreCommandNames << coreCommand.getCommandName();
@@ -78,9 +100,11 @@ ScriptBuilder::builldBotScripts(const QString &scriptDir) {
 
 void
 ScriptBuilder::buildBotScript() {
-    _engine.clearComponentCache();
+    QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
 
-    QQmlComponent comp(&_engine, _fileName);
+    engine->installExtensions(QQmlEngine::ConsoleExtension);
+
+    QQmlComponent comp(engine.data(), _fileName);
 
     if (comp.errors().size() > 0) {
         _logger->debug(comp.errorString());
@@ -114,6 +138,12 @@ ScriptBuilder::buildBotScript() {
     botScript->setGuildId(_guildId);
 
     botScript->setDatabaseContext(_defaultDatabaseContext);
+
+    botScript->setSharedPointer(botScript);
+
+    botScript->setEngine(engine);
+
+    QObject::connect(botScript.data(), &BotScript::timedBindingReady, _eventHandler, &EventHandler::registerTimedBinding);
 }
 
 void
@@ -240,35 +270,50 @@ ScriptBuilder::registerGatewayBinding(QSharedPointer<BotScript> botScript, const
         return;
     }
 
-    GatewayBinding gatewayBinding;
+    if (binding[GatewayBinding::SINGLETON].toBool() && _guildId != DEFAULT_GUILD_ID) {
+        return; // Singleton only run on Default Guild ID 0
+    }
 
-    gatewayBinding.setEventName(gatewayEventName);
+    GatewayBinding gatewayBinding;
 
     gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript));
 
-    gatewayBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+    gatewayBinding.setEventName(gatewayEventName);
+
+    gatewayBinding.setDescription(binding[IBinding::DESCRIPTION].toString());  
 
     if (gatewayBinding.isValid(*botScript->metaObject())) {
-        if (!_functionNameByEventNameByScriptName.contains(botScript->getScriptName())) {
-            QMap<QString, QString> functionNameByEventName;
+        _functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] = functionName;
 
-            functionNameByEventName[gatewayEventName] = functionName;
-
-            _functionNameByEventNameByScriptName[botScript->getScriptName()] = functionNameByEventName;
-
-            _gatewayBindings << gatewayBinding;
-
-        } else {
-            _functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] = functionName;
-
-            _gatewayBindings << gatewayBinding;
-        }
+        _gatewayBindings << gatewayBinding;
     }
 }
 
 void
 ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding) {
+    QString functionName = binding[IBinding::FUNCTION].toString();
 
+    if (binding[TimedBinding::SINGLETON].toBool() && _guildId != DEFAULT_GUILD_ID) {
+        return; // Singleton only run on Default Guild ID 0
+    }
+
+    TimedBinding timedBinding;
+
+    timedBinding.setFunctionMapping(qMakePair(functionName, botScript));
+
+    timedBinding.setScriptName(botScript->getScriptName());
+
+    timedBinding.setRepeatAfter(binding[TimedBinding::REPEAT_AFTER].toInt());
+
+    timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+
+    timedBinding.setEventContext(binding[TimedBinding::EVENT_CONTEXT].toObject());
+
+    timedBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    if (timedBinding.isValid(*botScript->metaObject())) {
+        _timedBindings << timedBinding;
+    }
 }
 
 bool

@@ -3,9 +3,9 @@
 #include "createmessage.h"
 
 QSharedPointer<EventContext>
-DiscordAPI::channelCreateMessage(QSharedPointer<EventContext> context)
+DiscordAPI::channelCreateMessage(const EventContext &context)
 {
-    CreateMessage createMessage(*context);
+    CreateMessage createMessage(context);
 
     return _httpClient.processRoute(createMessage);
 }

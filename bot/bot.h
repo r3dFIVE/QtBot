@@ -22,22 +22,13 @@ class Bot : public QObject
     QThread _entityManagerThread;
 
     Logger* _logger;
-    ScriptBuilder *_factory;
+    ScriptBuilder *_scriptBuilder;
 
 public:
-
     Bot();
     ~Bot();
     Bot(const Bot &other) { Q_UNUSED(other) }
     void run(QSharedPointer<Settings> settings);
-
-public slots:
-    void loadCommands(QSharedPointer<GuildEntity> guild);
-    void reloadAllCommands();
-
-signals:
-    void guildReady(QSharedPointer<GuildEntity> guild);
-    void reloadAllAvailableGuilds();
 };
 
 Q_DECLARE_METATYPE(Bot)

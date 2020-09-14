@@ -23,7 +23,7 @@ public:
      *      https://discord.com/developers/docs/resources/channel
      */
 
-    QSharedPointer<EventContext> channelCreateMessage(QSharedPointer<EventContext> context);
+    QSharedPointer<EventContext> channelCreateMessage(const EventContext &context);
 };
 
 #endif // DISCORDAPI_H

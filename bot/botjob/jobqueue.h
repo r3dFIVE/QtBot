@@ -22,6 +22,7 @@ public:
 
     bool hasJobs() const;
     Job* get();
+    void clear();
     void pop();
     void queue(Job *job);
 };

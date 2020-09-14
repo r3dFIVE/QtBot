@@ -3,26 +3,27 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QQmlApplicationEngine>
+#include <eventhandler.h>
 
 #include "bot.h"
 #include "commandbinding.h"
 #include "gatewaybinding.h"
+#include "timedbinding.h"
 #include "logging/logfactory.h"
 #include "botjob/botscript.h"
 #include "entity/guildentity.h"
 
 class Bot;
+class EventHandler;
 
 class ScriptBuilder : public QObject
 {
     Q_OBJECT
 
-    Bot *_bot;
+    EventHandler *_eventHandler;
     Logger *_logger;
 
     DatabaseContext _defaultDatabaseContext;
-    QQmlApplicationEngine _engine;
     QString _botToken;
     QString _fileName;
     QString _guildId;
@@ -30,7 +31,7 @@ class ScriptBuilder : public QObject
     QStringList _coreCommandNames;
     QList<CommandBinding> _commandBindings;
     QList<GatewayBinding> _gatewayBindings;
-//    QList<TimedBinding> _timedBindings;
+    QList<TimedBinding> _timedBindings;
     QMap<QString, QString> _scriptNameByCommand;
     QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 
@@ -53,27 +54,15 @@ public:
     const static QString BOT_API_MINOR_VERSION;
     const static QString BOT_API_MAJOR_VERSION;
 
-    ScriptBuilder(Bot *bot, QSharedPointer<Settings> settings)
-        : _defaultDatabaseContext(settings) {
+    ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings);
 
-        _bot = bot;
-
-        _logger = LogFactory::getLogger();
-
-        _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
-
-        _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
-
-        _engine.installExtensions(QJSEngine::ConsoleExtension);
-
-        qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
-                                   BOT_API_MAJOR_VERSION.toInt(),
-                                   BOT_API_MINOR_VERSION.toInt(),
-                                   BOT_TYPE_IDENTIFIER.toUtf8());
-    }
-
-    QSharedPointer<GuildEntity> buildCommands(QSharedPointer<GuildEntity> guild);
     void init(const QString &botToken, const QString &scriptDir);
+
+public slots:
+    void buildScripts(QSharedPointer<GuildEntity> guild);
+
+signals:
+    void guildReady(QSharedPointer<GuildEntity> guild);
 };
 
 #endif // SCRIPTBUILDER_H

@@ -93,3 +93,8 @@ bool
 JobQueue::hasJobs() const {
     return !_jobQueue.isEmpty();
 }
+
+void
+JobQueue::clear() {
+    _jobQueue.clear();
+}

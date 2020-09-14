@@ -10,30 +10,20 @@
 
 
 Bot::Bot() {
+    qRegisterMetaType<QSharedPointer<TimedBinding> >();
+    qRegisterMetaType<LogContext::LogLevel>();
     qRegisterMetaType<QSharedPointer<GatewayPayload> >();
+    qRegisterMetaType<QSharedPointer<GuildEntity> >();
     qRegisterMetaType<QSharedPointer<JsonSerializable> >();
     qRegisterMetaType<QSharedPointer<Route> >();
-    qRegisterMetaType<QSharedPointer<GuildEntity> >();
-    qRegisterMetaType<LogContext::LogLevel>();
 }
 
 Bot::~Bot() {
-    delete _factory;
-}
-
-void
-Bot::loadCommands(QSharedPointer<GuildEntity> guild) {
-    emit guildReady(_factory->buildCommands(guild));
-}
-
-void
-Bot::reloadAllCommands() {
-    emit reloadAllAvailableGuilds();
+    delete _scriptBuilder;
 }
 
 void
 Bot::run(QSharedPointer<Settings> settings) {
-    _factory = new ScriptBuilder(this, settings);
 
     Gateway *gateway = new Gateway(settings);
 
@@ -43,7 +33,9 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(&_gatewayThread, &QThread::started, gateway, &Gateway::init);
 
-    EventHandler *eventHandler = new EventHandler;
+    EventHandler *eventHandler = new EventHandler(settings);
+
+    _scriptBuilder = new ScriptBuilder(eventHandler, settings);
 
     eventHandler->moveToThread(&_eventHandlerThread);
 
@@ -53,17 +45,17 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(&_eventHandlerThread, &QThread::finished, eventHandler, &QObject::deleteLater);
 
-    connect(this, &Bot::guildReady, eventHandler, &EventHandler::guildReady);
+    connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
+
+    connect(_scriptBuilder, &ScriptBuilder::guildReady, eventHandler, &EventHandler::guildReady);
 
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 
     connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuild);
 
-    connect(eventHandler, &EventHandler::reloadCommands, this, &Bot::loadCommands);
+    connect(eventHandler, &EventHandler::reloadScripts, _scriptBuilder, &ScriptBuilder::buildScripts);
 
-    connect(entityManager, &EntityManager::guildInitialized, this, &Bot::loadCommands);
-
-    connect(this, &Bot::reloadAllAvailableGuilds, eventHandler, &EventHandler::reloadAllAvailableGuilds);
+    connect(entityManager, &EntityManager::guildInitialized, _scriptBuilder, &ScriptBuilder::buildScripts);
 
     _eventHandlerThread.start();
 

@@ -8,6 +8,24 @@
 #include "botjob/botscript.h"
 #include "botjob/job.h"
 
+EventHandler::EventHandler(QSharedPointer<Settings> settings) {
+    QString botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
+
+    _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI(botToken));
+}
+
+void
+EventHandler::init() {
+    _logger = LogFactory::getLogger();
+
+    _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
+
+    connect(_jobQueueTimer.data(), &QTimer::timeout, this, &EventHandler::processJobQueue);
+
+    _timedJobTimer = QSharedPointer<QTimer>(new QTimer);
+
+    connect(_timedJobTimer.data(), &QTimer::timeout, this, &EventHandler::processTimedJobs);
+}
 
 void
 EventHandler::processJobQueue() {
@@ -24,8 +42,25 @@ EventHandler::processJobQueue() {
         }
     }
 
-    if (_jobQueue.hasJobs()) {
-        QTimer::singleShot(1000, this, &EventHandler::processJobQueue);
+    if (_jobQueue.hasJobs() && !_jobQueueTimer->isActive()) {
+        _jobQueueTimer->start(1000);
+    } else {
+        _jobQueueTimer->stop();
+    }
+}
+
+void
+EventHandler::processTimedJobs() {
+    QList<Job *> readyTimedJobs = _timedJobs.getReadyJobs();
+
+    if (!readyTimedJobs.isEmpty()) {
+        _jobQueue << readyTimedJobs;
+
+        processJobQueue();
+    }
+
+    if (!_timedJobs.hasJobs()) {
+        _timedJobTimer->stop();
     }
 }
 
@@ -47,9 +82,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
     QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
-    QList<Job *> botJobs = guild->getBotJobs(context);
-
-    _jobQueue << botJobs;
+    _jobQueue << guild->getBotJobs(context);;
 
     processJobQueue();
 }
@@ -57,11 +90,134 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 void
 EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
     _availableGuilds[guild->id()] = guild;
+
+    _timedJobs.registerTimedBindings(guild);
+
+    if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
+        _timedJobTimer->start(1000);
+    }
+}
+
+void
+EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding) {
+    _timedJobs.registerTimedBinding(guildId, *timedBinding.data());
+
+    if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
+        _timedJobTimer->start(1000);
+    }
 }
 
 void
 EventHandler::reloadAllAvailableGuilds() {
+    _timedJobTimer->stop();
+
+    _jobQueueTimer->stop();
+
+    _timedJobs.clear();
+
+    _jobQueue.clear();
+
     for (auto guild : _availableGuilds.values()) {
-        emit reloadCommands(guild);
+        emit reloadScripts(guild);
     }
 }
+
+void
+EventHandler::displayTimedJobs(EventContext context) {
+    QString guildId = context.getGuildId().toString();
+
+    QList<TimedBinding> timedBindings = _timedJobs.getAllJobs(guildId);
+
+    if (timedBindings.size() == 0) {
+        return;
+    }
+
+    QString content = QString("Found `%1` timed jobs for GuildId: `%2`\n")
+            .arg(timedBindings.size())
+            .arg(guildId);
+
+    for (int i = 0; i < timedBindings.size(); ++i) {
+        TimedBinding timedBinding = timedBindings[i];
+
+        QString jobInfo = QString("Timed Job#: %1 => `ScriptName: %2 | FunctionName: %3 | SingleShot: %4 | Running: %5 | Remaining: %6s")
+                .arg(i + 1)
+                .arg(timedBinding.getScriptName())
+                .arg(timedBinding.getFunctionMapping().first)
+                .arg(timedBinding.isSingleShot() == true ? "true" : "false")
+                .arg(timedBinding.isRunning() == true ? "true" : "false")
+                .arg(timedBinding.getReimaining());
+
+        content.append(jobInfo);
+
+        QString description = timedBinding.getDescription();
+
+        if (!description.isEmpty()) {
+            jobInfo = QString(" | Description: %1")
+                    .arg(description);
+
+            content.append(jobInfo);
+        }
+
+        content.append("\n`");
+    }
+
+    Message message;
+
+    message.setContent(content);
+
+    context.setTargetPayload(message.toQJsonObject());
+
+    _discordAPI->channelCreateMessage(context);
+}
+
+int
+EventHandler::getJobNumber(const EventContext &context) {
+    return context.getContent().toString().split(" ")[1].toInt();
+}
+
+void
+EventHandler::removeTimedJob(const EventContext &context) {
+    int jobNumber = getJobNumber(context);
+
+    if (jobNumber > 0) {
+       _timedJobs.removeJob(context.getGuildId().toString(), jobNumber - 1);
+    } else {
+        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+    }
+}
+
+void
+EventHandler::resumeTimedJob(const EventContext &context) {
+    int jobNumber = getJobNumber(context);
+
+    if (jobNumber > 0) {
+       _timedJobs.resumeJob(context.getGuildId().toString(), jobNumber - 1);
+    } else {
+        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+    }
+}
+
+void
+EventHandler::startTimedJob(const EventContext &context) {
+    int jobNumber = getJobNumber(context);
+
+    if (jobNumber > 0) {
+       _timedJobs.startJob(context.getGuildId().toString(), jobNumber - 1);
+    } else {
+        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+    }
+}
+
+void
+EventHandler::stopTimedJob(const EventContext &context) {
+    int jobNumber = getJobNumber(context);
+
+    if (jobNumber > 0) {
+       _timedJobs.stopJob(context.getGuildId().toString(), jobNumber - 1);
+    } else {
+        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+    };
+}
+
+
+
