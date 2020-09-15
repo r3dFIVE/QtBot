@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QMetaEnum>
 #include <QDir>
+#include <gateway.h>
 
 #include "logging/logcontext.h"
 #include "settings.h"
@@ -46,6 +47,7 @@ Settings::isComment(QString line) {
 void
 Settings::validateSettings() {
     validateConnectionSettings();
+    validateGatewaySettings();
     validateScriptSettings();
     validateDatabaseSettings();
     validateLoggingSettings();
@@ -63,8 +65,28 @@ Settings::validateConnectionSettings() {
     }
 
     int max_retries = _settings[SettingsParam::Connection::MAX_RETRIES].toInt();
+
     if (max_retries <= 0) {
         _settings[SettingsParam::Connection::MAX_RETRIES] = 10;
+    }
+}
+
+void
+Settings::validateGatewaySettings() {
+    if (_settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString().isEmpty()) {
+        _settings[SettingsParam::Gateway::GATEWAY_INTENTS] = "GUILD_MESSAGES";
+    }
+
+    QMetaEnum metaEnum = QMetaEnum::fromType<Gateway::Intents>();
+
+    QString intents = _settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString();
+
+    for (QString intentToken : intents.split(",")) {
+        int typeValue = metaEnum.keyToValue(intentToken.toUpper().toStdString().c_str());
+
+        if (typeValue < 0) {
+            invalidEnumValue(SettingsParam::Gateway::GATEWAY_INTENTS, intentToken, metaEnum);
+        }
     }
 }
 

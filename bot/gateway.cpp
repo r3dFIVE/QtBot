@@ -21,17 +21,11 @@ Gateway::Gateway(QSharedPointer<Settings> settings)
 
     _maxRetries = settings->value(SettingsParam::Connection::MAX_RETRIES).toInt();
 
-    _lastSequenceNumber = -1;
-
-    _retryCount = 0;
-
-    _heartbeatAck = true;
-
-    _attemptResume = false;
-
     _logger = LogFactory::getLogger();
 
-    _gateway = buildConnectionUrl(settings);
+    buildConnectionUrl(settings);
+
+    calculateGatewayIntents(settings);
 }
 
 Gateway::~Gateway() {
@@ -58,7 +52,7 @@ Gateway::init() {
 
     connect(_heartbeatTimer.data(), &QTimer::timeout, this, &Gateway::sendHeartbeat);
 
-    _socket->open(_gateway);
+    _socket->open(_gatewayUrl);
 
     emit guildOnline(DEFAULT_GUILD_ID);
 }
@@ -123,7 +117,7 @@ Gateway::reconnect(int mSleep) {
 
     _logger->debug(QString("Reconnect attempt %1/%2.").arg(_retryCount).arg(_maxRetries));
 
-    _socket->open(_gateway);
+    _socket->open(_gatewayUrl);
 }
 
 void
@@ -175,6 +169,24 @@ Gateway::processPayload(QSharedPointer<GatewayPayload> payload) {
         processReconnect();
 
         break;
+    }
+}
+
+void
+Gateway::calculateGatewayIntents(QSharedPointer<Settings> settings) {
+    QString gatewayIntents = settings->value(SettingsParam::Gateway::GATEWAY_INTENTS).toString();
+
+    QStringList intentTokens = gatewayIntents.split(",");
+
+    if (intentTokens.contains(EnumUtils::valueToKey(ALL_INTENTS))) {
+        _gatewayIntents = (0 | (1 << ALL_INTENTS)) - 1;
+
+    } else {
+        for (QString intent : intentTokens) {
+            int value = EnumUtils::keyToValue<Gateway::Intents>(intent);
+
+            _gatewayIntents |= (1 << value);
+        }
     }
 }
 
@@ -289,16 +301,11 @@ Gateway::processHello(QSharedPointer<GatewayPayload> payload) {
 
 void
 Gateway::sendIdentify() {
-    //TODO add and pull intents from settings file
-    int intents = 0;
-
-    intents |= (1 << GUILDS) | (1 << GUILD_MEMBERS) | (1 << GUILD_MESSAGES) | (1 << DIRECT_MESSAGES) | (1 << GUILD_MESSAGE_TYPING);
-
     Identify identify;
 
     identify.setToken(_botToken);
 
-    identify.setIntents(intents);
+    identify.setIntents(_gatewayIntents);
 
     IdentifyProperties properties;
 
@@ -354,7 +361,7 @@ Gateway::sendTextPayload(const QString &payload) {
     _logger->trace(QString("Payload sent: %1").arg(payload));
 }
 
-QUrl
+void
 Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
     QString baseUrl = settings->value(SettingsParam::Connection::CONNECTION_URL).toString();
 
@@ -366,7 +373,7 @@ Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
         zlibParameter = "&compress=zlib-stream";
     }
 
-    return QUrl(QString("%1/?v=6&encoding=json%2")
+    _gatewayUrl = QUrl(QString("%1/?v=6&encoding=json%2")
                 .arg(baseUrl)
                 .arg(zlibParameter));
 }
