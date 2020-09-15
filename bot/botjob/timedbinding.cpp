@@ -136,10 +136,10 @@ TimedBinding::getReimaining() {
         if (_stoppedAt) {
             return _remainder;
         } else {
-            return ((QDateTime::currentSecsSinceEpoch() - _startedAt) - _remainder) * -1;
+            return (_remainder - (QDateTime::currentSecsSinceEpoch() - _startedAt));
         }
     } else {
-        return ((QDateTime::currentSecsSinceEpoch() - _startedAt) - _repeatAfter) * -1;
+        return (_repeatAfter - (QDateTime::currentSecsSinceEpoch() - _startedAt));
     }
 }
 
