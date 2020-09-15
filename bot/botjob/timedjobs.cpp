@@ -81,6 +81,10 @@ TimedJobs::clear() {
 
 bool
 TimedJobs::validateJobIndex(const QString &guildId, const int index) {
+    if (_timedBindings[guildId].isEmpty()) {
+        return false;
+    }
+
     if (index >= 0 && index <= _timedBindings[guildId].size()) {
         return true;
     }
