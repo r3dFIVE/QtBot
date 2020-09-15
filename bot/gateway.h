@@ -22,18 +22,20 @@ class Gateway : public QObject
 
     Heartbeat _heartbeat;
     Logger* _logger;
-    bool _heartbeatAck;
-    bool _attemptResume;
-    int _lastSequenceNumber;
+    bool _heartbeatAck = true;
+    bool _attemptResume = false;
+    int _gatewayIntents = 0;
+    int _lastSequenceNumber = -1;
     int _maxRetries;
     int _retryCount;
 
-    QUrl _gateway;
+    QUrl _gatewayUrl;
     QString _botToken;
     QString _sessionId;
 
+    void calculateGatewayIntents(QSharedPointer<Settings> settings);
     void closeConnection(QWebSocketProtocol::CloseCode closeCode);
-    QUrl buildConnectionUrl(QSharedPointer<Settings> settings);
+    void buildConnectionUrl(QSharedPointer<Settings> settings);
     void processAck();
     void processDispatch(QSharedPointer<GatewayPayload> payload);
     void processGuildCreate(QSharedPointer<GatewayPayload> payload);
@@ -105,7 +107,8 @@ public:
         GUILD_MESSAGE_TYPING = 11,
         DIRECT_MESSAGES = 12,
         DIRECT_MESSAGE_REACTIONS = 13,
-        DIRECT_MESSAGE_TYPING = 14
+        DIRECT_MESSAGE_TYPING = 14,
+        ALL_INTENTS = 15
     };
     Q_ENUM(Intents)
 

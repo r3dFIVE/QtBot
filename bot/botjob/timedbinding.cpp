@@ -105,7 +105,7 @@ void
 TimedBinding::stop() {
     _stoppedAt = QDateTime::currentSecsSinceEpoch();
 
-    _remainder = ((_stoppedAt - _startedAt) - _repeatAfter) * -1;
+    _remainder = _repeatAfter - (_stoppedAt - _startedAt);
 
     _running = false;
 }
@@ -132,9 +132,9 @@ TimedBinding::getEventContext() const {
 
 qint64
 TimedBinding::getReimaining() {
-    if (_remainder > 0) {
-        if (_stoppedAt > 0) {
-            return ((_stoppedAt - _startedAt) - _remainder);
+    if (_remainder) {
+        if (_stoppedAt) {
+            return _remainder;
         } else {
             return ((QDateTime::currentSecsSinceEpoch() - _startedAt) - _remainder) * -1;
         }

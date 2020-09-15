@@ -23,6 +23,10 @@ static const QString MAX_RETRIES = "max_retries";
 static const QString ZLIB_ENABLED = "zlib_enabled";
 }
 
+namespace Gateway {
+static const QString GATEWAY_INTENTS = "gateway_intents";
+}
+
 namespace Script {
 static const QString SCRIPT_DIRECTORY = "script_directory";
 }
