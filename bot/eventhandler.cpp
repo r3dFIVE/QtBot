@@ -172,7 +172,13 @@ EventHandler::displayTimedJobs(EventContext context) {
 
 int
 EventHandler::getJobNumber(const EventContext &context) {
-    return context.getContent().toString().split(" ")[1].toInt();
+    QStringList commandTokens = context.getContent().toString().split(" ");
+
+    if (commandTokens.size() <= 1) {
+        return -1;
+    }
+
+    return commandTokens[1].toInt();
 }
 
 void
