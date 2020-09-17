@@ -63,16 +63,6 @@ BotScript::getEventBindingsJson() const {
     return _eventBindingsJson;
 }
 
-//TODO - revisit this, feels wrong
-QSharedPointer<BotScript>
-BotScript::getSharedPointer() {
-    return _this;
-}
-
-void
-BotScript::setSharedPointer(QSharedPointer<BotScript> self) {
-    _this = self;
-}
 
 bool
 BotScript::invokable() {
@@ -118,7 +108,7 @@ BotScript::queueTimedEvent(const QVariant &timedBindingVariant) {
 
     QSharedPointer<TimedBinding> timedBinding = QSharedPointer<TimedBinding>(new TimedBinding);
 
-    timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), _this));
+    timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), QSharedPointer<BotScript>(this)));
 
     timedBinding->setScriptName(_scriptName);
 

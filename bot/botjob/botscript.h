@@ -29,7 +29,6 @@ class BotScript : public IBotJob
     QMap<QString, QVariant> _commands;
     QMutex _runLock;
 
-    QSharedPointer<BotScript> _this;
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlDatabase _database;
@@ -81,7 +80,7 @@ public:
     Q_ENUM(ParamType)
 
     BotScript() { _logger = LogFactory::getLogger(); }
-    ~BotScript() {}
+    ~BotScript() { _engine->clearComponentCache(); }
     BotScript(const BotScript &other);
 
     //BotScript &operator=(const BotScript &other);
@@ -89,7 +88,6 @@ public:
     DatabaseContext getDatabaseContext() const;
     QMap<QString, QVariant> getScriptCommands() const;
     QJsonArray getEventBindingsJson() const;
-    QSharedPointer<BotScript> getSharedPointer();
     QString getScriptName() const;
     QString findFunctionMapping(const QString &command) const;
     void initAPI(const QString &botToken);
@@ -98,7 +96,6 @@ public:
     void setDatabaseContext(const DatabaseContext &databaseContext);
     void setEngine(QSharedPointer<QQmlEngine> engine);
     void setScriptName(const QString &scriptName);
-    void setSharedPointer(QSharedPointer<BotScript> self);
 
     bool invokable() override;
     void execute(const QByteArray &command, const EventContext &message) override;

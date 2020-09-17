@@ -139,8 +139,6 @@ ScriptBuilder::buildBotScript() {
 
     botScript->setDatabaseContext(_defaultDatabaseContext);
 
-    botScript->setSharedPointer(botScript);
-
     botScript->setEngine(engine);
 
     QObject::connect(botScript.data(), &BotScript::timedBindingReady, _eventHandler, &EventHandler::registerTimedBinding);
