@@ -12,17 +12,17 @@ class CoreCommands {
 
 public:
 
-    static QList<CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
-        QList<CommandBinding> commands;
+    static QMap<QSharedPointer<CoreCommand>, CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
+        QMap<QSharedPointer<CoreCommand>, CommandBinding> commands;
 
         const auto addCommand = [&](auto commandName, auto cmd) {
             QSharedPointer<CoreCommand> coreCommand = QSharedPointer<CoreCommand>(new CoreCommand(cmd));
 
             coreCommand->setGuildId(guildId);
 
-            IBotJob::FunctionMapping functionMapping = qMakePair(commandName, coreCommand);
+            IBotJob::FunctionMapping functionMapping = qMakePair(commandName, coreCommand.data());
 
-            commands << CommandBinding(commandName, functionMapping);
+            commands[coreCommand] = CommandBinding(commandName, functionMapping);
         };
 
         addCommand(".reload", [&](const EventContext &context) -> void {

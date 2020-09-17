@@ -135,6 +135,13 @@ GuildEntity::setId(const QString &id) {
 }
 
 void
+GuildEntity::setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts) {
+    _registeredScripts.clear();
+
+    _registeredScripts << registeredScripts;
+}
+
+void
 GuildEntity::setCommandBindings(const QList<CommandBinding> &commandBindings) {
     _commandBindings.clear();
 

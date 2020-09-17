@@ -16,6 +16,7 @@ class GuildEntity : public QObject
 {
     Q_OBJECT
 
+    QList<QSharedPointer<IBotJob> > _registeredScripts;
     QList<TimedBinding> _timedBindings;
     QMap<QString, QList<GatewayBinding> > _gatewayBindings;
     QMap<QString, CommandBinding> _commandBindings;
@@ -43,9 +44,11 @@ public:
     QList<Job *> getBotJobs(QSharedPointer<EventContext> context);
     QList<TimedBinding> getTimedBindings() const;
     QString id() const;
-    void setId(const QString &id);
+
     void setCommandBindings(const QList<CommandBinding> &commandBindings);
     void setGatewayBindings(const QList<GatewayBinding> &gatewayBindings);
+    void setId(const QString &id);
+    void setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts);
     void setTimedBindings(const QList<TimedBinding> &timedBindings);
 
 private:

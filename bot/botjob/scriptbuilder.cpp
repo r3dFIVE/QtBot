@@ -43,16 +43,6 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
 
 void
 ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
-    _commandBindings.clear();
-
-    _gatewayBindings.clear();
-
-    _scriptNameByCommand.clear();
-
-    _timedBindings.clear();
-
-    _functionNameByEventNameByScriptName.clear();
-
     _guildId = guildEntity->id();
 
     loadCoreCommands();
@@ -65,18 +55,38 @@ ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
 
     guildEntity->setTimedBindings(_timedBindings);
 
+    guildEntity->setRegisteredScripts(_registeredScripts);
+
     emit guildReady(guildEntity);
+
+    _commandBindings.clear();
+
+    _gatewayBindings.clear();
+
+    _registeredScripts.clear();
+
+    _scriptNameByCommand.clear();
+
+    _timedBindings.clear();
+
+    _functionNameByEventNameByScriptName.clear();
 }
 
 void
 ScriptBuilder::loadCoreCommands() {
-    QList<CommandBinding> coreCommands = CoreCommands::buildCoreCommandBindings(*_eventHandler, _guildId);
+    QMap<QSharedPointer<CoreCommand>, CommandBinding> coreCommandMappings = CoreCommands::buildCoreCommandBindings(*_eventHandler, _guildId);
 
-    for (auto coreCommand : coreCommands) {
-        _coreCommandNames << coreCommand.getCommandName();
+    QList<CoreCommand> coreCommands;
+
+    for (auto key : coreCommandMappings.keys()) {
+        CommandBinding binding = coreCommandMappings[key];
+
+        _coreCommandNames << binding.getCommandName();
+
+        _commandBindings << binding;
+
+        _registeredScripts << key;
     }
-
-    _commandBindings << coreCommands;
 }
 
 void
@@ -141,6 +151,8 @@ ScriptBuilder::buildBotScript() {
 
     botScript->setEngine(engine);
 
+    _registeredScripts << botScript;
+
     QObject::connect(botScript.data(), &BotScript::timedBindingReady, _eventHandler, &EventHandler::registerTimedBinding);
 }
 
@@ -165,7 +177,7 @@ ScriptBuilder::resgisterScriptCommands(QSharedPointer<BotScript> botScript) {
 
         QString functionName = botScript->findFunctionMapping(command);
 
-        IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript);
+        IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript.data());
 
         CommandBinding commandBinding(command, functionMapping);
 
@@ -243,7 +255,7 @@ ScriptBuilder::registerCommandBinding(QSharedPointer<BotScript> botScript, const
 
     QString functionName = binding[IBinding::FUNCTION].toString();
 
-    commandBinding.setFunctionMapping(qMakePair(functionName, botScript));
+    commandBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
 
     commandBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
 
@@ -274,7 +286,7 @@ ScriptBuilder::registerGatewayBinding(QSharedPointer<BotScript> botScript, const
 
     GatewayBinding gatewayBinding;
 
-    gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript));
+    gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
 
     gatewayBinding.setEventName(gatewayEventName);
 
@@ -297,7 +309,7 @@ ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const Q
 
     TimedBinding timedBinding;
 
-    timedBinding.setFunctionMapping(qMakePair(functionName, botScript));
+    timedBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
 
     timedBinding.setScriptName(botScript->getScriptName());
 
