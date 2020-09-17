@@ -14,7 +14,7 @@ protected:
     QString _guildId;
 
 public:
-    typedef QPair<QString, QSharedPointer<IBotJob> > FunctionMapping;
+    typedef QPair<QString, IBotJob *> FunctionMapping;
 
     virtual bool invokable() = 0;
     virtual void execute(const QByteArray &command, const EventContext &context) = 0;

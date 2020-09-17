@@ -29,6 +29,7 @@ class ScriptBuilder : public QObject
     QString _guildId;
     QString _scriptDir;
     QStringList _coreCommandNames;
+    QList<QSharedPointer<IBotJob> > _registeredScripts;
     QList<CommandBinding> _commandBindings;
     QList<GatewayBinding> _gatewayBindings;
     QList<TimedBinding> _timedBindings;

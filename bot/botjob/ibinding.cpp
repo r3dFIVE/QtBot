@@ -9,10 +9,10 @@ const QString IBinding::FUNCTION = "function";
 const QString IBinding::DESCRIPTION = "description";
 
 bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
-    if (_functionMapping.first.isEmpty() || _functionMapping.second.isNull()) {
+    if (_functionMapping.first.isEmpty() || !_functionMapping.second) {
         _logger->warning(QString("Invalid command mapping. First: %1, Second: %2... Discarding binding.")
                          .arg(_functionMapping.first.isEmpty() )
-                         .arg(_functionMapping.second.isNull() ? "nullptr" : _functionMapping.second->objectName()));
+                         .arg(!_functionMapping.second ? "nullptr" : _functionMapping.second->objectName()));
 
         return false;
     }

@@ -108,7 +108,7 @@ BotScript::queueTimedEvent(const QVariant &timedBindingVariant) {
 
     QSharedPointer<TimedBinding> timedBinding = QSharedPointer<TimedBinding>(new TimedBinding);
 
-    timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), QSharedPointer<BotScript>(this)));
+    timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), this));
 
     timedBinding->setScriptName(_scriptName);
 
