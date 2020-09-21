@@ -69,6 +69,9 @@ HEADERS += \
     $$PWD/payloads/voicestate.h \
     $$PWD/botjob/botscript.h \
     $$PWD/payloads/eventcontext.h \
+    $$PWD/qml/openmode.h \
+    $$PWD/qml/sqldatabase.h \
+    $$PWD/qml/sqlquery.h \
     $$PWD/routes/createmessage.h \
     $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
@@ -76,6 +79,8 @@ HEADERS += \
     $$PWD/botjob/corecommands.h \
     $$PWD/util/enumutils.h \
     $$PWD/botjob/ibotjob.h \
+    $$PWD/qml/file.h \
+    $$PWD/qml/qmlfactory.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
     $$PWD/util/globals.h \
@@ -146,9 +151,14 @@ SOURCES += \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/botjob/botscript.cpp \
     $$PWD/payloads/eventcontext.cpp \
+    $$PWD/qml/openmode.cpp \
+    $$PWD/qml/sqldatabase.cpp \
+    $$PWD/qml/sqlquery.cpp \
     $$PWD/routes/createmessage.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/botjob/corecommand.cpp \
+    $$PWD/qml/file.cpp \
+    $$PWD/qml/qmlfactory.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \
     $$PWD/entity/guildentity.cpp

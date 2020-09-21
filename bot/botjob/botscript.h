@@ -14,6 +14,7 @@
 #include "httpclient.h"
 #include "payloads/eventcontext.h"
 #include "routes/discordapi.h"
+#include "qml/file.h"
 #include "util/globals.h"
 
 class TimedBinding;
@@ -28,7 +29,6 @@ class BotScript : public IBotJob
     QJsonArray _eventBindingsJson;
     QMap<QString, QVariant> _commands;
     QMutex _runLock;
-
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlDatabase _database;
@@ -36,8 +36,7 @@ class BotScript : public IBotJob
     QString _scriptName;
 
     QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
-    void closeExistingConnection();
-    void setConnectionName();
+
     void setScriptCommands(const QMap<QString, QVariant> &commands);
     void setEventBindingsJson(const QJsonArray &eventBindings);
 
@@ -77,13 +76,13 @@ public:
         InOut = In | Out,
         Binary = 4
     };
-    Q_ENUM(ParamType)
+    Q_FLAG(ParamType)
 
-    BotScript() { _logger = LogFactory::getLogger(); }
-    ~BotScript() { _engine->clearComponentCache(); }
+
+    BotScript();
     BotScript(const BotScript &other);
-
-    //BotScript &operator=(const BotScript &other);
+    ~BotScript();
+    BotScript &operator=(const BotScript &other);
 
     DatabaseContext getDatabaseContext() const;
     QMap<QString, QVariant> getScriptCommands() const;
@@ -92,7 +91,6 @@ public:
     QString findFunctionMapping(const QString &command) const;
     void initAPI(const QString &botToken);
     void postResult(const Message &message);
-    void setConnectionName(const QString &scriptName, const QString &getGuildId);
     void setDatabaseContext(const DatabaseContext &databaseContext);
     void setEngine(QSharedPointer<QQmlEngine> engine);
     void setScriptName(const QString &scriptName);
@@ -114,79 +112,7 @@ public slots:
     void logFatal(QString event);
     void pause(int ms);
 
-    /*
-     *  QSqlDatabase related functions
-     */
-    bool dbOpen();
-    void dbClose();
-    bool dbIsOpen() const;
-    bool dbIsOpenError() const;
-    QStringList dbTables(TableType type = Tables) const;
-    QString dbLastDatabaseError() const;
-    bool dbIsDatabaseValid() const;
-    bool dbTransaction();
-    bool dbCommit();
-    bool dbRollback();
-    void dbSetDatabaseName(const QString &name);
-    void dbSetUserName(const QString &name);
-    void dbSetPassword(const QString &dbPassword);
-    void dbSetHostName(const QString &host);
-    void dbSetPort(int p);
-    void dbSetConnectOptions(const QString &options = QString());
-    QString dbDatabaseName() const;
-    QString dbUserName() const;
-    QString dbHostName() const;
-    QString dbDriverName() const;
-    int dbPort() const;
-    QString dbConnectOptions() const;
-    QString dbConnectionName() const;
-    void dbSetNumericalPrecisionPolicy(const NumericalPrecisionPolicy &precisionPolicy);
-    NumericalPrecisionPolicy dbNumericalPrecisionPolicy() const;
-    void dbSetType(const QString &type);
-    QStringList dbDrivers();
-    bool dbIsDriverAvailable(const QString &name);
 
-    /*
-     *  QSqlQuery related functions
-     */
-    bool qryIsValid() const;
-    bool qryIsActive() const;
-    bool qryIsNull(int field) const;
-    bool qryIsNull(const QString &name) const;
-    int qryAt() const;
-    QString qryLastQuery() const;
-    int qryNumRowsAffected() const;
-    QString qryLastError() const;
-    bool qryIsSelect() const;
-    int qrySize() const;
-    bool qryIsForwardOnly() const;
-    void qrySetForwardOnly(bool forward);
-    bool qryExec(const QString& query);
-    QVariant qryValue(int i) const;
-    QVariant qryValue(const QString& name) const;
-    void qrySetNumericalPrecisionPolicy(NumericalPrecisionPolicy precisionPolicy);
-    NumericalPrecisionPolicy qryNumericalPrecisionPolicy() const;
-    bool qrySeek(int i, bool relative = false);
-    bool qryNext();
-    bool qryPrevious();
-    bool qryFirst();
-    bool qryLast();
-    void qryClear();
-
-    // prepared query support
-    bool qryExec();
-    bool execBatch(BatchExecutionMode mode = ValuesAsRows);
-    bool qryPrepare(const QString& query);
-    void qryBindValue(const QString& placeholder, const QVariant& val, ParamType type = In);
-    void qryBindValue(int pos, const QVariant& val, ParamType type = In);
-    void qryAddBindValue(const QVariant& val, ParamType type = In);
-    QVariant qryBoundValue(const QString& placeholder) const;
-    QVariant qryBoundValue(int pos) const;
-    QMap<QString, QVariant> boundValues() const;
-    QString qryExecutedQuery() const;
-    QVariant qryLastInsertId() const;
-    void qryFinish();
-    bool qryNextResult();
 
 
     /*

@@ -18,9 +18,12 @@ public:
     QString password;
     QString databaseName;
     QString driverName;
+    QString scriptName;
+    QString guildId;
 
     DatabaseContext() {}
     DatabaseContext(QSharedPointer<Settings> settings);
+    DatabaseContext(const DatabaseContext &other);
     ~DatabaseContext() {}
     void setConnectionName(const QString &scriptName, const QString &guildId);
     QString getConnectionName() const;

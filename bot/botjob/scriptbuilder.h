@@ -39,6 +39,7 @@ class ScriptBuilder : public QObject
     bool isBotScript(const QString &fileName);
     bool validateScriptCommandName(const QString &command);
     void loadCoreCommands();
+    void addQmlFactory(QSharedPointer<QQmlEngine> engine);
     void builldBotScripts(const QString &scriptDir);
     void buildBotScript();
     void namingConflict(const QString &command);
@@ -52,8 +53,9 @@ class ScriptBuilder : public QObject
 public:
     const static QString BOT_IMPORT_IDENTIFIER;
     const static QString BOT_TYPE_IDENTIFIER;
-    const static QString BOT_API_MINOR_VERSION;
-    const static QString BOT_API_MAJOR_VERSION;
+    const static int BOT_API_MINOR_VERSION;
+    const static int BOT_API_MAJOR_VERSION;
+    const static QString FILE_OPEN_MODE_IDENTIFIER;
 
     ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings);
 

@@ -13,15 +13,17 @@
 #include "payloads/eventcontext.h"
 #include "botjob/corecommands.h"
 #include "payloads/message.h"
+#include "qml/qmlfactory.h"
 #include "util/enumutils.h"
 #include "util/serializationutils.h"
 #include "timedbinding.h"
 
 
 const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
-const QString ScriptBuilder::BOT_API_MAJOR_VERSION = "0";
-const QString ScriptBuilder::BOT_API_MINOR_VERSION = "1";
+const int ScriptBuilder::BOT_API_MAJOR_VERSION = 0;
+const int ScriptBuilder::BOT_API_MINOR_VERSION = 1;
 const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
+const QString ScriptBuilder::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
 
 
 ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
@@ -36,9 +38,15 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
     _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
 
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
-                               BOT_API_MAJOR_VERSION.toInt(),
-                               BOT_API_MINOR_VERSION.toInt(),
+                               BOT_API_MAJOR_VERSION,
+                               BOT_API_MINOR_VERSION,
                                BOT_TYPE_IDENTIFIER.toUtf8());
+
+    qmlRegisterType<OpenMode>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          FILE_OPEN_MODE_IDENTIFIER.toUtf8());
+
 }
 
 void
@@ -112,7 +120,7 @@ void
 ScriptBuilder::buildBotScript() {
     QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
 
-    engine->installExtensions(QQmlEngine::ConsoleExtension);
+    addQmlFactory(engine);
 
     QQmlComponent comp(engine.data(), _fileName);
 
@@ -147,13 +155,30 @@ ScriptBuilder::buildBotScript() {
 
     botScript->setGuildId(_guildId);
 
-    botScript->setDatabaseContext(_defaultDatabaseContext);
-
     botScript->setEngine(engine);
 
     _registeredScripts << botScript;
 
     QObject::connect(botScript.data(), &BotScript::timedBindingReady, _eventHandler, &EventHandler::registerTimedBinding);
+}
+
+void
+ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
+    engine->installExtensions(QQmlEngine::ConsoleExtension);
+
+    DatabaseContext context(_defaultDatabaseContext);
+
+    context.setConnectionName(_guildId, _fileName);
+
+    QJSValue factory = engine->newQObject(new QmlFactory(_defaultDatabaseContext));
+
+    engine->globalObject().setProperty("_factory", factory);
+
+    engine->evaluate("function File(path, mode) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
+
+    engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", { }); }");
+
+    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
 }
 
 void
