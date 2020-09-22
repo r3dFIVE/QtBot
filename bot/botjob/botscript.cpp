@@ -178,10 +178,6 @@ BotScript::logFatal(QString event) {
     _logger->fatal(event);
 }
 
-
-
-
-
 QMap<QString, QVariant>
 BotScript::getScriptCommands() const {
     return _commands;

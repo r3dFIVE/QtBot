@@ -1,15 +1,30 @@
 #include "sqlquery.h"
 
+#include <QSql>
+
+
 SqlQuery::SqlQuery(const SqlQuery &other) {
     _database = other._database;
 
     _query = other._query;
 }
 
-SqlQuery::SqlQuery(const SqlDatabase &database) {
-    SqlDatabase _database = database;
+SqlQuery::SqlQuery(SqlQuery *other) {
+    _database = other->_database;
 
-    _query = QSqlQuery(_database.getDatabase());
+    _query = other->_query;
+}
+
+SqlQuery::SqlQuery(SqlDatabase *database, const QString &query) {
+    _database = database;
+
+    _query = QSqlQuery(query, _database->sqlDatabase());
+
+    _database->addQuery(this);
+}
+
+SqlQuery::SqlQuery(const QSqlQuery &other) {
+    _query = other;
 }
 
 SqlQuery
@@ -32,145 +47,152 @@ SqlQuery::isActive() const{
 }
 
 bool
-SqlQuery::qryIsNull(int field) const {
+SqlQuery::isNull(int field) const {
     return _query.isNull(field);
 }
 
-bool SqlQuery::qryIsNull(const QString &name) const {
+bool
+SqlQuery::isNull(const QString &name) const {
     return _query.isNull(name);
 }
 
 int
-SqlQuery::qryAt() const {
+SqlQuery::at() const {
     return _query.at();
 }
 
 QString
-SqlQuery::qryLastQuery() const {
+SqlQuery::lastQuery() const {
     return _query.lastQuery();
 }
 
 int
-SqlQuery::qryNumRowsAffected() const {
+SqlQuery::numRowsAffected() const {
     return _query.numRowsAffected();
 }
 
-//QString
-//SqlQuery::qryLastError() const {
-//    return _query.lastError().text();
-//}
+SqlError
+SqlQuery::lastError() const {
+    return SqlError(_query.lastError());
+}
+
 
 bool
-SqlQuery::qryIsSelect() const {
+SqlQuery::isSelect() const {
     return _query.isSelect();
 }
 
-int SqlQuery::qrySize() const {
+int SqlQuery::size() const {
     return _query.size();
 }
 
 bool
-SqlQuery::qryIsForwardOnly() const {
+SqlQuery::isForwardOnly() const {
     return _query.isForwardOnly();
 }
 
+SqlRecord
+SqlQuery::record() const {
+    return SqlRecord(_query.record());
+}
+
 void
-SqlQuery::qrySetForwardOnly(bool forward) {
+SqlQuery::setForwardOnly(bool forward) {
     _query.setForwardOnly(forward);
 }
 
-//QVariant
-//SqlQuery::qryValue(int i) const {
-//    return _query.value(i);
-//}
+QVariant
+SqlQuery::value(int i) const {
+    return _query.value(i);
+}
 
-//QVariant
-//SqlQuery::qryValue(const QString &name) const {
-//    return _query.value(name);
-//}
+QVariant
+SqlQuery::value(const QString &name) const {
+    return _query.value(name);
+}
 
-//void
-//SqlQuery::qrySetNumericalPrecisionPolicy(SqlQuery::NumericalPrecisionPolicy precisionPolicy) {
-//    _query.setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy(precisionPolicy));
-//}
+void
+SqlQuery::setNumericalPrecisionPolicy(Sql::NumericalPrecisionPolicy precisionPolicy) {
+    _query.setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy(precisionPolicy));
+}
 
-//SqlQuery::NumericalPrecisionPolicy
-//SqlQuery::qryNumericalPrecisionPolicy() const {
-//    return SqlQuery::NumericalPrecisionPolicy(_query.numericalPrecisionPolicy());
-//}
+Sql::NumericalPrecisionPolicy
+SqlQuery::numericalPrecisionPolicy() const {
+    return Sql::NumericalPrecisionPolicy(_query.numericalPrecisionPolicy());
+}
 
 bool
-SqlQuery::qrySeek(int i, bool relative) {
+SqlQuery::seek(int i, bool relative) {
     return _query.seek(i, relative);
 }
 
 bool
-SqlQuery::qryNext() {
+SqlQuery::next() {
     return _query.next();
 }
 
 bool
-SqlQuery::qryPrevious() {
+SqlQuery::previous() {
     return _query.previous();
 }
 
 bool
-SqlQuery::qryFirst() {
+SqlQuery::first() {
     return _query.first();
 }
 
 bool
-SqlQuery::qryLast() {
+SqlQuery::last() {
     return _query.last();
 }
 
 void
-SqlQuery::qryClear() {
+SqlQuery::clear() {
     _query.clear();
 }
 
 bool
-SqlQuery::qryPrepare(const QString &query) {
+SqlQuery::prepare(const QString &query) {
     return _query.prepare(query);
 }
 
 bool
-SqlQuery::qryExec() {
+SqlQuery::exec() {
     return _query.exec();
 }
 
-//bool
-//SqlQuery::execBatch(SqlQuery::BatchExecutionMode mode) {
-//    return _query.execBatch(QSqlQuery::BatchExecutionMode(mode));
-//}
+bool
+SqlQuery::execBatch(Sql::BatchExecutionMode mode) {
+    return _query.execBatch(QSqlQuery::BatchExecutionMode(mode));
+}
 
 bool
-SqlQuery::qryExec(const QString &query) {
+SqlQuery::exec(const QString &query) {
     return _query.exec(query);
 }
 
-//void
-//SqlQuery::qryBindValue(const QString &placeholder, const QVariant &value, ParamType type) {
-//    _query.bindValue(placeholder, value, QSql::ParamType(type));
-//}
+void
+SqlQuery::bindValue(const QString &placeholder, const QVariant &value, Sql::ParamTypeFlag type) {
+    _query.bindValue(placeholder, value, QSql::ParamTypeFlag(type));
+}
 
-//void
-//SqlQuery::qryBindValue(int pos, const QVariant &value, ParamType type) {
-//    _query.bindValue(pos, value, QSql::ParamType(type));
-//}
+void
+SqlQuery::bindValue(int pos, const QVariant &value, Sql::ParamTypeFlag type) {
+    _query.bindValue(pos, value, QSql::ParamTypeFlag(type));
+}
 
-//void
-//SqlQuery::qryAddBindValue(const QVariant &val, ParamType type) {
-//    _query.addBindValue(val, QSql::ParamType(type));
-//}
+void
+SqlQuery::addBindValue(const QVariant &val, Sql::ParamTypeFlag type) {
+    _query.addBindValue(val, QSql::ParamTypeFlag(type));
+}
 
 QVariant
-SqlQuery::qryBoundValue(const QString &placeholder) const {
+SqlQuery::boundValue(const QString &placeholder) const {
     return _query.boundValue(placeholder);
 }
 
 QVariant
-SqlQuery::qryBoundValue(int pos) const {
+SqlQuery::boundValue(int pos) const {
     return _query.boundValue(pos);
 }
 
@@ -180,20 +202,26 @@ SqlQuery::boundValues() const {
 }
 
 QString
-SqlQuery::qryExecutedQuery() const {
+SqlQuery::executedQuery() const {
     return _query.executedQuery();
 }
 
-QVariant SqlQuery::qryLastInsertId() const {
+QVariant
+SqlQuery::lastInsertId() const {
     return _query.lastInsertId();
 }
 
 void
-SqlQuery::qryFinish() {
+SqlQuery::finish() {
     return _query.finish();
 }
 
 bool
-SqlQuery::qryNextResult() {
+SqlQuery::nextResult() {
     return _query.nextResult();
+}
+
+SqlDatabase*
+SqlQuery::getDatabase() {
+    return _database;
 }

@@ -1,203 +1,294 @@
 #include "sqldatabase.h"
 
+#include <QSqlError>
+
+#include "util/globals.h"
+#include "util/enumutils.h"
+
+QMutex SqlDatabase::_mutex;
+QMap<QString, QList<SqlQuery *> > SqlDatabase::_queries;
+
 SqlDatabase::SqlDatabase(const SqlDatabase &other) {
     _database = other._database;
 
-    _databaseContext = other._databaseContext;
+    _defaultDatabaseContext = other._defaultDatabaseContext;
+
+    _hostName = other._hostName;
+
+    _userName = other._userName;
+
+    _password = other._password;
+
+    _databaseName = other._databaseName;
+
+    _port = other._port;
+
+    _type = other._type;
+
+    _connectionName = other._connectionName;
 }
 
 SqlDatabase::SqlDatabase(const DatabaseContext &databaseContext) {
-    _databaseContext = databaseContext;
+    _defaultDatabaseContext = databaseContext;
 }
 
 SqlDatabase
 &SqlDatabase::operator=(const SqlDatabase &other) {
     _database = other._database;
 
-    _databaseContext = other._databaseContext;
+    _defaultDatabaseContext = other._defaultDatabaseContext;
+
+    _hostName = other._hostName;
+
+    _userName = other._userName;
+
+    _password = other._password;
+
+    _databaseName = other._databaseName;
+
+    _port = other._port;
+
+    _type = other._type;
+
+    _connectionName = other._connectionName;
 
     return *this;
 }
 
 bool
-SqlDatabase::dbOpen() {
-    closeExistingConnection();
+SqlDatabase::open(QString suffix) {
+    _connectionName = QString ("%1|%2")
+            .arg(_defaultDatabaseContext.getConnectionName())
+            .arg(suffix);
 
-    _database = QSqlDatabase::addDatabase(_databaseContext.driverName, _databaseContext.getConnectionName());
+    closeExistingConnection(_connectionName);
 
-    _database.setHostName(_databaseContext.hostName);
+    _database = QSqlDatabase::addDatabase(_defaultDatabaseContext.driverName, _connectionName);
 
-    _database.setUserName(_databaseContext.userName);
+    if (_hostName.isEmpty()) {
+        _hostName = _defaultDatabaseContext.hostName;
 
-    _database.setPassword(_databaseContext.password);
+        _database.setHostName(_hostName);
+    }
 
-    _database.setDatabaseName(_databaseContext.databaseName);
+
+    if (_userName.isEmpty()) {
+        _userName = _defaultDatabaseContext.userName;
+
+        _database.setUserName(_userName);
+    }
+
+    if (_password.isEmpty()) {
+        _password = _defaultDatabaseContext.password;
+
+        _database.setPassword(_password);
+    }
+
+    if (_port == 0) {
+        _port = _defaultDatabaseContext.port;
+
+        _database.setPort(_port);
+    }
+
+    if (_databaseName.isEmpty()) {
+        _databaseName = _defaultDatabaseContext.databaseName;
+
+        _database.setDatabaseName(_databaseName);
+    }
 
     return _database.open();
 }
 
 void
-SqlDatabase::closeExistingConnection() {
-    if (QSqlDatabase::contains(_databaseContext.getConnectionName())) {
+SqlDatabase::closeExistingConnection(QString existingConnection) {
+    if (QSqlDatabase::contains(existingConnection)) {
+        for (auto query : getQueriesForConnection(existingConnection)) {
+            if (query) {
+                SqlDatabase *db = query->getDatabase();
 
-        _database.close();
+                if (db && db->isOpen()) {
+                    db->close();
+                }
+            }
+        }
 
-        _database = QSqlDatabase();
+        _queries[existingConnection].clear();
 
-        QSqlDatabase::removeDatabase(_databaseContext.getConnectionName());
+        QSqlDatabase::removeDatabase(existingConnection);
     }
 }
 
 void
-SqlDatabase::dbClose() {
+SqlDatabase::close() {
     _database.close();
+
+    _database = QSqlDatabase();
 }
 
 bool
-SqlDatabase::dbIsOpen() const {
+SqlDatabase::isOpen() const {
     return _database.isOpen();
 }
 
 bool
-SqlDatabase::dbIsOpenError() const {
+SqlDatabase::isOpenError() const {
     return _database.isOpenError();
 }
 
-//QStringList
-//SqlDatabase::dbTables(TableType type) const {
-//    return _database.tables(QSql::TableType(type));
-//}
+QStringList
+SqlDatabase::dbTables(Sql::TableType type) const {
+    return _database.tables(QSql::TableType(type));
+}
 
-//QString
-//SqlDatabase::dbLastDatabaseError() const {
-//    return QString("Database Text: %1, Driver Text: %2")
-//            .arg(_database.lastError().databaseText())
-//            .arg(_database.lastError().driverText());
-//}
+SqlError
+SqlDatabase::lastError() const {
+    return SqlError(_database.lastError());
+}
+
 
 bool
-SqlDatabase::dbIsDatabaseValid() const {
+SqlDatabase::isDatabaseValid() const {
     return _database.isValid();
 }
 
 bool
-SqlDatabase::dbTransaction() {
+SqlDatabase::transaction() {
     return _database.transaction();
 }
 
 bool
-SqlDatabase::dbCommit() {
+SqlDatabase::commit() {
     return _database.commit();
 }
 
 bool
-SqlDatabase::dbRollback() {
+SqlDatabase::rollback() {
     return _database.rollback();
 }
 
 void
-SqlDatabase::dbSetDatabaseName(const QString &databaseName) {
-    _databaseContext.databaseName = databaseName;
+SqlDatabase::setDatabaseName(const QString &databaseName) {
+    _defaultDatabaseContext.databaseName = databaseName;
 }
 
 void
-SqlDatabase::dbSetUserName(const QString &userName) {
-    _databaseContext.userName = userName;
+SqlDatabase::setUserName(const QString &userName) {
+    _defaultDatabaseContext.userName = userName;
 }
 
 void
-SqlDatabase::dbSetPassword(const QString &password) {
-    _databaseContext.password = password;
+SqlDatabase::setPassword(const QString &password) {
+    _defaultDatabaseContext.password = password;
 }
 
 
 void
-SqlDatabase::dbSetHostName(const QString &hostName) {
-    _databaseContext.hostName = hostName;
+SqlDatabase::setHostName(const QString &hostName) {
+    _defaultDatabaseContext.hostName = hostName;
 }
 
 void
-SqlDatabase::dbSetPort(int port) {
-    _databaseContext.port = port;
+SqlDatabase::setPort(int port) {
+    _defaultDatabaseContext.port = port;
 }
 
 void
-SqlDatabase::dbSetConnectOptions(const QString &options) {
+SqlDatabase::setConnectOptions(const QString &options) {
     _database.setConnectOptions(options);
 }
 
 QString
-SqlDatabase::dbDatabaseName() const {
-    return _databaseContext.databaseName;
+SqlDatabase::databaseName() const {
+    return _defaultDatabaseContext.databaseName;
 }
 
 QString
-SqlDatabase::dbUserName() const {
-    return _databaseContext.userName;
+SqlDatabase::userName() const {
+    return _defaultDatabaseContext.userName;
 }
 
 QString
-SqlDatabase::dbHostName() const {
-    return _databaseContext.hostName;
+SqlDatabase::hostName() const {
+    return _defaultDatabaseContext.hostName;
 }
 
 QString
-SqlDatabase::dbDriverName() const {
-    return _databaseContext.driverName;
+SqlDatabase::driverName() const {
+    return _defaultDatabaseContext.driverName;
 }
 
 int
-SqlDatabase::dbPort() const {
-    return _databaseContext.port;
+SqlDatabase::port() const {
+    return _defaultDatabaseContext.port;
 }
 
 QString
-SqlDatabase::dbConnectOptions() const {
+SqlDatabase::connectOptions() const {
     return _database.connectOptions();
 }
 
 QString
-SqlDatabase::dbConnectionName() const {
-    return _databaseContext.getConnectionName();
+SqlDatabase::connectionName() const {
+    return _defaultDatabaseContext.getConnectionName();
 }
 
-//void
-//SqlDatabase::dbSetNumericalPrecisionPolicy(const NumericalPrecisionPolicy &precisionPolicy) {
-//    _database.setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy(precisionPolicy));
-//}
+void
+SqlDatabase::setNumericalPrecisionPolicy(const Sql::NumericalPrecisionPolicy &precisionPolicy) {
+    _database.setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy(precisionPolicy));
+}
 
-//SqlDatabase::NumericalPrecisionPolicy
-//SqlDatabase::dbNumericalPrecisionPolicy() const {
-//    return NumericalPrecisionPolicy(_database.numericalPrecisionPolicy());
-//}
+Sql::NumericalPrecisionPolicy
+SqlDatabase::numericalPrecisionPolicy() const {
+    return Sql::NumericalPrecisionPolicy(_database.numericalPrecisionPolicy());
+}
 
-//void
-//SqlDatabase::dbSetType(const QString &type) {
-//    _databaseContext.type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(type);
-//}
+void
+SqlDatabase::setType(const QString &type) {
+    _defaultDatabaseContext.type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(type);
+}
 
 QStringList
-SqlDatabase::dbDrivers() {
+SqlDatabase::drivers() {
     return QSqlDatabase::drivers();
 }
 
 bool
-SqlDatabase::dbIsDriverAvailable(const QString &name) {
+SqlDatabase::isDriverAvailable(const QString &name) {
     return QSqlDatabase::isDriverAvailable(name);
 }
 
 void
+SqlDatabase::addQuery(SqlQuery *query) {
+    _mutex.lock();
+
+    _queries[_connectionName] << query;
+
+    _mutex.unlock();
+}
+
+void
 SqlDatabase::setConnectionName() {
-    _databaseContext.setConnectionName(_databaseContext.scriptName, _databaseContext.guildId);
+    _defaultDatabaseContext.setConnectionName(_defaultDatabaseContext.scriptName, _defaultDatabaseContext.guildId);
+}
+
+QList<SqlQuery *>
+SqlDatabase::getQueriesForConnection(const QString &existingConnection) {
+    _mutex.lock();
+
+    QList<SqlQuery *> queries = _queries[existingConnection];
+
+    _mutex.unlock();
+
+    return queries;
 }
 
 
 void
 SqlDatabase::setConnectionName(const QString &scriptName, const QString &guildId) {
-    _databaseContext.setConnectionName(scriptName, guildId);
+    _defaultDatabaseContext.setConnectionName(scriptName, guildId);
 }
 
 QSqlDatabase
-SqlDatabase::getDatabase() {
+SqlDatabase::sqlDatabase() {
     return _database;
 }

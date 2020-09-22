@@ -7,6 +7,8 @@
 #include "eventhandler.h"
 #include "util/globals.h"
 #include "logging/logfactory.h"
+#include "qml/sqldatabase.h"
+#include "qml/sqlquery.h"
 
 
 Bot::Bot() {
@@ -16,6 +18,8 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<GuildEntity> >();
     qRegisterMetaType<QSharedPointer<JsonSerializable> >();
     qRegisterMetaType<QSharedPointer<Route> >();
+    qRegisterMetaType<SqlDatabase>();
+    qRegisterMetaType<SqlQuery>();
 }
 
 Bot::~Bot() {

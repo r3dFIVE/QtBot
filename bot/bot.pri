@@ -69,18 +69,22 @@ HEADERS += \
     $$PWD/payloads/voicestate.h \
     $$PWD/botjob/botscript.h \
     $$PWD/payloads/eventcontext.h \
-    $$PWD/qml/openmode.h \
+    $$PWD/qml/enums/openmode.h \
+    $$PWD/qml/enums/sql.h \
     $$PWD/qml/sqldatabase.h \
+    $$PWD/qml/sqlerror.h \
+    $$PWD/qml/sqlfield.h \
     $$PWD/qml/sqlquery.h \
-    $$PWD/routes/createmessage.h \
+    $$PWD/qml/sqlrecord.h \
+    $$PWD/routes/channelcreatemessage.h \
     $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
     $$PWD/botjob/corecommand.h \
     $$PWD/botjob/corecommands.h \
-    $$PWD/util/enumutils.h \
     $$PWD/botjob/ibotjob.h \
     $$PWD/qml/file.h \
     $$PWD/qml/qmlfactory.h \
+    $$PWD/util/enumutils.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
     $$PWD/util/globals.h \
@@ -151,10 +155,12 @@ SOURCES += \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/botjob/botscript.cpp \
     $$PWD/payloads/eventcontext.cpp \
-    $$PWD/qml/openmode.cpp \
     $$PWD/qml/sqldatabase.cpp \
+    $$PWD/qml/sqlerror.cpp \
+    $$PWD/qml/sqlfield.cpp \
     $$PWD/qml/sqlquery.cpp \
-    $$PWD/routes/createmessage.cpp \
+    $$PWD/qml/sqlrecord.cpp \
+    $$PWD/routes/channelcreatemessage.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \

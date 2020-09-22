@@ -35,6 +35,8 @@ DatabaseContext::DatabaseContext(const DatabaseContext &other) {
     guildId = other.guildId;
 
     scriptName = other.scriptName;
+
+    _connectionName = other._connectionName;
 }
 
 

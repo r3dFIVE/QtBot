@@ -14,16 +14,19 @@
 #include "botjob/corecommands.h"
 #include "payloads/message.h"
 #include "qml/qmlfactory.h"
+#include "qml/enums/openmode.h"
+#include "qml/enums/sql.h"
 #include "util/enumutils.h"
 #include "util/serializationutils.h"
 #include "timedbinding.h"
-
 
 const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int ScriptBuilder::BOT_API_MAJOR_VERSION = 0;
 const int ScriptBuilder::BOT_API_MINOR_VERSION = 1;
 const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
 const QString ScriptBuilder::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
+const QString ScriptBuilder::SQL_IDENTIFIER = "Sql";
+const QString ScriptBuilder::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
 
 
 ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
@@ -42,11 +45,17 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
                                BOT_API_MINOR_VERSION,
                                BOT_TYPE_IDENTIFIER.toUtf8());
 
-    qmlRegisterType<OpenMode>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+    qmlRegisterUncreatableType<OpenMode>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                           BOT_API_MAJOR_VERSION,
                           BOT_API_MINOR_VERSION,
-                          FILE_OPEN_MODE_IDENTIFIER.toUtf8());
+                          FILE_OPEN_MODE_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
 
+    qmlRegisterUncreatableType<Sql>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          SQL_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
 }
 
 void
@@ -170,15 +179,22 @@ ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
 
     context.setConnectionName(_guildId, _fileName);
 
-    QJSValue factory = engine->newQObject(new QmlFactory(_defaultDatabaseContext));
+    QJSValue factory = engine->newQObject(new QmlFactory(context));
 
     engine->globalObject().setProperty("_factory", factory);
 
     engine->evaluate("function File(path, mode) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
 
-    engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", { }); }");
+    engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", {}); }");
 
     engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
+
+    engine->evaluate("function SqlError() { return _factory.createObject(\"SqlQuery\", {}); }");
+
+    engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
+
+    engine->evaluate("function SqlField() { return _factory.createObject(\"SqlField\", {}); }");
+
 }
 
 void

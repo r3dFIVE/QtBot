@@ -11,8 +11,8 @@ class DatabaseContext
     QString _connectionName;
 
 public:
-    int port;
-    int type;
+    int port = 0;
+    int type = 0;
     QString hostName;
     QString userName;
     QString password;

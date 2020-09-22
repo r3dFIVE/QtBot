@@ -1,6 +1,6 @@
 #include "httpclient.h"
 #include "util/globals.h"
-#include "routes/createmessage.h"
+#include "routes/channelcreatemessage.h"
 
 #include <QEventLoop>
 #include <QMutexLocker>
