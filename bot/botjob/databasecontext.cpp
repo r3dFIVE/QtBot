@@ -19,6 +19,27 @@ DatabaseContext::DatabaseContext(QSharedPointer<Settings> settings) {
     databaseName = settings->value(SettingsParam::Database::DATABASE_NAME).toString();
 }
 
+DatabaseContext::DatabaseContext(const DatabaseContext &other) {
+    hostName = other.hostName;
+
+    port = other.port;
+
+    userName = other.userName;
+
+    password = other.password;
+
+    driverName = other.driverName;
+
+    type = other.type;
+
+    guildId = other.guildId;
+
+    scriptName = other.scriptName;
+
+    _connectionName = other._connectionName;
+}
+
+
 void
 DatabaseContext::setConnectionName(const QString &scriptName, const QString &guildId) {
     _connectionName = QString("%1|%2|%3")

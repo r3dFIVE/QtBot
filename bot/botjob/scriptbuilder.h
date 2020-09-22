@@ -3,10 +3,10 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <eventhandler.h>
 
 #include "bot.h"
 #include "commandbinding.h"
+#include "eventhandler.h"
 #include "gatewaybinding.h"
 #include "timedbinding.h"
 #include "logging/logfactory.h"
@@ -39,6 +39,7 @@ class ScriptBuilder : public QObject
     bool isBotScript(const QString &fileName);
     bool validateScriptCommandName(const QString &command);
     void loadCoreCommands();
+    void addQmlFactory(QSharedPointer<QQmlEngine> engine);
     void builldBotScripts(const QString &scriptDir);
     void buildBotScript();
     void namingConflict(const QString &command);
@@ -52,8 +53,11 @@ class ScriptBuilder : public QObject
 public:
     const static QString BOT_IMPORT_IDENTIFIER;
     const static QString BOT_TYPE_IDENTIFIER;
-    const static QString BOT_API_MINOR_VERSION;
-    const static QString BOT_API_MAJOR_VERSION;
+    const static int BOT_API_MINOR_VERSION;
+    const static int BOT_API_MAJOR_VERSION;
+    const static QString FILE_OPEN_MODE_IDENTIFIER;
+    const static QString SQL_IDENTIFIER;
+    const static QString NO_CREATABLE_ENUM;
 
     ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings);
 
