@@ -8,21 +8,21 @@
 
 
 
-class CreateMessage : public Route
+class ChannelCreateMessage : public Route
 {
     Q_OBJECT
 
 public:
 
-    CreateMessage() {};
-    CreateMessage(const CreateMessage &other) { Q_UNUSED(other) }
-    CreateMessage(const EventContext &context);
-    ~CreateMessage() {}
+    ChannelCreateMessage() {};
+    ChannelCreateMessage(const ChannelCreateMessage &other) { Q_UNUSED(other) }
+    ChannelCreateMessage(const EventContext &context);
+    ~ChannelCreateMessage() {}
 
     virtual QNetworkRequest request() override;
     virtual QByteArray payload() override;
 };
 
-Q_DECLARE_METATYPE(CreateMessage)
+Q_DECLARE_METATYPE(ChannelCreateMessage)
 
 #endif // CREATEMESSAGE_H
