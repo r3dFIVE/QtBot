@@ -139,7 +139,7 @@ EventHandler::displayTimedJobs(EventContext context) {
     for (int i = 0; i < timedBindings.size(); ++i) {
         TimedBinding timedBinding = timedBindings[i];
 
-        QString jobInfo = QString("Timed Job#: %1 => `ScriptName: %2 | FunctionName: %3 | SingleShot: %4 | Running: %5 | Remaining: %6s")
+        QString jobInfo = QString("Timed Job#: `%1` => `ScriptName: %2 | FunctionName: %3 | SingleShot: %4 | Running: %5 | Remaining: %6s")
                 .arg(i + 1)
                 .arg(timedBinding.getScriptName())
                 .arg(timedBinding.getFunctionMapping().first)

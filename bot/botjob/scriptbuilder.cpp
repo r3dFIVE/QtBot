@@ -41,8 +41,6 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
 
     _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
 
-    DiscordAPI::setBotToken(_botToken);
-
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
                                BOT_API_MINOR_VERSION,
