@@ -10,6 +10,7 @@
 #include "payloads/identifyproperties.h"
 #include "payloads/ready.h"
 #include "payloads/resume.h"
+#include "routes/discordapi.h"
 #include "util/globals.h"
 #include "util/enumutils.h"
 
@@ -17,6 +18,8 @@
 Gateway::Gateway(QSharedPointer<Settings> settings)
 {    
     _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
+
+    DiscordAPI::setBotToken(_botToken);
 
     _maxRetries = settings->value(SettingsParam::Connection::MAX_RETRIES).toInt();
 
