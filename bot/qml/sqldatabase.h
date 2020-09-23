@@ -78,7 +78,7 @@ public:
     Q_INVOKABLE QStringList drivers();
     Q_INVOKABLE bool isDriverAvailable(const QString &name);
     void addQuery(SqlQuery *query);
-
+    static void clearQueries();
 };
 
 Q_DECLARE_METATYPE(SqlDatabase)

@@ -1,9 +1,15 @@
 #include "eventcontext.h"
 #include "util/globals.h"
 
+
 const QString EventContext::EVENT_NAME = "event_name";
+const QString EventContext::EMOJI = "emoji";
 const QString EventContext::CHANNEL_ID = "channel_id";
 const QString EventContext::GUILD_ID = "guild_id";
+const QString EventContext::MESSAGE_ID = "message_id";
+const QString EventContext::OVERWRITE_ID = "overwrite_id";
+const QString EventContext::WEBHOOK_ID = "webhook_id";
+const QString EventContext::USER_ID = "user_id";
 const QString EventContext::CONTENT = "content";
 const QString EventContext::AUTHOR = "author";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
@@ -19,9 +25,13 @@ EventContext::EventContext(const QJsonObject &json) {
 
 void
 EventContext::buildContext(const QJsonObject &json) {
-    _jsonObject[EVENT_NAME] = json[EVENT_NAME];
+    if (json.contains(EVENT_NAME)) {
+        _jsonObject[EVENT_NAME] = json[EVENT_NAME];
+    }
 
-    _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
+    if (json.contains(CHANNEL_ID)) {
+        _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
+    }
 
     if (json.contains(GUILD_ID)) {
         _jsonObject[GUILD_ID] = json[GUILD_ID];
@@ -29,11 +39,29 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[GUILD_ID] = DEFAULT_GUILD_ID;
     }
 
-    _jsonObject[CONTENT] = json[CONTENT];
+    if (json.contains(WEBHOOK_ID)) {
+        _jsonObject[WEBHOOK_ID] = json[WEBHOOK_ID];
+    }
 
-    _jsonObject[AUTHOR] = json[AUTHOR];
+    if (json.contains(CONTENT)) {
+        _jsonObject[CONTENT] = json[CONTENT];
+    }
 
-    _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
+    if (json.contains(AUTHOR)) {
+        _jsonObject[AUTHOR] = json[AUTHOR];
+    }
+
+    if (json.contains(TARGET_PAYLOAD)) {
+        _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
+    }
+
+    if (json.contains(EMOJI)) {
+        _jsonObject[EMOJI] = json[EMOJI];
+    }
+
+    if (json.contains(MESSAGE_ID)) {
+        _jsonObject[MESSAGE_ID] = json[MESSAGE_ID];
+    }
 
     _jsonObject[SOURCE_PAYLOAD] = json;
 }
@@ -54,6 +82,16 @@ EventContext::getChannelId() const {
 }
 
 void
+EventContext::setOverwriteId(const QJsonValue &channelId) {
+    _jsonObject[OVERWRITE_ID] = channelId;
+}
+
+QJsonValue
+EventContext::getOverwriteId() const {
+    return _jsonObject[OVERWRITE_ID];
+}
+
+void
 EventContext::setChannelId(const QJsonValue &channelId) {
     _jsonObject[CHANNEL_ID] = channelId;
 }
@@ -64,13 +102,53 @@ EventContext::getGuildId() const {
 }
 
 void
+EventContext::setUserId(const QJsonValue &userId) {
+    _jsonObject[USER_ID] = userId;
+}
+
+QJsonValue
+EventContext::getUserId() const {
+    return _jsonObject[USER_ID];
+}
+
+void
 EventContext::setGuildId(const QJsonValue &guildId) {
     _jsonObject[GUILD_ID] = guildId;
 }
 
 QJsonValue
+EventContext::getMessageId() const {
+    return _jsonObject[MESSAGE_ID];
+}
+
+void
+EventContext::setMessageId(const QJsonValue &messageId) {
+    _jsonObject[MESSAGE_ID] = messageId;
+}
+
+QJsonValue
+EventContext::getWebhookId() const {
+    return _jsonObject[WEBHOOK_ID];
+}
+
+void
+EventContext::setWebhookId(const QJsonValue &webhookId) {
+    _jsonObject[WEBHOOK_ID] = webhookId;
+}
+
+QJsonValue
 EventContext::getContent() const {
     return _jsonObject[CONTENT];
+}
+
+void
+EventContext::setEmoji(const QJsonValue &emoji) {
+    _jsonObject[EMOJI] = emoji;
+}
+
+QJsonValue
+EventContext::getEmoji() const {
+    return _jsonObject[EMOJI];
 }
 
 void

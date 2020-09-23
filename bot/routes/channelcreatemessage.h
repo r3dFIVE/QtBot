@@ -1,28 +1,19 @@
-#ifndef CREATEMESSAGE_H
-#define CREATEMESSAGE_H
-
-#include <QObject>
+#ifndef CHANNELCREATEMESSAGE_H
+#define CHANNELCREATEMESSAGE_H
 
 #include "route.h"
-#include "payloads/eventcontext.h"
-
 
 
 class ChannelCreateMessage : public Route
 {
-    Q_OBJECT
-
 public:
+    ChannelCreateMessage(const EventContext &context) {
+        QString endpoint = "/channels/{channel.id}/messages";
 
-    ChannelCreateMessage() {};
-    ChannelCreateMessage(const ChannelCreateMessage &other) { Q_UNUSED(other) }
-    ChannelCreateMessage(const EventContext &context);
-    ~ChannelCreateMessage() {}
+        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
 
-    virtual QNetworkRequest request() override;
-    virtual QByteArray payload() override;
+        buildRequest(endpoint, POST, CHANNEL_ID_BUCKET, context);
+    }
 };
 
-Q_DECLARE_METATYPE(ChannelCreateMessage)
-
-#endif // CREATEMESSAGE_H
+#endif // CHANNELCREATEMESSAGE_H

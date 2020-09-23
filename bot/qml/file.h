@@ -23,25 +23,22 @@ class File : public QObject
 
 public:
 
-    File() {}
-    File(const File &other);
-    File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
-    ~File() {
-        _logger->info("FILEIO DESTROYED!!!");
-    }
+    Q_INVOKABLE File() {}
+    Q_INVOKABLE File(const File &other);
+    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
+    Q_INVOKABLE~File() {}
 
-    File &operator=(const File &other);
+    Q_INVOKABLE File &operator=(const File &other);
 
-public slots:
-    bool hasNext() const;
-    bool open();
-    void write(const QString &string);
-    void write(const QStringList &string);
-    void writeLine(const QString &string);
-    void writeLine(const QStringList &strings);
-    QString fileName() const;
-    QString readAll();
-    QString readLine();
+    Q_INVOKABLE bool hasNext() const;
+    Q_INVOKABLE bool open();
+    Q_INVOKABLE void write(const QString &string);
+    Q_INVOKABLE void write(const QStringList &string);
+    Q_INVOKABLE void writeLine(const QString &string);
+    Q_INVOKABLE void writeLine(const QStringList &strings);
+    Q_INVOKABLE QString fileName() const;
+    Q_INVOKABLE QString readAll();
+    Q_INVOKABLE QString readLine();
 };
 
 #endif // FILEIO_H

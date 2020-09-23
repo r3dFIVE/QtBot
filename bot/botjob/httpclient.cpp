@@ -48,8 +48,8 @@ HttpClient::processRoute(Route &route) {
     bool bucketAvailable = true;
     int resetAt = 0;
 
-    switch (route.BUCKET) {
-        case Route::CHANNEL_ID: {
+    switch (route.getBucket()) {
+        case Route::CHANNEL_ID_BUCKET: {
 
             QMutexLocker lock(&_channelLock);
 
@@ -63,7 +63,7 @@ HttpClient::processRoute(Route &route) {
 
             break;
         }
-        case Route::GUILD_ID: {
+        case Route::GUILD_ID_BUCKET: {
 
             QMutexLocker lock(&_guildLock);
 
@@ -76,7 +76,7 @@ HttpClient::processRoute(Route &route) {
             }
 
             break;            
-        } case Route::WEBHOOK_ID: {
+        } case Route::WEBHOOK_ID_BUCKET: {
 
             QMutexLocker lock(&_webhookLock);
 
@@ -89,7 +89,7 @@ HttpClient::processRoute(Route &route) {
             }
 
             break;            
-        } case Route::GLOBAL: {
+        } case Route::GLOBAL_BUCKET: {
 
             QMutexLocker lock(&_globalLock);
 
@@ -115,7 +115,7 @@ HttpClient::processRoute(Route &route) {
         context = QSharedPointer<EventContext>(new EventContext(response));
     } else {
         _logger->warning(QString("Rate limit reached for bucket: %1. Limit resets at: %2")
-                            .arg(HttpClient::_bucketMap[route.BUCKET])
+                            .arg(HttpClient::_bucketMap[route.getBucket()])
                             .arg(QDateTime::fromSecsSinceEpoch(resetAt).toString()));
     }
 
@@ -130,7 +130,7 @@ HttpClient::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
 
     route.addRawHeader(_botAuthHeaderName, _botAuthHeaderValue);
 
-    switch (route.REQUEST_TYPE) {
+    switch (route.getType()) {
         case Route::POST: {
             reply = networkManager.post(route.request(), route.payload());
             break;
@@ -154,7 +154,7 @@ HttpClient::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
     if (statusCode >= 200 && statusCode < 300) {
-        updateRateLimit(route.BUCKET, reply);
+        updateRateLimit(route.getBucket(), reply);
     }
 
     return reply;
@@ -166,22 +166,26 @@ HttpClient::updateRateLimit(Route::Bucket bucket, QNetworkReply *reply) {
     QString rateLimitRemainingString = QString(reply->rawHeader(X_RATELIMIT_REMAINING));
     QString rateLimit = QString(reply->rawHeader(X_RATELIMIT_LIMIT));
 
+    if (rateLimit.isEmpty() || rateLimitResetAtString.isEmpty() || rateLimitRemainingString.isEmpty()) {
+        return;
+    }
+
     int rateLimitResetAt = rateLimitResetAtString.toUInt();
 
     switch(bucket) {
-        case Route::CHANNEL_ID: {
+        case Route::CHANNEL_ID_BUCKET: {
             _channelRequestResetAt = rateLimitResetAt;
             _channelRequestRemaining = rateLimitRemainingString.toUInt();
             break;
-        } case Route::GUILD_ID:
+        } case Route::GUILD_ID_BUCKET:
             _guildRequestResetAt = rateLimitResetAt;
             _guildRequestRemaining = rateLimitRemainingString.toUInt();
             break;
-        case Route::WEBHOOK_ID:
+        case Route::WEBHOOK_ID_BUCKET:
             _webhookRequestResetAt = rateLimitResetAt;
             _webhookRequestRemaining = rateLimitRemainingString.toUInt();
             break;
-        case Route::GLOBAL:
+        case Route::GLOBAL_BUCKET:
             _globalRequestResetAt = rateLimitResetAt;
             _globalRequestRemaining = rateLimitRemainingString.toUInt();
             break;

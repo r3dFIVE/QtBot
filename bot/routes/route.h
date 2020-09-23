@@ -1,38 +1,21 @@
 #ifndef ROUTE_H
 #define ROUTE_H
 
-#include "payloads/jsonserializable.h"
-#include "payloads/message.h"
-
 #include <QNetworkRequest>
 #include <QObject>
+
+#include "payloads/eventcontext.h"
+#include "payloads/jsonserializable.h"
+#include "payloads/message.h"
+#include "util/serializationutils.h"
 
 
 class Route : public QObject
 {
     Q_OBJECT
 
-protected:
-    QByteArray _payload;
-    QNetworkRequest _request;
-
-    const QString DISCORD_API_PATH = "https://discord.com/api";
-    const QString CHANNEL_ID_TOKEN = "{channel.id}";
-    const QString GUILD_ID_TOKEN = "{guild.id}";
-    const QString WEBHOOK_ID_TOKEN = "{webhook.id}";
-
-    inline void buildRequest(QString url) {
-        _request = QNetworkRequest(QUrl(url));
-        _request.setRawHeader("User-Agent", "QtBot 0.3");
-        _request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, "application/json");
-    }
 
 public:
-
-    Route() {}
-    Route(const Route &other) { Q_UNUSED(other) }
-    ~Route() {}
-
     enum RequestType {
         POST,       // C
         GET,        // R
@@ -43,25 +26,58 @@ public:
     Q_ENUM(RequestType);
 
     enum Bucket {
-        CHANNEL_ID,
-        GUILD_ID,
-        WEBHOOK_ID,
-        GLOBAL
+        CHANNEL_ID_BUCKET,
+        GUILD_ID_BUCKET,
+        WEBHOOK_ID_BUCKET,
+        GLOBAL_BUCKET
     };
-    Q_ENUM(Bucket)
 
-    virtual QNetworkRequest request() = 0;
-    virtual QByteArray payload() = 0;
+    inline QNetworkRequest request() {
+        return _request;
+    }
+
+    inline QByteArray payload() {
+        return _payload;
+    }
 
     inline void addRawHeader(const QByteArray &headerName, const QByteArray &headerValue) {
         _request.setRawHeader(headerName, headerValue);
     }
 
-    static const QString PATH;
-    static const RequestType REQUEST_TYPE;
-    static const Bucket BUCKET;
+    inline RequestType getType() {
+        return _requestType;
+    }
+
+    inline Bucket getBucket() {
+        return _bucket;
+    }
+
+protected:
+    Route() {}
+    Route(const Route &other) { Q_UNUSED(other) }
+    ~Route() {}
+
+    QByteArray _payload;
+    QNetworkRequest _request;
+    RequestType _requestType;
+    Bucket _bucket;
+
+    Q_ENUM(Bucket)
+
+    const QString DISCORD_API_PATH = "https://discord.com/api";
+    const QString CHANNEL_ID_TOKEN = "{channel.id}";
+    const QString GUILD_ID_TOKEN = "{guild.id}";
+    const QString WEBHOOK_ID_TOKEN = "{webhook.id}";
+    const QString MESSAGE_ID_TOKEN = "{message.id}";
+    const QString EMOJI_TOKEN = "{emoji}";
+    const QString USER_ID_TOKEN = "{user.id}";
+    const QString OVERWRITE_ID_TOKEN = "{overwrite.id}";
+
+    void buildRequest(const QString &endpoint, const RequestType requestType,
+                      const Bucket bucket, const EventContext &context);
+
+    void populateToken(const QString &path, const QString &token, const EventContext &context);
 };
 
-Q_DECLARE_METATYPE(Route*)
 
 #endif // ROUTE_H

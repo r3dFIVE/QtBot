@@ -16,9 +16,11 @@
 #include "qml/qmlfactory.h"
 #include "qml/enums/openmode.h"
 #include "qml/enums/sql.h"
+#include "routes/discordapi.h"
 #include "util/enumutils.h"
 #include "util/serializationutils.h"
 #include "timedbinding.h"
+
 
 const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int ScriptBuilder::BOT_API_MAJOR_VERSION = 0;
@@ -27,7 +29,6 @@ const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
 const QString ScriptBuilder::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
 const QString ScriptBuilder::SQL_IDENTIFIER = "Sql";
 const QString ScriptBuilder::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
-
 
 ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
     : _defaultDatabaseContext(settings) {
@@ -38,7 +39,9 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
 
     _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
 
-    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();;
+    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
+
+    DiscordAPI::setBotToken(_botToken);
 
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
@@ -160,8 +163,6 @@ ScriptBuilder::buildBotScript() {
 
     registerEventBindings(botScript);
 
-    botScript->initAPI(_botToken);
-
     botScript->setGuildId(_guildId);
 
     botScript->setEngine(engine);
@@ -194,7 +195,6 @@ ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
     engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
 
     engine->evaluate("function SqlField() { return _factory.createObject(\"SqlField\", {}); }");
-
 }
 
 void

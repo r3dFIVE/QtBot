@@ -127,7 +127,11 @@ SqlDatabase::close() {
 
 bool
 SqlDatabase::isOpen() const {
-    return _database.isOpen();
+    if (_database.isValid()) {
+        return _database.isOpen();
+    }
+
+    return false;
 }
 
 bool
@@ -280,6 +284,11 @@ SqlDatabase::getQueriesForConnection(const QString &existingConnection) {
     _mutex.unlock();
 
     return queries;
+}
+
+void
+SqlDatabase::clearQueries() {
+    _queries.clear();
 }
 
 

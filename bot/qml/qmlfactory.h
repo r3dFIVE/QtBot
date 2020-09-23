@@ -11,6 +11,7 @@ class QmlFactory : public QObject
     Q_OBJECT
 
     DatabaseContext _databaseContext;
+
 public:
 
     QmlFactory(const DatabaseContext &context);

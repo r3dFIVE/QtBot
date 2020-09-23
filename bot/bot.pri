@@ -76,7 +76,33 @@ HEADERS += \
     $$PWD/qml/sqlfield.h \
     $$PWD/qml/sqlquery.h \
     $$PWD/qml/sqlrecord.h \
+    $$PWD/routes/channeladdpinnedchannelmessage.h \
+    $$PWD/routes/channelbulkmessagesdelete.h \
+    $$PWD/routes/channelcreatechannelinvite.h \
     $$PWD/routes/channelcreatemessage.h \
+    $$PWD/routes/channelcreatereaction.h \
+    $$PWD/routes/channelcrosspostmessage.h \
+    $$PWD/routes/channeldeleteallreactions.h \
+    $$PWD/routes/channeldeleteallreactionsforemoji.h \
+    $$PWD/routes/channeldeletechannel.h \
+    $$PWD/routes/channeldeletechannelpermission.h \
+    $$PWD/routes/channeldeletemessage.h \
+    $$PWD/routes/channeldeleteownreaction.h \
+    $$PWD/routes/channeldeletepinnedchannelmessage.h \
+    $$PWD/routes/channeldeleteuserreaction.h \
+    $$PWD/routes/channeleditchannelpermissions.h \
+    $$PWD/routes/channeleditmessage.h \
+    $$PWD/routes/channelfollownewschannel.h \
+    $$PWD/routes/channelgetchannel.h \
+    $$PWD/routes/channelgetchannelinvites.h \
+    $$PWD/routes/channelgetchannelmessage.h \
+    $$PWD/routes/channelgetchannelmessages.h \
+    $$PWD/routes/channelgetpinnedmessages.h \
+    $$PWD/routes/channelgetreactions.h \
+    $$PWD/routes/channelgroupdmaddrecipient.h \
+    $$PWD/routes/channelgroupdmremoverecipient.h \
+    $$PWD/routes/channelmodifychannel.h \
+    $$PWD/routes/channeltriggertypingindicator.h \
     $$PWD/routes/discordapi.h \
     $$PWD/routes/route.h \
     $$PWD/botjob/corecommand.h \
@@ -160,11 +186,11 @@ SOURCES += \
     $$PWD/qml/sqlfield.cpp \
     $$PWD/qml/sqlquery.cpp \
     $$PWD/qml/sqlrecord.cpp \
-    $$PWD/routes/channelcreatemessage.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \
     $$PWD/qml/qmlfactory.cpp \
+    $$PWD/routes/route.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \
     $$PWD/entity/guildentity.cpp
