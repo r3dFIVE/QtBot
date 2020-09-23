@@ -4,9 +4,11 @@
 #include "bot.h"
 #include "commandbinding.h"
 #include "corecommand.h"
+#include "eventhandler.h"
 #include "logging/logfactory.h"
 #include "botjob/ibotjob.h"
-#include "eventhandler.h"
+#include "qml/sqldatabase.h"
+
 
 class CoreCommands {
 
@@ -27,6 +29,8 @@ public:
 
         addCommand(".reload", [&](const EventContext &context) -> void {
             Q_UNUSED(context);            
+
+            SqlDatabase::clearQueries();
 
             QMetaObject::invokeMethod(&eventHandler, &EventHandler::reloadAllAvailableGuilds, Qt::QueuedConnection);
         });

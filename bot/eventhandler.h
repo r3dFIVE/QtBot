@@ -5,7 +5,6 @@
 #include <QSqlQuery>
 #include <QTimer>
 
-
 #include "botjob/jobqueue.h"
 #include "botjob/timedjobs.h"
 #include "entity/guildentity.h"
@@ -16,6 +15,8 @@
 #include "botjob/corecommand.h"
 #include "util/settings.h"
 #include "logging/logfactory.h"
+#include "routes/discordapi.h"
+
 
 class EventHandler : public QObject
 {

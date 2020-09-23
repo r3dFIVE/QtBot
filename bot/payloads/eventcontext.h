@@ -12,9 +12,14 @@ class EventContext : public JsonSerializable
 
 public:
 
+    static const QString EMOJI;
     static const QString EVENT_NAME;
     static const QString CHANNEL_ID;
     static const QString GUILD_ID;
+    static const QString MESSAGE_ID;
+    static const QString OVERWRITE_ID;
+    static const QString WEBHOOK_ID;
+    static const QString USER_ID;
     static const QString CONTENT;
     static const QString AUTHOR;
     static const QString SOURCE_PAYLOAD;
@@ -48,15 +53,25 @@ public slots:
     QJsonObject getTargetPayload() const;
     QJsonValue getChannelId() const;
     QJsonValue getContent() const;
+    QJsonValue getEmoji() const;
     QJsonValue getEventName() const;
+    QJsonValue getMessageId() const;
+    QJsonValue getOverwriteId() const;
     QJsonValue getGuildId() const;
+    QJsonValue getUserId() const;
+    QJsonValue getWebhookId() const;
     void setAuthor(const QJsonObject &author);
     void setChannelId(const QJsonValue &channelId);
     void setContent(const QJsonValue &content);
+    void setEmoji(const QJsonValue &emoji);
     void setEventName(const QJsonValue &eventName);
     void setGuildId(const QJsonValue &guildId);
+    void setMessageId(const QJsonValue &messageId);
+    void setOverwriteId(const QJsonValue &overwriteId);
     void setSourcePayload(const QJsonObject &sourcePayload);
     void setTargetPayload(const QJsonObject &targetPayload);
+    void setUserId(const QJsonValue &userId);
+    void setWebhookId(const QJsonValue &webhookId);
 };
 
 Q_DECLARE_METATYPE(EventContext)

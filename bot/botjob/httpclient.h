@@ -39,8 +39,8 @@ class HttpClient : public QObject
     static const QByteArray X_RATELIMIT_REMAINING;
     static const QByteArray X_RATELIMIT_LIMIT;
 
-    const QByteArray _botAuthHeaderName;
-    const QByteArray _botAuthHeaderValue;
+    QByteArray _botAuthHeaderName;
+    QByteArray _botAuthHeaderValue;
 
     QNetworkReply* processChannelIdBucket(QNetworkAccessManager &networkManager, Route &route);
     QNetworkReply* processGuildIdBucket(QNetworkAccessManager &networkManager, Route &route);
@@ -58,17 +58,23 @@ class HttpClient : public QObject
     void updateRateLimit(const Route::Bucket bucket, QNetworkReply *reply);
     void waitForReply(QNetworkReply *reply);
 
+
     inline void buildBucketMap() {
-        HttpClient::_bucketMap.insert(0, "CHANNEL_ID");
-        HttpClient::_bucketMap.insert(1, "GUILD_ID");
-        HttpClient::_bucketMap.insert(2, "WEBHOOK_ID");
-        HttpClient::_bucketMap.insert(3, "GLOBAL");
+        HttpClient::_bucketMap.insert(0, "CHANNEL_ID_BUCKET");
+        HttpClient::_bucketMap.insert(1, "GUILD_ID_BUCKET");
+        HttpClient::_bucketMap.insert(2, "WEBHOOK_ID_BUCKET");
+        HttpClient::_bucketMap.insert(3, "GLOBAL_BUCKET");
     };
 
 public:
     HttpClient(const QString &botToken);
     QSharedPointer<EventContext> processRoute(Route &route);
 
+    inline void setBotToken(const QString &botToken) {
+        _botAuthHeaderName = QString("Authorization").toUtf8();
+
+        _botAuthHeaderValue = QString("Bot %1").arg(botToken).toUtf8();
+    }
 };
 
 #endif // HTTPCLIENT_H

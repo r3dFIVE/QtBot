@@ -11,7 +11,7 @@
 EventHandler::EventHandler(QSharedPointer<Settings> settings) {
     QString botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
 
-    _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI(botToken));
+    _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
 }
 
 void
@@ -167,7 +167,7 @@ EventHandler::displayTimedJobs(EventContext context) {
 
     context.setTargetPayload(message.toQJsonObject());
 
-    _discordAPI->channelCreateMessage(context);
+    _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
 }
 
 int

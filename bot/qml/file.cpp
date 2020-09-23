@@ -36,11 +36,18 @@ bool
 File::open() {
     _file.setFileName(_fileName);
 
-    bool ok = _file.open(QIODevice::OpenMode(_openMode));
+    if (!_file.open(QIODevice::OpenMode(_openMode))) {
+        _logger->warning(QString("Failed to open %1, with openmode: %2. Reason: %3")
+                         .arg(_fileName)
+                         .arg(OpenMode::Mode(_openMode))
+                         .arg(_file.errorString()));
 
+        return false;
+    }
     _textStream.setDevice(&_file);
 
-    return ok;
+    return true;
+
 }
 
 void

@@ -6,6 +6,7 @@
 #include "file.h"
 #include "sqldatabase.h"
 #include "sqlquery.h"
+#include "routes/discordapi.h"
 
 
 QmlFactory::QmlFactory(const DatabaseContext &databaseContext) {
@@ -31,16 +32,15 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
         return new SqlQuery(db);
 
     } else if (typeName == "SqlField") {
-        return new SqlField();
+        return new SqlField;
 
     } else if (typeName == "SqlRecord") {
-        return new SqlRecord();
+        return new SqlRecord;
 
     } else if (typeName == "SqlError") {
-        return new SqlError();
-    }
+        return new SqlError;
 
-    Q_ASSERT(false);
+    }
 
     return nullptr;
 }

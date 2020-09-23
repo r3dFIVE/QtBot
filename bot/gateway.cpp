@@ -14,7 +14,6 @@
 #include "util/enumutils.h"
 
 
-
 Gateway::Gateway(QSharedPointer<Settings> settings)
 {    
     _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
