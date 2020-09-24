@@ -23,11 +23,14 @@ public:
     static const QString WEBHOOK_ID;
     static const QString USER_ID;
     static const QString CONTENT;
+    static const QString ARGS;
     static const QString AUTHOR;
     static const QString SOURCE_PAYLOAD;
     static const QString TARGET_PAYLOAD;
 
-    EventContext() {}
+    EventContext() {
+        _jsonObject[TARGET_PAYLOAD] = QJsonObject();
+    }
     EventContext(const QByteArray &json);
     EventContext(const QJsonObject &json);
     EventContext(const EventContext &other) {
@@ -41,6 +44,7 @@ public:
         return *this;
     }
 
+    Q_PROPERTY(QJsonArray args READ getArgs WRITE setArgs)
     Q_PROPERTY(QJsonValue emoji READ getEmoji WRITE setEmoji)
     Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
     Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
@@ -61,10 +65,19 @@ public:
     }
 
     inline void addPropertyToTarget(const QString &key, const QJsonValue &value) {
-        _jsonObject[TARGET_PAYLOAD].toObject()[key] = value;
+        if (_jsonObject.contains(TARGET_PAYLOAD)) {
+            QJsonObject obj = _jsonObject[TARGET_PAYLOAD].toObject();
+
+            obj[key] = value;
+
+            _jsonObject[TARGET_PAYLOAD] = obj;
+        } else {
+            _jsonObject[TARGET_PAYLOAD] = QJsonObject{{key, value}};
+        }
     }
 
 public slots:
+    QJsonArray getArgs() const;
     QJsonObject getAuthor() const;
     QJsonObject getSourcePayload() const;
     QJsonObject getTargetPayload() const;
@@ -79,6 +92,7 @@ public slots:
     QJsonValue getUserId() const;
     QJsonValue getWebhookId() const;
     QJsonValue getIntegrationId() const;
+    void setArgs(const QJsonArray &args) const;
     void setAuthor(const QJsonObject &author);
     void setChannelId(const QJsonValue &channelId);
     void setContent(const QJsonValue &content);
@@ -93,6 +107,7 @@ public slots:
     void setUserId(const QJsonValue &userId);
     void setIntegrationId(const QJsonValue &webhookId);
     void setWebhookId(const QJsonValue &webhookId);
+    void splitContent();
 };
 
 Q_DECLARE_METATYPE(EventContext)
