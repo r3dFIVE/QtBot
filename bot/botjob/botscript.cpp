@@ -303,3 +303,203 @@ QVariant
 BotScript::cGroupDmRemoveRecipient(const QVariant &context) {
     return _discordAPI->channelGroupDmRemoveRecipient(context);
 }
+
+QVariant
+BotScript::gCreateGuild(const QVariant &context) {
+    return _discordAPI->guildCreateGuild(context);
+}
+
+QVariant
+BotScript::gGetGuild(const QVariant &context) {
+    return _discordAPI->guildGetGuild(context);
+}
+
+QVariant
+BotScript::gGetGuildPreview(const QVariant &context) {
+    return _discordAPI->guildGetGuild(context);
+}
+
+QVariant
+BotScript::gModifyGuild(const QVariant &context) {
+    return _discordAPI->guildModifyGuild(context);
+}
+
+QVariant
+BotScript::gDeleteGuild(const QVariant &context) {
+    return _discordAPI->guildDeleteGuild(context);
+}
+
+QVariant
+BotScript::gGetGuildChannels(const QVariant &context) {
+    return _discordAPI->guildGetGuildChannels(context);
+}
+
+QVariant
+BotScript::gCreateGuildChannel(const QVariant &context) {
+    return _discordAPI->guildCreateGuildChannel(context);
+}
+
+QVariant
+BotScript::gModifyGuildChannelPosition(const QVariant &context) {
+    return _discordAPI->guildModifyGuildChannelPosition(context);
+}
+
+QVariant
+BotScript::gGetGuildMember(const QVariant &context) {
+    return _discordAPI->guildGetGuildMember(context);
+}
+
+QVariant
+BotScript::gListGuildMembers(const QVariant &context) {
+    return _discordAPI->guildListGuildMembers(context);
+}
+
+QVariant
+BotScript::gAddGuildMember(const QVariant &context) {
+    return _discordAPI->guildAddGuildMember(context);
+}
+
+QVariant
+BotScript::gModifyGuildMember(const QVariant &context) {
+    return _discordAPI->guildModifyGuildMember(context);
+}
+
+QVariant
+BotScript::gModifyCurrentUserNick(const QVariant &context) {
+    return _discordAPI->guildModifyCurrentUserNick(context);
+}
+
+QVariant
+BotScript::gAddGuildMemberRole(const QVariant &context) {
+    return _discordAPI->guildAddGuildMemberRole(context);
+}
+
+QVariant
+BotScript::gRemoveGuildMemberRole(const QVariant &context) {
+    return _discordAPI->guildRemoveGuildMemberRole(context);
+}
+
+QVariant
+BotScript::gRemoveGuildMember(const QVariant &context) {
+    return _discordAPI->guildRemoveGuildMember(context);
+}
+
+QVariant
+BotScript::gGetGuildBans(const QVariant &context) {
+    return _discordAPI->guildGetGuildBans(context);
+}
+
+QVariant
+BotScript::gGetGuildBan(const QVariant &context) {
+    return _discordAPI->guildGetGuildBan(context);
+}
+
+QVariant
+BotScript::gCreateGuildBan(const QVariant &context) {
+    return _discordAPI->guildCreateGuildBan(context);
+}
+
+QVariant
+BotScript::gRemoveGuildBan(const QVariant &context) {
+    return _discordAPI->guildRemoveGuildBan(context);
+}
+
+QVariant
+BotScript::gGetGuildRoles(const QVariant &context) {
+    return _discordAPI->guildGetGuildRoles(context);
+}
+
+QVariant
+BotScript::gCreateGuildRole(const QVariant &context) {
+    return _discordAPI->guildCreateGuildRole(context);
+}
+
+QVariant
+BotScript::gModifyGuildRolePosition(const QVariant &context) {
+    return _discordAPI->guildModifyGuildRolePosition(context);
+}
+
+QVariant
+BotScript::gModifyGuildRole(const QVariant &context) {
+    return _discordAPI->guildModifyGuildRole(context);
+}
+
+QVariant
+BotScript::gDeleteGuildRole(const QVariant &context) {
+    return _discordAPI->guildDeleteGuildRole(context);
+}
+
+QVariant
+BotScript::gGetGuildPruneCount(const QVariant &context) {
+    return _discordAPI->guildGetGuildPruneCount(context);
+}
+
+QVariant
+BotScript::gBeginGuildPrune(const QVariant &context) {
+    return _discordAPI->guildBeginGuildPrune(context);
+}
+
+QVariant
+BotScript::gGetGuildVoiceRegions(const QVariant &context) {
+    return _discordAPI->guildGetGuildVoiceRegions(context);
+}
+
+QVariant
+BotScript::gGetGuildInvites(const QVariant &context) {
+    return _discordAPI->guildGetGuildInvites(context);
+}
+
+QVariant
+BotScript::gGetGuildIntegrations(const QVariant &context) {
+    return _discordAPI->guildGetGuildIntegrations(context);
+}
+
+QVariant
+BotScript::gCreateGuildIntegration(const QVariant &context) {
+    return _discordAPI->guildCreateGuildIntegration(context);
+}
+
+QVariant
+BotScript::gModifyGuildIntegration(const QVariant &context) {
+    return _discordAPI->guildModifyGuildIntegration(context);
+}
+
+QVariant
+BotScript::gDeleteGuildIntegration(const QVariant &context) {
+    return _discordAPI->guildDeleteGuildIntegration(context);
+}
+
+QVariant
+BotScript::gSyncGuildIntegration(const QVariant &context) {
+    return _discordAPI->guildSyncGuildIntegration(context);
+}
+
+QVariant
+BotScript::gGetGuildWidget(const QVariant &context) {
+    return _discordAPI->guildGetGuildWidget(context);
+}
+
+QVariant
+BotScript::gGetGuildEmbed(const QVariant &context) {
+    return _discordAPI->guildGetGuildEmbed(context);
+}
+
+QVariant
+BotScript::gModifyGuildWidget(const QVariant &context) {
+    return _discordAPI->guildModifyGuildWidget(context);
+}
+
+QVariant
+BotScript::gModifyGuildEmbed(const QVariant &context) {
+    return _discordAPI->guildModifyGuildEmbed(context);
+}
+
+QVariant
+BotScript::gGetVanityUrl(const QVariant &context) {
+    return _discordAPI->guildGetVanityUrl(context);
+}
+
+QVariant
+BotScript::gGetWidgetImage(const QVariant &context) {
+    return _discordAPI->guildGetWidgetImage(context);
+}
