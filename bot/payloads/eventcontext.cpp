@@ -6,6 +6,8 @@ const QString EventContext::EVENT_NAME = "event_name";
 const QString EventContext::EMOJI = "emoji";
 const QString EventContext::CHANNEL_ID = "channel_id";
 const QString EventContext::GUILD_ID = "guild_id";
+const QString EventContext::INTEGRATION_ID = "integration_id";
+const QString EventContext::ROLE_ID = "role_id";
 const QString EventContext::MESSAGE_ID = "message_id";
 const QString EventContext::OVERWRITE_ID = "overwrite_id";
 const QString EventContext::WEBHOOK_ID = "webhook_id";
@@ -29,6 +31,14 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[EVENT_NAME] = json[EVENT_NAME];
     }
 
+    if (json.contains(ROLE_ID)) {
+        _jsonObject[ROLE_ID] = json[ROLE_ID];
+    }
+
+    if (json.contains(OVERWRITE_ID)) {
+        _jsonObject[OVERWRITE_ID] = json[OVERWRITE_ID];
+    }
+
     if (json.contains(CHANNEL_ID)) {
         _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
     }
@@ -37,6 +47,14 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[GUILD_ID] = json[GUILD_ID];
     } else {
         _jsonObject[GUILD_ID] = DEFAULT_GUILD_ID;
+    }
+
+    if (json.contains(INTEGRATION_ID)) {
+        _jsonObject[INTEGRATION_ID] = json[INTEGRATION_ID];
+    }
+
+    if (json.contains(USER_ID)) {
+        _jsonObject[USER_ID] = json[USER_ID];
     }
 
     if (json.contains(WEBHOOK_ID)) {
@@ -117,6 +135,16 @@ EventContext::setGuildId(const QJsonValue &guildId) {
 }
 
 QJsonValue
+EventContext::getRoleId() const {
+    return _jsonObject[ROLE_ID];
+}
+
+void
+EventContext::setRoleId(const QJsonValue &roleId) {
+    _jsonObject[ROLE_ID] = roleId;
+}
+
+QJsonValue
 EventContext::getMessageId() const {
     return _jsonObject[MESSAGE_ID];
 }
@@ -134,6 +162,16 @@ EventContext::getWebhookId() const {
 void
 EventContext::setWebhookId(const QJsonValue &webhookId) {
     _jsonObject[WEBHOOK_ID] = webhookId;
+}
+
+QJsonValue
+EventContext::getIntegrationId() const {
+    return _jsonObject[INTEGRATION_ID];
+}
+
+void
+EventContext::setIntegrationId(const QJsonValue &webhookId) {
+    _jsonObject[INTEGRATION_ID] = webhookId;
 }
 
 QJsonValue

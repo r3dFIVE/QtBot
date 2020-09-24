@@ -24,6 +24,7 @@ public:
     DiscordAPI() : _httpClient(_botToken) { }
     ~DiscordAPI() {}
 
+    static QString getBotToken();
     static void setBotToken(const QString &botToken);
 
     /*
@@ -59,6 +60,52 @@ public:
     QVariant channelGroupDmAddRecipient(const QVariant &context);
     QVariant channelGroupDmRemoveRecipient(const QVariant &context);
 
+    /*
+     *      GUILD API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/guild
+     */
+
+    QVariant guildCreateGuild(const QVariant &context);
+    QVariant guildGetGuild(const QVariant &context);
+    QVariant guildGetGuildPreview(const QVariant &context);
+    QVariant guildModifyGuild(const QVariant &context);
+    QVariant guildDeleteGuild(const QVariant &context);
+    QVariant guildGetGuildChannels(const QVariant &context);
+    QVariant guildCreateGuildChannel(const QVariant &context);
+    QVariant guildModifyGuildChannelPosition(const QVariant &context);
+    QVariant guildGetGuildMember(const QVariant &context);
+    QVariant guildListGuildMembers(const QVariant &context);
+    QVariant guildAddGuildMember(const QVariant &context);
+    QVariant guildModifyGuildMember(const QVariant &context);
+    QVariant guildModifyCurrentUserNick(const QVariant &context);
+    QVariant guildAddGuildMemberRole(const QVariant &context);
+    QVariant guildRemoveGuildMemberRole(const QVariant &context);
+    QVariant guildRemoveGuildMember(const QVariant &context);
+    QVariant guildGetGuildBans(const QVariant &context);
+    QVariant guildGetGuildBan(const QVariant &context);
+    QVariant guildCreateGuildBan(const QVariant &context);
+    QVariant guildRemoveGuildBan(const QVariant &context);
+    QVariant guildGetGuildRoles(const QVariant &context);
+    QVariant guildCreateGuildRole(const QVariant &context);
+    QVariant guildModifyGuildRolePosition(const QVariant &context);
+    QVariant guildModifyGuildRole(const QVariant &context);
+    QVariant guildDeleteGuildRole(const QVariant &context);
+    QVariant guildGuildPruneCount(const QVariant &context);
+    QVariant guildGetGuildPruneCount(const QVariant &context);
+    QVariant guildBeginGuildPrune(const QVariant &context);
+    QVariant guildGetGuildVoiceRegions(const QVariant &context);
+    QVariant guildGetGuildInvites(const QVariant &context);
+    QVariant guildGetGuildIntegrations(const QVariant &context);
+    QVariant guildCreateGuildIntegration(const QVariant &context);
+    QVariant guildModifyGuildIntegration(const QVariant &context);
+    QVariant guildDeleteGuildIntegration(const QVariant &context);
+    QVariant guildSyncGuildIntegration(const QVariant &context);
+    QVariant guildGetGuildWidget(const QVariant &context);
+    QVariant guildGetGuildEmbed(const QVariant &context);
+    QVariant guildModifyGuildWidget(const QVariant &context);
+    QVariant guildModifyGuildEmbed(const QVariant &context);
+    QVariant guildGetVanityUrl(const QVariant &context);
+    QVariant guildGetWidgetImage(const QVariant &context);
 };
 
 #endif // DISCORDAPI_H

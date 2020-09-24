@@ -25,6 +25,45 @@
 #include "channelgetpinnedmessages.h"
 #include "channeladdpinnedchannelmessage.h"
 #include "channeldeletepinnedchannelmessage.h"
+#include "guildcreateguild.h"
+#include "guildgetguild.h"
+#include "guildmodifyguild.h"
+#include "guilddeleteguild.h"
+#include "guildgetguildchannels.h"
+#include "guildcreateguildchannel.h"
+#include "guildmodifyguildchannelposition.h"
+#include "guildgetguildmember.h"
+#include "guildlistguildmembers.h"
+#include "guildaddguildmember.h"
+#include "guildmodifyguildmember.h"
+#include "guildmodifycurrentusernick.h"
+#include "guildaddguildmemberrole.h"
+#include "guildremoveguildmemberrole.h"
+#include "guildremoveguildmember.h"
+#include "guildgetguildbans.h"
+#include "guildgetguildban.h"
+#include "guildcreateguildban.h"
+#include "guildremoveguildban.h"
+#include "guildgetguildroles.h"
+#include "guildcreateguildrole.h"
+#include "guildmodifyguildroleposition.h"
+#include "guildmodifyguildrole.h"
+#include "guilddeleteguildrole.h"
+#include "guildgetguildprunecount.h"
+#include "guildbeginguildprune.h"
+#include "guildgetguildvoiceregions.h"
+#include "guildgetguildinvites.h"
+#include "guildgetguildintegrations.h"
+#include "guildcreateguildintegration.h"
+#include "guildmodifyguildintegration.h"
+#include "guilddeleteguildintegration.h"
+#include "guildsyncguildintegration.h"
+#include "guildgetguildwidget.h"
+#include "guildgetguildembed.h"
+#include "guildmodifyguildwidget.h"
+#include "guildmodifyguildembed.h"
+#include "guildgetvanityurl.h"
+#include "guildgetwidgetimage.h"
 
 
 QString DiscordAPI::_botToken = QString();
@@ -52,6 +91,11 @@ DiscordAPI::buildResponseVariant(QSharedPointer<EventContext> apiResponse) {
 void
 DiscordAPI::setBotToken(const QString &botToken) {
     _botToken = botToken;
+}
+
+QString
+DiscordAPI::getBotToken() {
+    return _botToken;
 }
 
 QVariant
@@ -241,4 +285,284 @@ DiscordAPI::channelGroupDmRemoveRecipient(const QVariant &context) {
     ChannelDeletePinnedChannelMessage deletePinnedChannelMessage(buildRequestContext(context));
 
     return buildResponseVariant(_httpClient.processRoute(deletePinnedChannelMessage));
+}
+
+QVariant
+DiscordAPI::guildCreateGuild(const QVariant &context) {
+    GuildCreateGuild createGuild(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createGuild));
+}
+
+QVariant
+DiscordAPI::guildGetGuild(const QVariant &context) {
+    GuildGetGuild getGuild(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuild));
+}
+
+QVariant
+DiscordAPI::guildGetGuildPreview(const QVariant &context) {
+    GuildGetGuild getGuild(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuild));
+}
+
+QVariant
+DiscordAPI::guildModifyGuild(const QVariant &context) {
+    GuildModifyGuild modifyGuild(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuild));
+}
+
+QVariant
+DiscordAPI::guildDeleteGuild(const QVariant &context) {
+    GuildDeleteGuild deleteGuild(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(deleteGuild));
+}
+
+QVariant
+DiscordAPI::guildGetGuildChannels(const QVariant &context) {
+    GuildGetGuildChannels getGuildChannels(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildChannels));
+}
+
+QVariant
+DiscordAPI::guildCreateGuildChannel(const QVariant &context) {
+    GuildCreateGuildChannel createGuildChannel(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createGuildChannel));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildChannelPosition(const QVariant &context) {
+    GuildModifyGuildChannelPosition modifyGuildChannelPosition(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildChannelPosition));
+}
+
+QVariant
+DiscordAPI::guildGetGuildMember(const QVariant &context) {
+    GuildGetGuildMember getGuildMember(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildMember));
+}
+
+QVariant
+DiscordAPI::guildListGuildMembers(const QVariant &context) {
+    GuildListGuildMembers listGuildMembers(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(listGuildMembers));
+}
+
+QVariant
+DiscordAPI::guildAddGuildMember(const QVariant &context) {
+    GuildAddGuildMember addGuildMember(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(addGuildMember));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildMember(const QVariant &context) {
+    GuildModifyGuildMember modifyGuildMember(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildMember));
+}
+
+QVariant
+DiscordAPI::guildModifyCurrentUserNick(const QVariant &context) {
+    GuildModifyCurrentUserNick modifyCurrentUserNick(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyCurrentUserNick));
+}
+
+QVariant
+DiscordAPI::guildAddGuildMemberRole(const QVariant &context) {
+    GuildAddGuildMemberRole addGuildMemberRole(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(addGuildMemberRole));
+}
+
+QVariant
+DiscordAPI::guildRemoveGuildMemberRole(const QVariant &context) {
+    GuildRemoveGuildMemberRole removeGuildMemberRole(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(removeGuildMemberRole));
+}
+
+QVariant
+DiscordAPI::guildRemoveGuildMember(const QVariant &context) {
+    GuildRemoveGuildMember removeGuildMember(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(removeGuildMember));
+}
+
+QVariant
+DiscordAPI::guildGetGuildBans(const QVariant &context) {
+    GuildGetGuildBans getGuildBans(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildBans));
+}
+
+QVariant
+DiscordAPI::guildGetGuildBan(const QVariant &context) {
+    GuildGetGuildBan getGuildBan(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildBan));
+}
+
+QVariant
+DiscordAPI::guildCreateGuildBan(const QVariant &context) {
+    GuildCreateGuildBan createGuildBan(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createGuildBan));
+}
+
+QVariant
+DiscordAPI::guildRemoveGuildBan(const QVariant &context) {
+    GuildRemoveGuildBan removeGuildBan(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(removeGuildBan));
+}
+
+QVariant
+DiscordAPI::guildGetGuildRoles(const QVariant &context) {
+    GuildGetGuildRoles getGuildRoles(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildRoles));
+}
+
+QVariant
+DiscordAPI::guildCreateGuildRole(const QVariant &context) {
+    GuildCreateGuildRole createGuildRole(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createGuildRole));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildRolePosition(const QVariant &context) {
+    GuildModifyGuildRolePosition modifyGuildRolePosition(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildRolePosition));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildRole(const QVariant &context) {
+    GuildModifyGuildRole modifyGuildRole(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildRole));
+}
+
+QVariant
+DiscordAPI::guildDeleteGuildRole(const QVariant &context) {
+    GuildDeleteGuildRole modifyGuildRole(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildRole));
+}
+
+QVariant
+DiscordAPI::guildGetGuildPruneCount(const QVariant &context) {
+    GuildGetGuildPruneCount getGuildPruneCount(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildPruneCount));
+}
+
+QVariant
+DiscordAPI::guildBeginGuildPrune(const QVariant &context) {
+    GuildBeginGuildPrune beginGuildPrune(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(beginGuildPrune));
+}
+
+QVariant
+DiscordAPI::guildGetGuildVoiceRegions(const QVariant &context) {
+    GuildGetGuildVoiceRegions getGuildVoiceRegions(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildVoiceRegions));
+}
+
+QVariant
+DiscordAPI::guildGetGuildInvites(const QVariant &context) {
+    GuildGetGuildInvites getGuildInvites(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildInvites));
+}
+
+QVariant
+DiscordAPI::guildGetGuildIntegrations(const QVariant &context) {
+    GuildGetGuildIntegrations getGuildIntegrations(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildIntegrations));
+}
+
+QVariant
+DiscordAPI::guildCreateGuildIntegration(const QVariant &context) {
+    GuildCreateGuildIntegration createGuildIntegration(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createGuildIntegration));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildIntegration(const QVariant &context) {
+    GuildModifyGuildIntegration modifyGuildIntegration(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildIntegration));
+}
+
+QVariant
+DiscordAPI::guildDeleteGuildIntegration(const QVariant &context) {
+    GuildDeleteGuildIntegration deleteGuildIntegration(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(deleteGuildIntegration));
+}
+
+QVariant
+DiscordAPI::guildSyncGuildIntegration(const QVariant &context) {
+    GuildSyncGuildIntegration syncGuildIntegration(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(syncGuildIntegration));
+}
+
+QVariant
+DiscordAPI::guildGetGuildWidget(const QVariant &context) {
+    GuildGetGuildWidget getGuildWidget(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildWidget));
+}
+
+QVariant
+DiscordAPI::guildGetGuildEmbed(const QVariant &context) {
+    GuildGetGuildEmbed getGuildEmbed(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildEmbed));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildWidget(const QVariant &context) {
+    GuildModifyGuildWidget modifyGuildWidget(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildWidget));
+}
+
+QVariant
+DiscordAPI::guildModifyGuildEmbed(const QVariant &context) {
+    GuildModifyGuildEmbed modifyGuildEmbed(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildEmbed));
+}
+
+QVariant
+DiscordAPI::guildGetVanityUrl(const QVariant &context) {
+    GuildGetVanityUrl getVanityUrl(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getVanityUrl));
+}
+
+QVariant
+DiscordAPI::guildGetWidgetImage(const QVariant &context) {
+    GuildGetWidgetImage getWidgetImage(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getWidgetImage));
 }

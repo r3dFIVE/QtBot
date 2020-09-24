@@ -104,6 +104,46 @@ HEADERS += \
     $$PWD/routes/channelmodifychannel.h \
     $$PWD/routes/channeltriggertypingindicator.h \
     $$PWD/routes/discordapi.h \
+    $$PWD/routes/guildaddguildmember.h \
+    $$PWD/routes/guildaddguildmemberrole.h \
+    $$PWD/routes/guildbeginguildprune.h \
+    $$PWD/routes/guildcreateguild.h \
+    $$PWD/routes/guildcreateguildban.h \
+    $$PWD/routes/guildcreateguildchannel.h \
+    $$PWD/routes/guildcreateguildintegration.h \
+    $$PWD/routes/guildcreateguildrole.h \
+    $$PWD/routes/guilddeleteguild.h \
+    $$PWD/routes/guilddeleteguildintegration.h \
+    $$PWD/routes/guilddeleteguildrole.h \
+    $$PWD/routes/guildgetguild.h \
+    $$PWD/routes/guildgetguildban.h \
+    $$PWD/routes/guildgetguildbans.h \
+    $$PWD/routes/guildgetguildchannels.h \
+    $$PWD/routes/guildgetguildembed.h \
+    $$PWD/routes/guildgetguildintegrations.h \
+    $$PWD/routes/guildgetguildinvites.h \
+    $$PWD/routes/guildgetguildmember.h \
+    $$PWD/routes/guildgetguildpreview.h \
+    $$PWD/routes/guildgetguildprunecount.h \
+    $$PWD/routes/guildgetguildroles.h \
+    $$PWD/routes/guildgetguildvoiceregions.h \
+    $$PWD/routes/guildgetguildwidget.h \
+    $$PWD/routes/guildgetvanityurl.h \
+    $$PWD/routes/guildgetwidgetimage.h \
+    $$PWD/routes/guildlistguildmembers.h \
+    $$PWD/routes/guildmodifycurrentusernick.h \
+    $$PWD/routes/guildmodifyguild.h \
+    $$PWD/routes/guildmodifyguildchannelposition.h \
+    $$PWD/routes/guildmodifyguildembed.h \
+    $$PWD/routes/guildmodifyguildintegration.h \
+    $$PWD/routes/guildmodifyguildmember.h \
+    $$PWD/routes/guildmodifyguildrole.h \
+    $$PWD/routes/guildmodifyguildroleposition.h \
+    $$PWD/routes/guildmodifyguildwidget.h \
+    $$PWD/routes/guildremoveguildban.h \
+    $$PWD/routes/guildremoveguildmember.h \
+    $$PWD/routes/guildremoveguildmemberrole.h \
+    $$PWD/routes/guildsyncguildintegration.h \
     $$PWD/routes/route.h \
     $$PWD/botjob/corecommand.h \
     $$PWD/botjob/corecommands.h \
