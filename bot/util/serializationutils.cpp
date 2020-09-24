@@ -39,27 +39,25 @@ SerializationUtils::writeToJson(const QObject &source, QJsonObject &target) {
             case QMetaType::Int:
                 target[property.name()] = variant.toInt();
                 break;
+
             case QMetaType::Bool:
                 target[property.name()] = variant.toBool();
                 break;
+
             case QMetaType::QString:
                 target[property.name()] = variant.toString();
                 break;
+
             case QMetaType::QJsonValue:
                 target[property.name()] = variant.toJsonValue();
                 break;
+
             case QMetaType::QJsonObject: {
-                QJsonObject jsonObject = variant.toJsonObject();
-                if (!jsonObject.isEmpty()) {
-                    target[property.name()] = jsonObject;
-                }
+                target[property.name()] = variant.toJsonObject();
                 break;
             }
             case QMetaType::QJsonArray: {
-                QJsonArray jsonArray = variant.toJsonArray();
-                if (!jsonArray.isEmpty()) {
-                    target[property.name()] = jsonArray;
-                }
+                target[property.name()] = variant.toJsonArray();
                 break;
             }
         }

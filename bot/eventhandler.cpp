@@ -82,7 +82,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
     QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
-    _jobQueue << guild->getBotJobs(context);;
+    _jobQueue << guild->getBotJobs(context);
 
     processJobQueue();
 }

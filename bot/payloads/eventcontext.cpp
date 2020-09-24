@@ -13,6 +13,7 @@ const QString EventContext::OVERWRITE_ID = "overwrite_id";
 const QString EventContext::WEBHOOK_ID = "webhook_id";
 const QString EventContext::USER_ID = "user_id";
 const QString EventContext::CONTENT = "content";
+const QString EventContext::ARGS = "args";
 const QString EventContext::AUTHOR = "author";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
 const QString EventContext::TARGET_PAYLOAD = "target_payload";
@@ -69,10 +70,6 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[AUTHOR] = json[AUTHOR];
     }
 
-    if (json.contains(TARGET_PAYLOAD)) {
-        _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
-    }
-
     if (json.contains(EMOJI)) {
         _jsonObject[EMOJI] = json[EMOJI];
     }
@@ -81,7 +78,23 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[MESSAGE_ID] = json[MESSAGE_ID];
     }
 
-    _jsonObject[SOURCE_PAYLOAD] = json;
+    if (json.contains(TARGET_PAYLOAD)) {
+        _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
+    } else {
+        _jsonObject[TARGET_PAYLOAD] = QJsonObject();
+    }
+
+    _jsonObject[SOURCE_PAYLOAD] = json;    
+}
+
+QJsonArray
+EventContext::getArgs() const {
+    return _jsonObject[ARGS].toArray();
+}
+
+void
+EventContext::setArgs(const QJsonArray &args) const {
+    _jsonObject[ARGS] = args;
 }
 
 QJsonValue
@@ -162,6 +175,11 @@ EventContext::getWebhookId() const {
 void
 EventContext::setWebhookId(const QJsonValue &webhookId) {
     _jsonObject[WEBHOOK_ID] = webhookId;
+}
+
+void
+EventContext::splitContent() {
+    _jsonObject[ARGS] = QJsonArray::fromStringList(_jsonObject[CONTENT].toString().split(" "));
 }
 
 QJsonValue

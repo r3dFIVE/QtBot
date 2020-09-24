@@ -98,6 +98,8 @@ GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
        if (canInvoke(command, ids)) {
            commandJob = new Job;
 
+           context->splitContent();
+
            commandJob->setContext(*context);
 
            commandJob->setFunctionMapping(_commandBindings[command].getFunctionMapping());
