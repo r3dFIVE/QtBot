@@ -21,6 +21,7 @@ public:
     void registerTimedBindings(QSharedPointer<GuildEntity> guild);
     void registerTimedBinding(const QString &guildId, TimedBinding &timedBinding);
     void removeJob(const QString &guildId, const int index);
+    void removeJobById(const QString &guildId, const QString &jobId);
     void resumeJob(const QString &guildId, const int index);
     void startJob(const QString &guildId, const int index);
     void stopJob(const QString &guildId, const int index);

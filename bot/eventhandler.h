@@ -32,6 +32,7 @@ class EventHandler : public QObject
     Logger *_logger;
 
     int getJobNumber(const EventContext &context);
+    QString getJobId(const EventContext &context);
     void processMessageCreate(QSharedPointer<EventContext> context);
     void processMessageUpdate(QSharedPointer<EventContext> context);
 
@@ -51,6 +52,7 @@ public slots:
     void reloadAllAvailableGuilds();
     void registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
     void removeTimedJob(const EventContext &context);
+    void removeTimedJobById(QSharedPointer<EventContext> context);
     void resumeTimedJob(const EventContext &context);
     void startTimedJob(const EventContext &context);
     void stopTimedJob(const EventContext &context);

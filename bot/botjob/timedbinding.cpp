@@ -1,8 +1,8 @@
 #include "timedbinding.h"
 
 
-const QString TimedBinding::EVENT_CONTEXT = "event_context";
-const QString TimedBinding::REPEAT_AFTER = "repeat_after";
+const QString TimedBinding::CONTEXT = "context";
+const QString TimedBinding::FIRE_AFTER = "fire_after";
 const QString TimedBinding::SINGLE_SHOT = "single_shot";
 const QString TimedBinding::SINGLETON = "singleton";
 
@@ -19,7 +19,7 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
 
     _singleShot = other._singleShot;
 
-    _repeatAfter = other._repeatAfter;
+    _fireAfter = other._fireAfter;
 
     _scriptName = other._scriptName;
 
@@ -32,6 +32,8 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
     _running = other._running;
 
     _stoppedAt = other._stoppedAt;
+
+    _id = other._id;
 }
 
 TimedBinding
@@ -44,7 +46,7 @@ TimedBinding
 
     _singleShot = other._singleShot;
 
-    _repeatAfter = other._repeatAfter;
+    _fireAfter = other._fireAfter;
 
     _scriptName = other._scriptName;
 
@@ -57,6 +59,8 @@ TimedBinding
     _running = other._running;
 
     _stoppedAt = other._stoppedAt;
+
+    _id = other._id;
 
     return *this;
 }
@@ -72,13 +76,13 @@ TimedBinding::setScriptName(const QString &scriptName) {
 }
 
 qint64
-TimedBinding::getRepeatAfter() const {
-    return _repeatAfter;
+TimedBinding::getFireAfter() const {
+    return _fireAfter;
 }
 
 void
-TimedBinding::setRepeatAfter(int repeatAfter) {
-    _repeatAfter = repeatAfter;
+TimedBinding::setFireAfter(int fireAfter) {
+    _fireAfter = fireAfter;
 }
 
 void
@@ -105,7 +109,7 @@ void
 TimedBinding::stop() {
     _stoppedAt = QDateTime::currentSecsSinceEpoch();
 
-    _remainder = _repeatAfter - (_stoppedAt - _startedAt);
+    _remainder = _fireAfter - (_stoppedAt - _startedAt);
 
     _running = false;
 }
@@ -139,7 +143,7 @@ TimedBinding::getReimaining() {
             return (_remainder - (QDateTime::currentSecsSinceEpoch() - _startedAt));
         }
     } else {
-        return (_repeatAfter - (QDateTime::currentSecsSinceEpoch() - _startedAt));
+        return (_fireAfter - (QDateTime::currentSecsSinceEpoch() - _startedAt));
     }
 }
 
@@ -151,6 +155,16 @@ TimedBinding::setEventContext(const EventContext &eventContext) {
 qint64
 TimedBinding::getStartedAt() const {
     return _startedAt;
+}
+
+QString
+TimedBinding::id() const {
+    return _id;
+}
+
+void
+TimedBinding::setId(const QString &id) {
+    _id = id;
 }
 
 void
@@ -170,8 +184,8 @@ TimedBinding::isValid(const QMetaObject &metaObject) const {
         return false;
     }
 
-    if (_repeatAfter <= 0) {
-        _logger->warning("Repeat after value must be set and greater than 0... Discarding binding.");
+    if (_fireAfter <= 0) {
+        _logger->warning("fire_after value must be set and greater than 0... Discarding binding.");
 
         return false;
     }

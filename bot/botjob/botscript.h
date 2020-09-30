@@ -63,17 +63,18 @@ public:
 
 
     /*
-     *  GENERAL API RELATED FUNCTIONS
+     *  GENERAL BOT API RELATED FUNCTIONS
      */
 
-    Q_INVOKABLE void logTrace(QString event);
-    Q_INVOKABLE void logInfo(QString event);
-    Q_INVOKABLE void logDebug(QString event);
-    Q_INVOKABLE void logWarning(QString event);
-    Q_INVOKABLE void logCritical(QString event);
-    Q_INVOKABLE void logFatal(QString event);
-    Q_INVOKABLE void pause(int ms);
-    Q_INVOKABLE void queueTimedEvent(const QVariant &timedBindingVariant);
+    Q_INVOKABLE QVariant bQueueTimedEvent(const QVariant &timedBindingVariant);
+    Q_INVOKABLE void bLogTrace(QString logEvent);
+    Q_INVOKABLE void bLogInfo(QString logEvent);
+    Q_INVOKABLE void bLogDebug(QString logEvent);
+    Q_INVOKABLE void bLogWarning(QString logEvent);
+    Q_INVOKABLE void bLogCritical(QString logEvent);
+    Q_INVOKABLE void bLogFatal(QString event);
+    Q_INVOKABLE void bPause(int ms);
+    Q_INVOKABLE void bRemoveTimedEventByJobId(const QVariant &contextVariant);
 
     /*
      *  DiscordAPI RELATED FUNCTIONS
@@ -157,9 +158,9 @@ public:
     Q_INVOKABLE QVariant gGetVanityUrl(const QVariant &context);
     Q_INVOKABLE QVariant gGetWidgetImage(const QVariant &context);
 
-
 signals:
-    void timedBindingReady(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
+    void timedBindingReadySignal(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
+    void removeTimedEventByJobIdSignal(QSharedPointer<EventContext> context);
 };
 
 Q_DECLARE_METATYPE(BotScript)

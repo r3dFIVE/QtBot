@@ -167,7 +167,11 @@ ScriptBuilder::buildBotScript() {
 
     _registeredScripts << botScript;
 
-    QObject::connect(botScript.data(), &BotScript::timedBindingReady, _eventHandler, &EventHandler::registerTimedBinding);
+    QObject::connect(botScript.data(), &BotScript::timedBindingReadySignal,
+                     _eventHandler, &EventHandler::registerTimedBinding);
+
+    QObject::connect(botScript.data(), &BotScript::removeTimedEventByJobIdSignal,
+                     _eventHandler, &EventHandler::removeTimedJobById);
 }
 
 void
@@ -348,15 +352,19 @@ ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const Q
 
     TimedBinding timedBinding;
 
+    timedBinding.setId(QUuid::createUuid().toString(QUuid::Id128));
+
     timedBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
 
     timedBinding.setScriptName(botScript->getScriptName());
 
-    timedBinding.setRepeatAfter(binding[TimedBinding::REPEAT_AFTER].toInt());
+    timedBinding.setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
 
-    timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
+        timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+    }
 
-    timedBinding.setEventContext(binding[TimedBinding::EVENT_CONTEXT].toObject());
+    timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
     timedBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
 

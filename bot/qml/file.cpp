@@ -44,10 +44,25 @@ File::open() {
 
         return false;
     }
+
     _textStream.setDevice(&_file);
 
     return true;
+}
 
+bool
+File::exists() const {
+    return _file.exists(_fileName);
+}
+
+bool
+File::remove() {
+    return _file.remove();
+}
+
+bool
+File::rename(const QString &newName) {
+    return _file.rename(newName);
 }
 
 void
@@ -81,6 +96,11 @@ File::writeLine(const QStringList &strings) {
 QString
 File::fileName() const {
     return _file.fileName();
+}
+
+QString
+File::errorString() const {
+    return _file.errorString();
 }
 
 QString
