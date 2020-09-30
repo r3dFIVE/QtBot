@@ -182,6 +182,17 @@ EventHandler::getJobNumber(const EventContext &context) {
 }
 
 void
+EventHandler::removeTimedJobById(QSharedPointer<EventContext> context) {
+    QString jobId = context->getJobId().toString();
+
+    if (!jobId.isEmpty()) {
+        _timedJobs.removeJobById(context->getGuildId().toString(), jobId);
+    } else {
+        _logger->debug(QString("You must specify a job id for command: %1").arg(context->getContent().toString()));
+    }
+}
+
+void
 EventHandler::removeTimedJob(const EventContext &context) {
     int jobNumber = getJobNumber(context);
 

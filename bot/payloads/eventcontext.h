@@ -12,6 +12,7 @@ class EventContext : public JsonSerializable
 
 public:
 
+    static const QString ID;
     static const QString EMOJI;
     static const QString EVENT_NAME;
     static const QString CHANNEL_ID;
@@ -22,9 +23,11 @@ public:
     static const QString OVERWRITE_ID;
     static const QString WEBHOOK_ID;
     static const QString USER_ID;
+    static const QString JOB_ID;
     static const QString CONTENT;
     static const QString ARGS;
     static const QString AUTHOR;
+    static const QString USERNAME;
     static const QString SOURCE_PAYLOAD;
     static const QString TARGET_PAYLOAD;
 
@@ -33,13 +36,11 @@ public:
     }
     EventContext(const QByteArray &json);
     EventContext(const QJsonObject &json);
-    EventContext(const EventContext &other) {
-        _jsonObject = other._jsonObject;
-    }
+    EventContext(const EventContext &other);
     ~EventContext() {}
 
     EventContext &operator=(const EventContext &other) {
-        _jsonObject = other._jsonObject;
+        buildContext(other._jsonObject);
 
         return *this;
     }
@@ -48,14 +49,15 @@ public:
     Q_PROPERTY(QJsonValue emoji READ getEmoji WRITE setEmoji)
     Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
     Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
-    Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
     Q_PROPERTY(QJsonValue message_id READ getMessageId WRITE setMessageId)
     Q_PROPERTY(QJsonValue overwrite_id READ getOverwriteId WRITE setOverwriteId)
     Q_PROPERTY(QJsonValue webhook_id READ getWebhookId WRITE setWebhookId)
     Q_PROPERTY(QJsonValue user_id READ getUserId WRITE setUserId)
     Q_PROPERTY(QJsonValue role_id READ getRoleId WRITE setRoleId)
+    Q_PROPERTY(QJsonValue job_id READ getJobId WRITE setJobId)
     Q_PROPERTY(QJsonValue content READ getContent WRITE setContent)
     Q_PROPERTY(QJsonValue event_name READ getEventName WRITE setEventName)
+    Q_PROPERTY(QJsonValue username READ getUsername WRITE setUsername)
     Q_PROPERTY(QJsonObject author READ getAuthor WRITE setAuthor)
     Q_PROPERTY(QJsonObject source_payload READ getSourcePayload WRITE setSourcePayload)
     Q_PROPERTY(QJsonObject target_payload READ getTargetPayload WRITE setTargetPayload)
@@ -88,8 +90,10 @@ public slots:
     QJsonValue getMessageId() const;
     QJsonValue getOverwriteId() const;
     QJsonValue getGuildId() const;
+    QJsonValue getJobId() const;
     QJsonValue getRoleId() const;
     QJsonValue getUserId() const;
+    QJsonValue getUsername() const;
     QJsonValue getWebhookId() const;
     QJsonValue getIntegrationId() const;
     void setArgs(const QJsonArray &args) const;
@@ -99,15 +103,17 @@ public slots:
     void setEmoji(const QJsonValue &emoji);
     void setEventName(const QJsonValue &eventName);
     void setGuildId(const QJsonValue &guildId);
+    void setJobId(const QJsonValue &jobId);
     void setRoleId(const QJsonValue &roleId);
     void setMessageId(const QJsonValue &messageId);
     void setOverwriteId(const QJsonValue &overwriteId);
     void setSourcePayload(const QJsonObject &sourcePayload);
     void setTargetPayload(const QJsonObject &targetPayload);
     void setUserId(const QJsonValue &userId);
+    void setUsername(const QJsonValue &username);
     void setIntegrationId(const QJsonValue &webhookId);
     void setWebhookId(const QJsonValue &webhookId);
-    void splitContent();
+    void buildArgs();
 };
 
 Q_DECLARE_METATYPE(EventContext)

@@ -97,6 +97,15 @@ TimedJobs::validateJobIndex(const QString &guildId, const int index) {
 }
 
 void
+TimedJobs::removeJobById(const QString &guildId, const QString &jobId) {
+    for (int i = 0; i < _timedBindings[guildId].size(); ++i) {
+        if (_timedBindings[guildId][i].id() == jobId) {
+            _timedBindings[guildId].removeAt(i);
+        }
+    }
+}
+
+void
 TimedJobs::removeJob(const QString &guildId, const int index) {
     if (!validateJobIndex(guildId, index)) {
         return;

@@ -9,17 +9,22 @@ class TimedBinding : public IBinding
     Q_OBJECT
 
     bool _running = true;
-    bool _singleShot = false;
-    EventContext _eventContext;
+    bool _singleShot = true;
+    EventContext _eventContext;    
     qint64 _remainder = 0;
-    qint64 _repeatAfter = 0;
-    qint64 _startedAt = 0;
-    qint64 _stoppedAt = 0;
+    int _fireAfter = 0;
+    qint64 _startedAt = 0;    
+    qint64 _stoppedAt = 0;    
     QString _scriptName;
+    QString _id;
+
+    Q_PROPERTY(bool single_shot READ isSingleShot WRITE setSingleShot)
+    Q_PROPERTY(EventContext context READ getEventContext WRITE setEventContext)
+    Q_PROPERTY(qint64 fire_after READ getFireAfter WRITE setFireAfter)
 
 public:
-    static const QString EVENT_CONTEXT;
-    static const QString REPEAT_AFTER;
+    static const QString CONTEXT;
+    static const QString FIRE_AFTER;
     static const QString SINGLE_SHOT;
     static const QString SINGLETON;
 
@@ -29,20 +34,23 @@ public:
 
     TimedBinding &operator=(const TimedBinding &other);
 
+
     bool isValid(const QMetaObject &metaObject) const override;
     bool isSingleShot() const;
     bool isRunning() const;
-    qint64 getRepeatAfter() const;
+    qint64 getFireAfter() const;
     EventContext getEventContext() const;
     qint64 getReimaining();
     QString getScriptName() const;
     qint64 getStartedAt() const;
+    QString id() const;
     void resume();
     void setStartedAt(const qint64 startedAt);
-    void setRepeatAfter(const int repeatAfter);
+    void setFireAfter(const int fireAfter);
     void setScriptName(const QString &scriptName);
     void setSingleShot(bool singleShot);
     void setEventContext(const EventContext &sourcePayload);
+    void setId(const QString &id);
     void start();
     void stop();
 };

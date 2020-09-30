@@ -32,11 +32,15 @@ public:
 
     Q_INVOKABLE bool hasNext() const;
     Q_INVOKABLE bool open();
+    Q_INVOKABLE bool exists() const;
+    Q_INVOKABLE bool remove();
+    Q_INVOKABLE bool rename(const QString &newName);
     Q_INVOKABLE void write(const QString &string);
     Q_INVOKABLE void write(const QStringList &string);
     Q_INVOKABLE void writeLine(const QString &string);
     Q_INVOKABLE void writeLine(const QStringList &strings);
     Q_INVOKABLE QString fileName() const;
+    Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE QString readAll();
     Q_INVOKABLE QString readLine();
 };

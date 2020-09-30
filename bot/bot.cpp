@@ -16,8 +16,8 @@ Bot::Bot() {
     qRegisterMetaType<LogContext::LogLevel>();
     qRegisterMetaType<QSharedPointer<GatewayPayload> >();
     qRegisterMetaType<QSharedPointer<GuildEntity> >();
-    qRegisterMetaType<QSharedPointer<JsonSerializable> >();
     qRegisterMetaType<QSharedPointer<Route> >();
+    qRegisterMetaType<QSharedPointer<EventContext> >();
     qRegisterMetaType<SqlDatabase>();
     qRegisterMetaType<SqlQuery>();
 }

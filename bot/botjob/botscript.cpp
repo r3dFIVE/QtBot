@@ -106,31 +106,46 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
 }
 
-void
-BotScript::queueTimedEvent(const QVariant &timedBindingVariant) {
+QVariant
+BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
     QJsonObject binding = QJsonObject::fromVariantMap(timedBindingVariant.toMap());
 
     QSharedPointer<TimedBinding> timedBinding = QSharedPointer<TimedBinding>(new TimedBinding);
+
+    timedBinding->setId(QUuid::createUuid().toString(QUuid::Id128));
 
     timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), this));
 
     timedBinding->setScriptName(_scriptName);
 
-    timedBinding->setRepeatAfter(binding[TimedBinding::REPEAT_AFTER].toInt());
+    timedBinding->setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
 
-    timedBinding->setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
+        timedBinding->setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+    }
 
-    timedBinding->setEventContext(binding[TimedBinding::EVENT_CONTEXT].toObject());
+    timedBinding->setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
     timedBinding->setDescription(binding[IBinding::DESCRIPTION].toString());
 
     if (timedBinding->isValid(*this->metaObject())) {
-       emit timedBindingReady(_guildId, timedBinding);
+       emit timedBindingReadySignal(_guildId, timedBinding);
     }
+
+    return timedBinding->id();
 }
 
 void
-BotScript::pause(int ms) {
+BotScript::bRemoveTimedEventByJobId(const QVariant &contextVariant) {
+    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext);
+
+    SerializationUtils::fromVariant(*context.data(), contextVariant);
+
+    emit removeTimedEventByJobIdSignal(context);
+}
+
+void
+BotScript::bPause(int ms) {
     QThread::msleep(ms);
 }
 
@@ -145,32 +160,32 @@ BotScript::getScriptName() const {
 }
 
 void
-BotScript::logTrace(QString event) {
+BotScript::bLogTrace(QString event) {
     _logger->trace(event);
 }
 
 void
-BotScript::logInfo(QString event) {
+BotScript::bLogInfo(QString event) {
     _logger->info(event);
 }
 
 void
-BotScript::logDebug(QString event) {
+BotScript::bLogDebug(QString event) {
     _logger->debug(event);
 }
 
 void
-BotScript::logWarning(QString event) {
+BotScript::bLogWarning(QString event) {
     _logger->warning(event);
 }
 
 void
-BotScript::logCritical(QString event) {
+BotScript::bLogCritical(QString event) {
     _logger->critical(event);
 }
 
 void
-BotScript::logFatal(QString event) {
+BotScript::bLogFatal(QString event) {
     _logger->fatal(event);
 }
 

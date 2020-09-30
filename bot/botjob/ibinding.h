@@ -17,7 +17,6 @@ public:
     static const QString BINDING_TYPE_GATEWAY;
     static const QString BINDING_TYPE_TIMED;
     static const QString FUNCTION;
-    static const QString REPEAT_AFTER;
     static const QString DESCRIPTION;
 
     bool validateFunctionMapping(const QMetaObject &metaObject) const;
@@ -28,6 +27,7 @@ public:
 
     virtual bool isValid(const QMetaObject &metaObject) const = 0;
 
+    Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
 protected:
 
     IBotJob::FunctionMapping _functionMapping;
