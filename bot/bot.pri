@@ -37,6 +37,8 @@ HEADERS += \
     $$PWD/payloads/embedthumbnail.h \
     $$PWD/payloads/embedvideo.h \
     $$PWD/payloads/eventcontext.h \
+    $$PWD/payloads/guildroledelete.h \
+    $$PWD/payloads/guildroleupdate.h \
     $$PWD/payloads/invalidsession.h \
     $$PWD/payloads/activityparty.h \
     $$PWD/payloads/activitysecrets.h \
@@ -200,6 +202,8 @@ SOURCES += \
     $$PWD/payloads/gatewaypayload.cpp \
     $$PWD/payloads/guild.cpp \
     $$PWD/payloads/guildmember.cpp \
+    $$PWD/payloads/guildroledelete.cpp \
+    $$PWD/payloads/guildroleupdate.cpp \
     $$PWD/payloads/heartbeat.cpp \
     $$PWD/payloads/hello.cpp \
     $$PWD/payloads/identify.cpp \

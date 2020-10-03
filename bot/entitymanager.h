@@ -3,8 +3,10 @@
 
 #include <QObject>
 
-#include "payloads/guild.h"
 #include "entity/guildentity.h"
+#include "payloads/guild.h"
+#include "payloads/gatewaypayload.h"
+
 
 class EntityManager : public QObject
 {
@@ -12,13 +14,12 @@ class EntityManager : public QObject
 public:
     explicit EntityManager(QObject *parent = nullptr);
 
-
-
 signals:
     void guildInitialized(QSharedPointer<GuildEntity> guildEntity);
 
 public slots:
-    void initGuild(const QString &guildId);
+    void initGuild(QSharedPointer<GuildEntity> payload);
+    void initGuildFromPayload(QSharedPointer<GatewayPayload> payload);
 };
 
 #endif // ENTITYMANAGER_H

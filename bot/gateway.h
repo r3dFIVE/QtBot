@@ -6,6 +6,7 @@
 #include <QtWebSockets/QWebSocket>
 #include <QSharedPointer>
 
+#include "entity/guildentity.h"
 #include "payloads/eventcontext.h"
 #include "payloads/heartbeat.h"
 #include "payloads/gatewaypayload.h"
@@ -120,7 +121,8 @@ public slots:
 
 Q_SIGNALS:
     void dispatchEvent(QSharedPointer<GatewayPayload> payload);
-    void guildOnline(const QString &guildId);
+    void guildOnline(QSharedPointer<GatewayPayload> payload);
+    void defaultGuildOnline(QSharedPointer<GuildEntity> payload);
 };
 
 #endif // GATEWAYCONNECTION_H

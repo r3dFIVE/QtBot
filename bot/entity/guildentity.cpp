@@ -1,32 +1,77 @@
 #include "guildentity.h"
 
+#include "payloads/guildroleupdate.h"
 #include "payloads/user.h"
 #include "botjob/corecommand.h"
 #include "botjob/ibotjob.h"
 #include "util/enumutils.h"
 
 
+QString GuildEntity::ADMIN_ROLE_NAME = QString();
+QString GuildEntity::BOT_OWNER_ID = QString();
+GuildEntity::RestrictionScheme GuildEntity::DEFAULT_SCHEME;
+
+
+GuildEntity::GuildEntity(const Guild &guild) {
+    for (auto jsonRole : guild.getRoles()) {
+        updateRole(Role(jsonRole.toObject()));
+    }
+}
+
 bool
-GuildEntity::canInvoke(QString command, QStringList ids) {
-    bool isInvokable = _scheme;
+GuildEntity::hasAdminRole(QSharedPointer<EventContext> context) {
+    for (auto roleId : context->getRoleIds()) {
+        QString id = roleId.toString();
 
-    for (QString id : ids) {
-        if (_scheme == DISABLED) {
-            if (_mappedSchemeIdsByCommand.contains(command)) {
-                isInvokable = _mappedSchemeIdsByCommand[command].contains(id);
-
-                break;
-            }
-        } else {
-            if (_mappedSchemeIdsByCommand.contains(command)) {
-                isInvokable = !_mappedSchemeIdsByCommand[command].contains(id);
-
-                break;
-            }
+        if (_adminRoleIds.contains(id) || context->getUserId() == BOT_OWNER_ID) {
+            return true;
         }
     }
 
-    return isInvokable;
+    return false;
+}
+
+bool
+GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &command) {
+    if (hasAdminRole(context)) {
+        return true;
+    }
+
+    if (_commandBindings[command].isAdminOnly()) {
+        return false;
+    }
+
+    if (_mappedSchemeIdsByCommand.contains(command)) {
+        QMap<QString, RestrictionScheme> mappedSchemeById = _mappedSchemeIdsByCommand[command];
+
+        QString userId = context->getUserId().toString();
+
+        if (mappedSchemeById.contains(userId)) {
+            return mappedSchemeById[userId];
+        }
+
+        for (auto jsonRoleId : context->getRoleIds()) {
+            QString roleId = jsonRoleId.toString();
+
+            if (mappedSchemeById.contains(roleId)) {
+                return mappedSchemeById[roleId];
+            }
+        }
+
+        QString channelId = context->getChannelId().toString();
+
+        if (mappedSchemeById.contains(channelId)) {
+            return mappedSchemeById[channelId];
+        }
+
+        QString guildId = context->getGuildId().toString();
+
+        if (mappedSchemeById.contains(guildId)) {
+            return mappedSchemeById[guildId];
+        }
+    }
+
+    return DEFAULT_SCHEME;
 }
 
 QString
@@ -52,7 +97,7 @@ GuildEntity::parseCommandToken(const QString &message) const {
 }
 
 QList<Job *>
-GuildEntity::getBotJobs(QSharedPointer<EventContext> context) {
+GuildEntity::processEvent(QSharedPointer<EventContext> context) {
     GatewayEvent::Event gatewayEvent = EnumUtils::keyToValue<GatewayEvent::Event>(context->getEventName());
 
     QList<Job *> jobs; //QThreadPool will auto delete jobs on completion.
@@ -63,6 +108,13 @@ GuildEntity::getBotJobs(QSharedPointer<EventContext> context) {
     case GatewayEvent::MESSAGE_CREATE:
     case GatewayEvent::MESSAGE_UPDATE:
         commandJob = getCommandJob(context);
+        break;
+    case GatewayEvent::GUILD_ROLE_UPDATE:
+        updateRole(Role(context->getSourcePayload()[GuildRoleUpdate::ROLE].toObject()));
+        break;
+    case GatewayEvent::GUILD_ROLE_DELETE:
+        removeRole(context->getRoleId().toString());
+        break;
     }
 
     if (commandJob) {
@@ -82,26 +134,42 @@ GuildEntity::setTimedBindings(const QList<TimedBinding> &timedBindings) {
     _timedBindings = timedBindings;
 }
 
+void
+GuildEntity::updateRole(const Role &role) {
+    QString roleId = role.getId().toString();
+
+    _rolesByRoleId[roleId] = role;
+
+    QString roleName = role.getName().toString();
+
+    if (roleName.compare(ADMIN_ROLE_NAME, Qt::CaseInsensitive) != 0) {
+        _adminRoleIds.removeAll(roleId);
+    } else if (!_adminRoleIds.contains(roleId)) {
+        _adminRoleIds << roleId;
+    }
+}
+
+void
+GuildEntity::removeRole(const QString &roleId) {
+    _adminRoleIds.removeAll(roleId);
+
+    _rolesByRoleId.remove(roleId);
+}
+
 Job*
 GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
     QString command = parseCommandToken(context->getContent().toString());
 
     Job *commandJob = nullptr;
 
-    if (_commandBindings.contains(command)) {
-       QStringList ids;
+    if (_commandBindings.contains(command) && canInvoke(context, command)) {
+       commandJob = new Job;
 
-       ids << context->getGuildId().toString()
-           << context->getChannelId().toString()
-           << context->getAuthor()[User::ID].toString();
+       context->splitArgs();
 
-       if (canInvoke(command, ids)) {
-           commandJob = new Job;
+       commandJob->setContext(*context);
 
-           commandJob->setContext(*context);
-
-           commandJob->setFunctionMapping(_commandBindings[command].getFunctionMapping());
-       }
+       commandJob->setFunctionMapping(_commandBindings[command].getFunctionMapping());
     }
 
     return commandJob;
@@ -127,6 +195,25 @@ GuildEntity::getGatewayEventJobs(QSharedPointer<EventContext> context) const {
 QString
 GuildEntity::id() const {
     return _id;
+}
+
+void
+GuildEntity::addRole(const Role &role) {
+    updateRole(role);
+}
+
+void
+GuildEntity::setAdminRoleName(const QString &roleName) {
+    ADMIN_ROLE_NAME = roleName;
+}
+
+void GuildEntity::setBotOwnerId(const QString &userId) {
+    BOT_OWNER_ID = userId;
+}
+
+void
+GuildEntity::setDefaultRestrictionScheme(const QString &scheme) {
+    DEFAULT_SCHEME = EnumUtils::keyToValue<GuildEntity::RestrictionScheme>(scheme);
 }
 
 void

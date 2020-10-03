@@ -27,7 +27,7 @@ JobQueue::get() {
         return nullptr;
     }
 
-    for(int i = _lastJobGuildIndex; i < _jobQueue.keys().length(); ++i) {
+    for(int i = _lastJobGuildIndex; i < _jobQueue.size(); ++i) {
         Job *availableJob = getJobFromQueue(i);
 
         if (availableJob) {
@@ -68,7 +68,7 @@ JobQueue::getJobFromQueue(int index) {
 
             _lastJobGuildIndex = index;
 
-            if (_jobQueue.keys().size() > 0 && _lastJobGuildIndex == _jobQueue.keys().size()) {
+            if (_jobQueue.size() > 0 && _lastJobGuildIndex == _jobQueue.size()) {
                 _lastJobGuildIndex = 0;
             }
 

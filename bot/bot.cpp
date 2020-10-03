@@ -55,7 +55,9 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 
-    connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuild);
+    connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuildFromPayload);
+
+    connect(gateway, &Gateway::defaultGuildOnline, entityManager, &EntityManager::initGuild);
 
     connect(eventHandler, &EventHandler::reloadScripts, _scriptBuilder, &ScriptBuilder::buildScripts);
 

@@ -18,13 +18,16 @@ public:
     static const QString CHANNEL_ID;
     static const QString GUILD_ID;
     static const QString INTEGRATION_ID;
+    static const QString ROLES;
     static const QString ROLE_ID;
+    static const QString ROLE_IDS;
     static const QString MESSAGE_ID;
     static const QString OVERWRITE_ID;
     static const QString WEBHOOK_ID;
     static const QString USER_ID;
     static const QString JOB_ID;
     static const QString CONTENT;
+    static const QString MEMBER;
     static const QString ARGS;
     static const QString AUTHOR;
     static const QString USERNAME;
@@ -46,6 +49,7 @@ public:
     }
 
     Q_PROPERTY(QJsonArray args READ getArgs WRITE setArgs)
+    Q_PROPERTY(QJsonArray role_ids READ getRoleIds WRITE setRoleIds)
     Q_PROPERTY(QJsonValue emoji READ getEmoji WRITE setEmoji)
     Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
     Q_PROPERTY(QJsonValue guild_id READ getGuildId WRITE setGuildId)
@@ -80,6 +84,7 @@ public:
 
 public slots:
     QJsonArray getArgs() const;
+    QJsonArray getRoleIds() const;
     QJsonObject getAuthor() const;
     QJsonObject getSourcePayload() const;
     QJsonObject getTargetPayload() const;
@@ -105,6 +110,7 @@ public slots:
     void setGuildId(const QJsonValue &guildId);
     void setJobId(const QJsonValue &jobId);
     void setRoleId(const QJsonValue &roleId);
+    void setRoleIds(const QJsonValue &roleIds);
     void setMessageId(const QJsonValue &messageId);
     void setOverwriteId(const QJsonValue &overwriteId);
     void setSourcePayload(const QJsonObject &sourcePayload);
@@ -113,7 +119,7 @@ public slots:
     void setUsername(const QJsonValue &username);
     void setIntegrationId(const QJsonValue &webhookId);
     void setWebhookId(const QJsonValue &webhookId);
-    void buildArgs();
+    void splitArgs();
 };
 
 Q_DECLARE_METATYPE(EventContext)

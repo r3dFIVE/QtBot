@@ -1,4 +1,5 @@
 #include "eventcontext.h"
+
 #include "util/globals.h"
 
 
@@ -8,13 +9,16 @@ const QString EventContext::EMOJI = "emoji";
 const QString EventContext::CHANNEL_ID = "channel_id";
 const QString EventContext::GUILD_ID = "guild_id";
 const QString EventContext::INTEGRATION_ID = "integration_id";
+const QString EventContext::ROLES = "roles";
 const QString EventContext::ROLE_ID = "role_id";
+const QString EventContext::ROLE_IDS = "role_ids";
 const QString EventContext::MESSAGE_ID = "message_id";
 const QString EventContext::OVERWRITE_ID = "overwrite_id";
 const QString EventContext::WEBHOOK_ID = "webhook_id";
 const QString EventContext::USER_ID = "user_id";
 const QString EventContext::JOB_ID = "job_id";
 const QString EventContext::CONTENT = "content";
+const QString EventContext::MEMBER = "member";
 const QString EventContext::ARGS = "args";
 const QString EventContext::AUTHOR = "author";
 const QString EventContext::USERNAME = "username";
@@ -35,29 +39,79 @@ EventContext::EventContext(const EventContext &other) {
 
 void
 EventContext::buildContext(const QJsonObject &json) {
-    _jsonObject = json;
-
-    if (!json[SOURCE_PAYLOAD][SOURCE_PAYLOAD].isUndefined()) {
-        QJsonObject sourcePayload = _jsonObject[SOURCE_PAYLOAD].toObject();
-
-        sourcePayload.remove(SOURCE_PAYLOAD);
-
-        _jsonObject[SOURCE_PAYLOAD] = sourcePayload;
+    if (json.contains(EVENT_NAME)) {
+        _jsonObject[EVENT_NAME] = json[EVENT_NAME];
     }
 
-    if (!_jsonObject.contains(GUILD_ID)) {
+    if (json.contains(ROLE_ID)) {
+        _jsonObject[ROLE_ID] = json[ROLE_ID];
+    }
+
+    if (json.contains(OVERWRITE_ID)) {
+        _jsonObject[OVERWRITE_ID] = json[OVERWRITE_ID];
+    }
+
+    if (json.contains(CHANNEL_ID)) {
+        _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
+    }
+
+    if (json.contains(GUILD_ID)) {
+        _jsonObject[GUILD_ID] = json[GUILD_ID];
+    } else {
         _jsonObject[GUILD_ID] = DEFAULT_GUILD_ID;
     }
 
-    if (!json[AUTHOR][ID].isUndefined()) {
+    if (json.contains(INTEGRATION_ID)) {
+        _jsonObject[INTEGRATION_ID] = json[INTEGRATION_ID];
+    }
+
+    if (json.contains(USER_ID)) {
+        _jsonObject[USER_ID] = json[USER_ID];
+    }
+
+    if (json.contains(WEBHOOK_ID)) {
+        _jsonObject[WEBHOOK_ID] = json[WEBHOOK_ID];
+    }
+
+    if (json.contains(CONTENT)) {
+        _jsonObject[CONTENT] = json[CONTENT];
+    }
+
+    if (json.contains(AUTHOR)) {
+        _jsonObject[AUTHOR] = json[AUTHOR];
+
         _jsonObject[USER_ID] = json[AUTHOR][ID];
     }
 
-    if (!json[AUTHOR][USERNAME].isUndefined()) {
-        _jsonObject[USERNAME] = json[AUTHOR][USERNAME];
+    if (json.contains(MEMBER)) {
+        _jsonObject[ROLE_IDS] = json[MEMBER][ROLES];
+    } else if (json.contains(ROLE_IDS)) {
+        _jsonObject[ROLE_IDS] = json[ROLE_IDS];
     }
 
-    buildArgs();
+    if (json.contains(EMOJI)) {
+        _jsonObject[EMOJI] = json[EMOJI];
+    }
+
+    if (json.contains(MESSAGE_ID)) {
+        _jsonObject[MESSAGE_ID] = json[MESSAGE_ID];
+    }
+
+    if (json.contains(JOB_ID)) {
+        _jsonObject[JOB_ID] = json[JOB_ID];
+    }
+
+    if (json.contains(TARGET_PAYLOAD)) {
+        _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
+    } else {
+        _jsonObject[TARGET_PAYLOAD] = QJsonObject();
+    }
+
+    if (json.contains(SOURCE_PAYLOAD)) {
+        _jsonObject[SOURCE_PAYLOAD] = json[SOURCE_PAYLOAD];
+    } else {
+        _jsonObject[SOURCE_PAYLOAD] = json;
+    }
 }
 
 QJsonArray
@@ -130,6 +184,16 @@ EventContext::setRoleId(const QJsonValue &roleId) {
     _jsonObject[ROLE_ID] = roleId;
 }
 
+QJsonArray
+EventContext::getRoleIds() const {
+    return _jsonObject[ROLE_IDS].toArray();
+}
+
+void
+EventContext::setRoleIds(const QJsonValue &roleId) {
+    _jsonObject[ROLE_ID] = roleId;
+}
+
 QJsonValue
 EventContext::getMessageId() const {
     return _jsonObject[MESSAGE_ID];
@@ -151,7 +215,7 @@ EventContext::setWebhookId(const QJsonValue &webhookId) {
 }
 
 void
-EventContext::buildArgs() {
+EventContext::splitArgs() {
     QString content = _jsonObject[CONTENT].toString();
 
     if (content.isEmpty()) {
@@ -201,7 +265,7 @@ void
 EventContext::setContent(const QJsonValue &content) {
     _jsonObject[CONTENT] = content;
 
-    buildArgs();
+    splitArgs();
 }
 
 QJsonValue

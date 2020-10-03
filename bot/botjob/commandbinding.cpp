@@ -1,9 +1,8 @@
 #include "commandbinding.h"
 
-#include <QMetaProperty>
 
 const QString CommandBinding::COMMAND = "command";
-
+const QString CommandBinding::ADMIN_ONLY = "admin_only";
 
 CommandBinding::CommandBinding(const QString &commandName, const IBotJob::FunctionMapping &functionMapping) {
     _commandName = commandName;
@@ -19,6 +18,8 @@ CommandBinding::CommandBinding(const CommandBinding &other) {
     _description = other._description;
 
     _commandName = other._commandName;
+
+    _adminOnly = other._adminOnly;
 }
 
 CommandBinding
@@ -31,7 +32,19 @@ CommandBinding
 
     _commandName = other._commandName;
 
+    _adminOnly = other._adminOnly;
+
     return *this;
+}
+
+bool
+CommandBinding::isAdminOnly() const {
+    return _adminOnly;
+}
+
+void
+CommandBinding::setAdminOnly(const bool adminOnly) {
+    _adminOnly = adminOnly;
 }
 
 QString

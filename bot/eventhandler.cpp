@@ -9,7 +9,13 @@
 #include "botjob/job.h"
 
 EventHandler::EventHandler(QSharedPointer<Settings> settings) {
-    QString botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
+    GuildEntity::setBotOwnerId(settings->value(SettingsParam::Bot::OWNER_ID).toString());
+
+    GuildEntity::setAdminRoleName(settings->value(SettingsParam::Bot::ADMIN_ROLE_NAME).toString());
+
+    QString defaultScheme = settings->value(SettingsParam::Bot::RESTRICTION_SCHEME).toString();
+
+    GuildEntity::setDefaultRestrictionScheme(defaultScheme);
 
     _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
 }
@@ -82,7 +88,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
     QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
-    _jobQueue << guild->getBotJobs(context);
+    _jobQueue << guild->processEvent(context);
 
     processJobQueue();
 }

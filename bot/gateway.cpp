@@ -17,7 +17,7 @@
 
 Gateway::Gateway(QSharedPointer<Settings> settings)
 {    
-    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
+    _botToken = settings->value(SettingsParam::Bot::TOKEN).toString();
 
     DiscordAPI::setBotToken(_botToken);
 
@@ -54,9 +54,9 @@ Gateway::init() {
 
     connect(_heartbeatTimer.data(), &QTimer::timeout, this, &Gateway::sendHeartbeat);
 
-    _socket->open(_gatewayUrl);
+    _socket->open(_gatewayUrl);    
 
-    emit guildOnline(DEFAULT_GUILD_ID);
+    emit defaultGuildOnline(QSharedPointer<GuildEntity>(new GuildEntity));
 }
 
 void
@@ -382,5 +382,5 @@ Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
 
 void
 Gateway::processGuildCreate(QSharedPointer<GatewayPayload> payload) {
-    emit guildOnline(payload->getD()[Guild::ID].toString());
+    emit guildOnline(payload);
 }

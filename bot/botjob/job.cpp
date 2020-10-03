@@ -25,6 +25,8 @@ Job::context() const {
 void
 Job::setContext(const EventContext &context) {
     _context = context;
+
+    _context.splitArgs();
 }
 
 void
