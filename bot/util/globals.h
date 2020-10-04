@@ -14,10 +14,19 @@ static const QString DEFAULT_GUILD_ID = "0";
 
 namespace SettingsParam {
 //
+// Bot Control Properties
+//
+namespace Bot {
+static const QString TOKEN = "bot_token";
+static const QString OWNER_ID = "owner_id";
+static const QString ADMIN_ROLE_NAME = "admin_role_name";
+static const QString RESTRICTION_SCHEME = "restriction_scheme";
+}
+
+//
 // Connection properties
 //
 namespace Connection {
-static const QString BOT_TOKEN = "bot_token";
 static const QString CONNECTION_URL = "connection_url";
 static const QString MAX_RETRIES = "max_retries";
 static const QString ZLIB_ENABLED = "zlib_enabled";

@@ -5,11 +5,12 @@
 #include <gateway.h>
 
 #include "logging/logcontext.h"
+#include "entity/guildentity.h"
 #include "settings.h"
 #include "globals.h"
+#include "enumutils.h"
 
-Settings::Settings(QString path) : _path(path)
-{
+Settings::Settings(QString path) : _path(path) {
     parseSettingsFile();
     validateSettings();
 }
@@ -46,20 +47,49 @@ Settings::isComment(QString line) {
 
 void
 Settings::validateSettings() {
-    validateConnectionSettings();
+    validateBotSettings();
     validateGatewaySettings();
-    validateScriptSettings();
     validateDatabaseSettings();
     validateLoggingSettings();
 }
 
 void
-Settings::validateConnectionSettings() {
-    if (_settings[SettingsParam::Connection::BOT_TOKEN].toString().isEmpty()) {
+Settings::validateBotSettings() {
+    if (_settings[SettingsParam::Bot::TOKEN].toString().isEmpty()) {
         qDebug() << "Bot Token must be set in your options file for successful conenctions";
+
         QCoreApplication::exit();
     }
 
+    if (_settings[SettingsParam::Bot::OWNER_ID].toString().isEmpty()) {
+        qDebug() << "Bot Owner (discord user id) must be set in your options file.";
+
+        QCoreApplication::exit();
+    }
+
+    if (_settings[SettingsParam::Bot::ADMIN_ROLE_NAME].toString().isEmpty()) {
+        qDebug() << "Guild level bot admin role name must be set in your options file.";
+
+        QCoreApplication::exit();
+    }
+
+    if (_settings[SettingsParam::Script::SCRIPT_DIRECTORY].toString().isEmpty()) {
+        _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "./scripts";
+    }
+
+    QMetaEnum metaEnum = QMetaEnum::fromType<GuildEntity::RestrictionScheme>();
+
+    QString restrictionScheme = _settings[SettingsParam::Bot::RESTRICTION_SCHEME].toString();
+
+    int typeValue = metaEnum.keyToValue(restrictionScheme.toUtf8());
+
+    if (typeValue < 0) {
+        invalidEnumValue(SettingsParam::Bot::RESTRICTION_SCHEME, restrictionScheme, metaEnum);
+    }
+}
+
+void
+Settings::validateGatewaySettings() {
     if (_settings[SettingsParam::Connection::CONNECTION_URL].toString().isEmpty()) {
         _settings[SettingsParam::Connection::CONNECTION_URL] = "wss://gateway.discord.gg";
     }
@@ -69,10 +99,7 @@ Settings::validateConnectionSettings() {
     if (max_retries <= 0) {
         _settings[SettingsParam::Connection::MAX_RETRIES] = 10;
     }
-}
 
-void
-Settings::validateGatewaySettings() {
     if (_settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString().isEmpty()) {
         _settings[SettingsParam::Gateway::GATEWAY_INTENTS] = "GUILD_MESSAGES";
     }
@@ -82,18 +109,11 @@ Settings::validateGatewaySettings() {
     QString intents = _settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString();
 
     for (QString intentToken : intents.split(",")) {
-        int typeValue = metaEnum.keyToValue(intentToken.toUpper().toStdString().c_str());
+        int typeValue = metaEnum.keyToValue(intentToken.toStdString().c_str());
 
         if (typeValue < 0) {
             invalidEnumValue(SettingsParam::Gateway::GATEWAY_INTENTS, intentToken, metaEnum);
         }
-    }
-}
-
-void
-Settings::validateScriptSettings() {
-    if (_settings[SettingsParam::Script::SCRIPT_DIRECTORY].toString().isEmpty()) {
-        _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "/scripts";
     }
 }
 
@@ -105,9 +125,13 @@ Settings::validateDatabaseSettings() {
 
     QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
     QString databaseType = _settings[SettingsParam::Database::DATABASE_TYPE].toString();
-    int typeValue = metaEnum.keyToValue(databaseType.toUpper().toStdString().c_str());
+    int typeValue = metaEnum.keyToValue(databaseType.toStdString().c_str());
     if (typeValue < 0) {
         invalidEnumValue(SettingsParam::Database::DATABASE_TYPE, databaseType, metaEnum);
+    }
+
+    if (_settings[SettingsParam::Database::DATABASE_NAME].toString().isEmpty()) {
+        invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
     }
 
     if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
@@ -126,10 +150,6 @@ Settings::validateDatabaseSettings() {
         if (_settings[SettingsParam::Database::DATABASE_PASSWORD].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_PASSWORD);
         }
-
-        if (_settings[SettingsParam::Database::DATABASE_NAME].toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
-        }
     }
 }
 
@@ -140,7 +160,7 @@ Settings::validateLoggingSettings() {
         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
     } else {
         validateLogLevel(SettingsParam::Logging::CONSOLE_LOG_LEVEL, consoleLogLevel);
-         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = valueFromEnumKey(consoleLogLevel);
+         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
     }
 
 
@@ -149,7 +169,7 @@ Settings::validateLoggingSettings() {
         _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = LogContext::DEBUG;
     } else {
         validateLogLevel(SettingsParam::Logging::FILE_LOG_LEVEL, fileLogLevel);
-        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = valueFromEnumKey(fileLogLevel);
+        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
     }
 
     if (_settings[SettingsParam::Logging::LOG_FILE_SIZE].toInt() == 0) {
@@ -166,17 +186,10 @@ Settings::validateLoggingSettings() {
     }
 }
 
-int
-Settings::valueFromEnumKey(QString key) {
-    QMetaEnum metaEnum = QMetaEnum::fromType<LogContext::LogLevel>();
-    return metaEnum.keyToValue(key.toUpper().toUtf8());
-}
-
-
 void
 Settings::validateLogLevel(QString property, QString logLevel) {
     QMetaEnum metaEnum = QMetaEnum::fromType<LogContext::LogLevel>();
-    if (valueFromEnumKey(logLevel) < 0) {
+    if (EnumUtils::keyToValue<LogContext::LogLevel>(logLevel) < 0) {
         invalidEnumValue(property, logLevel, metaEnum);
     }
 }

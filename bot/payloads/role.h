@@ -22,6 +22,11 @@ public:
     Role(const QByteArray &json) : JsonSerializable(json) {}
     Role(const QJsonObject &json) : JsonSerializable(json) {}
     Role(const QString &json) : JsonSerializable(json) {}
+    Role &operator=(const Role &role) {
+        _jsonObject = role._jsonObject;
+
+        return *this;
+    }
 
     QJsonValue getColor() const;
     QJsonValue getHoist() const;

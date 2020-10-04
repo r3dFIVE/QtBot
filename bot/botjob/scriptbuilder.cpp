@@ -39,8 +39,6 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
 
     _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
 
-    _botToken = settings->value(SettingsParam::Connection::BOT_TOKEN).toString();
-
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
                                BOT_API_MINOR_VERSION,
@@ -93,8 +91,6 @@ ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
 void
 ScriptBuilder::loadCoreCommands() {
     QMap<QSharedPointer<CoreCommand>, CommandBinding> coreCommandMappings = CoreCommands::buildCoreCommandBindings(*_eventHandler, _guildId);
-
-    QList<CoreCommand> coreCommands;
 
     for (auto key : coreCommandMappings.keys()) {
         CommandBinding binding = coreCommandMappings[key];
@@ -301,6 +297,8 @@ ScriptBuilder::registerCommandBinding(QSharedPointer<BotScript> botScript, const
     commandBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
 
     commandBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    commandBinding.setAdminOnly(binding[CommandBinding::ADMIN_ONLY].toBool());
 
     if (commandBinding.isValid(*botScript->metaObject())) {
         _scriptNameByCommand[command] = botScript->getScriptName();

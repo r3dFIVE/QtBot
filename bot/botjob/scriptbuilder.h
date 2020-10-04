@@ -24,7 +24,6 @@ class ScriptBuilder : public QObject
     Logger *_logger;
 
     DatabaseContext _defaultDatabaseContext;
-    QString _botToken;
     QString _fileName;
     QString _guildId;
     QString _scriptDir;
