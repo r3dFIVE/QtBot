@@ -7,16 +7,18 @@
 class ChannelCreateReaction : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me";
+
     ChannelCreateReaction(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/@me";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        endpoint.replace(Route::MESSAGE_ID_TOKEN, context.getMessageId().toString());
+        _params[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
 
-        endpoint.replace(Route::EMOJI_TOKEN, context.getEmoji().toString());
+        _params[Route::EMOJI_TOKEN] = context.getEmoji().toString();
 
-        buildRequest(endpoint, PUT, CHANNEL_ID_BUCKET, context);
+        buildRequest(POST, PATH, channelId, context.getTargetPayload());
     }
 };
 

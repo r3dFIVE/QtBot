@@ -15,7 +15,6 @@ HEADERS += \
     $$PWD/botjob/timedbinding.h \
     $$PWD/botjob/timedjobs.h \
     $$PWD/entitymanager.h \
-    $$PWD/botjob/httpclient.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
@@ -62,6 +61,7 @@ HEADERS += \
     $$PWD/payloads/messagereference.h \
     $$PWD/payloads/permissionoverwrite.h \
     $$PWD/payloads/presenceupdate.h \
+    $$PWD/payloads/ratelimit.h \
     $$PWD/payloads/reaction.h \
     $$PWD/payloads/ready.h \
     $$PWD/payloads/resume.h \
@@ -78,6 +78,7 @@ HEADERS += \
     $$PWD/qml/sqlfield.h \
     $$PWD/qml/sqlquery.h \
     $$PWD/qml/sqlrecord.h \
+    $$PWD/routes/bucket.h \
     $$PWD/routes/channeladdpinnedchannelmessage.h \
     $$PWD/routes/channelbulkmessagesdelete.h \
     $$PWD/routes/channelcreatechannelinvite.h \
@@ -146,6 +147,7 @@ HEADERS += \
     $$PWD/routes/guildremoveguildmember.h \
     $$PWD/routes/guildremoveguildmemberrole.h \
     $$PWD/routes/guildsyncguildintegration.h \
+    $$PWD/routes/httpclient.h \
     $$PWD/routes/route.h \
     $$PWD/botjob/corecommand.h \
     $$PWD/botjob/corecommands.h \
@@ -175,7 +177,6 @@ SOURCES += \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
-    $$PWD/botjob/httpclient.cpp \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
     $$PWD/logging/logworker.cpp \
@@ -216,6 +217,7 @@ SOURCES += \
     $$PWD/payloads/messagereference.cpp \
     $$PWD/payloads/permissionoverwrite.cpp \
     $$PWD/payloads/presenceupdate.cpp \
+    $$PWD/payloads/ratelimit.cpp \
     $$PWD/payloads/reaction.cpp \
     $$PWD/payloads/ready.cpp \
     $$PWD/payloads/resume.cpp \
@@ -234,6 +236,7 @@ SOURCES += \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \
     $$PWD/qml/qmlfactory.cpp \
+    $$PWD/routes/httpclient.cpp \
     $$PWD/routes/route.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \

@@ -7,14 +7,16 @@
 class ChannelGroupDmAddRecipient : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}/recipients/{user.id}";
+
     ChannelGroupDmAddRecipient(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}/recipients/{user.id}";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        endpoint.replace(Route::USER_ID_TOKEN, context.getUserId().toString());
+        _params[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        buildRequest(endpoint, PUT, CHANNEL_ID_BUCKET, context);
+        buildRequest(PUT, PATH, channelId, context.getTargetPayload());
     }
 };
 

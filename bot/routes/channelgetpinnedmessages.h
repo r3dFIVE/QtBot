@@ -7,14 +7,16 @@
 class ChannelGetPinnedMessages : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}/pins/{message.id}";
+
     ChannelGetPinnedMessages(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}/pins/{message.id}";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        endpoint.replace(Route::MESSAGE_ID_TOKEN, context.getMessageId().toString());
+        _params[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
 
-        buildRequest(endpoint, GET, CHANNEL_ID_BUCKET, context);
+        buildRequest(GET, PATH , channelId, context.getTargetPayload());
     }
 };
 

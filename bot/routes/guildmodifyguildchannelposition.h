@@ -7,12 +7,14 @@
 class GuildModifyGuildChannelPosition : public Route
 {
 public:
+    const QString PATH = "/guilds/{guild.id}/channels";
+
     GuildModifyGuildChannelPosition(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}/channels";
+        QString guildId = context.getGuildId().toString();
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+        _params[Route::GUILD_ID_TOKEN] = guildId;
 
-        buildRequest(endpoint, PATCH, GUILD_ID_BUCKET, context);
+        buildRequest(PATCH, PATH, guildId, context.getTargetPayload());
     }
 };
 

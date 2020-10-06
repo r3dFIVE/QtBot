@@ -7,12 +7,14 @@
 class GuildGetGuild : public Route
 {
 public:
-    GuildGetGuild(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}";
+    const QString PATH = "/guilds/{guild.id}";
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+    GuildGetGuild(const EventContext &context) {        
+        QString guildId = context.getGuildId().toString();
 
-        buildRequest(endpoint, GET, GUILD_ID_BUCKET, context);
+        _params[Route::GUILD_ID_TOKEN] = guildId;
+
+        buildRequest(GET, PATH, guildId, context.getTargetPayload());
     }
 };
 

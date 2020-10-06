@@ -24,13 +24,6 @@ public:
     };
     Q_ENUM(RequestType);
 
-    enum Bucket {
-        CHANNEL_ID_BUCKET,
-        GUILD_ID_BUCKET,
-        WEBHOOK_ID_BUCKET,
-        GLOBAL_BUCKET
-    };
-
     inline QNetworkRequest request() {
         return _request;
     }
@@ -47,8 +40,13 @@ public:
         return _requestType;
     }
 
-    inline Bucket getBucket() {
-        return _bucket;
+
+    inline QString getMajorParamId() {
+        return _majorParamId;
+    }
+
+    inline QString getRouteWithMethod() {
+        return _routeWithMethod;
     }
 
 protected:
@@ -56,12 +54,12 @@ protected:
     Route(const Route &other) { Q_UNUSED(other) }
     ~Route() {}
 
+    QMap<QString, QString> _params;
     QByteArray _payload;
     QNetworkRequest _request;
+    QString _majorParamId;
+    QString _routeWithMethod;
     RequestType _requestType;
-    Bucket _bucket;
-
-    Q_ENUM(Bucket)
 
     const QString DISCORD_API_PATH = "https://discord.com/api";
     const QString CHANNEL_ID_TOKEN = "{channel.id}";
@@ -74,10 +72,10 @@ protected:
     const QString ROLE_ID_TOKEN = "{role.id}";
     const QString OVERWRITE_ID_TOKEN = "{overwrite.id}";
 
-    void buildRequest(const QString &endpoint, const RequestType requestType,
-                      const Bucket bucket, const EventContext &context);
-
-    void populateToken(const QString &path, const QString &token, const EventContext &context);
+    void buildRequest(const RequestType requestType,
+                        const QString &route,
+                        const QString &majorParamId,
+                        const QJsonObject &payload);
 };
 
 
