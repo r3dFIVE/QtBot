@@ -7,12 +7,14 @@
 class ChannelGetChannel : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}";
+
     ChannelGetChannel(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        buildRequest(endpoint, GET, CHANNEL_ID_BUCKET, context);
+        buildRequest(GET, PATH, channelId, context.getTargetPayload());
     }
 };
 

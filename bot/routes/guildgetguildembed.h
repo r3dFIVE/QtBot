@@ -7,12 +7,14 @@
 class GuildGetGuildEmbed : public Route
 {
 public:
+    const QString PATH = "/guilds/{guild.id}/embed";
+
     GuildGetGuildEmbed(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}/embed";
+        QString guildId = context.getGuildId().toString();
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+        _params[Route::GUILD_ID_TOKEN] = guildId;
 
-        buildRequest(endpoint, GET, GUILD_ID_BUCKET, context);
+        buildRequest(GET, PATH, guildId, context.getTargetPayload());
     }
 };
 

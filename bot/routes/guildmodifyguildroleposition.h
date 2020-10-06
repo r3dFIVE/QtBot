@@ -7,12 +7,14 @@
 class GuildModifyGuildRolePosition : public Route
 {
 public:
+    const QString PATH = "/guilds/{guild.id}/roles";
+
     GuildModifyGuildRolePosition(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}/roles";
+        QString guildId = context.getGuildId().toString();
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+        _params[Route::GUILD_ID_TOKEN] = guildId;
 
-        buildRequest(endpoint, PATCH, GUILD_ID_BUCKET, context);
+        buildRequest(PATCH, PATH, guildId, context.getTargetPayload());
     }
 };
 

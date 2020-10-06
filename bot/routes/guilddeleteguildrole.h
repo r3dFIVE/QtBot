@@ -7,14 +7,16 @@
 class GuildDeleteGuildRole : public Route
 {
 public:
+    const QString PATH = "/guilds/{guild.id}/roles/{role.id}";
+
     GuildDeleteGuildRole(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}/roles/{role.id}";
+        QString guildId = context.getGuildId().toString();
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+        _params[Route::GUILD_ID_TOKEN] = guildId;
 
-        endpoint.replace(Route::ROLE_ID_TOKEN, context.getRoleId().toString());
+        _params[Route::ROLE_ID_TOKEN] = context.getRoleId().toString();
 
-        buildRequest(endpoint, DELETE, GUILD_ID_BUCKET, context);
+        buildRequest(DELETE, PATH, guildId, context.getTargetPayload());
     }
 };
 

@@ -7,14 +7,16 @@
 class ChannelCrosspostMessage : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}/messages/{message.id}/crosspost";
+
     ChannelCrosspostMessage(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}/messages/{message.id}/crosspost";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        endpoint.replace(Route::MESSAGE_ID_TOKEN, context.getMessageId().toString());
+        _params[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
 
-        buildRequest(endpoint, POST, CHANNEL_ID_BUCKET, context);
+        buildRequest(POST, PATH, channelId, context.getTargetPayload());
     }
 };
 

@@ -7,12 +7,14 @@
 class ChannelGetChannelInvites : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}/invites";
+
     ChannelGetChannelInvites(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}/invites";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        buildRequest(endpoint, GET, CHANNEL_ID_BUCKET, context);
+        buildRequest(GET, PATH, channelId, context.getTargetPayload());
     }
 };
 

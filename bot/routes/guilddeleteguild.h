@@ -7,12 +7,14 @@
 class GuildDeleteGuild : public Route
 {
 public:
+    const QString PATH = "/guilds/{guild.id}";
+
     GuildDeleteGuild(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}";
+        QString guildId = context.getGuildId().toString();
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+        _params[Route::GUILD_ID_TOKEN] = guildId;
 
-        buildRequest(endpoint, DELETE, GUILD_ID_BUCKET, context);
+        buildRequest(DELETE, PATH, guildId, context.getTargetPayload());
     }
 };
 

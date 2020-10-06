@@ -2,15 +2,15 @@
 #define GUILDCREATEGUILD_H
 
 #include "route.h"
-
+#include "bucket.h"
 
 class GuildCreateGuild : public Route
 {
 public:
-    GuildCreateGuild(const EventContext &context) {
-        QString endpoint = "/guilds";
+    const QString PATH = "/guilds";
 
-        buildRequest(endpoint, POST, GUILD_ID_BUCKET, context);
+    GuildCreateGuild(const EventContext &context) {
+        buildRequest(POST, PATH, GLOBAL_BUCKET, context.getTargetPayload());
     }
 };
 

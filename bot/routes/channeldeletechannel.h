@@ -7,12 +7,14 @@
 class ChannelDeleteChannel : public Route
 {
 public:
+    const QString PATH = "/channels/{channel.id}";
+
     ChannelDeleteChannel(const EventContext &context) {
-        QString endpoint = "/channels/{channel.id}";
+        QString channelId = context.getChannelId().toString();
 
-        endpoint.replace(Route::CHANNEL_ID_TOKEN, context.getChannelId().toString());
+        _params[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        buildRequest(endpoint, DELETE, CHANNEL_ID_BUCKET, context);
+        buildRequest(DELETE, PATH, channelId, context.getTargetPayload());
     }
 };
 

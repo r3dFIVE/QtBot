@@ -7,12 +7,14 @@
 class GuildBeginGuildPrune : public Route
 {
 public:
+    const QString PATH = "/guilds/{guild.id}/prune";
+
     GuildBeginGuildPrune(const EventContext &context) {
-        QString endpoint = "/guilds/{guild.id}/prune";
+        QString guildId = context.getGuildId().toString();
 
-        endpoint.replace(Route::GUILD_ID_TOKEN, context.getGuildId().toString());
+        _params[Route::GUILD_ID_TOKEN] = guildId;
 
-        buildRequest(endpoint, POST, GUILD_ID_BUCKET, context);
+        buildRequest(POST, PATH, guildId, context.getTargetPayload());
     }
 };
 
