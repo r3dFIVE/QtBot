@@ -114,7 +114,7 @@ public:
 
     /*
      *  GUILD API FUNCTIONS
-     *  https://discord.com/developers/docs/resources/channel
+     *  https://discord.com/developers/docs/resources/guild
      */
 
     Q_INVOKABLE QVariant gCreateGuild(const QVariant &context);
@@ -157,6 +157,31 @@ public:
     Q_INVOKABLE QVariant gModifyGuildEmbed(const QVariant &context);
     Q_INVOKABLE QVariant gGetVanityUrl(const QVariant &context);
     Q_INVOKABLE QVariant gGetWidgetImage(const QVariant &context);
+
+    /*
+     *      EMOJI API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/emoji
+     */
+
+    Q_INVOKABLE QVariant eListGuildEmojis(const QVariant &context);
+    Q_INVOKABLE QVariant eCreateGuildEmoji(const QVariant &context);
+    Q_INVOKABLE QVariant eDeleteGuildEmoji(const QVariant &context);
+    Q_INVOKABLE QVariant eGetGuildEmoji(const QVariant &context);
+    Q_INVOKABLE QVariant eModifyGuildEmoji(const QVariant &context);
+
+    /*
+     *      USER API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/user
+     */
+    Q_INVOKABLE QVariant uGetCurrentUser(const QVariant &context);
+    Q_INVOKABLE QVariant uGetUser(const QVariant &context);
+    Q_INVOKABLE QVariant uModifyCurrentUser(const QVariant &context);
+    Q_INVOKABLE QVariant uGetCurrentUserGuilds(const QVariant &context);
+    Q_INVOKABLE QVariant uGetUserDms(const QVariant &context);
+    Q_INVOKABLE QVariant uCreateDm(const QVariant &context);
+    Q_INVOKABLE QVariant uGetUserConnections(const QVariant &context);
+
+
 
 signals:
     void timedBindingReadySignal(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);

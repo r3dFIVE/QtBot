@@ -12,7 +12,7 @@ public:
     GuildGetGuildVoiceRegions(const EventContext &context) {
         QString guildId = context.getGuildId().toString();
 
-        _params[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
 
         buildRequest(GET, PATH, guildId, context.getTargetPayload());
     }

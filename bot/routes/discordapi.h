@@ -106,6 +106,31 @@ public:
     QVariant guildModifyGuildEmbed(const QVariant &context);
     QVariant guildGetVanityUrl(const QVariant &context);
     QVariant guildGetWidgetImage(const QVariant &context);
+
+    /*
+     *      EMOJI API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/emoji
+     */
+
+    QVariant emojiListGuildEmojis(const QVariant &context);
+    QVariant emojiCreateGuildEmoji(const QVariant &context);
+    QVariant emojiDeleteGuildEmoji(const QVariant &context);
+    QVariant emojiGetGuildEmoji(const QVariant &context);
+    QVariant emojiModifyGuildEmoji(const QVariant &context);
+
+    /*
+     *      USER API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/emoji
+     */
+
+    QVariant userGetCurrentUser(const QVariant &context);
+    QVariant userGetUser(const QVariant &context);
+    QVariant userModifyCurrentUser(const QVariant &context);
+    QVariant userGetCurrentUserGuilds(const QVariant &context);
+    QVariant userGetUserDms(const QVariant &context);
+    QVariant userLeaveGuild(const QVariant &context);
+    QVariant userCreateDm(const QVariant &context);
+    QVariant userGetUserConnections(const QVariant &context);
 };
 
 #endif // DISCORDAPI_H

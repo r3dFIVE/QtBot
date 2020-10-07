@@ -12,7 +12,7 @@ public:
     ChannelDeleteChannel(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
         buildRequest(DELETE, PATH, channelId, context.getTargetPayload());
     }

@@ -12,11 +12,11 @@ public:
     ChannelCreateReaction(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        _params[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
+        _pathParams[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
 
-        _params[Route::EMOJI_TOKEN] = context.getEmoji().toString();
+        _pathParams[Route::EMOJI_TOKEN] = context.getEmoji().toString();
 
         buildRequest(POST, PATH, channelId, context.getTargetPayload());
     }

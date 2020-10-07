@@ -12,9 +12,9 @@ public:
     ChannelEditChannelPermissions(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        _params[Route::OVERWRITE_ID_TOKEN] = context.getOverwriteId().toString();
+        _pathParams[Route::OVERWRITE_ID_TOKEN] = context.getOverwriteId().toString();
 
         buildRequest(POST, PATH, channelId, context.getTargetPayload());
     }
