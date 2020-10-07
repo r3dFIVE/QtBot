@@ -14,7 +14,7 @@ public:
 
         _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        buildRequest(GET, PATH, channelId, context.getTargetPayload());
+        buildRequest(GET, PATH, channelId, context.getTargetPayload(), context.getQueryParams());
     }
 };
 

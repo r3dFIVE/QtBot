@@ -70,7 +70,6 @@ HEADERS += \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
     $$PWD/botjob/botscript.h \
-    $$PWD/payloads/eventcontext.h \
     $$PWD/qml/enums/openmode.h \
     $$PWD/qml/enums/sql.h \
     $$PWD/qml/sqldatabase.h \
@@ -212,7 +211,6 @@ SOURCES += \
     $$PWD/payloads/embedthumbnail.cpp \
     $$PWD/payloads/embedvideo.cpp \
     $$PWD/payloads/emoji.cpp \
-    $$PWD/payloads/eventcontext.cpp \
     $$PWD/payloads/gatewaypayload.cpp \
     $$PWD/payloads/guild.cpp \
     $$PWD/payloads/guildmember.cpp \
