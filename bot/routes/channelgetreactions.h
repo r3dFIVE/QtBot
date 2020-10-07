@@ -18,7 +18,7 @@ public:
 
         _pathParams[Route::EMOJI_TOKEN] = context.getEmoji().toString();
 
-        buildRequest(GET, PATH, channelId, context.getTargetPayload());
+        buildRequest(GET, PATH, channelId, context.getTargetPayload(), context.getQueryParams());
     }
 };
 
