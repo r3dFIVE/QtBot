@@ -12,9 +12,9 @@ public:
     ChannelGroupDmAddRecipient(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
-        _params[Route::USER_ID_TOKEN] = context.getUserId().toString();
+        _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
         buildRequest(PUT, PATH, channelId, context.getTargetPayload());
     }

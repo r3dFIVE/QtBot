@@ -12,9 +12,9 @@ public:
     GuildDeleteGuildIntegration(const EventContext &context) {
         QString guildId = context.getGuildId().toString();
 
-        _params[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
 
-        _params[Route::INTEGRATION_ID_TOKEN] = context.getIntegrationId().toString();
+        _pathParams[Route::INTEGRATION_ID_TOKEN] = context.getIntegrationId().toString();
 
         buildRequest(DELETE, PATH, guildId, context.getTargetPayload());
     }

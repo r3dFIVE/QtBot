@@ -1,14 +1,29 @@
 #include "route.h"
 
+const QString Route::GLOBAL_BUCKET = "GLOBAL_BUCKET";
+
 void
 Route::buildRequest(const RequestType requestType,
                     const QString &route,
                     const QString &majorParamId,
-                    const QJsonObject &payload) {
+                    const QJsonObject &payload,
+                    const QJsonObject &queryParams) {
     QString path = QString("%1%2").arg(Route::DISCORD_API_PATH, route);
 
-    for (auto key : _params.keys()) {
-        path.replace(key, _params[key]);
+    for (auto key : _pathParams.keys()) {
+        path.replace(key, _pathParams[key]);
+    }
+
+    if (requestType == GET && !queryParams.isEmpty()) {
+        QString queryString = "?";
+
+        for (auto key : queryParams.keys()) {
+            queryString += QString("%1=%2&").arg(key, queryParams[key].toString());
+        }
+
+        queryString.truncate(queryString.size() - 1);
+
+        path = QString("%1%2").arg(path, queryString);
     }
 
     _majorParamId = majorParamId;

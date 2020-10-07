@@ -1,15 +1,15 @@
-#ifndef GUILDDELETEGUILD_H
-#define GUILDDELETEGUILD_H
+#ifndef USERLEAVEGUILD_H
+#define USERLEAVEGUILD_H
 
 #include "route.h"
 
 
-class GuildDeleteGuild : public Route
+class UserLeaveGuild : public Route
 {
 public:
-    const QString PATH = "/guilds/{guild.id}";
+    const QString PATH = "/users/@me/guilds/{guild.id}";
 
-    GuildDeleteGuild(const EventContext &context) {
+    UserLeaveGuild(const EventContext &context) {
         QString guildId = context.getGuildId().toString();
 
         _pathParams[Route::GUILD_ID_TOKEN] = guildId;
@@ -18,4 +18,4 @@ public:
     }
 };
 
-#endif // GUILDDELETEGUILD_H
+#endif // USERLEAVEGUILD_H

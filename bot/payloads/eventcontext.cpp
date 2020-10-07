@@ -22,6 +22,7 @@ const QString EventContext::MEMBER = "member";
 const QString EventContext::ARGS = "args";
 const QString EventContext::AUTHOR = "author";
 const QString EventContext::USERNAME = "username";
+const QString EventContext::QUERY_PARAMS = "query_params";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
 const QString EventContext::TARGET_PAYLOAD = "target_payload";
 
@@ -99,6 +100,12 @@ EventContext::buildContext(const QJsonObject &json) {
 
     if (json.contains(JOB_ID)) {
         _jsonObject[JOB_ID] = json[JOB_ID];
+    }
+
+    if (json.contains(QUERY_PARAMS)) {
+        _jsonObject[QUERY_PARAMS] = json[QUERY_PARAMS];
+    } else {
+        _jsonObject[QUERY_PARAMS] = QJsonObject();
     }
 
     if (json.contains(TARGET_PAYLOAD)) {
@@ -286,6 +293,16 @@ EventContext::getAuthor() const {
 void
 EventContext::setAuthor(const QJsonObject &value) {
     _jsonObject[AUTHOR] = value;
+}
+
+QJsonObject
+EventContext::getQueryParams() const {
+    return _jsonObject[QUERY_PARAMS].toObject();
+}
+
+void
+EventContext::setQueryParams(const QJsonObject &queryParams) {
+    _jsonObject[QUERY_PARAMS] = queryParams;
 }
 
 QJsonObject

@@ -103,13 +103,9 @@ HttpClient::updateBucket(QSharedPointer<Bucket> bucket, QNetworkReply *reply, co
     if (rateLimitReset >= bucket->getRateLimitReset()) {
         bucket->setRateLimitReset(rateLimitReset);
 
-        int rateLimitLimit = reply->rawHeader(X_RATELIMIT_LIMIT).toInt();
+        bucket->setRateLimitLimit(reply->rawHeader(X_RATELIMIT_LIMIT).toInt());
 
-        if (rateLimitLimit != bucket->getRateLimitLimit()) {
-            bucket->setRateLimitLimit(rateLimitLimit);
-
-            bucket->setRateLimitRemaining(reply->rawHeader(X_RATELIMIT_REMAINING).toInt());
-        }
+        bucket->setRateLimitRemaining(reply->rawHeader(X_RATELIMIT_REMAINING).toInt());
     }
 
     _logger->trace(QString("Rate Limit updated for bucket: %1:%2. Rate Limit reimaining: %3/%4. Rate limit resets at: %5")

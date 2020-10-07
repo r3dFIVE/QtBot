@@ -12,7 +12,7 @@ public:
     ChannelModifyChannel(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
         buildRequest(PATCH, PATH, channelId, context.getTargetPayload());
     }

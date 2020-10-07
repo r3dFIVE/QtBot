@@ -518,3 +518,63 @@ QVariant
 BotScript::gGetWidgetImage(const QVariant &context) {
     return _discordAPI->guildGetWidgetImage(context);
 }
+
+QVariant
+BotScript::eListGuildEmojis(const QVariant &context) {
+    return _discordAPI->emojiListGuildEmojis(context);
+}
+
+QVariant
+BotScript::eCreateGuildEmoji(const QVariant &context) {
+    return _discordAPI->emojiCreateGuildEmoji(context);
+}
+
+QVariant
+BotScript::eDeleteGuildEmoji(const QVariant &context) {
+    return _discordAPI->emojiDeleteGuildEmoji(context);
+}
+
+QVariant
+BotScript::eGetGuildEmoji(const QVariant &context) {
+    return _discordAPI->emojiGetGuildEmoji(context);
+}
+
+QVariant
+BotScript::eModifyGuildEmoji(const QVariant &context) {
+    return _discordAPI->emojiModifyGuildEmoji(context);
+}
+
+QVariant
+BotScript::uGetCurrentUser(const QVariant &context) {
+    return _discordAPI->userGetCurrentUser(context);
+}
+
+QVariant
+BotScript::uGetUser(const QVariant &context) {
+    return _discordAPI->userGetUser(context);
+}
+
+QVariant
+BotScript::uModifyCurrentUser(const QVariant &context) {
+    return _discordAPI->userModifyCurrentUser(context);
+}
+
+QVariant
+BotScript::uGetCurrentUserGuilds(const QVariant &context) {
+    return _discordAPI->userGetCurrentUserGuilds(context);
+}
+
+QVariant
+BotScript::uGetUserDms(const QVariant &context) {
+    return _discordAPI->userGetUserDms(context);
+}
+
+QVariant
+BotScript::uCreateDm(const QVariant &context) {
+    return _discordAPI->userCreateDm(context);
+}
+
+QVariant
+BotScript::uGetUserConnections(const QVariant &context) {
+    return _discordAPI->userGetUserConnections(context);
+}

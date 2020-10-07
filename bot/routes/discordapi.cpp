@@ -64,6 +64,19 @@
 #include "guildmodifyguildembed.h"
 #include "guildgetvanityurl.h"
 #include "guildgetwidgetimage.h"
+#include "emojilistguildemojis.h"
+#include "emojicreateguildemoji.h"
+#include "emojideleteguildemoji.h"
+#include "emojigetguildemoji.h"
+#include "emojimodifyguildemoji.h"
+#include "usergetcurrentuser.h"
+#include "usergetuser.h"
+#include "usermodifycurrentuser.h"
+#include "usergetcurrentuserguilds.h"
+#include "usergetuserdms.h"
+#include "userleaveguild.h"
+#include "usercreatedm.h"
+#include "usergetuserconnections.h"
 
 
 QString DiscordAPI::_botToken = QString();
@@ -565,4 +578,98 @@ DiscordAPI::guildGetWidgetImage(const QVariant &context) {
     GuildGetWidgetImage getWidgetImage(buildRequestContext(context));
 
     return buildResponseVariant(_httpClient.processRoute(getWidgetImage));
+}
+
+QVariant
+DiscordAPI::emojiListGuildEmojis(const QVariant &context) {
+    EmojiListGuildEmojis listGuildEmojis(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(listGuildEmojis));
+}
+
+QVariant
+DiscordAPI::emojiCreateGuildEmoji(const QVariant &context) {
+    EmojiCreateGuildEmoji createGuildEmoji(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createGuildEmoji));
+}
+
+
+QVariant
+DiscordAPI::emojiDeleteGuildEmoji(const QVariant &context) {
+    EmojiDeleteGuildEmoji deleteGuildEmoji(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(deleteGuildEmoji));
+}
+
+QVariant
+DiscordAPI::emojiGetGuildEmoji(const QVariant &context) {
+    EmojiGetGuildEmoji getGuildEmoji(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildEmoji));
+}
+
+QVariant
+DiscordAPI::emojiModifyGuildEmoji(const QVariant &context) {
+    EmojiModifyGuildEmoji modifyGuildEmoji(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyGuildEmoji));
+}
+
+QVariant
+DiscordAPI::userGetCurrentUser(const QVariant &context) {
+    UserGetCurrentUser getCurrentUser(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getCurrentUser));
+}
+
+QVariant
+DiscordAPI::userGetUser(const QVariant &context) {
+    UserGetUser getUser(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getUser));
+}
+
+QVariant
+DiscordAPI::userModifyCurrentUser(const QVariant &context) {
+    UserModifyCurrentUser modifyCurrentUser(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyCurrentUser));
+}
+
+QVariant
+DiscordAPI::userGetCurrentUserGuilds(const QVariant &context) {
+    UserCurrentGetUserGuilds getUserGuilds(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getUserGuilds));
+}
+
+QVariant
+DiscordAPI::userGetUserDms(const QVariant &context) {
+    UserGetUserDms getUserDms(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getUserDms));
+}
+
+QVariant
+DiscordAPI::userLeaveGuild(const QVariant &context) {
+    UserLeaveGuild leaveGuild(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(leaveGuild));
+}
+
+
+QVariant
+DiscordAPI::userCreateDm(const QVariant &context) {
+    UserCreateDm createDm(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createDm));
+}
+
+
+QVariant
+DiscordAPI::userGetUserConnections(const QVariant &context) {
+    UserGetUserConnections getUserConnections(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getUserConnections));
 }

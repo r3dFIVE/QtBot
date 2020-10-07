@@ -12,11 +12,11 @@ public:
     GuildRemoveGuildMemberRole(const EventContext &context) {
         QString guildId = context.getGuildId().toString();
 
-        _params[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
 
-        _params[Route::USER_ID_TOKEN] = context.getUserId().toString();
+        _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        _params[Route::ROLE_ID_TOKEN] = context.getRoleId().toString();
+        _pathParams[Route::ROLE_ID_TOKEN] = context.getRoleId().toString();
 
         buildRequest(DELETE, PATH, guildId, context.getTargetPayload());
     }

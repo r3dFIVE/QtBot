@@ -12,7 +12,7 @@ public:
     ChannelGetChannelMessages(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
         buildRequest(GET, PATH, channelId, context.getTargetPayload());
     }

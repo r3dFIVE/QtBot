@@ -107,6 +107,11 @@ HEADERS += \
     $$PWD/routes/channelmodifychannel.h \
     $$PWD/routes/channeltriggertypingindicator.h \
     $$PWD/routes/discordapi.h \
+    $$PWD/routes/emojicreateguildemoji.h \
+    $$PWD/routes/emojideleteguildemoji.h \
+    $$PWD/routes/emojigetguildemoji.h \
+    $$PWD/routes/emojilistguildemojis.h \
+    $$PWD/routes/emojimodifyguildemoji.h \
     $$PWD/routes/guildaddguildmember.h \
     $$PWD/routes/guildaddguildmemberrole.h \
     $$PWD/routes/guildbeginguildprune.h \
@@ -154,6 +159,14 @@ HEADERS += \
     $$PWD/botjob/ibotjob.h \
     $$PWD/qml/file.h \
     $$PWD/qml/qmlfactory.h \
+    $$PWD/routes/usercreatedm.h \
+    $$PWD/routes/usergetcurrentuser.h \
+    $$PWD/routes/usergetcurrentuserguilds.h \
+    $$PWD/routes/usergetuser.h \
+    $$PWD/routes/usergetuserconnections.h \
+    $$PWD/routes/usergetuserdms.h \
+    $$PWD/routes/userleaveguild.h \
+    $$PWD/routes/usermodifycurrentuser.h \
     $$PWD/util/enumutils.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \

@@ -12,9 +12,9 @@ public:
     GuildModifyGuildRole(const EventContext &context) {
         QString guildId = context.getGuildId().toString();
 
-        _params[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
 
-        _params[Route::ROLE_ID_TOKEN] = context.getRoleId().toString();
+        _pathParams[Route::ROLE_ID_TOKEN] = context.getRoleId().toString();
 
         buildRequest(PATCH, PATH, guildId, context.getTargetPayload());
     }

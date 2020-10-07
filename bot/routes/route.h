@@ -15,6 +15,8 @@ class Route : public QObject
     Q_OBJECT
 
 public:
+    static const QString GLOBAL_BUCKET;
+
     enum RequestType {
         POST,       // C
         GET,        // R
@@ -54,7 +56,7 @@ protected:
     Route(const Route &other) { Q_UNUSED(other) }
     ~Route() {}
 
-    QMap<QString, QString> _params;
+    QMap<QString, QString> _pathParams;
     QByteArray _payload;
     QNetworkRequest _request;
     QString _majorParamId;
@@ -75,7 +77,8 @@ protected:
     void buildRequest(const RequestType requestType,
                         const QString &route,
                         const QString &majorParamId,
-                        const QJsonObject &payload);
+                        const QJsonObject &payload,
+                        const QJsonObject &queryParams = QJsonObject());
 };
 
 

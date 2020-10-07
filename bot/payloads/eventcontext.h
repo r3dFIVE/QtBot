@@ -31,6 +31,7 @@ public:
     static const QString ARGS;
     static const QString AUTHOR;
     static const QString USERNAME;
+    static const QString QUERY_PARAMS;
     static const QString SOURCE_PAYLOAD;
     static const QString TARGET_PAYLOAD;
 
@@ -63,6 +64,7 @@ public:
     Q_PROPERTY(QJsonValue event_name READ getEventName WRITE setEventName)
     Q_PROPERTY(QJsonValue username READ getUsername WRITE setUsername)
     Q_PROPERTY(QJsonObject author READ getAuthor WRITE setAuthor)
+    Q_PROPERTY(QJsonObject query_params READ getQueryParams WRITE setQueryParams)
     Q_PROPERTY(QJsonObject source_payload READ getSourcePayload WRITE setSourcePayload)
     Q_PROPERTY(QJsonObject target_payload READ getTargetPayload WRITE setTargetPayload)
 
@@ -86,6 +88,7 @@ public slots:
     QJsonArray getArgs() const;
     QJsonArray getRoleIds() const;
     QJsonObject getAuthor() const;
+    QJsonObject getQueryParams() const;
     QJsonObject getSourcePayload() const;
     QJsonObject getTargetPayload() const;
     QJsonValue getChannelId() const;
@@ -113,6 +116,7 @@ public slots:
     void setRoleIds(const QJsonValue &roleIds);
     void setMessageId(const QJsonValue &messageId);
     void setOverwriteId(const QJsonValue &overwriteId);
+    void setQueryParams(const QJsonObject &queryParams);
     void setSourcePayload(const QJsonObject &sourcePayload);
     void setTargetPayload(const QJsonObject &targetPayload);
     void setUserId(const QJsonValue &userId);

@@ -12,7 +12,7 @@ public:
     ChannelBulkDeleteMessages(const EventContext &context) {
         QString channelId = context.getChannelId().toString();
 
-        _params[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
 
         buildRequest(POST, PATH, channelId, context.getTargetPayload());
     }
