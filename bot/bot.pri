@@ -152,6 +152,8 @@ HEADERS += \
     $$PWD/routes/guildremoveguildmemberrole.h \
     $$PWD/routes/guildsyncguildintegration.h \
     $$PWD/routes/httpclient.h \
+    $$PWD/routes/invitedeleteinvite.h \
+    $$PWD/routes/invitegetinvite.h \
     $$PWD/routes/route.h \
     $$PWD/botjob/corecommand.h \
     $$PWD/botjob/corecommands.h \
@@ -166,6 +168,19 @@ HEADERS += \
     $$PWD/routes/usergetuserdms.h \
     $$PWD/routes/userleaveguild.h \
     $$PWD/routes/usermodifycurrentuser.h \
+    $$PWD/routes/voicelistvoiceregions.h \
+    $$PWD/routes/webhookcreatewebhook.h \
+    $$PWD/routes/webhookdeletewebhook.h \
+    $$PWD/routes/webhookdeletewebhookwithtoken.h \
+    $$PWD/routes/webhookexecutegithubcompatiblewebhook.h \
+    $$PWD/routes/webhookexecuteslackcompatiblewebhook.h \
+    $$PWD/routes/webhookexecutewebook.h \
+    $$PWD/routes/webhookgetchannelwebhooks.h \
+    $$PWD/routes/webhookgetguildwebhooks.h \
+    $$PWD/routes/webhookgetwebhook.h \
+    $$PWD/routes/webhookgetwebhookwithtoken.h \
+    $$PWD/routes/webhookmodifywebhook.h \
+    $$PWD/routes/webhookmodifywebhookwithtoken.h \
     $$PWD/util/enumutils.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \

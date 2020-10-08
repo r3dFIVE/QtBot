@@ -67,7 +67,9 @@ protected:
     const QString CHANNEL_ID_TOKEN = "{channel.id}";
     const QString GUILD_ID_TOKEN = "{guild.id}";
     const QString INTEGRATION_ID_TOKEN = "{integration.id}";
+    const QString INVITE_CODE_TOKEN = "{invite.code}";
     const QString WEBHOOK_ID_TOKEN = "{webhook.id}";
+    const QString WEBHOOK_TOKEN_TOKEN = "{webhook.token}";
     const QString MESSAGE_ID_TOKEN = "{message.id}";
     const QString EMOJI_TOKEN = "{emoji}";
     const QString USER_ID_TOKEN = "{user.id}";
