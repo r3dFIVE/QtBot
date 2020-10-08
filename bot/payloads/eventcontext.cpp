@@ -9,12 +9,14 @@ const QString EventContext::EMOJI = "emoji";
 const QString EventContext::CHANNEL_ID = "channel_id";
 const QString EventContext::GUILD_ID = "guild_id";
 const QString EventContext::INTEGRATION_ID = "integration_id";
+const QString EventContext::INVITE_CODE = "invite_code";
 const QString EventContext::ROLES = "roles";
 const QString EventContext::ROLE_ID = "role_id";
 const QString EventContext::ROLE_IDS = "role_ids";
 const QString EventContext::MESSAGE_ID = "message_id";
 const QString EventContext::OVERWRITE_ID = "overwrite_id";
 const QString EventContext::WEBHOOK_ID = "webhook_id";
+const QString EventContext::WEBHOOK_TOKEN = "webhook_token";
 const QString EventContext::USER_ID = "user_id";
 const QString EventContext::JOB_ID = "job_id";
 const QString EventContext::CONTENT = "content";
@@ -66,12 +68,20 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[INTEGRATION_ID] = json[INTEGRATION_ID];
     }
 
+    if (json.contains(INVITE_CODE)) {
+        _jsonObject[INVITE_CODE] = json[INVITE_CODE];
+    }
+
     if (json.contains(USER_ID)) {
         _jsonObject[USER_ID] = json[USER_ID];
     }
 
     if (json.contains(WEBHOOK_ID)) {
         _jsonObject[WEBHOOK_ID] = json[WEBHOOK_ID];
+    }
+
+    if (json.contains(WEBHOOK_TOKEN)) {
+        _jsonObject[WEBHOOK_TOKEN] = json[WEBHOOK_TOKEN];
     }
 
     if (json.contains(CONTENT)) {
@@ -221,6 +231,17 @@ EventContext::setWebhookId(const QJsonValue &webhookId) {
     _jsonObject[WEBHOOK_ID] = webhookId;
 }
 
+QJsonValue
+EventContext::getWebhookToken() const {
+    return _jsonObject[WEBHOOK_TOKEN];
+}
+
+void
+EventContext::setWebhookToken(const QJsonValue &webhookToken) {
+    _jsonObject[WEBHOOK_TOKEN] = webhookToken;
+}
+
+
 void
 EventContext::splitArgs() {
     QString content = _jsonObject[CONTENT].toString();
@@ -238,8 +259,18 @@ EventContext::getIntegrationId() const {
 }
 
 void
-EventContext::setIntegrationId(const QJsonValue &webhookId) {
-    _jsonObject[INTEGRATION_ID] = webhookId;
+EventContext::setIntegrationId(const QJsonValue &integrationId) {
+    _jsonObject[INTEGRATION_ID] = integrationId;
+}
+
+QJsonValue
+EventContext::getInviteCode() const {
+    return _jsonObject[INVITE_CODE];
+}
+
+void
+EventContext::setInviteCode(const QJsonValue &inviteCode) {
+    _jsonObject[INVITE_CODE] = inviteCode;
 }
 
 QJsonValue

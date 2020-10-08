@@ -575,6 +575,87 @@ BotScript::uCreateDm(const QVariant &context) {
 }
 
 QVariant
+BotScript::uLeaveGuild(const QVariant &context) {
+    return _discordAPI->userLeaveGuild(context);
+}
+
+QVariant
 BotScript::uGetUserConnections(const QVariant &context) {
     return _discordAPI->userGetUserConnections(context);
 }
+
+QVariant
+BotScript::wCreateWebhook(const QVariant &context) {
+    return _discordAPI->webhookCreateWebhook(context);
+}
+
+QVariant
+BotScript::wGetChannelWebhooks(const QVariant &context) {
+    return _discordAPI->webhookGetChannelWebhooks(context);
+}
+
+QVariant
+BotScript::wGetGuildWebhooks(const QVariant &context) {
+    return _discordAPI->webhookGetGuildWebhooks(context);
+}
+
+QVariant
+BotScript::wGetWebhook(const QVariant &context) {
+    return _discordAPI->webhookGetWebhook(context);
+}
+
+QVariant
+BotScript::wGetWebhookWithToken(const QVariant &context) {
+    return _discordAPI->webhookGetWebhookWithToken(context);
+}
+
+QVariant
+BotScript::wModifyWebhook(const QVariant &context) {
+    return _discordAPI->webhookModifyWebhook(context);
+}
+
+QVariant
+BotScript::wModifyWebhookWithToken(const QVariant &context) {
+    return _discordAPI->webhookModifyWebhookWithToken(context);
+}
+
+QVariant
+BotScript::wDeleteWebhook(const QVariant &context) {
+    return _discordAPI->webhookDeleteWebhook(context);
+}
+
+QVariant
+BotScript::wDeleteWebhookWithToken(const QVariant &context) {
+    return _discordAPI->webhookDeleteWebhookWithToken(context);
+}
+
+QVariant
+BotScript::wExecuteWebhook(const QVariant &context) {
+    return _discordAPI->webhookExecuteWebhook(context);
+}
+
+QVariant
+BotScript::wExecuteSlackCompatibleWebhook(const QVariant &context) {
+    return _discordAPI->webhookExecuteSlackCompatibleWebhook(context);
+}
+
+QVariant
+BotScript::wExecuteGithubCompatibleWebhook(const QVariant &context) {
+    return _discordAPI->webhookExecuteGithubCompatibleWebhook(context);
+}
+
+QVariant
+BotScript::iGetInvite(const QVariant &context) {
+    return _discordAPI->inviteGetInvite(context);
+}
+
+QVariant
+BotScript::iDeleteInvite(const QVariant &context) {
+    return _discordAPI->inviteDeleteInvite(context);
+}
+
+QVariant
+BotScript::vListVoiceRegions(const QVariant &context) {
+    return _discordAPI->voiceListVoiceRegions(context);
+}
+

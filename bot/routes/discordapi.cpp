@@ -77,6 +77,21 @@
 #include "userleaveguild.h"
 #include "usercreatedm.h"
 #include "usergetuserconnections.h"
+#include "webhookcreatewebhook.h"
+#include "webhookgetchannelwebhooks.h"
+#include "webhookgetguildwebhooks.h"
+#include "webhookgetwebhook.h"
+#include "webhookgetwebhookwithtoken.h"
+#include "webhookmodifywebhook.h"
+#include "webhookmodifywebhookwithtoken.h"
+#include "webhookdeletewebhook.h"
+#include "webhookdeletewebhookwithtoken.h"
+#include "webhookexecutewebook.h"
+#include "webhookexecuteslackcompatiblewebhook.h"
+#include "webhookexecutegithubcompatiblewebhook.h"
+#include "invitegetinvite.h"
+#include "invitedeleteinvite.h"
+#include "voicelistvoiceregions.h"
 
 
 QString DiscordAPI::_botToken = QString();
@@ -594,7 +609,6 @@ DiscordAPI::emojiCreateGuildEmoji(const QVariant &context) {
     return buildResponseVariant(_httpClient.processRoute(createGuildEmoji));
 }
 
-
 QVariant
 DiscordAPI::emojiDeleteGuildEmoji(const QVariant &context) {
     EmojiDeleteGuildEmoji deleteGuildEmoji(buildRequestContext(context));
@@ -658,7 +672,6 @@ DiscordAPI::userLeaveGuild(const QVariant &context) {
     return buildResponseVariant(_httpClient.processRoute(leaveGuild));
 }
 
-
 QVariant
 DiscordAPI::userCreateDm(const QVariant &context) {
     UserCreateDm createDm(buildRequestContext(context));
@@ -666,10 +679,115 @@ DiscordAPI::userCreateDm(const QVariant &context) {
     return buildResponseVariant(_httpClient.processRoute(createDm));
 }
 
-
 QVariant
 DiscordAPI::userGetUserConnections(const QVariant &context) {
     UserGetUserConnections getUserConnections(buildRequestContext(context));
 
     return buildResponseVariant(_httpClient.processRoute(getUserConnections));
 }
+
+QVariant
+DiscordAPI::webhookCreateWebhook(const QVariant &context) {
+    WebhookCreateWebhook createWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(createWebhook));
+}
+
+QVariant
+DiscordAPI::webhookGetChannelWebhooks(const QVariant &context) {
+    WebhookGetChannelWebhooks getChannelWebhooks(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getChannelWebhooks));
+}
+
+QVariant
+DiscordAPI::webhookGetGuildWebhooks(const QVariant &context) {
+    WebhookGetGuildWebhooks getGuildWebhooks(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildWebhooks));
+}
+
+QVariant
+DiscordAPI::webhookGetWebhook(const QVariant &context) {
+    WebhookGetWebhook getWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getWebhook));
+}
+
+QVariant
+DiscordAPI::webhookGetWebhookWithToken(const QVariant &context) {
+    WebhookGetWebhookWithToken getWebhookWithToken(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getWebhookWithToken));
+}
+
+QVariant
+DiscordAPI::webhookModifyWebhook(const QVariant &context) {
+    WebhookModifyWebhook modifyWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyWebhook));
+}
+
+QVariant
+DiscordAPI::webhookModifyWebhookWithToken(const QVariant &context) {
+    WebhookModifyWebhookWithToken modifyWebhookWithToken(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(modifyWebhookWithToken));
+}
+
+QVariant
+DiscordAPI::webhookDeleteWebhook(const QVariant &context) {
+    WebhookDeleteWebhook deleteWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(deleteWebhook));
+}
+
+QVariant
+DiscordAPI::webhookDeleteWebhookWithToken(const QVariant &context) {
+    WebhookDeleteWebhookWithToken deleteWebhookWithToken(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(deleteWebhookWithToken));
+}
+
+QVariant
+DiscordAPI::webhookExecuteWebhook(const QVariant &context) {
+    WebhookExecuteWebhook executeWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(executeWebhook));
+}
+
+QVariant
+DiscordAPI::webhookExecuteSlackCompatibleWebhook(const QVariant &context) {
+    WebhookExecuteSlackCompatibleWebhook executeSlackCompatibleWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(executeSlackCompatibleWebhook));
+}
+
+QVariant
+DiscordAPI::webhookExecuteGithubCompatibleWebhook(const QVariant &context) {
+    WebhookExecuteGithubCompatibleWebhook executeGithubCompatibleWebhook(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(executeGithubCompatibleWebhook));
+}
+
+QVariant
+DiscordAPI::inviteGetInvite(const QVariant &context) {
+    InviteGetInvite getInvite(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getInvite));
+}
+
+QVariant
+DiscordAPI::inviteDeleteInvite(const QVariant &context) {
+    InviteDeleteInvite deleteInvite(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(deleteInvite));
+}
+
+QVariant
+DiscordAPI::voiceListVoiceRegions(const QVariant &context) {
+    VoiceListVoiceRegions listVoiceRegions(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(listVoiceRegions));
+}
+

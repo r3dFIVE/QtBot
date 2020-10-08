@@ -173,14 +173,48 @@ public:
      *      USER API FUNCTIONS
      *      https://discord.com/developers/docs/resources/user
      */
+
     Q_INVOKABLE QVariant uGetCurrentUser(const QVariant &context);
     Q_INVOKABLE QVariant uGetUser(const QVariant &context);
     Q_INVOKABLE QVariant uModifyCurrentUser(const QVariant &context);
     Q_INVOKABLE QVariant uGetCurrentUserGuilds(const QVariant &context);
     Q_INVOKABLE QVariant uGetUserDms(const QVariant &context);
     Q_INVOKABLE QVariant uCreateDm(const QVariant &context);
+    Q_INVOKABLE QVariant uLeaveGuild(const QVariant &context);
     Q_INVOKABLE QVariant uGetUserConnections(const QVariant &context);
 
+    /*
+     *      WEBHOOK API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/webhook
+     */
+
+    Q_INVOKABLE QVariant wCreateWebhook(const QVariant &context);
+    Q_INVOKABLE QVariant wGetChannelWebhooks(const QVariant &context);
+    Q_INVOKABLE QVariant wGetGuildWebhooks(const QVariant &context);
+    Q_INVOKABLE QVariant wGetWebhook(const QVariant &context);
+    Q_INVOKABLE QVariant wGetWebhookWithToken(const QVariant &context);
+    Q_INVOKABLE QVariant wModifyWebhook(const QVariant &context);
+    Q_INVOKABLE QVariant wModifyWebhookWithToken(const QVariant &context);
+    Q_INVOKABLE QVariant wDeleteWebhook(const QVariant &context);
+    Q_INVOKABLE QVariant wDeleteWebhookWithToken(const QVariant &context);
+    Q_INVOKABLE QVariant wExecuteWebhook(const QVariant &context);
+    Q_INVOKABLE QVariant wExecuteSlackCompatibleWebhook(const QVariant &context);
+    Q_INVOKABLE QVariant wExecuteGithubCompatibleWebhook(const QVariant &context);
+
+    /*
+     *      INVITE API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/invite
+     */
+
+    Q_INVOKABLE QVariant iGetInvite(const QVariant &context);
+    Q_INVOKABLE QVariant iDeleteInvite(const QVariant &context);
+
+    /*
+     *      VOICE API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/voice
+     */
+
+    Q_INVOKABLE QVariant vListVoiceRegions(const QVariant &context);
 
 
 signals:

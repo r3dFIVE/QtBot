@@ -131,6 +131,40 @@ public:
     QVariant userLeaveGuild(const QVariant &context);
     QVariant userCreateDm(const QVariant &context);
     QVariant userGetUserConnections(const QVariant &context);
+
+    /*
+     *      WEBHOOK API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/webhook
+     */
+
+    QVariant webhookCreateWebhook(const QVariant &context);
+    QVariant webhookGetChannelWebhooks(const QVariant &context);
+    QVariant webhookGetGuildWebhooks(const QVariant &context);
+    QVariant webhookGetWebhook(const QVariant &context);
+    QVariant webhookGetWebhookWithToken(const QVariant &context);
+    QVariant webhookModifyWebhook(const QVariant &context);
+    QVariant webhookModifyWebhookWithToken(const QVariant &context);
+    QVariant webhookDeleteWebhook(const QVariant &context);
+    QVariant webhookDeleteWebhookWithToken(const QVariant &context);
+    QVariant webhookExecuteWebhook(const QVariant &context);
+    QVariant webhookExecuteSlackCompatibleWebhook(const QVariant &context);
+    QVariant webhookExecuteGithubCompatibleWebhook(const QVariant &context);
+
+    /*
+     *      INVITE API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/invite
+     */
+
+    QVariant inviteGetInvite(const QVariant &context);
+    QVariant inviteDeleteInvite(const QVariant &context);
+
+    /*
+     *      VOICE API FUNCTIONS
+     *      https://discord.com/developers/docs/resources/voice
+     */
+
+    QVariant voiceListVoiceRegions(const QVariant &context);
+
 };
 
 #endif // DISCORDAPI_H
