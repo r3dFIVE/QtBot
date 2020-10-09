@@ -10,8 +10,7 @@ public:
     const QString PATH = "/users/@me/guilds";
 
     UserCurrentGetUserGuilds(const EventContext &context) {
-        buildRequest(GET, PATH, Route::GLOBAL_BUCKET,
-                     context.getTargetPayload(), context.getQueryParams());
+        buildRequest(GET, PATH, context);
     }
 };
 

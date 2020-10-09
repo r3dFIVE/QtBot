@@ -10,7 +10,7 @@ public:
     const QString PATH = "/guilds";
 
     GuildCreateGuild(const EventContext &context) {
-        buildRequest(POST, PATH, GLOBAL_BUCKET, context.getTargetPayload());
+        buildRequest(POST, PATH, context);
     }
 };
 

@@ -10,7 +10,9 @@ public:
     const QString PATH = "/voice/regions";
 
     VoiceListVoiceRegions(const EventContext &context) {
-        buildRequest(GET, PATH, Route::GLOBAL_BUCKET, context.getTargetPayload());
+        Q_UNUSED(context)
+
+        buildRequest(GET, PATH);
     }
 };
 

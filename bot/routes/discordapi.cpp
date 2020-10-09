@@ -58,7 +58,7 @@
 #include "guildmodifyguildintegration.h"
 #include "guilddeleteguildintegration.h"
 #include "guildsyncguildintegration.h"
-#include "guildgetguildwidget.h"
+#include "guildgetguildwidgetsettings.h"
 #include "guildgetguildembed.h"
 #include "guildmodifyguildwidget.h"
 #include "guildmodifyguildembed.h"
@@ -92,6 +92,7 @@
 #include "invitegetinvite.h"
 #include "invitedeleteinvite.h"
 #include "voicelistvoiceregions.h"
+#include "guildgetguildwidget.h"
 
 
 QString DiscordAPI::_botToken = QString();
@@ -558,6 +559,13 @@ DiscordAPI::guildGetGuildWidget(const QVariant &context) {
     GuildGetGuildWidget getGuildWidget(buildRequestContext(context));
 
     return buildResponseVariant(_httpClient.processRoute(getGuildWidget));
+}
+
+QVariant
+DiscordAPI::guildGetGuildWidgetSettings(const QVariant &context) {
+    GuildGetGuildWidgetSettings getGuildWidgetSettings(buildRequestContext(context));
+
+    return buildResponseVariant(_httpClient.processRoute(getGuildWidgetSettings));
 }
 
 QVariant

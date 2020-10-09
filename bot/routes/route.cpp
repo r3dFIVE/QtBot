@@ -6,29 +6,32 @@ void
 Route::buildRequest(const RequestType requestType,
                     const QString &route,
                     const QString &majorParamId,
-                    const QJsonObject &payload,
-                    const QJsonObject &queryParams) {
+                    const EventContext &context) {
     QString path = QString("%1%2").arg(Route::DISCORD_API_PATH, route);
 
     for (auto key : _pathParams.keys()) {
         path.replace(key, _pathParams[key]);
     }
 
-    if (requestType == GET && !queryParams.isEmpty()) {
-        QString queryString = "?";
+    if (requestType == GET || requestType == POST) {
+        if (!context.getQueryParams().isEmpty()) {
+            QJsonObject queryParams = context.getQueryParams();
 
-        for (auto key : queryParams.keys()) {
-            queryString += QString("%1=%2&").arg(key, queryParams[key].toString());
+            QString queryString = "?";
+
+            for (auto key : queryParams.keys()) {
+                queryString += QString("%1=%2&").arg(key, queryParams[key].toString());
+            }
+
+            queryString.truncate(queryString.size() - 1);
+
+            path = QString("%1%2").arg(path, queryString);
         }
-
-        queryString.truncate(queryString.size() - 1);
-
-        path = QString("%1%2").arg(path, queryString);
     }
 
     _majorParamId = majorParamId;
 
-    _payload = SerializationUtils::toQByteArray(payload);
+    _payload = SerializationUtils::toQByteArray(context.getTargetPayload());
 
     _request = QNetworkRequest(QUrl(path));
 

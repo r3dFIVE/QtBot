@@ -10,13 +10,11 @@ public:
     const QString PATH = "/guilds/{guild.id}/roles/{role.id}";
 
     GuildModifyGuildRole(const EventContext &context) {
-        QString guildId = context.getGuildId().toString();
-
-        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = context.getGuildId().toString();
 
         _pathParams[Route::ROLE_ID_TOKEN] = context.getRoleId().toString();
 
-        buildRequest(PATCH, PATH, guildId, context.getTargetPayload());
+        buildRequest(PATCH, PATH, _pathParams[Route::GUILD_ID_TOKEN], context);
     }
 };
 

@@ -101,6 +101,7 @@ public:
     QVariant guildDeleteGuildIntegration(const QVariant &context);
     QVariant guildSyncGuildIntegration(const QVariant &context);
     QVariant guildGetGuildWidget(const QVariant &context);
+    QVariant guildGetGuildWidgetSettings(const QVariant &context);
     QVariant guildGetGuildEmbed(const QVariant &context);
     QVariant guildModifyGuildWidget(const QVariant &context);
     QVariant guildModifyGuildEmbed(const QVariant &context);

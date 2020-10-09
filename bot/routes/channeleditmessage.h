@@ -10,13 +10,11 @@ public:
     const QString PATH = "/channels/{channel.id}/messages/{message.id}";
 
     ChannelEditMessage(const EventContext &context) {
-        QString channelId = context.getChannelId().toString();
-
-        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();
 
         _pathParams[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
 
-        buildRequest(PATCH, PATH, channelId, context.getTargetPayload());
+        buildRequest(PATCH, PATH, _pathParams[Route::CHANNEL_ID_TOKEN], context);
     }
 };
 

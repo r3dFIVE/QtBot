@@ -10,13 +10,11 @@ public:
     const QString PATH = "/guilds/{guild.id}/bans/{user.id}";
 
     GuildCreateGuildBan(const EventContext &context) {
-        QString guildId = context.getGuildId().toString();
-
-        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = context.getGuildId().toString();
 
         _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        buildRequest(PUT, PATH, guildId, context.getTargetPayload());
+        buildRequest(PUT, PATH, _pathParams[Route::GUILD_ID_TOKEN], context);
     }
 };
 

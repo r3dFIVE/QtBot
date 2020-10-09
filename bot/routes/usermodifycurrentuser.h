@@ -10,7 +10,7 @@ public:
     const QString PATH = "/users/@me";
 
     UserModifyCurrentUser(const EventContext &context) {
-        buildRequest(PATCH, PATH, Route::GLOBAL_BUCKET, context.getTargetPayload());
+        buildRequest(PATCH, PATH, context);
     }
 };
 
