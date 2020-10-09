@@ -494,6 +494,12 @@ BotScript::gGetGuildWidget(const QVariant &context) {
     return _discordAPI->guildGetGuildWidget(context);
 }
 
+
+QVariant
+BotScript::gGetGuildWidgetSettings(const QVariant &context) {
+    return _discordAPI->guildGetGuildWidget(context);
+}
+
 QVariant
 BotScript::gGetGuildEmbed(const QVariant &context) {
     return _discordAPI->guildGetGuildEmbed(context);

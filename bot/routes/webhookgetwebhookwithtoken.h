@@ -10,13 +10,11 @@ public:
     const QString PATH = "/webhooks/{webhook.id}/{webhook.token}";
 
     WebhookGetWebhookWithToken(const EventContext &context) {
-        QString webhookId = context.getWebhookId().toString();
-
-        _pathParams[Route::WEBHOOK_ID_TOKEN] = webhookId;
+        _pathParams[Route::WEBHOOK_ID_TOKEN] = context.getWebhookId().toString();
 
         _pathParams[Route::WEBHOOK_TOKEN_TOKEN] = context.getWebhookToken().toString();
 
-        buildRequest(GET, PATH, webhookId, context.getTargetPayload());
+        buildRequest(GET, PATH, _pathParams[Route::WEBHOOK_ID_TOKEN]);
     }
 };
 

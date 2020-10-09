@@ -135,6 +135,7 @@ HEADERS += \
     $$PWD/routes/guildgetguildroles.h \
     $$PWD/routes/guildgetguildvoiceregions.h \
     $$PWD/routes/guildgetguildwidget.h \
+    $$PWD/routes/guildgetguildwidgetsettings.h \
     $$PWD/routes/guildgetvanityurl.h \
     $$PWD/routes/guildgetwidgetimage.h \
     $$PWD/routes/guildlistguildmembers.h \

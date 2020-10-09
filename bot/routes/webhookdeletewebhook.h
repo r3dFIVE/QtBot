@@ -10,11 +10,9 @@ public:
     const QString PATH = "/webhooks/{webhook.id}";
 
     WebhookDeleteWebhook(const EventContext &context) {
-        QString webhookId = context.getWebhookId().toString();
+        _pathParams[Route::WEBHOOK_ID_TOKEN] = context.getWebhookId().toString();
 
-        _pathParams[Route::WEBHOOK_ID_TOKEN] = webhookId;
-
-        buildRequest(DELETE, PATH, webhookId, context.getTargetPayload());
+        buildRequest(DELETE, PATH, _pathParams[Route::WEBHOOK_ID_TOKEN]);
     }
 };
 

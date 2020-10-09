@@ -152,6 +152,7 @@ public:
     Q_INVOKABLE QVariant gDeleteGuildIntegration(const QVariant &context);
     Q_INVOKABLE QVariant gSyncGuildIntegration(const QVariant &context);
     Q_INVOKABLE QVariant gGetGuildWidget(const QVariant &context);
+    Q_INVOKABLE QVariant gGetGuildWidgetSettings(const QVariant &context);
     Q_INVOKABLE QVariant gGetGuildEmbed(const QVariant &context);
     Q_INVOKABLE QVariant gModifyGuildWidget(const QVariant &context);
     Q_INVOKABLE QVariant gModifyGuildEmbed(const QVariant &context);

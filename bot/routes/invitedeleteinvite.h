@@ -12,7 +12,7 @@ public:
     InviteDeleteInvite(const EventContext &context) {
         _pathParams[Route::INVITE_CODE_TOKEN] = context.getInviteCode().toString();
 
-        buildRequest(DELETE, PATH, Route::GLOBAL_BUCKET, context.getTargetPayload());
+        buildRequest(DELETE, PATH, context);
     }
 };
 

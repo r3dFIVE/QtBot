@@ -10,9 +10,7 @@ public:
     const QString PATH = "/channels/{channel.id}/messages/{message.id}/reactions/{emoji}/{user.id}";
 
     ChannelDeleteUserReaction(const EventContext &context) {
-        QString channelId = context.getChannelId().toString();
-
-        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();
 
         _pathParams[Route::MESSAGE_ID_TOKEN] = context.getMessageId().toString();
 
@@ -20,7 +18,7 @@ public:
 
         _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        buildRequest(DELETE, PATH, channelId, context.getTargetPayload());
+        buildRequest(DELETE, PATH, _pathParams[Route::CHANNEL_ID_TOKEN]);
     }
 };
 

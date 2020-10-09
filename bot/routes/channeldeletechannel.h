@@ -10,11 +10,9 @@ public:
     const QString PATH = "/channels/{channel.id}";
 
     ChannelDeleteChannel(const EventContext &context) {
-        QString channelId = context.getChannelId().toString();
+        _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();
 
-        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
-
-        buildRequest(DELETE, PATH, channelId, context.getTargetPayload());
+        buildRequest(DELETE, PATH, _pathParams[Route::CHANNEL_ID_TOKEN]);
     }
 };
 

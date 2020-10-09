@@ -10,13 +10,11 @@ public:
     const QString PATH = "/guilds/{guild.id}/members/{user.id}";
 
     GuildGetGuildMember(const EventContext &context) {
-        QString guildId = context.getGuildId().toString();
-
-        _pathParams[Route::GUILD_ID_TOKEN] = guildId;
+        _pathParams[Route::GUILD_ID_TOKEN] = context.getGuildId().toString();
 
         _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        buildRequest(GET, PATH, guildId, context.getTargetPayload());
+        buildRequest(GET, PATH, _pathParams[Route::GUILD_ID_TOKEN]);
     }
 };
 

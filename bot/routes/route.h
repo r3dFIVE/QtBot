@@ -77,10 +77,26 @@ protected:
     const QString OVERWRITE_ID_TOKEN = "{overwrite.id}";
 
     void buildRequest(const RequestType requestType,
-                        const QString &route,
-                        const QString &majorParamId,
-                        const QJsonObject &payload,
-                        const QJsonObject &queryParams = QJsonObject());
+                      const QString &route,
+                      const QString &majorParamId,
+                      const EventContext &context);
+
+    void buildRequest(const RequestType requestType,
+                      const QString &route,
+                      const EventContext &context) {
+        buildRequest(requestType, route, GLOBAL_BUCKET, context);
+    }
+
+    void buildRequest(const RequestType requestType,
+                      const QString &route,
+                      const QString &majorParamId) {
+        buildRequest(requestType, route, majorParamId, EventContext());
+    }
+
+    void buildRequest(const RequestType requestType,
+                      const QString &route) {
+        buildRequest(requestType, route, GLOBAL_BUCKET, EventContext());
+    }
 };
 
 

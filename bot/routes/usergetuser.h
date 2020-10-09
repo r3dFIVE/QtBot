@@ -10,11 +10,9 @@ public:
     const QString PATH = "/users/{user.id}";
 
     UserGetUser(const EventContext &context) {
-        QString userId = context.getUserId().toString();
+        _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        _pathParams[Route::USER_ID_TOKEN] = userId;
-
-        buildRequest(GET, PATH, userId, context.getTargetPayload());
+        buildRequest(GET, PATH);
     }
 };
 

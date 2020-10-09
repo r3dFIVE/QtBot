@@ -10,11 +10,9 @@ public:
     const QString PATH = "/channels/{channel.id}";
 
     ChannelGetChannel(const EventContext &context) {
-        QString channelId = context.getChannelId().toString();
+        _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();
 
-        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
-
-        buildRequest(GET, PATH, channelId, context.getTargetPayload());
+        buildRequest(GET, PATH, _pathParams[Route::CHANNEL_ID_TOKEN]);
     }
 };
 

@@ -10,13 +10,11 @@ public:
     const QString PATH = "/channels/{channel.id}/recipients/{user.id}";
 
     ChannelGroupDmAddRecipient(const EventContext &context) {
-        QString channelId = context.getChannelId().toString();
-
-        _pathParams[Route::CHANNEL_ID_TOKEN] = channelId;
+        _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();
 
         _pathParams[Route::USER_ID_TOKEN] = context.getUserId().toString();
 
-        buildRequest(PUT, PATH, channelId, context.getTargetPayload());
+        buildRequest(PUT, PATH, _pathParams[Route::USER_ID_TOKEN], context);
     }
 };
 

@@ -10,7 +10,7 @@ public:
     const QString PATH = "/users/@me/channels";
 
     UserCreateDm(const EventContext &context) {
-        buildRequest(POST, PATH, Route::GLOBAL_BUCKET, context.getTargetPayload());
+        buildRequest(POST, PATH, context);
     }
 };
 

@@ -12,7 +12,7 @@ public:
     InviteGetInvite(const EventContext &context) {
         _pathParams[Route::INVITE_CODE_TOKEN] = context.getInviteCode().toString();
 
-        buildRequest(GET, PATH, Route::GLOBAL_BUCKET, context.getTargetPayload());
+        buildRequest(GET, PATH, context);
     }
 };
 
