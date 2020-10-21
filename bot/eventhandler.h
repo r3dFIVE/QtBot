@@ -31,6 +31,7 @@ class EventHandler : public QObject
 
     Logger *_logger;
 
+    bool isGuildReady(const QString &guildId);
     int getJobNumber(const EventContext &context);
     QString getJobId(const EventContext &context);
     void processMessageCreate(QSharedPointer<EventContext> context);
@@ -43,7 +44,11 @@ public:
     EventHandler(QSharedPointer<Settings> settings);
 
 public slots:
+    void clearCommand(const EventContext &context);
+    void clearCommandForId(const EventContext &context);
+    void disableCommand(const EventContext &context);
     void displayTimedJobs(EventContext context);
+    void enableCommand(const EventContext &context);
     void guildReady(QSharedPointer<GuildEntity> guild);
     void init();
     void processEvent(QSharedPointer<GatewayPayload> payload);

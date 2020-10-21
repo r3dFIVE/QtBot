@@ -9,7 +9,7 @@
 
 QString GuildEntity::ADMIN_ROLE_NAME = QString();
 QString GuildEntity::BOT_OWNER_ID = QString();
-GuildEntity::RestrictionScheme GuildEntity::DEFAULT_SCHEME;
+CommandRestrictions::RestrictionState GuildEntity::DEFAULT_STATE;
 
 
 GuildEntity::GuildEntity(const Guild &guild) {
@@ -41,8 +41,8 @@ GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &comm
         return false;
     }
 
-    if (_mappedSchemeIdsByCommand.contains(command)) {
-        QMap<QString, RestrictionScheme> mappedSchemeById = _mappedSchemeIdsByCommand[command];
+    if (_mappedStateIdsByCommand.contains(command)) {
+        QMap<QString, CommandRestrictions::RestrictionState> mappedSchemeById = _mappedStateIdsByCommand[command];
 
         QString userId = context->getUserId().toString();
 
@@ -71,7 +71,7 @@ GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &comm
         }
     }
 
-    return DEFAULT_SCHEME;
+    return DEFAULT_STATE;
 }
 
 QString
@@ -156,6 +156,85 @@ GuildEntity::removeRole(const QString &roleId) {
     _rolesByRoleId.remove(roleId);
 }
 
+void
+GuildEntity::enableCommand(const EventContext &context) {
+    updateStateIdsByCommand(context, CommandRestrictions::ENABLED);
+}
+
+void
+GuildEntity::disableCommand(const EventContext &context) {
+    updateStateIdsByCommand(context, CommandRestrictions::DISABLED);
+}
+
+void
+GuildEntity::updateStateIdsByCommand(const EventContext &context, CommandRestrictions::RestrictionState state) {
+    QString commandName = context.getArgs()[1].toString();
+
+    QString targetId = context.getArgs()[2].toString();
+
+    QMap<QString, CommandRestrictions::RestrictionState> entityUpdateRestrictions;
+
+    if (_commandNamesByScriptName.contains(commandName)) {
+        for (QJsonValue cmd : _commandNamesByScriptName[commandName]) {
+            _mappedStateIdsByCommand[cmd.toString()][targetId] = state;
+
+            entityUpdateRestrictions[cmd.toString()] = state;
+        }
+    } else {
+        for (QString scriptName : _commandNamesByScriptName.keys()) {
+            _mappedStateIdsByCommand[commandName][targetId] = state;
+
+            entityUpdateRestrictions[commandName] = state;
+        }
+    }
+
+    restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityUpdateRestrictions)));
+}
+
+void
+GuildEntity::clearCommandForId(const EventContext &context) {
+    QString commandName = context.getArgs()[1].toString();
+
+    QString targetId = context.getArgs()[2].toString();
+
+    QMap<QString, CommandRestrictions::RestrictionState> entityUpdateRestrictions;
+
+    if (_commandNamesByScriptName.contains(commandName)) {
+        for (QJsonValue cmd : _commandNamesByScriptName[commandName]) {
+            _mappedStateIdsByCommand[cmd.toString()].remove(targetId);
+
+            entityUpdateRestrictions[cmd.toString()] = CommandRestrictions::REMOVE;
+        }
+    } else {
+        _mappedStateIdsByCommand[commandName].remove(targetId);
+
+        entityUpdateRestrictions[commandName] = CommandRestrictions::REMOVE;
+    }
+
+    restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityUpdateRestrictions)));
+}
+
+void
+GuildEntity::clearCommand(const EventContext &context) {
+    QString commandName = context.getArgs()[1].toString();
+
+    QMap<QString, CommandRestrictions::RestrictionState> entityUpdateRestrictions;
+
+    if (_commandNamesByScriptName.contains(commandName)) {
+        for (QJsonValue cmd : _commandNamesByScriptName[commandName]) {
+            _mappedStateIdsByCommand[cmd.toString()].clear();
+
+            entityUpdateRestrictions[cmd.toString()] = CommandRestrictions::REMOVE;
+        }
+    } else {
+        _mappedStateIdsByCommand[commandName].clear();
+
+        entityUpdateRestrictions[commandName] = CommandRestrictions::REMOVE;
+    }
+
+    restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, "", entityUpdateRestrictions)));
+}
+
 Job*
 GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
     QString command = parseCommandToken(context->getContent().toString());
@@ -212,8 +291,8 @@ void GuildEntity::setBotOwnerId(const QString &userId) {
 }
 
 void
-GuildEntity::setDefaultRestrictionScheme(const QString &scheme) {
-    DEFAULT_SCHEME = EnumUtils::keyToValue<GuildEntity::RestrictionScheme>(scheme);
+GuildEntity::setDefaultRestrictionState(const QString &state) {
+    DEFAULT_STATE = EnumUtils::keyToValue<CommandRestrictions::RestrictionState>(state);
 }
 
 void
@@ -226,6 +305,22 @@ GuildEntity::setRegisteredScripts(const QList<QSharedPointer<IBotJob> > register
     _registeredScripts.clear();
 
     _registeredScripts << registeredScripts;
+}
+
+void
+GuildEntity::setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand) {
+    _commandNamesByScriptName.clear();
+
+    for (auto commandName : scriptNamesByCommand.keys()) {
+        QString scriptName = scriptNamesByCommand[commandName];
+
+        _commandNamesByScriptName[scriptName] << commandName;
+    }
+}
+
+void
+GuildEntity::setMappedStateIdsByCommand(QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > mappedStateIdsByCommand) {
+    _mappedStateIdsByCommand = mappedStateIdsByCommand;
 }
 
 void

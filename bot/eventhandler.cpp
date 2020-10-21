@@ -13,9 +13,9 @@ EventHandler::EventHandler(QSharedPointer<Settings> settings) {
 
     GuildEntity::setAdminRoleName(settings->value(SettingsParam::Bot::ADMIN_ROLE_NAME).toString());
 
-    QString defaultScheme = settings->value(SettingsParam::Bot::RESTRICTION_SCHEME).toString();
+    QString defaultScheme = settings->value(SettingsParam::Bot::RESTRICTION_STATE).toString();
 
-    GuildEntity::setDefaultRestrictionScheme(defaultScheme);
+    GuildEntity::setDefaultRestrictionState(defaultScheme);
 
     _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
 }
@@ -76,9 +76,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
     QString guildId = context->getGuildId().toString();
 
-    if (!_availableGuilds.contains(guildId)) {
-        _logger->debug(QString("Guild %1 is still initializing.").arg(guildId));
-
+    if (!isGuildReady(guildId)) {
         return;
     }
 
@@ -176,6 +174,17 @@ EventHandler::displayTimedJobs(EventContext context) {
     _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
 }
 
+bool
+EventHandler::isGuildReady(const QString &guildId) {
+    if (!_availableGuilds.contains(guildId)) {
+        _logger->debug(QString("Guild %1 is still initializing.").arg(guildId));
+
+        return false;
+    }
+
+    return true;
+}
+
 int
 EventHandler::getJobNumber(const EventContext &context) {
     QStringList commandTokens = context.getContent().toString().split(" ");
@@ -242,5 +251,48 @@ EventHandler::stopTimedJob(const EventContext &context) {
     };
 }
 
+void
+EventHandler::enableCommand(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
+        _availableGuilds[guildId]->enableCommand(context);
+    } else {
+        _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
+    };
+}
+
+void
+EventHandler::disableCommand(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
+        _availableGuilds[guildId]->disableCommand(context);
+    } else {
+        _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
+    };
+}
+
+void
+EventHandler::clearCommandForId(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
+        _availableGuilds[guildId]->clearCommandForId(context);
+    } else {
+        _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
+    };
+}
+
+void
+EventHandler::clearCommand(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
+        _availableGuilds[guildId]->clearCommand(context);
+    } else {
+        _logger->debug(QString("\"%1\" requires a scriptName...").arg(context.getContent().toString()));
+    };
+}
 
 

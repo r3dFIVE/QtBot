@@ -18,6 +18,7 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<GuildEntity> >();
     qRegisterMetaType<QSharedPointer<Route> >();
     qRegisterMetaType<QSharedPointer<EventContext> >();
+    qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
     qRegisterMetaType<SqlDatabase>();
     qRegisterMetaType<SqlQuery>();
 }
@@ -43,7 +44,7 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     eventHandler->moveToThread(&_eventHandlerThread);
 
-    EntityManager *entityManager = new EntityManager;
+    EntityManager *entityManager = new EntityManager(settings);
 
     entityManager->moveToThread(&_entityManagerThread);
 
@@ -63,11 +64,13 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(entityManager, &EntityManager::guildInitialized, _scriptBuilder, &ScriptBuilder::buildScripts);
 
+    connect(&_entityManagerThread, &QThread::started, entityManager, &EntityManager::init);
+
     _eventHandlerThread.start();
 
-    _gatewayThread.start();
-
     _entityManagerThread.start();
+
+    _gatewayThread.start();
 
     _gatewayThread.setPriority(QThread::HighestPriority);
 }

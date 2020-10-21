@@ -86,6 +86,8 @@ EventContext::buildContext(const QJsonObject &json) {
 
     if (json.contains(CONTENT)) {
         _jsonObject[CONTENT] = json[CONTENT];
+
+        splitArgs();
     }
 
     if (json.contains(AUTHOR)) {
