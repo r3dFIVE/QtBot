@@ -14,6 +14,7 @@ HEADERS += \
     $$PWD/botjob/scriptbuilder.h \
     $$PWD/botjob/timedbinding.h \
     $$PWD/botjob/timedjobs.h \
+    $$PWD/entity/commandrestrictions.h \
     $$PWD/entitymanager.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \

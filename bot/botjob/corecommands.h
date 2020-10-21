@@ -74,6 +74,36 @@ public:
                                      Q_ARG(const EventContext&, context));
         });
 
+        addCommand(".enable", true, [&](const EventContext &context) -> void {
+
+
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "enableCommand",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
+        addCommand(".disable", true, [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "disableCommand",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
+        addCommand(".clear", true, [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "clearCommandForId",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
+        addCommand(".clearall", true, [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                     "clearCommand",
+                                     Qt::QueuedConnection,
+                                     Q_ARG(const EventContext&, context));
+        });
+
         return commands;
     }
 };

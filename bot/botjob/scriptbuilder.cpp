@@ -73,6 +73,8 @@ ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
 
     guildEntity->setRegisteredScripts(_registeredScripts);
 
+    guildEntity->setCommandNamesByScriptName(_scriptNamesByCommand);
+
     emit guildReady(guildEntity);
 
     _commandBindings.clear();
@@ -81,7 +83,7 @@ ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
 
     _registeredScripts.clear();
 
-    _scriptNameByCommand.clear();
+    _scriptNamesByCommand.clear();
 
     _timedBindings.clear();
 
@@ -197,7 +199,7 @@ ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
 
 void
 ScriptBuilder::validateScriptName(QSharedPointer<BotScript> botScript) {
-    if (_scriptNameByCommand.values().contains(botScript->getScriptName())) {
+    if (_scriptNamesByCommand.values().contains(botScript->getScriptName())) {
         QFileInfo info(_fileName);
 
         _logger->warning(QString("%1 already registered. Please update name property for %2 and reload.")
@@ -221,7 +223,7 @@ ScriptBuilder::resgisterScriptCommands(QSharedPointer<BotScript> botScript) {
         CommandBinding commandBinding(command, functionMapping);
 
         if (commandBinding.isValid(*botScript->metaObject())) {
-            _scriptNameByCommand[command] = botScript->getScriptName();
+            _scriptNamesByCommand[command] = botScript->getScriptName();
 
             _commandBindings << commandBinding;
         }
@@ -238,8 +240,8 @@ ScriptBuilder::validateScriptCommandName(const QString &command) {
 
         return false;
 
-    } else if (_scriptNameByCommand.contains(command)) {
-        QString existingScript = _scriptNameByCommand[command];
+    } else if (_scriptNamesByCommand.contains(command)) {
+        QString existingScript = _scriptNamesByCommand[command];
 
         _logger->warning(QString("Commmand \"%1\" already registered to bot script named: %2")
                     .arg(command)
@@ -301,7 +303,7 @@ ScriptBuilder::registerCommandBinding(QSharedPointer<BotScript> botScript, const
     commandBinding.setAdminOnly(binding[CommandBinding::ADMIN_ONLY].toBool());
 
     if (commandBinding.isValid(*botScript->metaObject())) {
-        _scriptNameByCommand[command] = botScript->getScriptName();
+        _scriptNamesByCommand[command] = botScript->getScriptName();
 
         _commandBindings << commandBinding;
     }

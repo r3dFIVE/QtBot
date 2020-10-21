@@ -77,14 +77,14 @@ Settings::validateBotSettings() {
         _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "./scripts";
     }
 
-    QMetaEnum metaEnum = QMetaEnum::fromType<GuildEntity::RestrictionScheme>();
+    QMetaEnum metaEnum = QMetaEnum::fromType<CommandRestrictions::RestrictionState>();
 
-    QString restrictionScheme = _settings[SettingsParam::Bot::RESTRICTION_SCHEME].toString();
+    QString restrictionState = _settings[SettingsParam::Bot::RESTRICTION_STATE].toString();
 
-    int typeValue = metaEnum.keyToValue(restrictionScheme.toUtf8());
+    int typeValue = metaEnum.keyToValue(restrictionState.toUtf8());
 
     if (typeValue < 0) {
-        invalidEnumValue(SettingsParam::Bot::RESTRICTION_SCHEME, restrictionScheme, metaEnum);
+        invalidEnumValue(SettingsParam::Bot::RESTRICTION_STATE, restrictionState, metaEnum);
     }
 }
 
@@ -160,7 +160,8 @@ Settings::validateLoggingSettings() {
         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
     } else {
         validateLogLevel(SettingsParam::Logging::CONSOLE_LOG_LEVEL, consoleLogLevel);
-         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
+
+        _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
     }
 
 
@@ -169,6 +170,7 @@ Settings::validateLoggingSettings() {
         _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = LogContext::DEBUG;
     } else {
         validateLogLevel(SettingsParam::Logging::FILE_LOG_LEVEL, fileLogLevel);
+
         _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
     }
 
@@ -182,6 +184,7 @@ Settings::validateLoggingSettings() {
 
     if (_settings[SettingsParam::Logging::LOG_FILE_DIRECTORY].toString().isEmpty()) {
         QString path = QDir::currentPath().append("/logs");
+
         _settings[SettingsParam::Logging::LOG_FILE_DIRECTORY] = path;
     }
 }
@@ -189,6 +192,7 @@ Settings::validateLoggingSettings() {
 void
 Settings::validateLogLevel(QString property, QString logLevel) {
     QMetaEnum metaEnum = QMetaEnum::fromType<LogContext::LogLevel>();
+
     if (EnumUtils::keyToValue<LogContext::LogLevel>(logLevel) < 0) {
         invalidEnumValue(property, logLevel, metaEnum);
     }

@@ -20,7 +20,7 @@ namespace Bot {
 static const QString TOKEN = "bot_token";
 static const QString OWNER_ID = "owner_id";
 static const QString ADMIN_ROLE_NAME = "admin_role_name";
-static const QString RESTRICTION_SCHEME = "restriction_scheme";
+static const QString RESTRICTION_STATE = "restriction_state";
 }
 
 //

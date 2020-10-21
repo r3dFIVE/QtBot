@@ -32,7 +32,7 @@ class ScriptBuilder : public QObject
     QList<CommandBinding> _commandBindings;
     QList<GatewayBinding> _gatewayBindings;
     QList<TimedBinding> _timedBindings;
-    QMap<QString, QString> _scriptNameByCommand;
+    QMap<QString, QString> _scriptNamesByCommand;
     QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 
     bool isBotScript(const QString &fileName);
