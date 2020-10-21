@@ -11,7 +11,6 @@ class CommandRestrictions : public QObject
 public:
 
     enum RestrictionState {
-        REMOVE = -1,
         DISABLED = 0,
         ENABLED = 1
     };

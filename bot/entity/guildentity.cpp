@@ -203,12 +203,12 @@ GuildEntity::clearCommandForId(const EventContext &context) {
         for (QJsonValue cmd : _commandNamesByScriptName[commandName]) {
             _mappedStateIdsByCommand[cmd.toString()].remove(targetId);
 
-            entityUpdateRestrictions[cmd.toString()] = CommandRestrictions::REMOVE;
+            entityUpdateRestrictions[cmd.toString()] = CommandRestrictions::DISABLED;
         }
     } else {
         _mappedStateIdsByCommand[commandName].remove(targetId);
 
-        entityUpdateRestrictions[commandName] = CommandRestrictions::REMOVE;
+        entityUpdateRestrictions[commandName] = CommandRestrictions::DISABLED;
     }
 
     restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityUpdateRestrictions)));
@@ -224,12 +224,12 @@ GuildEntity::clearCommand(const EventContext &context) {
         for (QJsonValue cmd : _commandNamesByScriptName[commandName]) {
             _mappedStateIdsByCommand[cmd.toString()].clear();
 
-            entityUpdateRestrictions[cmd.toString()] = CommandRestrictions::REMOVE;
+            entityUpdateRestrictions[cmd.toString()] = CommandRestrictions::DISABLED;
         }
     } else {
         _mappedStateIdsByCommand[commandName].clear();
 
-        entityUpdateRestrictions[commandName] = CommandRestrictions::REMOVE;
+        entityUpdateRestrictions[commandName] = CommandRestrictions::DISABLED;
     }
 
     restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, "", entityUpdateRestrictions)));
