@@ -26,11 +26,7 @@ class Bot : public QObject
 
 public:
     Bot();
-    ~Bot();
-    Bot(const Bot &other) { Q_UNUSED(other) }
     void run(QSharedPointer<Settings> settings);
 };
-
-Q_DECLARE_METATYPE(Bot)
 
 #endif // BOT_H

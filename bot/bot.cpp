@@ -23,10 +23,6 @@ Bot::Bot() {
     qRegisterMetaType<SqlQuery>();
 }
 
-Bot::~Bot() {
-    delete _scriptBuilder;
-}
-
 void
 Bot::run(QSharedPointer<Settings> settings) {
 

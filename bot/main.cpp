@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     }
 
     if(!(QFileInfo::exists(path))) {
-        qDebug().noquote() << QString("Settings file %1 does not exist. . . exiting.\n").arg(path);
+        qDebug().noquote() << QString("Settings file %1 does not exist... exiting.\n").arg(path);
         exit(1);
     }    
 
