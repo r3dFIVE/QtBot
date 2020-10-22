@@ -144,6 +144,7 @@ GuildEntity::updateRole(const Role &role) {
 
     if (roleName.compare(ADMIN_ROLE_NAME, Qt::CaseInsensitive) != 0) {
         _adminRoleIds.removeAll(roleId);
+
     } else if (!_adminRoleIds.contains(roleId)) {
         _adminRoleIds << roleId;
     }
