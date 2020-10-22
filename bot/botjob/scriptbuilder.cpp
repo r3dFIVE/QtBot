@@ -23,8 +23,8 @@
 
 
 const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
-const int ScriptBuilder::BOT_API_MAJOR_VERSION = 0;
-const int ScriptBuilder::BOT_API_MINOR_VERSION = 1;
+const int ScriptBuilder::BOT_API_MAJOR_VERSION = 1;
+const int ScriptBuilder::BOT_API_MINOR_VERSION = 0;
 const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
 const QString ScriptBuilder::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
 const QString ScriptBuilder::SQL_IDENTIFIER = "Sql";
