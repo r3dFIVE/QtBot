@@ -57,7 +57,7 @@ EventHandler::processJobQueue() {
 
 void
 EventHandler::processTimedJobs() {
-    QList<Job *> readyTimedJobs = _timedJobs.getReadyJobs();
+    QList<Job *> readyTimedJobs = _timedJobs.getReadyJobs();22222222
 
     if (!readyTimedJobs.isEmpty()) {
         _jobQueue << readyTimedJobs;
