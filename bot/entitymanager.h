@@ -14,6 +14,7 @@ class EntityManager : public QObject
 
     static const QString CONNECTION_NAME;
     static const QString COMMAND_RESTRICTIONS;
+    static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE;
     static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE;
     static const QString SQL_SELECT_COMMAND_RESTRICTION_ID;
     static const QString SQL_INSERT_COMMAND_RESTRICTION;

@@ -17,7 +17,7 @@ public:
     static QMap<QSharedPointer<CoreCommand>, CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
         QMap<QSharedPointer<CoreCommand>, CommandBinding> commands;
 
-        const auto addCommand = [&](auto commandName, auto adminOnly, auto cmd) {
+        const auto addCommand = [&](const QString& commandName, bool adminOnly, std::function<void(const EventContext &context)> cmd) {
             QSharedPointer<CoreCommand> coreCommand = QSharedPointer<CoreCommand>(new CoreCommand(cmd));
 
             coreCommand->setGuildId(guildId);

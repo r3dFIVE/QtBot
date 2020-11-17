@@ -7,8 +7,9 @@
 
 const QString EntityManager::CONNECTION_NAME = "entityManager";
 const QString EntityManager::COMMAND_RESTRICTIONS = "CommandRestrictions";
+const QString EntityManager::SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE = QString("CREATE TABLE %1 (id integer PRIMARY KEY AUTOINCREMENT, guild_id varchar(256), command_name varchar(256), target_id varchar(256), state integer);").arg(COMMAND_RESTRICTIONS);
 const QString EntityManager::SQL_CREATE_COMMAND_RESTRICTIONS_TABLE = QString("CREATE TABLE %1 (id integer PRIMARY KEY AUTO_INCREMENT, guild_id varchar(256), command_name varchar(256), target_id varchar(256), state integer);").arg(COMMAND_RESTRICTIONS);
-const QString EntityManager::SQL_SELECT_COMMAND_RESTRICTION_ID = QString("SELECT id FROM %1 WHERE guild_id = ? AND target_id = ? AND command_name = ?;").arg(COMMAND_RESTRICTIONS);
+const QString EntityManager::SQL_SELECT_COMMAND_RESTRICTION_ID = QString("SELECT COUNT(id) FROM %1 WHERE guild_id = ? AND target_id = ? AND command_name = ?;").arg(COMMAND_RESTRICTIONS);
 const QString EntityManager::SQL_INSERT_COMMAND_RESTRICTION = QString("INSERT INTO %1 (guild_id, command_name, target_id, state) VALUES (?, ?, ?, ?);").arg(COMMAND_RESTRICTIONS);
 const QString EntityManager::SQL_UPDATE_COMMAND_RESTRICTION = QString("UPDATE %1 SET state = ? WHERE guild_id = ? and command_name = ? AND target_id = ?;").arg(COMMAND_RESTRICTIONS);
 const QString EntityManager::SQL_REMOVE_COMMAND_RESTRICTION = QString("DELETE FROM %1 WHERE guild_id = ? AND command_name = ?;").arg(COMMAND_RESTRICTIONS);
@@ -40,6 +41,8 @@ EntityManager::init() {
 
     int type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(_databaseContext.driverName);
 
+    QString query;
+
     if (type != SettingsParam::Database::QSQLITE) {
         _database.setHostName(_databaseContext.hostName);
 
@@ -48,13 +51,22 @@ EntityManager::init() {
         _database.setPassword(_databaseContext.password);
 
         _database.setPort(_databaseContext.port);
+
+        query = SQL_CREATE_COMMAND_RESTRICTIONS_TABLE;
+    } else {
+        query = SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE;
     }
 
     if (isDbOpen()) {
         _logger->info("EntityManager successfully connected to database...");
 
-        if (!_database.tables().contains(COMMAND_RESTRICTIONS)) {
-            _database.exec(SQL_CREATE_COMMAND_RESTRICTIONS_TABLE);
+        if (!_database.tables().contains(COMMAND_RESTRICTIONS, Qt::CaseInsensitive)) {
+
+            _database.exec(query);
+
+            if (_database.lastError().isValid()) {
+                _logger->warning(_database.lastError().text());
+            }
         }
     }
 }
@@ -89,20 +101,28 @@ EntityManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictio
 
         query.bindValue(2, commandName);
 
-        query.exec();       
+        if (!query.exec()) {
+            _logger->warning(query.lastError().databaseText());
 
-        if (query.size() > 0) {
+            _logger->warning(_database.lastError().databaseText());
+
+            return;
+        } else {
+            query.first();
+        }
+
+        int count = query.value(0).toInt();
+
+        if (count > 0) {
             updateRestriction(restrictions->getGuildId(),
                               commandName,
                               restrictions->getTargetId(),
                               restrictionMap[commandName]);
-        } else if (query.size() == 0) {
+        } else {
             insertRestriction(restrictions->getGuildId(),
                               commandName,
                               restrictions->getTargetId(),
                               restrictionMap[commandName]);
-        } else {
-            _logger->warning(query.lastError().text());
         }
     }
 }
