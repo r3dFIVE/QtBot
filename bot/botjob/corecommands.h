@@ -75,8 +75,6 @@ public:
         });
 
         addCommand(".enable", true, [&](const EventContext &context) -> void {
-
-
             QMetaObject::invokeMethod(&eventHandler,
                                      "enableCommand",
                                      Qt::QueuedConnection,
