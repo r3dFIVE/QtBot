@@ -1,3 +1,23 @@
+/*
+ *  QtBot - The extensible Qt Discord Bot!
+ *
+ *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include <QDebug>
 #include <QFile>
 #include <QMetaEnum>
@@ -10,32 +30,39 @@
 #include "globals.h"
 #include "enumutils.h"
 
+
 Settings::Settings(QString path) : _path(path) {
-    parseSettingsFile();
+    parseSettingsFile();    
     validateSettings();
 }
 
 void
 Settings::parseSettingsFile() {
     QFile settingsFile(_path);
+
     settingsFile.open(QIODevice::ReadOnly);
 
     if (!settingsFile.isOpen()) {
         qDebug().noquote() << QString("Error initializing opening %1. . . exiting.\n").arg(_path);
-        exit(1);
+
+        exit(EXIT_FAILURE);
     }
 
     QTextStream stream(&settingsFile);
+
     QString line = stream.readLine();
 
     while(!line.isNull()) {
         line = line.trimmed();
+
         if (!line.isEmpty() && !isComment(line)) {
             if (line.contains("=")) {
                 QStringList settingsTokens = line.split("=");
+
                 _settings[settingsTokens[0].trimmed()] = settingsTokens[1].trimmed();
             }
         }
+
         line = stream.readLine();
     }
 }
@@ -58,23 +85,23 @@ Settings::validateBotSettings() {
     if (_settings[SettingsParam::Bot::TOKEN].toString().isEmpty()) {
         qDebug() << "Bot Token must be set in your options file for successful conenctions";
 
-        QCoreApplication::exit();
+        exit(EXIT_FAILURE);
     }
 
     if (_settings[SettingsParam::Bot::OWNER_ID].toString().isEmpty()) {
         qDebug() << "Bot Owner (discord user id) must be set in your options file.";
 
-        QCoreApplication::exit();
+        exit(EXIT_FAILURE);
     }
 
     if (_settings[SettingsParam::Bot::ADMIN_ROLE_NAME].toString().isEmpty()) {
         qDebug() << "Guild level bot admin role name must be set in your options file.";
 
-        QCoreApplication::exit();
+        exit(EXIT_FAILURE);
     }
 
     if (_settings[SettingsParam::Script::SCRIPT_DIRECTORY].toString().isEmpty()) {
-        _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "./scripts";
+        _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "./scripts/";
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<CommandRestrictions::RestrictionState>();
@@ -124,8 +151,11 @@ Settings::validateDatabaseSettings() {
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
+
     QString databaseType = _settings[SettingsParam::Database::DATABASE_TYPE].toString();
+
     int typeValue = metaEnum.keyToValue(databaseType.toStdString().c_str());
+
     if (typeValue < 0) {
         invalidEnumValue(SettingsParam::Database::DATABASE_TYPE, databaseType, metaEnum);
     }
@@ -158,6 +188,7 @@ Settings::validateLoggingSettings() {
     QString consoleLogLevel = _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL].toString();
     if (consoleLogLevel.isEmpty()) {
         _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
+
     } else {
         validateLogLevel(SettingsParam::Logging::CONSOLE_LOG_LEVEL, consoleLogLevel);
 
@@ -168,6 +199,7 @@ Settings::validateLoggingSettings() {
     QString fileLogLevel = _settings[SettingsParam::Logging::FILE_LOG_LEVEL].toString();
     if (fileLogLevel.isEmpty()) {
         _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = LogContext::DEBUG;
+
     } else {
         validateLogLevel(SettingsParam::Logging::FILE_LOG_LEVEL, fileLogLevel);
 
@@ -201,21 +233,29 @@ Settings::validateLogLevel(QString property, QString logLevel) {
 void
 Settings::invalidEnumValue(QString property, QString value, QMetaEnum metaEnum) {
     qDebug().noquote() << QString("[%1]").arg(_path) << "\n";
+
     qDebug().noquote() << QString("Invalid %1: %2\n").arg(property, value);
+
     qDebug() << "Possible values:";
+
     for (int i = 0; i < metaEnum.keyCount(); ++i) {
         qDebug().noquote() << "\t" << metaEnum.key(i);
     }
-    exit(1);
+
+    exit(EXIT_FAILURE);
 }
 
 void
 Settings::invalidDatabaseProperty(QString databaseType, QString propertyName) {
     QString fileName = QString("[%1]").arg(_path);
+
     qDebug().noquote() << fileName << "\n";
+
     qDebug().noquote() << "Database Type: " << databaseType << "\n";
+
     qDebug().noquote() << QString("ERROR: Property \"%1\" cannot be blank.\n").arg(propertyName);
-    exit(1);
+
+    exit(EXIT_FAILURE);
 }
 
 QVariant

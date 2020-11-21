@@ -1,3 +1,23 @@
+/*
+ *  QtBot - The extensible Qt Discord Bot!
+ *
+ *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include <QCoreApplication>
 #include <QFile>
 #include <QFileInfo>
@@ -32,20 +52,25 @@ int main(int argc, char *argv[])
 
     parser.process(qtbot);
 
-    QString path;
+    QString settingsPath = ".\\config\\settings.ini";
+
+    bool exists;
 
     if (parser.isSet(targetFileOption)) {
-        path = parser.value(targetFileOption);
+        settingsPath = parser.value(targetFileOption);
+
+        exists = QFileInfo::exists(settingsPath);
     } else {
-        path = ".\\settings.ini";
+        exists = QFileInfo::exists(settingsPath) || QFileInfo::exists(".\\settings.ini");
     }
 
-    if(!(QFileInfo::exists(path))) {
-        qDebug().noquote() << QString("Settings file %1 does not exist... exiting.\n").arg(path);
-        exit(1);
+    if(!exists) {
+        qDebug().noquote() << QString("Settings file %1 not found... exiting.\n").arg(settingsPath);
+
+        exit(EXIT_FAILURE);
     }    
 
-    QSharedPointer<Settings> settings = QSharedPointer<Settings>(new Settings(path));
+    QSharedPointer<Settings> settings = QSharedPointer<Settings>(new Settings(settingsPath));
 
     LogFactory::init(settings);
 
