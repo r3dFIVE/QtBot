@@ -54,7 +54,6 @@ HEADERS += \
     payloads/tst_role.h \
     payloads/tst_updatestatus.h \
     payloads/tst_voicestate.h \
-    tests.h \
     testsuite.h \
     payloads/testpayloads.h \
     payloads/tst_heartbeat.h \

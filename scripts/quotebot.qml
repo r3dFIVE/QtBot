@@ -30,7 +30,7 @@ BotScript {
 		if (db.open()) {
 			qry = new SqlQuery(db);
 		
-			var args = context.content.split(" ");
+			var args = context.args;
 			
 			bLogInfo(args)
 			
@@ -52,13 +52,12 @@ BotScript {
 			qry.exec();		
 			
 			if (qry.size() > 1) {
-				qry.seek(Math.floor(Math.random() * qry.size()));
-			} else if (!qry.next()) {
-				return { content: "No quotes found..." }
+				qry.seek(Math.floor(Math.random() * qry.size()));				
+				context.target_payload.content = buildQuoteString();
+			} else if (!qry.next()) {			
+				context.target_payload.content = "No quotes found...";
 			} 
-			
-			context.target_payload = { content: buildQuoteString() }
-			
+						
 			cCreateMessage(context)	
 		}
     }
@@ -82,7 +81,7 @@ BotScript {
 			qry.seek(0)
 		}
 		
-		context.target_payload = { content: buildQuoteString() }
+		context.target_payload.content = buildQuoteString();
 		
         cCreateMessage(context)		
 	}
@@ -95,7 +94,7 @@ BotScript {
 			qry.seek(size - 1);
 		}
 		
-		context.target_payload = { content: buildQuoteString() }
+		context.target_payload.content = buildQuoteString();
 		
         cCreateMessage(context)		
 	}
