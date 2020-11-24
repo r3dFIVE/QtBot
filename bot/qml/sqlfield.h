@@ -82,4 +82,6 @@ public:
     Q_INVOKABLE bool isValid() const;
 };
 
+Q_DECLARE_METATYPE(SqlField)
+
 #endif // SQLFIELD_H

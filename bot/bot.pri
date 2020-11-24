@@ -190,6 +190,7 @@ HEADERS += \
     $$PWD/entity/guildentity.h
 
 DISTFILES += \
+    $$PWD/readme.txt \
     $$PWD/settings.ini
 
 SOURCES += \

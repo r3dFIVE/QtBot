@@ -132,17 +132,21 @@ EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedB
 }
 
 void
-EventHandler::reloadAllAvailableGuilds() {
-    _timedJobTimer->stop();
+EventHandler::reloadGuild(const QString &guildId) {
+    _timedJobs.clear(guildId);
 
-    _jobQueueTimer->stop();
+    _jobQueue.clear(guildId);
 
-    _timedJobs.clear();
+    if (guildId == DEFAULT_GUILD_ID) {
+        _timedJobTimer->stop();
 
-    _jobQueue.clear();
+        _jobQueueTimer->stop();
 
-    for (auto guild : _availableGuilds.values()) {
-        emit reloadScripts(guild);
+        for (auto guild : _availableGuilds.values()) {
+            emit reloadScripts(guild);
+        }
+    } else {
+        emit reloadScripts(_availableGuilds[guildId]);
     }
 }
 
@@ -169,7 +173,7 @@ EventHandler::displayTimedJobs(EventContext context) {
                 .arg(timedBinding.getFunctionMapping().first)
                 .arg(timedBinding.isSingleShot() == true ? "true" : "false")
                 .arg(timedBinding.isRunning() == true ? "true" : "false")
-                .arg(timedBinding.getReimaining());
+                .arg(timedBinding.getRemaining());
 
         content.append(jobInfo);
 
@@ -206,7 +210,7 @@ EventHandler::isGuildReady(const QString &guildId) {
 }
 
 int
-EventHandler::getJobNumber(const EventContext &context) {
+EventHandler::getTimedJobNumber(const EventContext &context) {
     QStringList commandTokens = context.getContent().toString().split(" ");
 
     if (commandTokens.size() <= 1) {
@@ -229,7 +233,7 @@ EventHandler::removeTimedJobById(QSharedPointer<EventContext> context) {
 
 void
 EventHandler::removeTimedJob(const EventContext &context) {
-    int jobNumber = getJobNumber(context);
+    int jobNumber = getTimedJobNumber(context);
 
     if (jobNumber > 0) {
        _timedJobs.removeJob(context.getGuildId().toString(), jobNumber - 1);
@@ -240,7 +244,7 @@ EventHandler::removeTimedJob(const EventContext &context) {
 
 void
 EventHandler::resumeTimedJob(const EventContext &context) {
-    int jobNumber = getJobNumber(context);
+    int jobNumber = getTimedJobNumber(context);
 
     if (jobNumber > 0) {
        _timedJobs.resumeJob(context.getGuildId().toString(), jobNumber - 1);
@@ -251,7 +255,7 @@ EventHandler::resumeTimedJob(const EventContext &context) {
 
 void
 EventHandler::startTimedJob(const EventContext &context) {
-    int jobNumber = getJobNumber(context);
+    int jobNumber = getTimedJobNumber(context);
 
     if (jobNumber > 0) {
        _timedJobs.startJob(context.getGuildId().toString(), jobNumber - 1);
@@ -262,57 +266,50 @@ EventHandler::startTimedJob(const EventContext &context) {
 
 void
 EventHandler::stopTimedJob(const EventContext &context) {
-    int jobNumber = getJobNumber(context);
+    int jobNumber = getTimedJobNumber(context);
 
     if (jobNumber > 0) {
        _timedJobs.stopJob(context.getGuildId().toString(), jobNumber - 1);
     } else {
         _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
-    };
+    }
 }
 
+
 void
-EventHandler::enableCommand(const EventContext &context) {
+EventHandler::toggleCommand(const EventContext &context, CommandRestrictions::RestrictionState state) {
     QString guildId = context.getGuildId().toString();
 
     if (isGuildReady(guildId) && context.getArgs().size() > 2) {
-        _availableGuilds[guildId]->enableCommand(context);
+        QString commandName = context.getArgs()[1].toString();
+
+        QString targetId = context.getArgs()[2].toString();
+
+        _availableGuilds[guildId]->toggleCommand(commandName, targetId, state);
     } else {
         _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
-    };
+    }
 }
 
 void
-EventHandler::disableCommand(const EventContext &context) {
+EventHandler::clear(const EventContext &context) {
     QString guildId = context.getGuildId().toString();
 
-    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
-        _availableGuilds[guildId]->disableCommand(context);
+    int argCount = context.getArgs().size();
+
+    if (isGuildReady(guildId) && argCount > 1) {
+        QString commandName = context.getArgs()[1].toString();
+
+        QString targetId;
+
+        if (argCount > 2) {
+            targetId = context.getArgs()[2].toString();
+        }
+
+        _availableGuilds[guildId]->clear(commandName, targetId);
     } else {
-        _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
-    };
-}
-
-void
-EventHandler::clearCommandForId(const EventContext &context) {
-    QString guildId = context.getGuildId().toString();
-
-    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
-        _availableGuilds[guildId]->clearCommandForId(context);
-    } else {
-        _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
-    };
-}
-
-void
-EventHandler::clearCommand(const EventContext &context) {
-    QString guildId = context.getGuildId().toString();
-
-    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
-        _availableGuilds[guildId]->clearCommand(context);
-    } else {
-        _logger->debug(QString("\"%1\" requires a scriptName...").arg(context.getContent().toString()));
-    };
+        _logger->debug(QString("\"%1\" requires a scriptName or command name...").arg(context.getContent().toString()));
+    }
 }
 
 

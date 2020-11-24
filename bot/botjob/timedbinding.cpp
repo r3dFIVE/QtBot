@@ -155,7 +155,7 @@ TimedBinding::getEventContext() const {
 }
 
 qint64
-TimedBinding::getReimaining() {
+TimedBinding::getRemaining() {
     if (_remainder) {
         if (_stoppedAt) {
             return _remainder;

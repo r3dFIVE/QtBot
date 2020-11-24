@@ -19,10 +19,7 @@
  */
 
 #include "sqlerror.h"
-
-SqlError::SqlError(const QString &driverText, const QString &databaseText, Sql::ErrorType type, const QString &errorCode) {
-    _sqlError = QSqlError(driverText, databaseText, QSqlError::ErrorType(type), errorCode);
-}
+#include <QDebug>
 
 SqlError::SqlError(const SqlError &other) {
     _sqlError = other._sqlError;

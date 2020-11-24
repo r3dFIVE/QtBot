@@ -19,6 +19,7 @@
  */
 
 #include "jobqueue.h"
+#include "util/globals.h"
 
 JobQueue&
 operator<<(JobQueue &jobQueue, Job *job) {
@@ -71,8 +72,8 @@ JobQueue::get() {
 }
 
 Job*
-JobQueue::getJobFromQueue(int index) {
-    QString guildId =  _jobQueue.keys().at(index);
+JobQueue::getJobFromQueue(int index) {        
+    QString guildId = _jobQueue.keys().at(index);
 
     for (int i = 0; i < _jobQueue[guildId].length(); ++i) {
         Job *job = _jobQueue[guildId].at(i);
@@ -115,6 +116,10 @@ JobQueue::hasJobs() const {
 }
 
 void
-JobQueue::clear() {
-    _jobQueue.clear();
+JobQueue::clear(const QString &guildId) {
+    if (guildId == DEFAULT_GUILD_ID) {
+        _jobQueue.clear();
+    } else {
+        _jobQueue[guildId].clear();
+    }
 }

@@ -60,7 +60,7 @@ public:
     bool isRunning() const;
     qint64 getFireAfter() const;
     EventContext getEventContext() const;
-    qint64 getReimaining();
+    qint64 getRemaining();
     QString getScriptName() const;
     qint64 getStartedAt() const;
     QString id() const;

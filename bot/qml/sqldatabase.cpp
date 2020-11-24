@@ -122,16 +122,6 @@ SqlDatabase::open(QString suffix) {
 void
 SqlDatabase::closeExistingConnection(QString existingConnection) {
     if (QSqlDatabase::contains(existingConnection)) {
-        for (auto query : getQueriesForConnection(existingConnection)) {
-            if (query) {
-                SqlDatabase *db = query->getDatabase();
-
-                if (db && db->isOpen()) {
-                    db->close();
-                }
-            }
-        }
-
         _queries[existingConnection].clear();
 
         QSqlDatabase::removeDatabase(existingConnection);

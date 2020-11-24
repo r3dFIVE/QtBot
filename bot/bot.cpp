@@ -41,6 +41,10 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
     qRegisterMetaType<SqlDatabase>();
     qRegisterMetaType<SqlQuery>();
+    qRegisterMetaType<SqlField>();
+    qRegisterMetaType<SqlRecord>();
+    qRegisterMetaType<SqlError>();
+    qRegisterMetaType<CommandRestrictions::RestrictionState>();
 }
 
 void
