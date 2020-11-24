@@ -81,7 +81,7 @@ BotScript {
 				
 				likeClause = "%" + likeClause.trim() + "%"
 
-				qry.prepare("SELECT quote,author,date FROM quotes.quote WHERE quote LIKE ?");
+				qry.prepare("SELECT quote,author,date FROM quotes.quotebot WHERE quote LIKE ?");
 				qry.bindValue(0, likeClause);
 			} else {
 				qry.prepare(randomQuote);
