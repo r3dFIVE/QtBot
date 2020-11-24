@@ -1,6 +1,6 @@
 TEMPLATE = aux
 
-VERSION = 1.0.0
+VERSION = 0.9.9
 
 INSTALLER = "QtBot-Installer-$$VERSION"
 
