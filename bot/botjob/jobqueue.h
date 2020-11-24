@@ -42,7 +42,7 @@ public:
 
     bool hasJobs() const;
     Job* get();
-    void clear();
+    void clear(const QString &guildId);
     void pop();
     void queue(Job *job);
 };

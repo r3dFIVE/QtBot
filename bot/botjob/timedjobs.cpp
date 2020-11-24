@@ -37,7 +37,7 @@ TimedJobs::getReadyJobs() {
             if (QDateTime::currentSecsSinceEpoch() == timedBinding.getStartedAt()) {
                 continue;
 
-            } else if (timedBinding.isRunning() && timedBinding.getReimaining() <= 0) {
+            } else if (timedBinding.isRunning() && timedBinding.getRemaining() <= 0) {
                 EventContext context = timedBinding.getEventContext();
 
                 context.setGuildId(guildId);
@@ -95,8 +95,12 @@ TimedJobs::registerTimedBinding(const QString &guildId, TimedBinding &timedBindi
 }
 
 void
-TimedJobs::clear() {
-    _timedBindings.clear();
+TimedJobs::clear(const QString &guildId) {
+    if (guildId == DEFAULT_GUILD_ID) {
+        _timedBindings.clear();
+    } else {
+        _timedBindings[guildId].clear();
+    }
 }
 
 bool

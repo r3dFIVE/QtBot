@@ -52,17 +52,16 @@ public:
     void setGatewayBindings(const QList<GatewayBinding> &gatewayBindings);
     void setId(const QString &id);
     void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
-    void setMappedStateIdsByCommand(QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > mappedStateIdsByCommand);
+    void setMappedStateIdsByCommand(QMap<QString, QMap<QString,
+                                    CommandRestrictions::RestrictionState> > mappedStateIdsByCommand);
     void setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts);
     void setTimedBindings(const QList<TimedBinding> &timedBindings);
+    void toggleCommand(const QString &commandName,
+                       const QString &targetId,
+                       CommandRestrictions::RestrictionState state);
     void updateRole(const Role &role);
-    void updateStateIdsByCommand(const EventContext &context, CommandRestrictions::RestrictionState state);
     void removeRole(const QString &roleId);
-
-    void enableCommand(const EventContext &context);
-    void disableCommand(const EventContext &context);
-    void clearCommandForId(const EventContext &context);
-    void clearCommand(const EventContext &context);
+    void clear(const QString &commandName, const QString &targetId);
 
     static void setAdminRoleName(const QString &roleName);
     static void setBotOwnerId(const QString &userId);
@@ -87,6 +86,7 @@ private:
     Job* getCommandJob(QSharedPointer<EventContext> context);
     QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context) const;
     QString parseCommandToken(const QString &content) const;
+    void clearCommand(const QString &commandName, const QString &targetId);
 
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);

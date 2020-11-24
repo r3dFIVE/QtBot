@@ -1,0 +1,3 @@
+This readme will have something meaningful in 1.0.0!
+
+Now it is only an example placeholder...

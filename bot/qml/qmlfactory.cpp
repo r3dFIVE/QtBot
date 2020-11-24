@@ -58,8 +58,9 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
         return new SqlRecord;
 
     } else if (typeName == "SqlError") {
-        return new SqlError;
+        SqlError sqlError = qvariant_cast<SqlError>(arguments.value("sqlError"));
 
+        return new SqlError(sqlError);
     }
 
     return nullptr;

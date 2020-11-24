@@ -210,7 +210,7 @@ ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
 
     engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
 
-    engine->evaluate("function SqlError() { return _factory.createObject(\"SqlQuery\", {}); }");
+    engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { sqlError: error }); }");
 
     engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
 

@@ -52,74 +52,76 @@ public:
         };
 
         addCommand(".reload", true, [&](const EventContext &context) -> void {
-            Q_UNUSED(context);            
-
-            SqlDatabase::clearQueries();
-
-            QMetaObject::invokeMethod(&eventHandler, &EventHandler::reloadAllAvailableGuilds, Qt::QueuedConnection);
+            QMetaObject::invokeMethod(&eventHandler,
+                                      "reloadGuild",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(QString, context.getGuildId().toString()));
         });
 
         addCommand(".timed", false, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "displayTimedJobs",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(EventContext, context));
+                                      "displayTimedJobs",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(EventContext, context));
         });
 
         addCommand(".timedremove", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "removeTimedJob",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "removeTimedJob",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context));
         });
 
         addCommand(".timedresume", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "resumeTimedJob",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "resumeTimedJob",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context));
         });
 
         addCommand(".timedstart", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "startTimedJob",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "startTimedJob",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context));
         });
 
         addCommand(".timedstop", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "stopTimedJob",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "stopTimedJob",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context));
         });
 
         addCommand(".enable", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "enableCommand",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "toggleCommand",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context),
+                                      Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::ENABLED));
         });
 
         addCommand(".disable", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                     "disableCommand",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "toggleCommand",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context),
+                                      Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::DISABLED));
         });
 
         addCommand(".clear", true, [&](const EventContext &context) -> void {
-            QMetaObject::invokeMethod(&eventHandler,
-                                     "clearCommandForId",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
-        });
+            QString commandName = context.getArgs()[1].toString();
 
-        addCommand(".clearall", true, [&](const EventContext &context) -> void {
+            QString targetId;
+
+            if (context.getArgs().size() > 2) {
+                QString targetId = context.getArgs()[2].toString();
+            }
+
             QMetaObject::invokeMethod(&eventHandler,
-                                     "clearCommand",
-                                     Qt::QueuedConnection,
-                                     Q_ARG(const EventContext&, context));
+                                      "clear",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(const EventContext&, context));
         });
 
         return commands;

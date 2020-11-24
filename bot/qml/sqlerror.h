@@ -33,28 +33,25 @@ class SqlError : public QObject
     QSqlError _sqlError;
 
 public:
-    SqlError(const QString &driverText = QString(),
-              const QString &databaseText = QString(),
-              Sql::ErrorType type = Sql::NoError,
-              const QString &errorCode = QString());
-    SqlError(const SqlError &other);
-    SqlError(SqlError *other);
-    SqlError(const QSqlError &other);
-    ~SqlError() {}
+    Q_INVOKABLE SqlError() {}
+    Q_INVOKABLE SqlError(const SqlError &other);
+    Q_INVOKABLE SqlError(SqlError *other);
+    Q_INVOKABLE SqlError(const QSqlError &other);
+    Q_INVOKABLE ~SqlError() {}
 
-    SqlError& operator=(const SqlError& other);
-    SqlError &operator=(SqlError &&other) noexcept { _sqlError.swap(other._sqlError); return *this; }
+    Q_INVOKABLE SqlError& operator=(const SqlError& other);
+    Q_INVOKABLE SqlError &operator=(SqlError &&other) noexcept { _sqlError.swap(other._sqlError); return *this; }
 
-    bool operator==(const SqlError& other) const;
-    bool operator!=(const SqlError& other) const;
+    Q_INVOKABLE bool operator==(const SqlError& other) const;
+    Q_INVOKABLE bool operator!=(const SqlError& other) const;
 
-    QString driverText() const;
-    QString databaseText() const;
-    Sql::ErrorType type() const;
+    Q_INVOKABLE QString driverText() const;
+    Q_INVOKABLE QString databaseText() const;
+    Q_INVOKABLE Sql::ErrorType type() const;
 
-    QString nativeErrorCode() const;
-    QString text() const;
-    bool isValid() const;
+    Q_INVOKABLE QString nativeErrorCode() const;
+    Q_INVOKABLE QString text() const;
+    Q_INVOKABLE bool isValid() const;
 };
 
 Q_DECLARE_METATYPE(SqlError)

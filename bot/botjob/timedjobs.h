@@ -37,7 +37,7 @@ public:
     bool hasJobs() const;
     QList<Job *> getReadyJobs();
     QList<TimedBinding> getAllJobs(const QString &guildId);
-    void clear();
+    void clear(const QString &guildId);
     void registerTimedBindings(QSharedPointer<GuildEntity> guild);
     void registerTimedBinding(const QString &guildId, TimedBinding &timedBinding);
     void removeJob(const QString &guildId, const int index);
