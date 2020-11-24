@@ -1,5 +1,5 @@
 CREATE TABLE `quotebot` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `quote_id` int(11) unsigned NOT NULL DEFAULT 0,
   `chan_id` int(11) unsigned NOT NULL DEFAULT 0,
   `quote` mediumtext NOT NULL,
