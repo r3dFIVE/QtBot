@@ -31,6 +31,14 @@
 #include "qml/sqlquery.h"
 
 
+const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
+const int Bot::BOT_API_MAJOR_VERSION = 1;
+const int Bot::BOT_API_MINOR_VERSION = 0;
+const QString Bot::BOT_TYPE_IDENTIFIER = "BotScript";
+const QString Bot::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
+const QString Bot::SQL_IDENTIFIER = "Sql";
+const QString Bot::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
+
 Bot::Bot() {
     qRegisterMetaType<QSharedPointer<TimedBinding> >();
     qRegisterMetaType<LogContext::LogLevel>();
@@ -45,6 +53,22 @@ Bot::Bot() {
     qRegisterMetaType<SqlRecord>();
     qRegisterMetaType<SqlError>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
+    qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                               BOT_API_MAJOR_VERSION,
+                               BOT_API_MINOR_VERSION,
+                               BOT_TYPE_IDENTIFIER.toUtf8());
+
+    qmlRegisterUncreatableType<OpenMode>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          FILE_OPEN_MODE_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
+
+    qmlRegisterUncreatableType<Sql>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          SQL_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
 }
 
 void

@@ -95,10 +95,10 @@ public:
     Q_INVOKABLE void setNumericalPrecisionPolicy(const Sql::NumericalPrecisionPolicy &precisionPolicy);
     Q_INVOKABLE Sql::NumericalPrecisionPolicy numericalPrecisionPolicy() const;
     Q_INVOKABLE void setType(const QString &type);
-    Q_INVOKABLE QStringList drivers();
+    Q_INVOKABLE QStringList drivers() const;
     Q_INVOKABLE bool isDriverAvailable(const QString &name);
     void addQuery(SqlQuery *query);
-    static void clearQueries();
+    static void clearQueries(const QString &guildId, const QString &fileName);
 };
 
 Q_DECLARE_METATYPE(SqlDatabase)

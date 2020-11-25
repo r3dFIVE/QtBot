@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE bool isNull(int field) const;
     Q_INVOKABLE bool isNull(const QString &name) const;
     Q_INVOKABLE int at() const;
+    Q_INVOKABLE QString lastErrorText() const;
     Q_INVOKABLE QString lastQuery() const;
     Q_INVOKABLE int numRowsAffected() const;
     Q_INVOKABLE QVariant lastError() const;

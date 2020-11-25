@@ -82,6 +82,11 @@ SqlQuery::at() const {
 }
 
 QString
+SqlQuery::lastErrorText() const {
+    return _query.lastError().text();
+}
+
+QString
 SqlQuery::lastQuery() const {
     return _query.lastQuery();
 }

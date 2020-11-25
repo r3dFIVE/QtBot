@@ -272,7 +272,7 @@ SqlDatabase::setType(const QString &type) {
 }
 
 QStringList
-SqlDatabase::drivers() {
+SqlDatabase::drivers() const {
     return QSqlDatabase::drivers();
 }
 
@@ -307,10 +307,15 @@ SqlDatabase::getQueriesForConnection(const QString &existingConnection) {
 }
 
 void
-SqlDatabase::clearQueries() {
-    _queries.clear();
-}
+SqlDatabase::clearQueries(const QString &guildId, const QString &scriptName) {
+    QString targetName = QString("%1|%2").arg(guildId, scriptName);
 
+    for (auto cachedConnectionName : _queries.keys()) {
+        if (cachedConnectionName.contains(targetName)) {
+            _queries[cachedConnectionName].clear();
+        }
+    }
+}
 
 void
 SqlDatabase::setConnectionName(const QString &scriptName, const QString &guildId) {
