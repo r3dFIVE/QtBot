@@ -4,16 +4,16 @@
  *  Copyright (C) 2020  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
@@ -42,14 +42,6 @@
 #include "timedbinding.h"
 
 
-const QString ScriptBuilder::BOT_IMPORT_IDENTIFIER = "BotApi";
-const int ScriptBuilder::BOT_API_MAJOR_VERSION = 1;
-const int ScriptBuilder::BOT_API_MINOR_VERSION = 0;
-const QString ScriptBuilder::BOT_TYPE_IDENTIFIER = "BotScript";
-const QString ScriptBuilder::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
-const QString ScriptBuilder::SQL_IDENTIFIER = "Sql";
-const QString ScriptBuilder::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
-
 ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
     : _defaultDatabaseContext(settings) {
 
@@ -58,28 +50,11 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings
     _logger = LogFactory::getLogger();
 
     _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
-
-    qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
-                               BOT_API_MAJOR_VERSION,
-                               BOT_API_MINOR_VERSION,
-                               BOT_TYPE_IDENTIFIER.toUtf8());
-
-    qmlRegisterUncreatableType<OpenMode>(BOT_IMPORT_IDENTIFIER.toUtf8(),
-                          BOT_API_MAJOR_VERSION,
-                          BOT_API_MINOR_VERSION,
-                          FILE_OPEN_MODE_IDENTIFIER.toUtf8(),
-                          NO_CREATABLE_ENUM);
-
-    qmlRegisterUncreatableType<Sql>(BOT_IMPORT_IDENTIFIER.toUtf8(),
-                          BOT_API_MAJOR_VERSION,
-                          BOT_API_MINOR_VERSION,
-                          SQL_IDENTIFIER.toUtf8(),
-                          NO_CREATABLE_ENUM);
 }
 
 void
 ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
-    _guildId = guildEntity->id();
+    _guildId = guildEntity->getId();
 
     loadCoreCommands();
 
@@ -135,22 +110,22 @@ ScriptBuilder::builldBotScripts(const QString &scriptDir) {
         QString fileWithPath = directory.absoluteFilePath(fileName);
 
         if (isBotScript(fileWithPath)) {
-            _logger->debug(QString("Loading bot script: %1").arg(fileName));
+            _logger->debug(QString("Loading bot script: %1").arg(fileName));           
 
-            _fileName = fileWithPath;
+            _fileName = fileName;
 
-            buildBotScript();
+            buildBotScript(fileWithPath);
         }
     }
 }
 
 void
-ScriptBuilder::buildBotScript() {
+ScriptBuilder::buildBotScript(const QString &fileWithPath) {
     QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
 
     addQmlFactory(engine);
 
-    QQmlComponent comp(engine.data(), _fileName);
+    QQmlComponent comp(engine.data(), fileWithPath);
 
     if (comp.errors().size() > 0) {
         _logger->debug(comp.errorString());
@@ -168,7 +143,7 @@ ScriptBuilder::buildBotScript() {
 
     if (botScript->getEventBindingsJson().isEmpty() && botScript->getScriptCommands().isEmpty()) {
         _logger->debug(QString("No Script Commands or Event Bindings set for \"%1\", skipping.")
-                       .arg(_fileName));
+                       .arg(fileWithPath));
 
         return;
     }
@@ -185,6 +160,8 @@ ScriptBuilder::buildBotScript() {
 
     _registeredScripts << botScript;
 
+    SqlDatabase::clearQueries(_guildId, _fileName);
+
     QObject::connect(botScript.data(), &BotScript::timedBindingReadySignal,
                      _eventHandler, &EventHandler::registerTimedBinding);
 
@@ -196,11 +173,11 @@ void
 ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
     engine->installExtensions(QQmlEngine::ConsoleExtension);
 
-    DatabaseContext context(_defaultDatabaseContext);
+    DatabaseContext databaseContext(_defaultDatabaseContext);
 
-    context.setConnectionName(_guildId, _fileName);
+    databaseContext.setConnectionName(_guildId, _fileName);
 
-    QJSValue factory = engine->newQObject(new QmlFactory(context));
+    QJSValue factory = engine->newQObject(new QmlFactory(databaseContext));
 
     engine->globalObject().setProperty("_factory", factory);
 
@@ -414,11 +391,11 @@ ScriptBuilder::isBotScript(const QString &fileName) {
             continue;
         }
 
-        if (lineTokens[1] != BOT_IMPORT_IDENTIFIER) {
+        if (lineTokens[1] != Bot::BOT_IMPORT_IDENTIFIER) {
             continue;
         }
 
-        QString majorMinorVersion = QString("%1.%2").arg(BOT_API_MAJOR_VERSION).arg(BOT_API_MINOR_VERSION);
+        QString majorMinorVersion = QString("%1.%2").arg(Bot::BOT_API_MAJOR_VERSION).arg(Bot::BOT_API_MINOR_VERSION);
 
         if (lineTokens[2] != majorMinorVersion) {
             continue;
@@ -429,9 +406,9 @@ ScriptBuilder::isBotScript(const QString &fileName) {
 
     _logger->trace(QString("%1 is not a Bot Script. Did you forget to \"import %2 %3.%4\"?")
                 .arg(fileName)
-                .arg(BOT_IMPORT_IDENTIFIER)
-                .arg(BOT_API_MAJOR_VERSION)
-                .arg(BOT_API_MINOR_VERSION));
+                .arg(Bot::BOT_IMPORT_IDENTIFIER)
+                .arg(Bot::BOT_API_MAJOR_VERSION)
+                .arg(Bot::BOT_API_MINOR_VERSION));
 
     return false;
 }

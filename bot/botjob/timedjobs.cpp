@@ -4,16 +4,16 @@
  *  Copyright (C) 2020  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
@@ -79,7 +79,7 @@ TimedJobs::registerTimedBindings(QSharedPointer<GuildEntity> guild) {
     for (TimedBinding timedBinding : guild->getTimedBindings()) {
         timedBinding.setStartedAt(currentEpochTime);
 
-        _timedBindings[guild->id()] << timedBinding;
+        _timedBindings[guild->getId()] << timedBinding;
     }
 
     guild->getTimedBindings().clear();
@@ -139,21 +139,21 @@ TimedJobs::removeJob(const QString &guildId, const int index) {
 }
 
 void
-TimedJobs::resumeJob(const QString &guildId, const int index) {
-    if (!validateJobIndex(guildId, index)) {
-        return;
-    }
-
-    _timedBindings[guildId][index].resume();
-}
-
-void
 TimedJobs::startJob(const QString &guildId, const int index) {
     if (!validateJobIndex(guildId, index)) {
         return;
     }
 
     _timedBindings[guildId][index].start();
+}
+
+void
+TimedJobs::restartJob(const QString &guildId, const int index) {
+    if (!validateJobIndex(guildId, index)) {
+        return;
+    }
+
+    _timedBindings[guildId][index].restart();
 }
 
 void

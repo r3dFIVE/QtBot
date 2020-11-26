@@ -4,16 +4,16 @@
  *  Copyright (C) 2020  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
@@ -31,6 +31,14 @@
 #include "qml/sqlquery.h"
 
 
+const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
+const int Bot::BOT_API_MAJOR_VERSION = 1;
+const int Bot::BOT_API_MINOR_VERSION = 0;
+const QString Bot::BOT_TYPE_IDENTIFIER = "BotScript";
+const QString Bot::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
+const QString Bot::SQL_IDENTIFIER = "Sql";
+const QString Bot::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
+
 Bot::Bot() {
     qRegisterMetaType<QSharedPointer<TimedBinding> >();
     qRegisterMetaType<LogContext::LogLevel>();
@@ -45,6 +53,22 @@ Bot::Bot() {
     qRegisterMetaType<SqlRecord>();
     qRegisterMetaType<SqlError>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
+    qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                               BOT_API_MAJOR_VERSION,
+                               BOT_API_MINOR_VERSION,
+                               BOT_TYPE_IDENTIFIER.toUtf8());
+
+    qmlRegisterUncreatableType<OpenMode>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          FILE_OPEN_MODE_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
+
+    qmlRegisterUncreatableType<Sql>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          SQL_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
 }
 
 void

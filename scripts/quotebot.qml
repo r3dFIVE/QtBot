@@ -24,7 +24,15 @@ BotScript {
 		}
 	]
 	
-	property string randomQuote: "SELECT quote,author,date FROM quotes.quotebot ORDER BY RAND() LIMIT 1"
+	property string databaseName: "quotes"
+	
+	property string tableName: "quotebot"
+	
+	property string randomQuoteSql: `SELECT quote,author,date FROM ${databaseName}.${tableName} ORDER BY RAND() LIMIT 1`
+	
+	property string searchQuoteSql: `SELECT quote,author,date FROM ${databaseName}.${tableName} WHERE quote LIKE ?`
+	
+	property string addQuoteSql: `INSERT INTO ${databaseName}.${tableName} (chan_id, quote, author, date) VALUES (?, ?, ?, ?);`
 	
 	property var qry: {}
 	
@@ -43,7 +51,7 @@ BotScript {
 					quote += args[i] + " "
 				}				
 				var dateTime = new Date().toLocaleString(Qt.locale(), 'yyyy-MM-dd hh:mm:ss');				
-				sqlQuery.prepare("INSERT INTO quotes.quotebot (chan_id, quote, author, date) VALUES (?, ?, ?, ?);");		
+				sqlQuery.prepare(addQuoteSql);		
 				bLogInfo(dateTime);
 				
 				sqlQuery.bindValue(0, context.channel_id);				
@@ -54,7 +62,7 @@ BotScript {
 				if (sqlQuery.exec()) {
 					context.target_payload.content = "**Quote Added!**";
 				} else {
-					var sqlError = new SqlError(sqlQuery.lastError());
+					var e = new SqlError(sqlQuery.lastError());
 					bLogWarning(sqlError.databaseText());
 					return
 				}
@@ -81,20 +89,23 @@ BotScript {
 				
 				likeClause = "%" + likeClause.trim() + "%"
 
-				qry.prepare("SELECT quote,author,date FROM quotes.quote WHERE quote LIKE ?");
+				qry.prepare(searchQuoteSql);
 				qry.bindValue(0, likeClause);
 			} else {
-				qry.prepare(randomQuote);
+				qry.prepare(randomQuoteSql);
 			}
 			
-			qry.exec();		
+			if (!qry.exec()) {
+				logSqlError(qry);
+				return;
+			}		
 			
 			if (qry.size() > 1) {
 				qry.seek(Math.floor(Math.random() * qry.size()));				
 				context.target_payload.content = buildQuoteString();
 			} else if (qry.next()) {			
 				context.target_payload.content = buildQuoteString();
-			} else {
+			} else {				
 				context.target_payload.content = "No quotes found...";
 			}
 						
@@ -114,28 +125,40 @@ BotScript {
 	}
 	
 	function quoteNext(context) {
-		var size = qry.size();
-		if (size == 0 || !qry.isValid()) {			
-			qry.exec(randomQuote)
+		if (isEmpty(qry)) {
+			context.content = context.args[0];			
+			quote(context);
+			return;
 		} else if (!qry.next()) {
-			qry.seek(0)
-		}
-		
-		context.target_payload.content = buildQuoteString();
-		
-        cCreateMessage(context)		
+			qry.seek(0);
+		}		
+		context.target_payload.content = buildQuoteString();		
+        cCreateMessage(context);
 	}
 	
-	function quotePrev(context) {
-		var size = qry.size();
-		if (size == 0 || !qry.isValid()) {
-			qry.exec(randomQuote)
+	function quotePrev(context) {		
+		if (isEmpty(qry)) {
+			context.content = context.args[0];			
+			quote(context);
+			return;
 		} else if (!qry.previous()) {
-			qry.seek(size - 1);
+			qry.seek(qry.size() - 1);
+		}		
+		context.target_payload.content = buildQuoteString();		
+        cCreateMessage(context);
+	}
+	
+	function isEmpty(obj) {
+		for(var prop in obj) {
+			if(obj.hasOwnProperty(prop)) {
+			  return false;
+			}			
 		}
-		
-		context.target_payload.content = buildQuoteString();
-		
-        cCreateMessage(context)		
+		return JSON.stringify(obj) === JSON.stringify({}) || typeof obj === "undefined"
+	}
+	
+	function logSqlError(qry) {
+		var e = new SqlError(qry.lastError());
+		bLogWarning(e.text());
 	}
 }

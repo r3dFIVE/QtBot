@@ -4,16 +4,16 @@
  *  Copyright (C) 2020  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
@@ -113,7 +113,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
 void
 EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
-    _availableGuilds[guild->id()] = guild;
+    _availableGuilds[guild->getId()] = guild;
 
     _timedJobs.registerTimedBindings(guild);
 
@@ -132,18 +132,26 @@ EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedB
 }
 
 void
-EventHandler::reloadGuild(const QString &guildId) {
-    _timedJobs.clear(guildId);
-
-    _jobQueue.clear(guildId);
+EventHandler::reloadGuild(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
 
     if (guildId == DEFAULT_GUILD_ID) {
-        _timedJobTimer->stop();
+        QString userId = context.getUserId().toString();
 
-        _jobQueueTimer->stop();
+        if (userId == GuildEntity::getBotOwnerId()) {
+            _timedJobTimer->stop();
 
-        for (auto guild : _availableGuilds.values()) {
-            emit reloadScripts(guild);
+            _jobQueueTimer->stop();
+
+            for (auto guild : _availableGuilds.values()) {
+                _timedJobs.clear(guild->getId());
+
+                _jobQueue.clear(guild->getId());
+
+                emit reloadScripts(guild);
+            }
+        } else {
+            _logger->warning(QString("User %1 attempted to .reload all guilds but they are not Bot Owner...").arg(userId));
         }
     } else {
         emit reloadScripts(_availableGuilds[guildId]);
@@ -200,13 +208,13 @@ EventHandler::displayTimedJobs(EventContext context) {
 
 bool
 EventHandler::isGuildReady(const QString &guildId) {
-    if (!_availableGuilds.contains(guildId)) {
-        _logger->debug(QString("Guild %1 is still initializing.").arg(guildId));
-
-        return false;
+    if (_availableGuilds.contains(guildId)) {
+        return true;
     }
 
-    return true;
+    _logger->debug(QString("Guild %1 is still initializing.").arg(guildId));
+
+    return false;
 }
 
 int
@@ -243,11 +251,11 @@ EventHandler::removeTimedJob(const EventContext &context) {
 }
 
 void
-EventHandler::resumeTimedJob(const EventContext &context) {
+EventHandler::restartTimedJob(const EventContext &context) {
     int jobNumber = getTimedJobNumber(context);
 
     if (jobNumber > 0) {
-       _timedJobs.resumeJob(context.getGuildId().toString(), jobNumber - 1);
+       _timedJobs.restartJob(context.getGuildId().toString(), jobNumber - 1);
     } else {
         _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
     }
