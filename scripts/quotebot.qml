@@ -95,14 +95,17 @@ BotScript {
 				qry.prepare(randomQuoteSql);
 			}
 			
-			qry.exec();		
+			if (!qry.exec()) {
+				logSqlError(qry);
+				return;
+			}		
 			
 			if (qry.size() > 1) {
 				qry.seek(Math.floor(Math.random() * qry.size()));				
 				context.target_payload.content = buildQuoteString();
 			} else if (qry.next()) {			
 				context.target_payload.content = buildQuoteString();
-			} else {
+			} else {				
 				context.target_payload.content = "No quotes found...";
 			}
 						
@@ -122,28 +125,40 @@ BotScript {
 	}
 	
 	function quoteNext(context) {
-		var size = qry.size();
-		if (size == 0 || !qry.isValid()) {			
-			qry.exec(randomQuote)
+		if (isEmpty(qry)) {
+			context.content = context.args[0];			
+			quote(context);
+			return;
 		} else if (!qry.next()) {
-			qry.seek(0)
-		}
-		
-		context.target_payload.content = buildQuoteString();
-		
-        cCreateMessage(context)		
+			qry.seek(0);
+		}		
+		context.target_payload.content = buildQuoteString();		
+        cCreateMessage(context);
 	}
 	
-	function quotePrev(context) {
-		var size = qry.size();
-		if (size == 0 || !qry.isValid()) {
-			qry.exec(randomQuote)
+	function quotePrev(context) {		
+		if (isEmpty(qry)) {
+			context.content = context.args[0];			
+			quote(context);
+			return;
 		} else if (!qry.previous()) {
-			qry.seek(size - 1);
+			qry.seek(qry.size() - 1);
+		}		
+		context.target_payload.content = buildQuoteString();		
+        cCreateMessage(context);
+	}
+	
+	function isEmpty(obj) {
+		for(var prop in obj) {
+			if(obj.hasOwnProperty(prop)) {
+			  return false;
+			}			
 		}
-		
-		context.target_payload.content = buildQuoteString();
-		
-        cCreateMessage(context)		
+		return JSON.stringify(obj) === JSON.stringify({}) || typeof obj === "undefined"
+	}
+	
+	function logSqlError(qry) {
+		var e = new SqlError(qry.lastError());
+		bLogWarning(e.text());
 	}
 }

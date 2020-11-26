@@ -4,16 +4,16 @@
  *  Copyright (C) 2020  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
+ *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
@@ -33,7 +33,6 @@
 class CoreCommands {
 
 public:
-
     static QMap<QSharedPointer<CoreCommand>, CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
         QMap<QSharedPointer<CoreCommand>, CommandBinding> commands;
 
@@ -55,14 +54,14 @@ public:
             QMetaObject::invokeMethod(&eventHandler,
                                       "reloadGuild",
                                       Qt::QueuedConnection,
-                                      Q_ARG(QString, context.getGuildId().toString()));
+                                      Q_ARG(const EventContext&, context));
         });
 
         addCommand(".timed", false, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "displayTimedJobs",
                                       Qt::QueuedConnection,
-                                      Q_ARG(EventContext, context));
+                                      Q_ARG(const EventContext&, context));
         });
 
         addCommand(".timedremove", true, [&](const EventContext &context) -> void {
@@ -72,16 +71,16 @@ public:
                                       Q_ARG(const EventContext&, context));
         });
 
-        addCommand(".timedresume", true, [&](const EventContext &context) -> void {
+        addCommand(".timedstart", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                      "resumeTimedJob",
+                                      "startTimedJob",
                                       Qt::QueuedConnection,
                                       Q_ARG(const EventContext&, context));
         });
 
-        addCommand(".timedstart", true, [&](const EventContext &context) -> void {
+        addCommand(".timedrestart", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                      "startTimedJob",
+                                      "restartTimedJob",
                                       Qt::QueuedConnection,
                                       Q_ARG(const EventContext&, context));
         });
@@ -110,14 +109,6 @@ public:
         });
 
         addCommand(".clear", true, [&](const EventContext &context) -> void {
-            QString commandName = context.getArgs()[1].toString();
-
-            QString targetId;
-
-            if (context.getArgs().size() > 2) {
-                QString targetId = context.getArgs()[2].toString();
-            }
-
             QMetaObject::invokeMethod(&eventHandler,
                                       "clear",
                                       Qt::QueuedConnection,
