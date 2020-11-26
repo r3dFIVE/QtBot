@@ -85,7 +85,7 @@ Instructions coming in 1.0.0 release!
 ### Build from Qt Creator
 
 1. Open *QtBot.pro* in Qt Creator.
-	* If this is first time opening project, configure the project to use the *MSVC2019 64bit Kit*
+	* If this is first time opening project, configure the project to use the *Desktop Qt 5.15.0 GCC 64bit* Kit.
 2. Run qmake.
 	* `Build -> Run qmake`
 3. Build project.
