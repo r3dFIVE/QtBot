@@ -1,8 +1,21 @@
-QT += websockets sql qml
+QT += gui websockets sql qml
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
+LIB_DIR = $$PWD/../..
+BOOST_HEADERS=$$LIB_DIR/boost_1_66_0
+MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
+MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
+
+INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
+INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
+INCLUDEPATH += $$BOOST_HEADERS
+
+MONGO_CXX_BIN=$$LIB_DIR/mongo-cxx-driver/bin
+MONGO_C_BIN=$$LIB_DIR/mongo-c-driver/bin
+
+LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
 
 HEADERS += \
     $$PWD/botjob/commandbinding.h \
@@ -15,6 +28,9 @@ HEADERS += \
     $$PWD/botjob/timedbinding.h \
     $$PWD/botjob/timedjobs.h \
     $$PWD/entity/commandrestrictions.h \
+    $$PWD/entity/imanager.h \
+    $$PWD/entity/sqlmanager.h \
+    $$PWD/entity/mongodb.h \
     $$PWD/entitymanager.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
@@ -204,6 +220,8 @@ SOURCES += \
     $$PWD/botjob/scriptbuilder.cpp \
     $$PWD/botjob/timedbinding.cpp \
     $$PWD/botjob/timedjobs.cpp \
+    $$PWD/entity/mongodb.cpp \
+    $$PWD/entity/sqlmanager.cpp \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
@@ -270,3 +288,4 @@ SOURCES += \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \
     $$PWD/entity/guildentity.cpp
+

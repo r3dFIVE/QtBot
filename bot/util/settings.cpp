@@ -164,7 +164,8 @@ Settings::validateDatabaseSettings() {
         invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
     }
 
-    if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
+    if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE
+            && typeValue != SettingsParam::Database::DatabaseType::QMONGODB) {
         if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_HOST);
         }
