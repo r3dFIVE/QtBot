@@ -62,19 +62,20 @@ MongoDB::connect() {
         _database = mongocxx::database { _client[_databaseName.toStdString()] };
 
     } catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %2").arg(e.what()));
+        _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %1").arg(e.what()));
     }
 }
 
 QSet<QString>
 MongoDB::listDatabaseNames() {
     QSet<QString> databaseNames;
+
     try {
         for (auto name : _database.list_collection_names()) {
             databaseNames << QString::fromStdString(name);
         }
     } catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %2").arg(e.what()));
+        _logger->warning(QString("Failed to list database names. REASON: %1").arg(e.what()));
     }
 
     return databaseNames;
@@ -86,7 +87,7 @@ MongoDB::setCollection(const QString &collectionName) {
         _collection = _database[collectionName.toStdString()];
 
     }  catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to open collection: %1. REASON: %").arg(collectionName, e.what()));
+        _logger->warning(QString("Failed to open collection: %1. REASON: %2").arg(collectionName, e.what()));
     }
 }
 
