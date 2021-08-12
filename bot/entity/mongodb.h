@@ -19,28 +19,22 @@
 
 #include "botjob/databasecontext.h"
 
+#include "imanager.h"
+
 class MongoDB
 {
+    Logger *_logger = LogFactory::getLogger();
 
-
-private:
-    DatabaseContext _defaultDatabaseContext;
-
-    static const QString MONGODB_PREFIX;
-
-    static bool _isGlobalInit;
-
-    bool _valid;
-    int _port = 27017;
+    int _port;
     QString _databaseName;
-    QString _hostName = "localhost";
+    QString _hostName;
     QString _password;
     QString _userName;
 
     mongocxx::uri _uri;
     mongocxx::client _client;
-    mongocxx::database _db;
-    mongocxx::collection _coll;
+    mongocxx::database _database;
+    mongocxx::collection _collection;
 
     QString buildUri();
 
@@ -50,15 +44,24 @@ public:
     MongoDB(const DatabaseContext &context);
     ~MongoDB() {}
 
-    static void init() {
-        if (!_isGlobalInit) {
-            mongocxx::instance instance{};
 
-            _isGlobalInit = true;
-        }
-    }
-
-    void saveEvent(const QString &eventJson) const;
+    int getPort();
+    QString getCollectionName();
+    QString getDatabaseName();
+    QString getHostName();
+    QString getPassword();
+    QString getUserName();
+    QSet<QString> listCollectionNames();
+    QSet<QString> listDatabaseNames();
+    void connect();
+    void createCollection(const QString &collectionName);
+    void insertOne(const QJsonObject &json);
+    void setCollection(const QString &collectionName);
+    void setPort(int port);
+    void setDatabaseName(const QString &databaseName);
+    void setHostName(const QString &hostName);
+    void setPassword(const QString &password);
+    void setUserName(const QString &userName);
 };
 
 #endif // MONGODB_H

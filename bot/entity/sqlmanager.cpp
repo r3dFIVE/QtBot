@@ -27,7 +27,6 @@
 
 
 const QString SqlManager::CONNECTION_NAME = "entityManager";
-const QString SqlManager::COMMAND_RESTRICTIONS = "CommandRestrictions";
 const QString SqlManager::SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE = QString("CREATE TABLE %1 (id integer PRIMARY KEY AUTOINCREMENT, guild_id varchar(256), command_name varchar(256), target_id varchar(256), state integer);").arg(COMMAND_RESTRICTIONS);
 const QString SqlManager::SQL_CREATE_COMMAND_RESTRICTIONS_TABLE = QString("CREATE TABLE %1 (id integer PRIMARY KEY AUTO_INCREMENT, guild_id varchar(256), command_name varchar(256), target_id varchar(256), state integer);").arg(COMMAND_RESTRICTIONS);
 const QString SqlManager::SQL_SELECT_COMMAND_RESTRICTION_ID = QString("SELECT COUNT(id) FROM %1 WHERE guild_id = ? AND target_id = ? AND command_name = ?;").arg(COMMAND_RESTRICTIONS);
@@ -39,7 +38,7 @@ const QString SqlManager::SQL_SELECT_COMMAND_RESTRICTIONS_FOR_GUILD = QString("S
 
 
 void
-SqlManager::init() {
+SqlManager::init() {    
     _database = QSqlDatabase::addDatabase(_databaseContext.driverName, CONNECTION_NAME);
 
     _database.setDatabaseName(_databaseContext.databaseName);
@@ -66,6 +65,10 @@ SqlManager::init() {
         _logger->info("EntityManager successfully connected to database...");
 
         if (!_database.tables().contains(COMMAND_RESTRICTIONS, Qt::CaseInsensitive)) {
+
+            QString databaseName = _databaseContext.databaseName;
+
+            qDebug() << "database name: " << databaseName;
 
             _database.exec(query);
 

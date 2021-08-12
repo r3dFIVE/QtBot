@@ -147,7 +147,7 @@ Settings::validateGatewaySettings() {
 void
 Settings::validateDatabaseSettings() {
     if (_settings[SettingsParam::Database::DATABASE_TYPE].toString().isEmpty()) {
-        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseType::QSQLITE;
+        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseType::QMONGODB;
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
@@ -164,8 +164,16 @@ Settings::validateDatabaseSettings() {
         invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
     }
 
-    if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE
-            && typeValue != SettingsParam::Database::DatabaseType::QMONGODB) {
+    if (typeValue == SettingsParam::Database::DatabaseType::QMONGODB) {
+        if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
+            _settings[SettingsParam::Database::DATABASE_HOST] = "127.0.0.1";
+        }
+
+        if (_settings[SettingsParam::Database::DATABASE_PORT].toInt() == 0) {
+            _settings[SettingsParam::Database::DATABASE_PORT] = 27017;
+        }
+
+    } else if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
         if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_HOST);
         }

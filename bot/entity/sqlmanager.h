@@ -23,18 +23,12 @@
 
 #include <QObject>
 
-#include "entity/guildentity.h"
-#include "payloads/guild.h"
-#include "payloads/gatewaypayload.h"
 #include "imanager.h"
 
 
 class SqlManager : public IManager
 {
-    Q_OBJECT
-
     static const QString CONNECTION_NAME;
-    static const QString COMMAND_RESTRICTIONS;
     static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE;
     static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE;
     static const QString SQL_SELECT_COMMAND_RESTRICTION_ID;
@@ -45,7 +39,6 @@ class SqlManager : public IManager
     static const QString SQL_SELECT_COMMAND_RESTRICTIONS_FOR_GUILD;
 
     QSqlDatabase _database;
-    DatabaseContext _databaseContext;
     Logger *_logger = LogFactory::getLogger();
 
     bool isDbOpen();
@@ -61,7 +54,10 @@ class SqlManager : public IManager
     void clearCommandForId(QSharedPointer<CommandRestrictions> restrictions);
 
 public:
-    SqlManager(DatabaseContext context) : _databaseContext(context) {}
+
+    SqlManager(DatabaseContext context) {
+        _databaseContext = context;
+    }
 
     void initGuild(QSharedPointer<GuildEntity> payload) override;
     void init() override;

@@ -34,9 +34,9 @@ DatabaseContext::DatabaseContext(QSharedPointer<Settings> settings) {
 
     driverName = settings->value(SettingsParam::Database::DATABASE_TYPE).toString();
 
-    type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(driverName);
-
     databaseName = settings->value(SettingsParam::Database::DATABASE_NAME).toString();
+
+    type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(driverName);
 }
 
 DatabaseContext::DatabaseContext(const DatabaseContext &other) {
@@ -55,6 +55,8 @@ DatabaseContext::DatabaseContext(const DatabaseContext &other) {
     guildId = other.guildId;
 
     scriptName = other.scriptName;
+
+    databaseName = other.databaseName;
 
     _connectionName = other._connectionName;
 }

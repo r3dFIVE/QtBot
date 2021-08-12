@@ -53,6 +53,7 @@ public slots:
     void init();
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
     void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions);
+    void saveEvent(QSharedPointer<GatewayPayload> payload);
 };
 
 #endif // ENTITYMANAGER_H

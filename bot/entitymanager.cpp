@@ -22,6 +22,7 @@
 
 #include <QSqlError>
 
+#include "entity/mongomanager.h"
 #include "util/enumutils.h"
 
 
@@ -49,7 +50,7 @@ void
 EntityManager::init() {
     switch (_databaseContext.type) {
         case SettingsParam::Database::QMONGODB:
-
+            _manager = QSharedPointer<MongoManager>(new MongoManager(_databaseContext));
             break;
         case SettingsParam::Database::QSQLITE:
         case SettingsParam::Database::QMYSQL:
@@ -76,4 +77,9 @@ EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     _manager->initGuild(guildEntity);
 
     emit guildInitialized(guildEntity);
+}
+
+void
+EntityManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
+    _manager->saveEvent(payload);
 }

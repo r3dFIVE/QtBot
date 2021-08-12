@@ -26,6 +26,8 @@
 #include <QCommandLineParser>
 #include <QDir>
 
+#include <mongocxx/instance.hpp>
+
 #include "bot.h"
 
 
@@ -90,6 +92,8 @@ int main(int argc, char *argv[])
     QSharedPointer<Settings> settings = QSharedPointer<Settings>(new Settings(targetSettingsFile));
 
     LogFactory::init(settings);
+
+    mongocxx::instance globalInstance{};
 
     Bot bot;
 
