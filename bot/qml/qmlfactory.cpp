@@ -26,6 +26,7 @@
 #include "file.h"
 #include "sqldatabase.h"
 #include "sqlquery.h"
+#include "entity/mongodb.h"
 #include "routes/discordapi.h"
 
 
@@ -46,7 +47,10 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
     } else if (typeName == "SqlDatabase") {
         return new SqlDatabase(_databaseContext);
 
-    } else if (typeName == "SqlQuery") {
+    } else if (typeName == "MongoDB") {
+        return new MongoDB(_databaseContext);
+
+    }else if (typeName == "SqlQuery") {
         SqlDatabase *db = qvariant_cast<SqlDatabase *>(arguments.value("database"));
 
         return new SqlQuery(db);

@@ -26,6 +26,7 @@
 #include "entitymanager.h"
 #include "eventhandler.h"
 #include "util/globals.h"
+#include "entity/mongodb.h"
 #include "logging/logfactory.h"
 #include "qml/sqldatabase.h"
 #include "qml/sqlquery.h"
@@ -48,6 +49,7 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<EventContext> >();
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
     qRegisterMetaType<SqlDatabase>();
+    qRegisterMetaType<MongoDB>();
     qRegisterMetaType<SqlQuery>();
     qRegisterMetaType<SqlField>();
     qRegisterMetaType<SqlRecord>();
@@ -101,6 +103,8 @@ Bot::run(QSharedPointer<Settings> settings) {
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 
     connect(gateway, &Gateway::dispatchEvent, entityManager, &EntityManager::saveEvent);
+
+    connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::saveEvent);
 
     connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuildFromPayload);
 

@@ -40,35 +40,22 @@ BotScript::~BotScript() {
 BotScript::BotScript(const BotScript &other) {
     _guildId = other._guildId;
 
-    _database = other._database;
-
     _logger = other._logger;
-
-    _databaseContext = other._databaseContext;
 
     _commands = other._commands;
 
     _scriptName = other._scriptName;
-
-    _query = other._query;
 }
 
 BotScript
-&BotScript::operator=(const BotScript &other)
-{
+&BotScript::operator=(const BotScript &other) {
     _guildId = other._guildId;
 
-    _database = other._database;
-
     _logger = other._logger;
-
-    _databaseContext = other._databaseContext;
 
     _commands = other._commands;
 
     _scriptName = other._scriptName;
-
-    _query = other._query;
 
     return *this;
 }

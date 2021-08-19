@@ -29,6 +29,7 @@ HEADERS += \
     $$PWD/botjob/timedjobs.h \
     $$PWD/entity/commandrestrictions.h \
     $$PWD/entity/imanager.h \
+    $$PWD/entity/mongoconnectionpool.h \
     $$PWD/entity/mongomanager.h \
     $$PWD/entity/sqlmanager.h \
     $$PWD/entity/mongodb.h \
@@ -222,6 +223,7 @@ SOURCES += \
     $$PWD/botjob/timedbinding.cpp \
     $$PWD/botjob/timedjobs.cpp \
     $$PWD/entity/imanager.cpp \
+    $$PWD/entity/mongoconnectionpool.cpp \
     $$PWD/entity/mongodb.cpp \
     $$PWD/entity/mongomanager.cpp \
     $$PWD/entity/sqlmanager.cpp \

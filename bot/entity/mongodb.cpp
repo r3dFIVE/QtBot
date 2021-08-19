@@ -1,7 +1,9 @@
+#include "mongoconnectionpool.h"
 #include "mongodb.h"
 
 #include <QJsonDocument>
 
+Logger* MongoDB::_logger = nullptr;
 
 MongoDB::MongoDB(const MongoDB &other) {
     _port = other._port;
@@ -18,7 +20,7 @@ MongoDB::MongoDB(const MongoDB &other) {
 MongoDB::MongoDB(const DatabaseContext &context) {
     _port = context.port;
 
-    _databaseName = context.databaseName;
+    _databaseName = context.databaseName.toStdString();
 
     _hostName = context.hostName;
 
@@ -27,110 +29,33 @@ MongoDB::MongoDB(const DatabaseContext &context) {
     _userName = context.userName;
 }
 
-QString
-MongoDB::buildUri() {
+mongocxx::uri
+MongoDB::buildUri(const DatabaseContext &ctx) {
+    if (!_logger) {
+        _logger = LogFactory::getLogger();
+    }
+
     QString uri("mongodb://");
 
     bool requiresAuth = false;
 
-    if (!_userName.isEmpty()) {
-        uri.append(QString("%1:%2@").arg(_userName).arg(_password));
+    if (!ctx.userName.isEmpty()) {
+        uri.append(QString("%1:%2@").arg(ctx.userName.arg(ctx.password)));
 
         requiresAuth = true;
     }
 
-    QString hostPort = QString("%1:%2").arg(_hostName).arg(_port);
+    QString hostPort = QString("%1:%2").arg(ctx.hostName).arg(ctx.port);
 
     uri.append(hostPort);
 
+    uri.append(QString("/?minPoolSize=%1&maxPoolSize=%2").arg(ctx.minPoolSize).arg(ctx.maxPoolSize));
+
     if (requiresAuth) {
-        uri.append("/?authSource=admin");
+        uri.append("&authSource=admin");
     }
 
-    qDebug() << uri;
-
-    return uri;
-}
-
-void
-MongoDB::connect() {
-    try {
-        _uri = mongocxx::uri{ buildUri().toStdString() };
-
-        _client = mongocxx::client{ _uri };
-
-        _database = mongocxx::database { _client[_databaseName.toStdString()] };
-
-    } catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %1").arg(e.what()));
-    }
-}
-
-QSet<QString>
-MongoDB::listDatabaseNames() {
-    QSet<QString> databaseNames;
-
-    try {
-        for (auto name : _database.list_collection_names()) {
-            databaseNames << QString::fromStdString(name);
-        }
-    } catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to list database names. REASON: %1").arg(e.what()));
-    }
-
-    return databaseNames;
-}
-
-void
-MongoDB::setCollection(const QString &collectionName) {
-    try {
-        _collection = _database[collectionName.toStdString()];
-
-    }  catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to open collection: %1. REASON: %2").arg(collectionName, e.what()));
-    }
-}
-
-QSet<QString>
-MongoDB::listCollectionNames() {
-    QSet<QString> collectionNames;
-
-    try {
-        for (auto name : _database.list_collection_names()) {
-            collectionNames << QString::fromStdString(name);
-        }
-    } catch(const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to list collection names. REASON: %1").arg(e.what()));
-    }
-
-    return collectionNames;
-}
-
-QString
-MongoDB::getCollectionName() {
-    return QString::fromStdString(_collection.name().to_string());
-}
-
-void
-MongoDB::insertOne(const QJsonObject &json) {
-    try {
-        QByteArray jsonData = QJsonDocument(json).toJson(QJsonDocument::Compact);
-
-        _collection.insert_one(bsoncxx::from_json(jsonData.toStdString()));
-
-    }  catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to insert record into collection. REASON: %1").arg(e.what()));
-    }
-}
-
-void
-MongoDB::createCollection(const QString &collectionName) {
-    try {
-        _database.create_collection(collectionName.toStdString());
-
-    }  catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to create collection: %1. REASON: %2").arg(collectionName, e.what()));
-    }
+    return mongocxx::uri{uri.toStdString()};
 }
 
 void
@@ -144,13 +69,24 @@ MongoDB::getPort() {
 }
 
 void
+MongoDB::setCollectionName(const QString &collectionName) {
+    _collectionName = collectionName.toStdString();
+}
+
+QString
+MongoDB::getCollectionName() {
+    return QString::fromStdString(_collectionName);
+}
+
+
+void
 MongoDB::setDatabaseName(const QString &databaseName) {
-    _databaseName = databaseName;
+    _databaseName = databaseName.toStdString();
 }
 
 QString
 MongoDB::getDatabaseName() {
-    return _databaseName;
+    return QString::fromStdString(_databaseName);
 }
 
 void
@@ -181,4 +117,17 @@ MongoDB::setUserName(const QString &userName) {
 QString
 MongoDB::getUserName() {
     return _userName;
+}
+
+QJsonObject
+MongoDB::findOne(const QString &filter) {
+    auto client = MongoConnectionPool::acquire();
+
+    auto database = (*client)[_databaseName];
+
+    auto collection = database[_collectionName];
+
+    auto result = collection.find_one(bsoncxx::from_json(filter.toStdString()));
+
+    return QJsonDocument::fromJson(QString::fromStdString(bsoncxx::to_json(*result)).toUtf8()).object();
 }

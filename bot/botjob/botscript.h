@@ -51,7 +51,6 @@ class BotScript : public IBotJob
     QMutex _runLock;
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
-    QSqlDatabase _database;
     QSqlQuery _query;
     QString _scriptName;
     QString _botToken;

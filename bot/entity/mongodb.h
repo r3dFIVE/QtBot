@@ -7,6 +7,9 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+
+#ifndef Q_MOC_RUN
+
 #include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/stdx.hpp>
@@ -17,51 +20,49 @@
 #include <bsoncxx/builder/stream/array.hpp>
 #include <mongocxx/exception/exception.hpp>
 
+#endif
+
 #include "botjob/databasecontext.h"
 
 #include "imanager.h"
 
-class MongoDB
+class MongoDB : public QObject
 {
-    Logger *_logger = LogFactory::getLogger();
+    Q_OBJECT
+
+    static Logger *_logger;
 
     int _port;
-    QString _databaseName;
+    std::string _databaseName;
+    std::string _collectionName;
     QString _hostName;
     QString _password;
     QString _userName;
 
-    mongocxx::uri _uri;
-    mongocxx::client _client;
-    mongocxx::database _database;
-    mongocxx::collection _collection;
-
-    QString buildUri();
-
 public:
-    MongoDB() {}
-    MongoDB(const MongoDB &other);
-    MongoDB(const DatabaseContext &context);
-    ~MongoDB() {}
+    Q_INVOKABLE MongoDB() {}
+    Q_INVOKABLE MongoDB(const MongoDB &other);
+    Q_INVOKABLE MongoDB(const DatabaseContext &context);
+    Q_INVOKABLE ~MongoDB() {}
 
+    static mongocxx::uri buildUri(const DatabaseContext &ctx);
 
-    int getPort();
-    QString getCollectionName();
-    QString getDatabaseName();
-    QString getHostName();
-    QString getPassword();
-    QString getUserName();
-    QSet<QString> listCollectionNames();
-    QSet<QString> listDatabaseNames();
-    void connect();
-    void createCollection(const QString &collectionName);
-    void insertOne(const QJsonObject &json);
-    void setCollection(const QString &collectionName);
-    void setPort(int port);
-    void setDatabaseName(const QString &databaseName);
-    void setHostName(const QString &hostName);
-    void setPassword(const QString &password);
-    void setUserName(const QString &userName);
+    Q_INVOKABLE int getPort();
+    Q_INVOKABLE QString getCollectionName();
+    Q_INVOKABLE QString getDatabaseName();
+    Q_INVOKABLE QString getHostName();
+    Q_INVOKABLE QString getPassword();
+    Q_INVOKABLE QString getUserName();
+    //Q_INVOKABLE void insertOne(const QJsonObject &json);
+    Q_INVOKABLE QJsonObject findOne(const QString &filter);
+    Q_INVOKABLE void setPort(int port);
+    Q_INVOKABLE void setDatabaseName(const QString &databaseName);
+    Q_INVOKABLE void setCollectionName(const QString &collectionName);
+    Q_INVOKABLE void setHostName(const QString &hostName);
+    Q_INVOKABLE void setPassword(const QString &password);
+    Q_INVOKABLE void setUserName(const QString &userName);
 };
+
+Q_DECLARE_METATYPE(MongoDB)
 
 #endif // MONGODB_H

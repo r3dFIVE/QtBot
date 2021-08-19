@@ -10,7 +10,6 @@
 
 
 class IManager : public QObject {
-
     Logger *_logger = LogFactory::getLogger();
 
     void notImplemented(QString name);

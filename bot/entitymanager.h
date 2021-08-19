@@ -26,6 +26,7 @@
 
 #include "entity/guildentity.h"
 #include "entity/sqlmanager.h"
+#include "entity/mongoconnectionpool.h"
 #include "payloads/guild.h"
 #include "payloads/gatewaypayload.h"
 
@@ -41,7 +42,11 @@ class EntityManager : public QObject
 
 
 public:
-    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {}
+    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {
+        if (_databaseContext.type == SettingsParam::Database::QMONGODB) {
+            MongoConnectionPool::init(_databaseContext);
+        }
+    }
 
 
 signals:

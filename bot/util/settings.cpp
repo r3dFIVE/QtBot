@@ -190,6 +190,40 @@ Settings::validateDatabaseSettings() {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_PASSWORD);
         }
     }
+
+    if (!_settings[SettingsParam::Database::MIN_POOL_SIZE].toString().isEmpty()
+            && _settings[SettingsParam::Database::MIN_POOL_SIZE].toInt() == 0) {
+
+        _settings[SettingsParam::Database::MIN_POOL_SIZE] = 2;
+
+    }
+
+    if (_settings[SettingsParam::Database::MAX_POOL_SIZE].toString().isEmpty()) {
+
+        _settings[SettingsParam::Database::MAX_POOL_SIZE] = 10;
+    }
+
+    int minPoolSize = _settings[SettingsParam::Database::MIN_POOL_SIZE].toInt();
+
+    int maxPoolSize = _settings[SettingsParam::Database::MAX_POOL_SIZE].toInt();
+
+    if (minPoolSize < 0) {
+        qDebug() << QString("min_pool_size (%1) must be greater than or equal to 0").arg(minPoolSize);
+
+        exit(EXIT_FAILURE);
+    }
+
+    if (maxPoolSize <= 0) {
+        qDebug() << QString("max_pool_size (%1) must be greater 0").arg(maxPoolSize);
+
+        exit(EXIT_FAILURE);
+    }
+
+    if (minPoolSize != 0 && minPoolSize > maxPoolSize) {
+        qDebug() << QString("min_pool_size (%1) must be less than or equal to max_pool_size (%2)").arg(minPoolSize, maxPoolSize);
+
+        exit(EXIT_FAILURE);
+    }
 }
 
 void

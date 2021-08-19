@@ -93,8 +93,6 @@ int main(int argc, char *argv[])
 
     LogFactory::init(settings);
 
-    mongocxx::instance globalInstance{};
-
     Bot bot;
 
     bot.run(settings);

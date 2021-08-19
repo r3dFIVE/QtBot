@@ -85,6 +85,8 @@ static const QString DATABASE_USER = "database_user";
 static const QString DATABASE_PASSWORD = "database_password";
 static const QString DATABASE_TYPE = "database_type";
 static const QString DATABASE_NAME = "database_name";
+static const QString MIN_POOL_SIZE = "min_pool_size";
+static const QString MAX_POOL_SIZE = "max_pool_size";
 
 enum DatabaseType {
     QMONGODB = 0,

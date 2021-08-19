@@ -185,6 +185,8 @@ ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
 
     engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", {}); }");
 
+    engine->evaluate("function MongoDB() { return _factory.createObject(\"MongoDB\", {}); }");
+
     engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
 
     engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { sqlError: error }); }");
