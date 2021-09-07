@@ -45,18 +45,22 @@ public:
         fileLogLevel = ctx.fileLogLevel;
     }
 
-    LogContext& operator=(const LogContext& ctx) {
-        fileName = ctx.fileName;
+    LogContext& operator=(const LogContext& other) {
+        if (this == &other) {
+            return *this;
+        }
 
-        directoryPath = ctx.directoryPath;
+        fileName = other.fileName;
 
-        maxRolloverFiles = ctx.maxRolloverFiles;
+        directoryPath = other.directoryPath;
 
-        maxFileSize = ctx.maxFileSize;
+        maxRolloverFiles = other.maxRolloverFiles;
 
-        consoleLogLevel = ctx.consoleLogLevel;
+        maxFileSize = other.maxFileSize;
 
-        fileLogLevel = ctx.fileLogLevel;
+        consoleLogLevel = other.consoleLogLevel;
+
+        fileLogLevel = other.fileLogLevel;
 
         return *this;
     }

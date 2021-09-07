@@ -35,7 +35,7 @@ class EntityManager : public QObject
 {
     Q_OBJECT
 
-    QSharedPointer<IManager> _manager;
+    QSharedPointer<IDBManager> _manager;
 
     DatabaseContext _databaseContext;
     Logger *_logger = LogFactory::getLogger();

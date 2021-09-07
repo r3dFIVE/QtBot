@@ -27,6 +27,10 @@
 #include "util/enumutils.h"
 #include "timedbinding.h"
 
+
+QString BotScript::_botId = QString();
+QString BotScript::_botName = QString();
+
 BotScript::BotScript() {
     _logger = LogFactory::getLogger();
 
@@ -48,7 +52,11 @@ BotScript::BotScript(const BotScript &other) {
 }
 
 BotScript
-&BotScript::operator=(const BotScript &other) {
+&BotScript::operator=(const BotScript &other) {    
+    if (this == &other) {
+        return *this;
+    }
+
     _guildId = other._guildId;
 
     _logger = other._logger;
@@ -113,6 +121,16 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
 }
 
+void
+BotScript::setBotId(const QString &botId) {
+    _botId = botId;
+}
+
+void
+BotScript::setBotName(const QString &botName) {
+    _botName = botName;
+}
+
 QVariant
 BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
     QJsonObject binding = QJsonObject::fromVariantMap(timedBindingVariant.toMap());
@@ -140,6 +158,16 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
     }
 
     return timedBinding->id();
+}
+
+QString
+BotScript::bId() {
+    return _botId;
+}
+
+QString
+BotScript::bName() {
+    return _botName;
 }
 
 void

@@ -21,7 +21,9 @@
 #ifndef QMLFACTORY_H
 #define QMLFACTORY_H
 
+#include <QQmlEngine>
 #include <QObject>
+#include <QSharedPointer>
 
 #include "botjob/databasecontext.h"
 
@@ -35,6 +37,9 @@ class QmlFactory : public QObject
 public:
 
     QmlFactory(const DatabaseContext &context);
+
+    static void buildQmlFactory(QSharedPointer<QQmlEngine> engine,
+                                const DatabaseContext &context);
 
 public slots:
     QObject* createObject(const QString& typeName, const QVariantMap& arguments);

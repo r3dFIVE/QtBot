@@ -28,6 +28,9 @@
 #include "botjob/botscript.h"
 #include "botjob/job.h"
 
+
+const int EventHandler::JOB_POLL_MS = 500;
+
 EventHandler::EventHandler(QSharedPointer<Settings> settings) {
     GuildEntity::setBotOwnerId(settings->value(SettingsParam::Bot::OWNER_ID).toString());
 
@@ -69,7 +72,7 @@ EventHandler::processJobQueue() {
     }
 
     if (_jobQueue.hasJobs() && !_jobQueueTimer->isActive()) {
-        _jobQueueTimer->start(1000);
+        _jobQueueTimer->start(JOB_POLL_MS);
     } else {
         _jobQueueTimer->stop();
     }
@@ -118,7 +121,7 @@ EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
     _timedJobs.registerTimedBindings(guild);
 
     if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
-        _timedJobTimer->start(1000);
+        _timedJobTimer->start(JOB_POLL_MS);
     }
 }
 
@@ -127,7 +130,7 @@ EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedB
     _timedJobs.registerTimedBinding(guildId, *timedBinding.data());
 
     if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
-        _timedJobTimer->start(1000);
+        _timedJobTimer->start(JOB_POLL_MS);
     }
 }
 
@@ -154,6 +157,10 @@ EventHandler::reloadGuild(const EventContext &context) {
             _logger->warning(QString("User %1 attempted to .reload all guilds but they are not Bot Owner...").arg(userId));
         }
     } else {
+        _timedJobs.clear(guildId);
+
+        _jobQueue.clear(guildId);
+
         emit reloadScripts(_availableGuilds[guildId]);
     }
 }

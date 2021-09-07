@@ -58,6 +58,8 @@ class SqlDatabase : public QObject
     static QList<SqlQuery *> getQueriesForConnection(const QString &existingConnection);
 
 public:
+    static const QString TYPE_NAME;
+
     Q_INVOKABLE SqlDatabase() {}
     Q_INVOKABLE SqlDatabase(const SqlDatabase &other);
     Q_INVOKABLE SqlDatabase(const DatabaseContext &context);

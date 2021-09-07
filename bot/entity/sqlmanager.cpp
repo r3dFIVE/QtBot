@@ -68,7 +68,7 @@ SqlManager::init() {
 
             QString databaseName = _databaseContext.databaseName;
 
-            qDebug() << "database name: " << databaseName;
+             _logger->info(QString("Creating command restrictions table for database: %1").arg(databaseName));
 
             _database.exec(query);
 

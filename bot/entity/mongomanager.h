@@ -17,22 +17,24 @@
 
 #endif
 
-#include "imanager.h"
-#include "mongodb.h"
+#include "idbmanager.h"
+#include "qml/mongodb.h"
 
 
-class MongoManager : public IManager
+class MongoManager : public IDBManager
 {
     Q_OBJECT
 
     Logger *_logger = LogFactory::getLogger();
 
     QSet<QString> _availableCollections;
+    QSharedPointer<mongocxx::instance> _instance;
+
+    mongocxx::client _client;
+    mongocxx::collection _collection;
+    mongocxx::database _database;
 
     mongocxx::uri _uri;
-    mongocxx::client _client;
-    mongocxx::database _database;
-    mongocxx::collection _collection;
 
     QString getCollectionName();
     QSet<QString> listCollectionNames();

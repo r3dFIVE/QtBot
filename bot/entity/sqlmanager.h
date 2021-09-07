@@ -23,10 +23,10 @@
 
 #include <QObject>
 
-#include "imanager.h"
+#include "idbmanager.h"
 
 
-class SqlManager : public IManager
+class SqlManager : public IDBManager
 {
     static const QString CONNECTION_NAME;
     static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE;

@@ -131,6 +131,10 @@ Settings::validateGatewaySettings() {
         _settings[SettingsParam::Gateway::GATEWAY_INTENTS] = "GUILD_MESSAGES";
     }
 
+    if (_settings[SettingsParam::Connection::API_VERSION].toString().isEmpty()) {
+        _settings[SettingsParam::Connection::API_VERSION] = 9;
+    }
+
     QMetaEnum metaEnum = QMetaEnum::fromType<Gateway::Intents>();
 
     QString intents = _settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString();

@@ -58,6 +58,10 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
 
 TimedBinding
 &TimedBinding::operator=(const TimedBinding &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;

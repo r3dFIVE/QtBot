@@ -21,6 +21,8 @@
 #include "sqlfield.h"
 
 
+const QString SqlField::TYPE_NAME = "SqlField";
+
 SqlField::SqlField(const QString &fieldName, QVariant::Type type) {
     _sqlField = QSqlField(fieldName, type);
 }
@@ -42,6 +44,10 @@ SqlField::SqlField(const SqlField &other) {
 }
 
 SqlField &SqlField::operator=(const SqlField &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _sqlField = other._sqlField;
 
     return *this;

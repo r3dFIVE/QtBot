@@ -43,7 +43,6 @@ public:
         ExistingOnly = 0x0080
     };
     Q_ENUM(Mode)
-
 };
 
 #endif // OPENMODE_H

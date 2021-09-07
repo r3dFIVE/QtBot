@@ -18,6 +18,11 @@
  *
  */
 
+#include "http.h"
+#include "httpmultipart.h"
+#include "httppart.h"
+#include "mongofind.h"
+#include "mongoinsert.h"
 #include "qmlfactory.h"
 
 #include <QQmlEngine>
@@ -26,7 +31,7 @@
 #include "file.h"
 #include "sqldatabase.h"
 #include "sqlquery.h"
-#include "entity/mongodb.h"
+#include "qml/mongodb.h"
 #include "routes/discordapi.h"
 
 
@@ -44,13 +49,28 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
 
         return new File(filePath, openMode);
 
-    } else if (typeName == "SqlDatabase") {
-        return new SqlDatabase(_databaseContext);
+    } else if (typeName == "Http") {
+        return new Http();
+
+    } else if (typeName == "HttpPart") {
+        return new HttpPart();
+
+    } else if (typeName == "HttpMultiPart") {
+        return new HttpMultiPart();
 
     } else if (typeName == "MongoDB") {
         return new MongoDB(_databaseContext);
 
-    }else if (typeName == "SqlQuery") {
+    } else if (typeName == "MongoFind") {
+        return new MongoFind();
+
+    } else if (typeName == "MongoInsert") {
+        return new MongoInsert();
+
+    } else if (typeName == "SqlDatabase") {
+        return new SqlDatabase(_databaseContext);
+
+    } else if (typeName == "SqlQuery") {
         SqlDatabase *db = qvariant_cast<SqlDatabase *>(arguments.value("database"));
 
         return new SqlQuery(db);
@@ -69,3 +89,37 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
 
     return nullptr;
 }
+
+void
+QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseContext &context) {
+    engine->installExtensions(QQmlEngine::ConsoleExtension);
+
+    QJSValue factory = engine->newQObject(new QmlFactory(context));
+
+    engine->globalObject().setProperty("_factory", factory);
+
+    engine->evaluate("function File(path, mode) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
+
+    engine->evaluate("function Http() { return _factory.createObject(\"Http\", {}); }");
+
+    engine->evaluate("function HttpPart() { return _factory.createObject(\"HttpPart\", {}); }");
+
+    engine->evaluate("function HttpMultiPart() { return _factory.createObject(\"HttpMultiPart\", {}); }");
+
+    engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", {}); }");
+
+    engine->evaluate("function MongoDB() { return _factory.createObject(\"MongoDB\", {}); }");
+
+    engine->evaluate("function MongoFind() { return _factory.createObject(\"MongoFind\", {}); }");
+
+    engine->evaluate("function MongoInsert() { return _factory.createObject(\"MongoInsert\", {}); }");
+
+    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
+
+    engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { sqlError: error }); }");
+
+    engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
+
+    engine->evaluate("function SqlField() { return _factory.createObject(\"SqlField\", {}); }");
+}
+

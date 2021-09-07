@@ -42,6 +42,8 @@ class EventHandler : public QObject
 {
     Q_OBJECT
 
+    static const int JOB_POLL_MS;
+
     QSharedPointer<DiscordAPI> _discordAPI;
     JobQueue _jobQueue;
     QMap<QString, QSharedPointer<GuildEntity> > _availableGuilds;

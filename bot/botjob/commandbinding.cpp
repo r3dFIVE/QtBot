@@ -44,6 +44,10 @@ CommandBinding::CommandBinding(const CommandBinding &other) {
 
 CommandBinding
 &CommandBinding::operator=(const CommandBinding &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;

@@ -21,6 +21,8 @@
 #include "sqlrecord.h"
 
 
+const QString SqlRecord::TYPE_NAME = "SqlRecord";
+
 SqlRecord::SqlRecord(const QSqlRecord &other) {
     _sqlRecord = other;
 }
@@ -35,6 +37,10 @@ SqlRecord::SqlRecord(SqlRecord *other) {
 
 SqlRecord
 &SqlRecord::operator=(const SqlRecord &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _sqlRecord = other._sqlRecord;
 
     return *this;

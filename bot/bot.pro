@@ -3,6 +3,9 @@ QT += gui
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
+QMAKE_CXXFLAGS_RELEASE += -Zi
+QMAKE_LFLAGS_RELEASE += /DEBUG /OPT:REF
+
 DEFINES += QT_DEPRECATED_WARNINGS
 
 include(main.pri)

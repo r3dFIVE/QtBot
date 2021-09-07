@@ -26,10 +26,13 @@
 #include "entitymanager.h"
 #include "eventhandler.h"
 #include "util/globals.h"
-#include "entity/mongodb.h"
+#include "qml/mongodb.h"
 #include "logging/logfactory.h"
 #include "qml/sqldatabase.h"
 #include "qml/sqlquery.h"
+#include "qml/http.h"
+#include "qml/mongofind.h"
+#include "qml/mongoinsert.h"
 
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
@@ -50,10 +53,13 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
     qRegisterMetaType<SqlDatabase>();
     qRegisterMetaType<MongoDB>();
+    qRegisterMetaType<MongoFind>();
+    qRegisterMetaType<MongoInsert>();
     qRegisterMetaType<SqlQuery>();
     qRegisterMetaType<SqlField>();
     qRegisterMetaType<SqlRecord>();
     qRegisterMetaType<SqlError>();
+    qRegisterMetaType<File>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
@@ -75,7 +81,6 @@ Bot::Bot() {
 
 void
 Bot::run(QSharedPointer<Settings> settings) {
-
     Gateway *gateway = new Gateway(settings);
 
     gateway->moveToThread(&_gatewayThread);

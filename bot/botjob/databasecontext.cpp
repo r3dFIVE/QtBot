@@ -71,6 +71,10 @@ DatabaseContext::DatabaseContext(const DatabaseContext &other) {
 
 DatabaseContext&
 DatabaseContext::operator=(const DatabaseContext &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     hostName = other.hostName;
 
     port = other.port;

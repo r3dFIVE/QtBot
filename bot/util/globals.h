@@ -49,7 +49,7 @@ static const QString RESTRICTION_STATE = "restriction_state";
 namespace Connection {
 static const QString CONNECTION_URL = "connection_url";
 static const QString MAX_RETRIES = "max_retries";
-static const QString ZLIB_ENABLED = "zlib_enabled";
+static const QString API_VERSION = "api_version";
 }
 
 namespace Gateway {

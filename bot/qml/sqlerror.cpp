@@ -21,6 +21,9 @@
 #include "sqlerror.h"
 #include <QDebug>
 
+
+const QString SqlError::TYPE_NAME = "SqlError";
+
 SqlError::SqlError(const SqlError &other) {
     _sqlError = other._sqlError;
 }
@@ -33,9 +36,24 @@ SqlError::SqlError(const QSqlError &other) {
     _sqlError = other;
 }
 
-SqlError
-&SqlError::operator=(const SqlError &other) {
+SqlError&
+SqlError::operator=(const SqlError &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _sqlError = other._sqlError;
+
+    return *this;
+}
+
+SqlError&
+SqlError::operator=(SqlError &&other) noexcept {
+    if (this == &other) {
+        return *this;
+    }
+
+    _sqlError.swap(other._sqlError);
 
     return *this;
 }

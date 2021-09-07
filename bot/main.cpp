@@ -26,7 +26,6 @@
 #include <QCommandLineParser>
 #include <QDir>
 
-#include <mongocxx/instance.hpp>
 
 #include "bot.h"
 

@@ -18,11 +18,11 @@
  *
  */
 
-#ifndef FILEIO_H
-#define FILEIO_H
+#ifndef FILE_H
+#define FILE_H
 
+#include <QDataStream>
 #include <QFile>
-#include <QObject>
 #include <QQmlContext>
 #include <QTextStream>
 
@@ -37,16 +37,18 @@ class File : public QObject
     Logger *_logger = LogFactory::getLogger();
 
     int _openMode;
-    QFile _file;
+    QSharedPointer<QFile> _file;
     QString _fileName;
     QTextStream _textStream;
+    QDataStream _dataStream;
 
 public:
+    static const QString TYPE_NAME;
 
-    Q_INVOKABLE File() {}
+    Q_INVOKABLE File();
     Q_INVOKABLE File(const File &other);
-    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
-    Q_INVOKABLE~File() {}
+    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode);
+    Q_INVOKABLE ~File() {}
 
     Q_INVOKABLE File &operator=(const File &other);
 
@@ -55,6 +57,7 @@ public:
     Q_INVOKABLE bool exists() const;
     Q_INVOKABLE bool remove();
     Q_INVOKABLE bool rename(const QString &newName);
+
     Q_INVOKABLE void write(const QString &string);
     Q_INVOKABLE void write(const QStringList &string);
     Q_INVOKABLE void writeLine(const QString &string);
@@ -63,6 +66,11 @@ public:
     Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE QString readAll();
     Q_INVOKABLE QString readLine();
+
+    void setParent(QObject *parent);
+    QSharedPointer<QFile> get();
 };
 
-#endif // FILEIO_H
+Q_DECLARE_METATYPE(File)
+
+#endif // FILE_H

@@ -1,5 +1,5 @@
-#ifndef IMANAGER_H
-#define IMANAGER_H
+#ifndef IDBMANAGER_H
+#define IDBMANAGER_H
 
 #include <QSharedPointer>
 
@@ -9,7 +9,7 @@
 #include "payloads/gatewaypayload.h"
 
 
-class IManager : public QObject {
+class IDBManager : public QObject {
     Logger *_logger = LogFactory::getLogger();
 
     void notImplemented(QString name);
@@ -29,4 +29,4 @@ public:
     virtual void saveEvent(QSharedPointer<GatewayPayload> payload);
 };
 
-#endif // IMANAGER_H
+#endif // IDBMANAGER_H

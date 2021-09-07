@@ -113,7 +113,9 @@ EventContext::buildContext(const QJsonObject &json) {
     if (json.contains(AUTHOR)) {
         _jsonObject[AUTHOR] = json[AUTHOR];
 
-        _jsonObject[USER_ID] = json[AUTHOR][ID];
+        if (!json[AUTHOR][ID].isUndefined()) {
+            _jsonObject[USER_ID] = json[AUTHOR][ID];
+        }
     }
 
     if (json.contains(MEMBER)) {

@@ -4,10 +4,14 @@
 #include <QMutex>
 #include <QSharedPointer>
 
+#ifndef Q_MOC_RUN
+
 #include <mongocxx/instance.hpp>
 #include <mongocxx/logger.hpp>
 #include <mongocxx/pool.hpp>
 #include <mongocxx/uri.hpp>
+
+#endif
 
 #include "botjob/databasecontext.h"
 #include "logging/logfactory.h"
@@ -19,7 +23,6 @@ class MongoConnectionPool
 {
     static Logger *_logger;
 
-    static QSharedPointer<mongocxx::instance> _instance;
     static QSharedPointer<mongocxx::pool> _pool;
     static MongoConnectionPool* _mongoConnectionPool;
     static QMutex _mutex;

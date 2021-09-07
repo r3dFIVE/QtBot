@@ -20,29 +20,48 @@
 
 #include "file.h"
 
-#include "util/enumutils.h"
+#include "util/mimeutils.h"
 
+
+const QString File::TYPE_NAME = "File";
+
+File::File() {
+    _file = QSharedPointer<QFile>(new QFile);
+}
 
 File::File(const QString &fileName,
-           const OpenMode::Mode openMode,
-           QObject *parent) : QObject(parent) {
+           const OpenMode::Mode openMode) {
 
     _fileName = fileName;
 
     _openMode = openMode;
+
+    _file = QSharedPointer<QFile>(new QFile);
 }
 
 File::File(const File &other) {
+    if (this == &other) {
+        return;
+    }
+
     _fileName = other._fileName;
 
     _openMode = other._openMode;
+
+    _file = other._file;
 }
 
 File
 &File::operator=(const File &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _fileName = other._fileName;
 
     _openMode = other._openMode;
+
+    _file = other._file;
 
     return *this;
 }
@@ -54,35 +73,39 @@ File::hasNext() const {
 
 bool
 File::open() {
-    _file.setFileName(_fileName);
+    _file->setFileName(_fileName);
 
-    if (!_file.open(QIODevice::OpenMode(_openMode))) {
+    if (!_file->open(QIODevice::OpenMode(_openMode))) {
         _logger->warning(QString("Failed to open %1, with openmode: %2. Reason: %3")
                          .arg(_fileName)
                          .arg(OpenMode::Mode(_openMode))
-                         .arg(_file.errorString()));
+                         .arg(_file->errorString()));
 
         return false;
     }
 
-    _textStream.setDevice(&_file);
+    if (MimeUtils::isTextContent(*_file)) {
+        _textStream.setDevice(_file.data());
+    } else {
+        _dataStream.setDevice(_file.data());
+    }
 
     return true;
 }
 
 bool
 File::exists() const {
-    return _file.exists(_fileName);
+    return _file->exists(_fileName);
 }
 
 bool
 File::remove() {
-    return _file.remove();
+    return _file->remove();
 }
 
 bool
 File::rename(const QString &newName) {
-    return _file.rename(newName);
+    return _file->rename(newName);
 }
 
 void
@@ -115,17 +138,30 @@ File::writeLine(const QStringList &strings) {
 
 QString
 File::fileName() const {
-    return _file.fileName();
+    return _file->fileName();
 }
 
 QString
 File::errorString() const {
-    return _file.errorString();
+    return _file->errorString();
 }
 
 QString
 File::readLine() {
     return _textStream.readLine();
+}
+
+void
+File::setParent(QObject *parent) {
+    _file->setParent(parent);
+}
+
+QSharedPointer<QFile>
+File::get() {
+    if (!open()) {
+        return nullptr;
+    }
+    return _file;
 }
 
 QString

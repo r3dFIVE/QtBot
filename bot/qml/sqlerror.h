@@ -26,6 +26,7 @@
 
 #include "enums/sql.h"
 
+
 class SqlError : public QObject
 {
     Q_OBJECT
@@ -33,14 +34,16 @@ class SqlError : public QObject
     QSqlError _sqlError;
 
 public:
+    static const QString TYPE_NAME;
+
     Q_INVOKABLE SqlError() {}
     Q_INVOKABLE SqlError(const SqlError &other);
     Q_INVOKABLE SqlError(SqlError *other);
     Q_INVOKABLE SqlError(const QSqlError &other);
     Q_INVOKABLE ~SqlError() {}
 
-    Q_INVOKABLE SqlError& operator=(const SqlError& other);
-    Q_INVOKABLE SqlError &operator=(SqlError &&other) noexcept { _sqlError.swap(other._sqlError); return *this; }
+    Q_INVOKABLE SqlError &operator=(const SqlError &other);
+    Q_INVOKABLE SqlError &operator=(SqlError &&other) noexcept;
 
     Q_INVOKABLE bool operator==(const SqlError& other) const;
     Q_INVOKABLE bool operator!=(const SqlError& other) const;

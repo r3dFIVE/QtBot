@@ -2,10 +2,16 @@
 
 #include "util/globals.h"
 
+#include "util/mongoutils.h"
+
 void
 MongoManager::init() {
     try {
-        _uri = mongocxx::uri{ MongoDB::buildUri(_databaseContext) };
+        if (!_instance) {
+            _instance = QSharedPointer<mongocxx::instance>(new mongocxx::instance{});
+        }
+
+        _uri = mongocxx::uri{ MongoUtils::buildUri(_databaseContext) };
 
         _client = mongocxx::client{ _uri };
 
@@ -100,9 +106,7 @@ MongoManager::getCollectionName() {
 void
 MongoManager::insertOne(const QJsonObject &json) {
     try {
-        QByteArray jsonData = QJsonDocument(json).toJson(QJsonDocument::Compact);
-
-        _collection.insert_one(bsoncxx::from_json(jsonData.toStdString()));
+        _collection.insert_one(MongoUtils::toViewOrValue(json));
 
     }  catch (const mongocxx::exception& e) {
         _logger->warning(QString("Failed to insert record into collection. REASON: %1").arg(e.what()));
