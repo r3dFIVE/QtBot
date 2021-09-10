@@ -25,6 +25,7 @@
 #include "util/globals.h"
 #include "util/enumutils.h"
 
+
 QMutex SqlDatabase::_mutex;
 QMap<QString, QList<SqlQuery *> > SqlDatabase::_queries;
 
@@ -54,6 +55,10 @@ SqlDatabase::SqlDatabase(const DatabaseContext &databaseContext) {
 
 SqlDatabase
 &SqlDatabase::operator=(const SqlDatabase &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _database = other._database;
 
     _defaultDatabaseContext = other._defaultDatabaseContext;

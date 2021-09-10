@@ -35,6 +35,10 @@ SqlRecord::SqlRecord(SqlRecord *other) {
 
 SqlRecord
 &SqlRecord::operator=(const SqlRecord &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _sqlRecord = other._sqlRecord;
 
     return *this;

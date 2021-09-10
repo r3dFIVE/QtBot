@@ -121,9 +121,13 @@ ScriptBuilder::builldBotScripts(const QString &scriptDir) {
 
 void
 ScriptBuilder::buildBotScript(const QString &fileWithPath) {
+    DatabaseContext databaseContext(_defaultDatabaseContext);
+
+    databaseContext.setConnectionName(_guildId, _fileName);
+
     QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
 
-    addQmlFactory(engine);
+    QmlFactory::buildQmlFactory(engine, databaseContext);
 
     QQmlComponent comp(engine.data(), fileWithPath);
 
@@ -167,31 +171,6 @@ ScriptBuilder::buildBotScript(const QString &fileWithPath) {
 
     QObject::connect(botScript.data(), &BotScript::removeTimedEventByJobIdSignal,
                      _eventHandler, &EventHandler::removeTimedJobById);
-}
-
-void
-ScriptBuilder::addQmlFactory(QSharedPointer<QQmlEngine> engine) {
-    engine->installExtensions(QQmlEngine::ConsoleExtension);
-
-    DatabaseContext databaseContext(_defaultDatabaseContext);
-
-    databaseContext.setConnectionName(_guildId, _fileName);
-
-    QJSValue factory = engine->newQObject(new QmlFactory(databaseContext));
-
-    engine->globalObject().setProperty("_factory", factory);
-
-    engine->evaluate("function File(path, mode) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
-
-    engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", {}); }");
-
-    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
-
-    engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { sqlError: error }); }");
-
-    engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
-
-    engine->evaluate("function SqlField() { return _factory.createObject(\"SqlField\", {}); }");
 }
 
 void

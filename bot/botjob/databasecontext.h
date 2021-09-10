@@ -31,8 +31,10 @@ class DatabaseContext
     QString _connectionName;
 
 public:
-    int port = 0;
-    int type = 0;
+    int minPoolSize;
+    int maxPoolSize;
+    int port;
+    int type;
     QString hostName;
     QString userName;
     QString password;
@@ -45,8 +47,12 @@ public:
     DatabaseContext(QSharedPointer<Settings> settings);
     DatabaseContext(const DatabaseContext &other);
     ~DatabaseContext() {}
+
+    DatabaseContext& operator=(const DatabaseContext &other);
+
     void setConnectionName(const QString &scriptName, const QString &guildId);
     QString getConnectionName() const;
+
 };
 
 #endif // DATABASECONTEXT_H

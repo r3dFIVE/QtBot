@@ -42,6 +42,10 @@ GatewayBinding::GatewayBinding(const GatewayBinding &other) {
 
 GatewayBinding
 &GatewayBinding::operator=(const GatewayBinding &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;

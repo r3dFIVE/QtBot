@@ -27,6 +27,10 @@
 #include "util/enumutils.h"
 #include "timedbinding.h"
 
+
+QString BotScript::_botId = QString();
+QString BotScript::_botName = QString();
+
 BotScript::BotScript() {
     _logger = LogFactory::getLogger();
 
@@ -40,35 +44,26 @@ BotScript::~BotScript() {
 BotScript::BotScript(const BotScript &other) {
     _guildId = other._guildId;
 
-    _database = other._database;
-
     _logger = other._logger;
-
-    _databaseContext = other._databaseContext;
 
     _commands = other._commands;
 
     _scriptName = other._scriptName;
-
-    _query = other._query;
 }
 
 BotScript
-&BotScript::operator=(const BotScript &other)
-{
+&BotScript::operator=(const BotScript &other) {    
+    if (this == &other) {
+        return *this;
+    }
+
     _guildId = other._guildId;
 
-    _database = other._database;
-
     _logger = other._logger;
-
-    _databaseContext = other._databaseContext;
 
     _commands = other._commands;
 
     _scriptName = other._scriptName;
-
-    _query = other._query;
 
     return *this;
 }
@@ -126,6 +121,16 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
 }
 
+void
+BotScript::setBotId(const QString &botId) {
+    _botId = botId;
+}
+
+void
+BotScript::setBotName(const QString &botName) {
+    _botName = botName;
+}
+
 QVariant
 BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
     QJsonObject binding = QJsonObject::fromVariantMap(timedBindingVariant.toMap());
@@ -153,6 +158,16 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
     }
 
     return timedBinding->id();
+}
+
+QString
+BotScript::bId() {
+    return _botId;
+}
+
+QString
+BotScript::bName() {
+    return _botName;
 }
 
 void
@@ -237,6 +252,11 @@ BotScript::cGetChannelMessage(const QVariant &context) {
 QVariant
 BotScript::cCreateMessage(const QVariant &context) {
     return _discordAPI->channelCreateMessage(context);
+}
+
+QVariant
+BotScript::cCreateMessage(const QVariant &context, File *file) {
+    return _discordAPI->channelCreateMessage(context, file);
 }
 
 QVariant

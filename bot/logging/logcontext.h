@@ -33,20 +33,36 @@ public:
 
     LogContext(const LogContext& ctx) {
         fileName = ctx.fileName;
+
         directoryPath = ctx.directoryPath;
+
         maxRolloverFiles = ctx.maxRolloverFiles;
+
         maxFileSize = ctx.maxFileSize;
+
         consoleLogLevel = ctx.consoleLogLevel;
+
         fileLogLevel = ctx.fileLogLevel;
     }
 
-    void operator=(const LogContext& ctx) {
-        fileName = ctx.fileName;
-        directoryPath = ctx.directoryPath;
-        maxRolloverFiles = ctx.maxRolloverFiles;
-        maxFileSize = ctx.maxFileSize;
-        consoleLogLevel = ctx.consoleLogLevel;
-        fileLogLevel = ctx.fileLogLevel;
+    LogContext& operator=(const LogContext& other) {
+        if (this == &other) {
+            return *this;
+        }
+
+        fileName = other.fileName;
+
+        directoryPath = other.directoryPath;
+
+        maxRolloverFiles = other.maxRolloverFiles;
+
+        maxFileSize = other.maxFileSize;
+
+        consoleLogLevel = other.consoleLogLevel;
+
+        fileLogLevel = other.fileLogLevel;
+
+        return *this;
     }
 
     enum LogLevel {

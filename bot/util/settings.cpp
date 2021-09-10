@@ -131,6 +131,10 @@ Settings::validateGatewaySettings() {
         _settings[SettingsParam::Gateway::GATEWAY_INTENTS] = "GUILD_MESSAGES";
     }
 
+    if (_settings[SettingsParam::Connection::API_VERSION].toString().isEmpty()) {
+        _settings[SettingsParam::Connection::API_VERSION] = 9;
+    }
+
     QMetaEnum metaEnum = QMetaEnum::fromType<Gateway::Intents>();
 
     QString intents = _settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString();
@@ -147,7 +151,7 @@ Settings::validateGatewaySettings() {
 void
 Settings::validateDatabaseSettings() {
     if (_settings[SettingsParam::Database::DATABASE_TYPE].toString().isEmpty()) {
-        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseType::QSQLITE;
+        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseType::QMONGODB;
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
@@ -164,7 +168,16 @@ Settings::validateDatabaseSettings() {
         invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
     }
 
-    if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
+    if (typeValue == SettingsParam::Database::DatabaseType::QMONGODB) {
+        if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
+            _settings[SettingsParam::Database::DATABASE_HOST] = "127.0.0.1";
+        }
+
+        if (_settings[SettingsParam::Database::DATABASE_PORT].toInt() == 0) {
+            _settings[SettingsParam::Database::DATABASE_PORT] = 27017;
+        }
+
+    } else if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
         if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_HOST);
         }
@@ -180,6 +193,40 @@ Settings::validateDatabaseSettings() {
         if (_settings[SettingsParam::Database::DATABASE_PASSWORD].toString().isEmpty()) {
             invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_PASSWORD);
         }
+    }
+
+    if (!_settings[SettingsParam::Database::MIN_POOL_SIZE].toString().isEmpty()
+            && _settings[SettingsParam::Database::MIN_POOL_SIZE].toInt() == 0) {
+
+        _settings[SettingsParam::Database::MIN_POOL_SIZE] = 2;
+
+    }
+
+    if (_settings[SettingsParam::Database::MAX_POOL_SIZE].toString().isEmpty()) {
+
+        _settings[SettingsParam::Database::MAX_POOL_SIZE] = 10;
+    }
+
+    int minPoolSize = _settings[SettingsParam::Database::MIN_POOL_SIZE].toInt();
+
+    int maxPoolSize = _settings[SettingsParam::Database::MAX_POOL_SIZE].toInt();
+
+    if (minPoolSize < 0) {
+        qDebug() << QString("min_pool_size (%1) must be greater than or equal to 0").arg(minPoolSize);
+
+        exit(EXIT_FAILURE);
+    }
+
+    if (maxPoolSize <= 0) {
+        qDebug() << QString("max_pool_size (%1) must be greater 0").arg(maxPoolSize);
+
+        exit(EXIT_FAILURE);
+    }
+
+    if (minPoolSize != 0 && minPoolSize > maxPoolSize) {
+        qDebug() << QString("min_pool_size (%1) must be less than or equal to max_pool_size (%2)").arg(minPoolSize, maxPoolSize);
+
+        exit(EXIT_FAILURE);
     }
 }
 

@@ -61,6 +61,16 @@ EventContext::EventContext(const EventContext &other) {
 }
 
 void
+EventContext::setHttpMultiPart(QSharedPointer<QHttpMultiPart> httpMultiPart) {
+    _httpMultiPart = httpMultiPart;
+}
+
+QSharedPointer<QHttpMultiPart>
+EventContext::getHttpMultiPart() {
+    return _httpMultiPart;
+}
+
+void
 EventContext::buildContext(const QJsonObject &json) {
     if (json.contains(EVENT_NAME)) {
         _jsonObject[EVENT_NAME] = json[EVENT_NAME];
@@ -113,7 +123,9 @@ EventContext::buildContext(const QJsonObject &json) {
     if (json.contains(AUTHOR)) {
         _jsonObject[AUTHOR] = json[AUTHOR];
 
-        _jsonObject[USER_ID] = json[AUTHOR][ID];
+        if (!json[AUTHOR][ID].isUndefined()) {
+            _jsonObject[USER_ID] = json[AUTHOR][ID];
+        }
     }
 
     if (json.contains(MEMBER)) {

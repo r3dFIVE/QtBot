@@ -21,10 +21,12 @@
 #ifndef SQLFIELD_H
 #define SQLFIELD_H
 
+
 #include <QObject>
 #include <QSqlField>
 
 #include "enums/sql.h"
+
 
 class SqlField : public QObject
 {

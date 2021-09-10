@@ -42,6 +42,10 @@ SqlField::SqlField(const SqlField &other) {
 }
 
 SqlField &SqlField::operator=(const SqlField &other) {
+    if (this == &other) {
+        return *this;
+    }
+
     _sqlField = other._sqlField;
 
     return *this;

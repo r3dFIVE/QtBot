@@ -21,25 +21,23 @@
 #ifndef SERIALIZATIONUTILS_H
 #define SERIALIZATIONUTILS_H
 
-#include "logging/logfactory.h"
 #include "payloads/jsonserializable.h"
-#include <QMetaProperty>
 
 struct SerializationUtils
 {
-    static void readFromJson(QObject &target, const QJsonObject &source);
-    static void writeToJson(const QObject &source, QJsonObject &target);
-    static QJsonObject toQJsonObject(const QObject &source);
-    static QString toQString(const QObject &source);
-    static QByteArray toQByteArray(const QObject &source);
+    static void readFromJson(JsonSerializable &target, const QJsonObject &source);
+    static void writeToJson(const JsonSerializable &source, QJsonObject &target);
+    static QJsonObject toQJsonObject(const JsonSerializable &source);
+    static QString toQString(const JsonSerializable &source);
+    static QByteArray toQByteArray(const JsonSerializable &source);
     static QByteArray toQByteArray(const QJsonObject &source);
-    static QJsonDocument toJsonDocument(const QObject &source);
-    static QVariant toVariant(const QObject &source);
-    static void fromQJsonObject(QObject &target, const QJsonObject &source);
-    static void fromQString(QObject &target, const QString &source);
-    static void fromQByteArray(QObject &target, const QByteArray &source);
-    static void fromJsonDocument(QObject &target, const QJsonDocument &source);
-    static void fromVariant(QObject &target, const QVariant &source);
+    static QJsonDocument toJsonDocument(const JsonSerializable &source);
+    static QVariant toVariant(const JsonSerializable &source);
+    static void fromQJsonObject(JsonSerializable &target, const QJsonObject &source);
+    static void fromQString(JsonSerializable &target, const QString &source);
+    static void fromQByteArray(JsonSerializable &target, const QByteArray &source);
+    static void fromJsonDocument(JsonSerializable &target, const QJsonDocument &source);
+    static void fromVariant(JsonSerializable &target, const QVariant &source);
 };
 
 #endif // SERIALIZATIONUTILS_H

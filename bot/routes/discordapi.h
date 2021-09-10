@@ -25,27 +25,61 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QQmlEngine>
+#include <QSharedPointer>
+#include <QNetworkAccessManager>
+#include <QMutex>
+#include <QReadWriteLock>
 
-#include "httpclient.h"
+#include "bucket.h"
+#include "logging/logfactory.h"
+#include "routes/route.h"
+#include "payloads/eventcontext.h"
+#include "util/settings.h"
+#include "util/httputils.h"
 
 
 class DiscordAPI : public QObject
 {
     Q_OBJECT
 
-    static QString _botToken;
+    Logger *_logger = LogFactory::getLogger();
 
-    HttpClient _httpClient;
+    static const QByteArray X_RATELIMIT_GLOBAL;
+    static const QByteArray X_RATELIMIT_RESET;
+    static const QByteArray X_RATELIMIT_REMAINING;
+    static const QByteArray X_RATELIMIT_LIMIT;
+    static const QByteArray X_RATELIMIT_BUCKET;
+
+    static qint64 _globalRequestResetAt;
+    static QMap<QString, QString> _bucketIdByRoute;
+    static QMap<QString, QMap<QString, QSharedPointer<Bucket> > > _bucketMaps;
+    static QReadWriteLock _discoveryLock;
+
+    static QByteArray _botAuthHeaderName;
+    static QByteArray _botAuthHeaderValue;
+
+    bool validStatusCode(QSharedPointer<QNetworkReply> reply, const QByteArray &repsonse);
+    bool isGlobalLimitActive() const;
+
+    QSharedPointer<QNetworkReply> executeRoute(QNetworkAccessManager &networkManager, Route &route);
+    QSharedPointer<EventContext> createBucketAndExecute(QNetworkAccessManager &networkManager, Route &route);
+    QSharedPointer<EventContext> checkBucketAndExecute(QNetworkAccessManager &networkManager, Route &route);
+    QSharedPointer<Bucket> createNewBucket(const QString &majorId, const QString &rateLimitBucket, QSharedPointer<QNetworkReply> reply);
+    QSharedPointer<EventContext> processRoute(Route &route);
+
+    void createBucket(QSharedPointer<QNetworkReply> reply, Route &route);
+    void updateBucket(QSharedPointer<Bucket> bucket, QSharedPointer<QNetworkReply> reply, const QByteArray &response);
 
     EventContext buildRequestContext(const QVariant &contextVariant);
     QVariant buildResponseVariant(QSharedPointer<EventContext> apiResponse);
 
 public:        
-    DiscordAPI() : _httpClient(_botToken) { }
-    ~DiscordAPI() {}
+    DiscordAPI() {
+        _botAuthHeaderName = QString("Authorization").toUtf8();
 
-    static QString getBotToken();
-    static void setBotToken(const QString &botToken);
+        _botAuthHeaderValue = QString("Bot %1").arg(HttpUtils::botToken()).toUtf8();
+    }
+    ~DiscordAPI() {}
 
     /*
      *      CHANNEL API FUNCTIONS
@@ -58,6 +92,7 @@ public:
     QVariant channelGetChannelMessages(const QVariant &context);
     QVariant channelGetChannelMessage(const QVariant &context);
     QVariant channelCreateMessage(const QVariant &context);
+    QVariant channelCreateMessage(const QVariant &context, File *file);
     QVariant channelCrosspostMessage(const QVariant &context);
     QVariant channelCreateReaction(const QVariant &context);
     QVariant channelDeleteOwnReaction(const QVariant &context);

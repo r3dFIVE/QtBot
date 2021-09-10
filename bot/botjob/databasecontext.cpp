@@ -34,9 +34,13 @@ DatabaseContext::DatabaseContext(QSharedPointer<Settings> settings) {
 
     driverName = settings->value(SettingsParam::Database::DATABASE_TYPE).toString();
 
+    databaseName = settings->value(SettingsParam::Database::DATABASE_NAME).toString();
+
     type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(driverName);
 
-    databaseName = settings->value(SettingsParam::Database::DATABASE_NAME).toString();
+    minPoolSize = settings->value(SettingsParam::Database::MIN_POOL_SIZE).toInt();
+
+    maxPoolSize = settings->value(SettingsParam::Database::MAX_POOL_SIZE).toInt();
 }
 
 DatabaseContext::DatabaseContext(const DatabaseContext &other) {
@@ -56,9 +60,45 @@ DatabaseContext::DatabaseContext(const DatabaseContext &other) {
 
     scriptName = other.scriptName;
 
+    databaseName = other.databaseName;
+
     _connectionName = other._connectionName;
+
+    minPoolSize = other.minPoolSize;
+
+    maxPoolSize = other.maxPoolSize;
 }
 
+DatabaseContext&
+DatabaseContext::operator=(const DatabaseContext &other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    hostName = other.hostName;
+
+    port = other.port;
+
+    userName = other.userName;
+
+    password = other.password;
+
+    driverName = other.driverName;
+
+    type = other.type;
+
+    guildId = other.guildId;
+
+    scriptName = other.scriptName;
+
+    databaseName = other.databaseName;
+
+    minPoolSize = other.minPoolSize;
+
+    maxPoolSize = other.maxPoolSize;
+
+    return *this;
+}
 
 void
 DatabaseContext::setConnectionName(const QString &scriptName, const QString &guildId) {

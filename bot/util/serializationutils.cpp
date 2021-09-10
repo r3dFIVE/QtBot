@@ -20,8 +20,10 @@
 
 #include "serializationutils.h"
 
+#include <QMetaProperty>
+
 void
-SerializationUtils::readFromJson(QObject &target, const QJsonObject &source) {
+SerializationUtils::readFromJson(JsonSerializable &target, const QJsonObject &source) {
     QMetaObject metaObject = *target.metaObject();
     for (int i = metaObject.propertyOffset(); i < metaObject.propertyCount(); ++i) {
         QMetaProperty metaProperty = metaObject.property(i);
@@ -45,7 +47,7 @@ SerializationUtils::readFromJson(QObject &target, const QJsonObject &source) {
 }
 
 void
-SerializationUtils::writeToJson(const QObject &source, QJsonObject &target) {
+SerializationUtils::writeToJson(const JsonSerializable &source, QJsonObject &target) {
     QMetaObject metaObject = *source.metaObject();
     for (int i = metaObject.propertyOffset(); i < metaObject.propertyCount(); ++i) {
         QMetaProperty property = metaObject.property(i);
@@ -85,14 +87,14 @@ SerializationUtils::writeToJson(const QObject &source, QJsonObject &target) {
 }
 
 QJsonObject
-SerializationUtils::toQJsonObject(const QObject &source) {
+SerializationUtils::toQJsonObject(const JsonSerializable &source) {
     QJsonObject jsonObject;
     writeToJson(source, jsonObject);
     return jsonObject;
 }
 
 QByteArray
-SerializationUtils::toQByteArray(const QObject &source) {
+SerializationUtils::toQByteArray(const JsonSerializable &source) {
     QJsonDocument document(toQJsonObject(source));
     return document.toJson(QJsonDocument::Compact);
 }
@@ -102,44 +104,44 @@ QByteArray SerializationUtils::toQByteArray(const QJsonObject &source) {
 }
 
 QJsonDocument
-SerializationUtils::toJsonDocument(const QObject &source) {
+SerializationUtils::toJsonDocument(const JsonSerializable &source) {
     return QJsonDocument(toQJsonObject(source));
 }
 
 QVariant
-SerializationUtils::toVariant(const QObject &source) {
+SerializationUtils::toVariant(const JsonSerializable &source) {
     return toJsonDocument(source).toVariant();
 }
 
 QString
-SerializationUtils::toQString(const QObject &source) {
+SerializationUtils::toQString(const JsonSerializable &source) {
     return QString(toQByteArray(source));
 }
 
 void
-SerializationUtils::fromQJsonObject(QObject &target, const QJsonObject &source) {
+SerializationUtils::fromQJsonObject(JsonSerializable &target, const QJsonObject &source) {
     readFromJson(target, source);
 }
 
 void
-SerializationUtils::fromQString(QObject &target, const QString &source) {
+SerializationUtils::fromQString(JsonSerializable &target, const QString &source) {
     fromQByteArray(target, source.toUtf8());
 }
 
 void
-SerializationUtils::fromQByteArray(QObject &target, const QByteArray &source) {
+SerializationUtils::fromQByteArray(JsonSerializable &target, const QByteArray &source) {
     QJsonDocument document = QJsonDocument::fromJson(source);
     QJsonObject object = document.object();
     readFromJson(target, object);
 }
 
 void
-SerializationUtils::fromJsonDocument(QObject &target, const QJsonDocument &source) {
+SerializationUtils::fromJsonDocument(JsonSerializable &target, const QJsonDocument &source) {
     readFromJson(target, source.object());
 }
 
 void
-SerializationUtils::fromVariant(QObject &target, const QVariant &source) {
+SerializationUtils::fromVariant(JsonSerializable &target, const QVariant &source) {
     QJsonObject object = QJsonObject::fromVariantMap(source.toMap());
     readFromJson(target, object);
 }

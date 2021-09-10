@@ -26,9 +26,16 @@
 #include "entitymanager.h"
 #include "eventhandler.h"
 #include "util/globals.h"
+#include "qml/mongodb.h"
 #include "logging/logfactory.h"
 #include "qml/sqldatabase.h"
 #include "qml/sqlquery.h"
+#include "qml/http.h"
+#include "qml/mongofind.h"
+#include "qml/mongoinsert.h"
+#include "qml/enums/networkrequest.h"
+#include "qml/httpmultipart.h"
+#include "qml/httppart.h"
 
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
@@ -37,6 +44,7 @@ const int Bot::BOT_API_MINOR_VERSION = 0;
 const QString Bot::BOT_TYPE_IDENTIFIER = "BotScript";
 const QString Bot::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
 const QString Bot::SQL_IDENTIFIER = "Sql";
+const QString Bot::NETWORK_REQUEST_IDENTIFIER = "NetworkRequest";
 const QString Bot::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
 
 Bot::Bot() {
@@ -48,10 +56,16 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<EventContext> >();
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
     qRegisterMetaType<SqlDatabase>();
+    qRegisterMetaType<MongoDB>();
+    qRegisterMetaType<MongoFind>();
+    qRegisterMetaType<MongoInsert>();
     qRegisterMetaType<SqlQuery>();
     qRegisterMetaType<SqlField>();
     qRegisterMetaType<SqlRecord>();
     qRegisterMetaType<SqlError>();
+    qRegisterMetaType<File>();
+    qRegisterMetaType<HttpPart>();
+    qRegisterMetaType<HttpMultiPart>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
@@ -69,11 +83,16 @@ Bot::Bot() {
                           BOT_API_MINOR_VERSION,
                           SQL_IDENTIFIER.toUtf8(),
                           NO_CREATABLE_ENUM);
+
+    qmlRegisterUncreatableType<NetworkRequest>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          NETWORK_REQUEST_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
 }
 
 void
 Bot::run(QSharedPointer<Settings> settings) {
-
     Gateway *gateway = new Gateway(settings);
 
     gateway->moveToThread(&_gatewayThread);
@@ -99,6 +118,10 @@ Bot::run(QSharedPointer<Settings> settings) {
     connect(_scriptBuilder, &ScriptBuilder::guildReady, eventHandler, &EventHandler::guildReady);
 
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
+
+    connect(gateway, &Gateway::dispatchEvent, entityManager, &EntityManager::saveEvent);
+
+    connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::saveEvent);
 
     connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuildFromPayload);
 

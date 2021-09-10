@@ -20,6 +20,11 @@
 
 #include "route.h"
 
+#include <QFileInfo>
+#include <QMimeType>
+
+#include "util/mimeutils.h"
+
 const QString Route::GLOBAL_BUCKET = "GLOBAL_BUCKET";
 
 void
@@ -57,9 +62,42 @@ Route::buildRequest(const RequestType requestType,
 
     _request.setRawHeader("User-Agent", "QtBot 1.0");
 
-    _request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if (!_httpMultiPart) {
+        _request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    }
 
     _requestType = requestType;
 
     _routeWithMethod = QString("%1%2").arg(QString::number(_requestType), route);
+}
+
+void
+Route::buildHttpMultiPart(EventContext &context, File *file) {
+    _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
+
+    QFileInfo fileInfo(*file->get());
+
+    QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
+
+    QHttpPart filePart;
+
+    QString mimeTypeStr(mimeType.name());
+
+    filePart.setHeader(QNetworkRequest::ContentTypeHeader, mimeTypeStr);
+
+    QString dispostionValue = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileInfo.fileName());
+
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
+
+    filePart.setBodyDevice(file->get());
+
+    _httpMultiPart->append(filePart);
+
+    QHttpPart jsonPart;
+
+    jsonPart.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"payload_json\"");
+
+    jsonPart.setBody(SerializationUtils::toQByteArray(context.getTargetPayload()));
+
+    _httpMultiPart->append(jsonPart);
 }

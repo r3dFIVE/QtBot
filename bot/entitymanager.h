@@ -22,8 +22,11 @@
 #define ENTITYMANAGER_H
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include "entity/guildentity.h"
+#include "entity/sqlmanager.h"
+#include "entity/mongoconnectionpool.h"
 #include "payloads/guild.h"
 #include "payloads/gatewaypayload.h"
 
@@ -32,35 +35,18 @@ class EntityManager : public QObject
 {
     Q_OBJECT
 
-    static const QString CONNECTION_NAME;
-    static const QString COMMAND_RESTRICTIONS;
-    static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE_SQLITE;
-    static const QString SQL_CREATE_COMMAND_RESTRICTIONS_TABLE;
-    static const QString SQL_SELECT_COMMAND_RESTRICTION_ID;
-    static const QString SQL_INSERT_COMMAND_RESTRICTION;
-    static const QString SQL_UPDATE_COMMAND_RESTRICTION;
-    static const QString SQL_REMOVE_COMMAND_RESTRICTION;
-    static const QString SQL_REMOVE_COMMAND_RESTRICTION_FOR_ID;
-    static const QString SQL_SELECT_COMMAND_RESTRICTIONS_FOR_GUILD;
+    QSharedPointer<IDBManager> _manager;
 
-    QSqlDatabase _database;
     DatabaseContext _databaseContext;
     Logger *_logger = LogFactory::getLogger();
 
-    bool isDbOpen();
-    void insertRestriction(const QString &guildId,
-                           const QString &commandName,
-                           const QString &targetId,
-                           CommandRestrictions::RestrictionState state);
-    void updateRestriction(const QString &guildId,
-                           const QString &commandName,
-                           const QString &targetId,
-                           CommandRestrictions::RestrictionState state);
-    void clearCommand(QSharedPointer<CommandRestrictions> restrictions);
-    void clearCommandForId(QSharedPointer<CommandRestrictions> restrictions);
 
 public:
-    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {}
+    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {
+        if (_databaseContext.type == SettingsParam::Database::QMONGODB) {
+            MongoConnectionPool::init(_databaseContext);
+        }
+    }
 
 
 signals:
@@ -72,6 +58,7 @@ public slots:
     void init();
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
     void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions);
+    void saveEvent(QSharedPointer<GatewayPayload> payload);
 };
 
 #endif // ENTITYMANAGER_H

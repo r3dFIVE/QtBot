@@ -1,8 +1,21 @@
-QT += websockets sql qml
+QT += gui websockets sql qml
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
+LIB_DIR = $$PWD/../lib
+BOOST_HEADERS=$$LIB_DIR/boost
+MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
+MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
+
+INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
+INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
+INCLUDEPATH += $$BOOST_HEADERS
+
+MONGO_CXX_BIN=$$LIB_DIR/mongo-cxx-driver/bin
+MONGO_C_BIN=$$LIB_DIR/mongo-c-driver/bin
+
+LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
 
 HEADERS += \
     $$PWD/botjob/commandbinding.h \
@@ -15,6 +28,10 @@ HEADERS += \
     $$PWD/botjob/timedbinding.h \
     $$PWD/botjob/timedjobs.h \
     $$PWD/entity/commandrestrictions.h \
+    $$PWD/entity/idbmanager.h \
+    $$PWD/entity/mongoconnectionpool.h \
+    $$PWD/entity/mongomanager.h \
+    $$PWD/entity/sqlmanager.h \
     $$PWD/entitymanager.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
@@ -71,8 +88,18 @@ HEADERS += \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
     $$PWD/botjob/botscript.h \
+    $$PWD/qml/enums/networkrequest.h \
     $$PWD/qml/enums/openmode.h \
     $$PWD/qml/enums/sql.h \
+    $$PWD/qml/http.h \
+    $$PWD/qml/httpmultipart.h \
+    $$PWD/qml/httppart.h \
+    $$PWD/qml/httpresponse.h \
+    $$PWD/qml/mongodb.h \
+    $$PWD/qml/mongofind.h \
+    $$PWD/qml/mongohint.h \
+    $$PWD/qml/mongoinsert.h \
+    $$PWD/qml/mongoupdate.h \
     $$PWD/qml/sqldatabase.h \
     $$PWD/qml/sqlerror.h \
     $$PWD/qml/sqlfield.h \
@@ -153,7 +180,6 @@ HEADERS += \
     $$PWD/routes/guildremoveguildmember.h \
     $$PWD/routes/guildremoveguildmemberrole.h \
     $$PWD/routes/guildsyncguildintegration.h \
-    $$PWD/routes/httpclient.h \
     $$PWD/routes/invitedeleteinvite.h \
     $$PWD/routes/invitegetinvite.h \
     $$PWD/routes/route.h \
@@ -184,6 +210,8 @@ HEADERS += \
     $$PWD/routes/webhookmodifywebhook.h \
     $$PWD/routes/webhookmodifywebhookwithtoken.h \
     $$PWD/util/enumutils.h \
+    $$PWD/util/mimeutils.h \
+    $$PWD/util/mongoutils.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
     $$PWD/util/globals.h \
@@ -204,6 +232,10 @@ SOURCES += \
     $$PWD/botjob/scriptbuilder.cpp \
     $$PWD/botjob/timedbinding.cpp \
     $$PWD/botjob/timedjobs.cpp \
+    $$PWD/entity/idbmanager.cpp \
+    $$PWD/entity/mongoconnectionpool.cpp \
+    $$PWD/entity/mongomanager.cpp \
+    $$PWD/entity/sqlmanager.cpp \
     $$PWD/entitymanager.cpp \
     $$PWD/eventhandler.cpp \
     $$PWD/gateway.cpp \
@@ -256,7 +288,16 @@ SOURCES += \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/botjob/botscript.cpp \
     $$PWD/payloads/eventcontext.cpp \
+    $$PWD/qml/http.cpp \
+    $$PWD/qml/httpmultipart.cpp \
+    $$PWD/qml/httppart.cpp \
+    $$PWD/qml/httpresponse.cpp \
+    $$PWD/qml/mongofind.cpp \
+    $$PWD/qml/mongohint.cpp \
+    $$PWD/qml/mongoinsert.cpp \
+    $$PWD/qml/mongoupdate.cpp \
     $$PWD/qml/sqldatabase.cpp \
+    $$PWD/qml/mongodb.cpp \
     $$PWD/qml/sqlerror.cpp \
     $$PWD/qml/sqlfield.cpp \
     $$PWD/qml/sqlquery.cpp \
@@ -265,8 +306,9 @@ SOURCES += \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \
     $$PWD/qml/qmlfactory.cpp \
-    $$PWD/routes/httpclient.cpp \
     $$PWD/routes/route.cpp \
+    $$PWD/util/httputils.cpp \
     $$PWD/util/serializationutils.cpp \
     $$PWD/util/settings.cpp \
     $$PWD/entity/guildentity.cpp
+

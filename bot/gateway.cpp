@@ -23,6 +23,7 @@
 #include <QSettings>
 #include <QThread>
 
+#include "botjob/botscript.h"
 #include "logging/logfactory.h"
 #include "payloads/guild.h"
 #include "payloads/hello.h"
@@ -30,16 +31,19 @@
 #include "payloads/identifyproperties.h"
 #include "payloads/ready.h"
 #include "payloads/resume.h"
+#include "payloads/user.h"
 #include "routes/discordapi.h"
 #include "util/globals.h"
 #include "util/enumutils.h"
+
+#include "util/httputils.h"
 
 
 Gateway::Gateway(QSharedPointer<Settings> settings)
 {    
     _botToken = settings->value(SettingsParam::Bot::TOKEN).toString();
 
-    DiscordAPI::setBotToken(_botToken);
+    HttpUtils::setBotToken(_botToken);
 
     _maxRetries = settings->value(SettingsParam::Connection::MAX_RETRIES).toInt();
 
@@ -270,6 +274,12 @@ Gateway::processReady(QSharedPointer<GatewayPayload> payload) {
     _sessionId = ready.getSessionId().toString();
 
     _retryCount = 0;
+
+    User botUser(ready.getUser());
+
+    BotScript::setBotId(botUser.getId().toString());
+
+    BotScript::setBotName(botUser.getUsername().toString());
 }
 
 void
@@ -387,17 +397,11 @@ void
 Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
     QString baseUrl = settings->value(SettingsParam::Connection::CONNECTION_URL).toString();
 
-    bool zlibEnabled = settings->value(SettingsParam::Connection::ZLIB_ENABLED).toBool();
+    int apiVersion = settings->value(SettingsParam::Connection::API_VERSION).toInt();
 
-    QString zlibParameter = "";
-
-    if (zlibEnabled) {
-        zlibParameter = "&compress=zlib-stream";
-    }
-
-    _gatewayUrl = QUrl(QString("%1/?v=6&encoding=json%2")
+    _gatewayUrl = QUrl(QString("%1/?v=%2&encoding=json")
                 .arg(baseUrl)
-                .arg(zlibParameter));
+                .arg(apiVersion));
 }
 
 void

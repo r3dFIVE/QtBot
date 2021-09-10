@@ -51,10 +51,12 @@ class BotScript : public IBotJob
     QMutex _runLock;
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
-    QSqlDatabase _database;
     QSqlQuery _query;
-    QString _scriptName;
     QString _botToken;
+    QString _scriptName;
+
+    static QString _botId;
+    static QString _botName;
 
     void setScriptCommands(const QMap<QString, QVariant> &commands);
     void setEventBindingsJson(const QJsonArray &eventBindings);
@@ -81,18 +83,22 @@ public:
     bool invokable() override;
     void execute(const QByteArray &command, const EventContext &message) override;
 
+    static void setBotId(const QString &botId);
+    static void setBotName(const QString &botName);
 
     /*
      *  GENERAL BOT API RELATED FUNCTIONS
      */
 
     Q_INVOKABLE QVariant bQueueTimedEvent(const QVariant &timedBindingVariant);
+    Q_INVOKABLE QString bId();
     Q_INVOKABLE void bLogTrace(QString logEvent);
     Q_INVOKABLE void bLogInfo(QString logEvent);
     Q_INVOKABLE void bLogDebug(QString logEvent);
     Q_INVOKABLE void bLogWarning(QString logEvent);
     Q_INVOKABLE void bLogCritical(QString logEvent);
     Q_INVOKABLE void bLogFatal(QString event);
+    Q_INVOKABLE QString bName();
     Q_INVOKABLE void bPause(int ms);
     Q_INVOKABLE void bRemoveTimedEventByJobId(const QVariant &contextVariant);
 
@@ -111,6 +117,7 @@ public:
     Q_INVOKABLE QVariant cGetChannelMessages(const QVariant &context);
     Q_INVOKABLE QVariant cGetChannelMessage(const QVariant &context);
     Q_INVOKABLE QVariant cCreateMessage(const QVariant &context);
+    Q_INVOKABLE QVariant cCreateMessage(const QVariant &context, File *file);
     Q_INVOKABLE QVariant cCrosspostMessage(const QVariant &context);
     Q_INVOKABLE QVariant cCreateReaction(const QVariant &context);
     Q_INVOKABLE QVariant cDeleteOwnReaction(const QVariant &context);
