@@ -1,8 +1,6 @@
 #include "mongoinsert.h"
 
 
-const QString MongoInsert::TYPE_NAME = "MongoInsert";
-
 MongoInsert::MongoInsert(const MongoInsert &other) {
     _insertOpts = other._insertOpts;
 }

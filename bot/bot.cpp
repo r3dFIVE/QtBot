@@ -33,6 +33,9 @@
 #include "qml/http.h"
 #include "qml/mongofind.h"
 #include "qml/mongoinsert.h"
+#include "qml/enums/networkrequest.h"
+#include "qml/httpmultipart.h"
+#include "qml/httppart.h"
 
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
@@ -41,6 +44,7 @@ const int Bot::BOT_API_MINOR_VERSION = 0;
 const QString Bot::BOT_TYPE_IDENTIFIER = "BotScript";
 const QString Bot::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
 const QString Bot::SQL_IDENTIFIER = "Sql";
+const QString Bot::NETWORK_REQUEST_IDENTIFIER = "NetworkRequest";
 const QString Bot::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
 
 Bot::Bot() {
@@ -60,6 +64,8 @@ Bot::Bot() {
     qRegisterMetaType<SqlRecord>();
     qRegisterMetaType<SqlError>();
     qRegisterMetaType<File>();
+    qRegisterMetaType<HttpPart>();
+    qRegisterMetaType<HttpMultiPart>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
@@ -76,6 +82,12 @@ Bot::Bot() {
                           BOT_API_MAJOR_VERSION,
                           BOT_API_MINOR_VERSION,
                           SQL_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
+
+    qmlRegisterUncreatableType<NetworkRequest>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          NETWORK_REQUEST_IDENTIFIER.toUtf8(),
                           NO_CREATABLE_ENUM);
 }
 

@@ -4,7 +4,10 @@
 #include <QObject>
 #include <QNetworkRequest>
 
-class NetworkRequest : public QObject {
+class NetworkRequest : public QObject
+{
+    Q_OBJECT
+
 public:
     enum KnownHeaders {
         ContentTypeHeader,

@@ -372,11 +372,16 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
     route.addRawHeader(_botAuthHeaderName, _botAuthHeaderValue);
 
     switch (route.getType()) {
-        case Route::POST: {
-            rawReply = networkManager.post(route.request(), route.payload());
-            break;
-        } case Route::GET: {
+        case Route::GET: {
             rawReply = networkManager.get(route.request());
+            break;
+        } case Route::POST: {
+            QHttpMultiPart *multipPart = route.getHttpMultiPart();
+            if (multipPart) {
+                rawReply = networkManager.post(route.request(), route.getHttpMultiPart());
+            } else {
+                rawReply = networkManager.post(route.request(), route.payload());
+            }
             break;
         } case Route::PUT: {
             rawReply = networkManager.put(route.request(), route.payload());
@@ -433,8 +438,19 @@ DiscordAPI::channelGetChannelMessage(const QVariant &context) {
 }
 
 QVariant
-DiscordAPI::channelCreateMessage(const QVariant &context) {
-    ChannelCreateMessage createMessage(buildRequestContext(context));
+DiscordAPI::channelCreateMessage(const QVariant &contextVar, File *file) {
+    EventContext context = buildRequestContext(contextVar);
+
+    ChannelCreateMessage createMessage(context, file);
+
+    return buildResponseVariant(processRoute(createMessage));
+}
+
+QVariant
+DiscordAPI::channelCreateMessage(const QVariant &contextVar) {
+    EventContext context = buildRequestContext(contextVar);
+
+    ChannelCreateMessage createMessage(context);
 
     return buildResponseVariant(processRoute(createMessage));
 }

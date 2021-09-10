@@ -43,8 +43,6 @@ class File : public QObject
     QDataStream _dataStream;
 
 public:
-    static const QString TYPE_NAME;
-
     Q_INVOKABLE File();
     Q_INVOKABLE File(const File &other);
     Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode);
@@ -68,7 +66,7 @@ public:
     Q_INVOKABLE QString readLine();
 
     void setParent(QObject *parent);
-    QSharedPointer<QFile> get();
+    QFile* get();
 };
 
 Q_DECLARE_METATYPE(File)

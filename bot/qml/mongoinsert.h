@@ -17,8 +17,6 @@ class MongoInsert : public QObject
     mongocxx::options::insert _insertOpts{};
 
 public:
-    static const QString TYPE_NAME;
-
     MongoInsert() {}
     MongoInsert(const MongoInsert &other);
     ~MongoInsert() {}

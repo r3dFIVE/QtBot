@@ -18,8 +18,6 @@ class MongoUpdate : public QObject
     mongocxx::options::update _updateOpts;
 
 public:
-    static const QString TYPE_NAME;
-
     MongoUpdate() {}
     MongoUpdate(const MongoUpdate &other);
     ~MongoUpdate() {}

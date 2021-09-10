@@ -35,8 +35,6 @@ class SqlField : public QObject
     QSqlField _sqlField;
 
 public:
-    static const QString TYPE_NAME;
-
     Q_INVOKABLE SqlField() {}
     Q_INVOKABLE SqlField(const QString& fieldName,
                        QVariant::Type type = {});

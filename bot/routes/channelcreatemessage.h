@@ -23,14 +23,20 @@
 
 #include "route.h"
 
+#include "qml/file.h"
+
 
 class ChannelCreateMessage : public Route
 {
 public:
     const QString PATH = "/channels/{channel.id}/messages";
 
-    ChannelCreateMessage(const EventContext &context) {
+    ChannelCreateMessage(EventContext &context, File *file = nullptr) {
         _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();;
+
+        if (file) {
+            buildHttpMultiPart(context, file);
+        }
 
         buildRequest(POST, PATH, _pathParams[Route::CHANNEL_ID_TOKEN], context);
     }

@@ -40,8 +40,6 @@ class SqlQuery : public QObject
     SqlDatabase *_database;
 
 public:
-    static const QString TYPE_NAME;
-
     Q_INVOKABLE SqlQuery() {}
     Q_INVOKABLE SqlQuery(const SqlQuery &other);
     Q_INVOKABLE SqlQuery(SqlQuery *other);

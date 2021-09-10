@@ -62,7 +62,6 @@ public:
         return _requestType;
     }
 
-
     inline QString getMajorParamId() {
         return _majorParamId;
     }
@@ -71,11 +70,16 @@ public:
         return _routeWithMethod;
     }
 
+    inline QHttpMultiPart* getHttpMultiPart() {
+        return _httpMultiPart.data();
+    }
+
 protected:
     Route() {}
     Route(const Route &other) { Q_UNUSED(other) }
     ~Route() {}
 
+    QSharedPointer<QHttpMultiPart> _httpMultiPart;
     QMap<QString, QString> _pathParams;
     QByteArray _payload;
     QNetworkRequest _request;
@@ -117,6 +121,8 @@ protected:
                       const QString &route) {
         buildRequest(requestType, route, GLOBAL_BUCKET, EventContext());
     }
+
+    void buildHttpMultiPart(EventContext &context, File *file);
 };
 
 

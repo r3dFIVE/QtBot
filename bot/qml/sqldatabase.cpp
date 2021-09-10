@@ -25,7 +25,7 @@
 #include "util/globals.h"
 #include "util/enumutils.h"
 
-const QString SqlDatabase::TYPE_NAME = "SqlDatabase";
+
 QMutex SqlDatabase::_mutex;
 QMap<QString, QList<SqlQuery *> > SqlDatabase::_queries;
 

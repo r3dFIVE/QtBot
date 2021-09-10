@@ -3,8 +3,6 @@
 #include "util/mongoutils.h"
 
 
-const QString MongoHint::TYPE_NAME = "MongoHint";
-
 MongoHint::MongoHint(const MongoHint &other) {
     _hint = QSharedPointer<mongocxx::hint>(new mongocxx::hint{*other._hint.get()});
 }

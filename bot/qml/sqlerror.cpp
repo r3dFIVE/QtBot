@@ -22,8 +22,6 @@
 #include <QDebug>
 
 
-const QString SqlError::TYPE_NAME = "SqlError";
-
 SqlError::SqlError(const SqlError &other) {
     _sqlError = other._sqlError;
 }

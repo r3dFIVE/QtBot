@@ -19,8 +19,6 @@ class MongoHint : public QObject
     QSharedPointer<mongocxx::hint> _hint;
 
 public:
-    static const QString TYPE_NAME;
-
     MongoHint() {};
     MongoHint(const QJsonObject &hint);
     MongoHint(const MongoHint &other);

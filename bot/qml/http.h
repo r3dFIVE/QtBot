@@ -10,6 +10,7 @@
 #include "httpresponse.h"
 #include "logging/logfactory.h"
 #include "file.h"
+#include "httpmultipart.h"
 
 
 class Http : public QObject
@@ -25,7 +26,7 @@ class Http : public QObject
     QDir _downloadDirectory = QDir(QString("downloads"));
     QString _filePrefix;
 
-    void addHeadersToRequest(QNetworkRequest &request);
+    void addCommonHeadersToRequest(QNetworkRequest &request, bool isJsonPayload = true);
     QJsonObject processReply(QSharedPointer<QNetworkReply> reply);
     void writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse &reponse);
     QJsonObject multiPartFailure();
@@ -36,17 +37,17 @@ class Http : public QObject
 public:
     Http();
     Http(const Http &other);
-    ~Http() {};
+    ~Http() {}
 
     Q_INVOKABLE Http &operator=(const Http &other);
 
     Q_INVOKABLE QJsonObject get(const QString &url);
     Q_INVOKABLE QJsonObject post(const QString &path, const QJsonObject &json);
-    Q_INVOKABLE QJsonObject post(const QString &path, QVariant formMultiPart);
+    Q_INVOKABLE QJsonObject post(const QString &path, HttpMultiPart *formMultiPart);
     Q_INVOKABLE QJsonObject put(const QString &path, const QJsonObject &json);
-    Q_INVOKABLE QJsonObject put(const QString &path, QVariant formMultiPart);
+    Q_INVOKABLE QJsonObject put(const QString &path, HttpMultiPart *formMultiPart);
     Q_INVOKABLE QJsonObject patch(const QString &path, const QJsonObject &json);
-    Q_INVOKABLE QJsonObject patch(const QString &path, QVariant formMultiPart);
+    Q_INVOKABLE QJsonObject patch(const QString &path, HttpMultiPart *formMultiPart);
     Q_INVOKABLE QJsonObject del(const QString &url);
 
     Q_INVOKABLE void enableBotAuth(const bool enable);

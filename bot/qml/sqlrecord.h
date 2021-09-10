@@ -34,8 +34,6 @@ class SqlRecord : public QObject
     QSqlRecord _sqlRecord;
 
 public:
-    static const QString TYPE_NAME;
-
     Q_INVOKABLE SqlRecord() {}
     Q_INVOKABLE SqlRecord(const QSqlRecord &other);
     Q_INVOKABLE SqlRecord(const SqlRecord& other);

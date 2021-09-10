@@ -1,6 +1,5 @@
 #include "mongoupdate.h"
 
-const QString MongoUpdate::TYPE_NAME = "MongoUpdate";
 
 MongoUpdate::MongoUpdate(const MongoUpdate &other) {
     _updateOpts = other._updateOpts;

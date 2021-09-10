@@ -21,8 +21,6 @@
 #include "sqlfield.h"
 
 
-const QString SqlField::TYPE_NAME = "SqlField";
-
 SqlField::SqlField(const QString &fieldName, QVariant::Type type) {
     _sqlField = QSqlField(fieldName, type);
 }

@@ -23,10 +23,16 @@
 
 #include "payloads/jsonserializable.h"
 
+#include "qml/file.h"
+
+#include <QHttpMultiPart>
+
 
 class EventContext : public JsonSerializable
 {
     Q_OBJECT
+
+    QSharedPointer<QHttpMultiPart> _httpMultiPart;
 
     void buildContext(const QJsonObject &json);
 
@@ -108,6 +114,9 @@ public:
             _jsonObject[TARGET_PAYLOAD] = QJsonObject{{key, value}};
         }
     }
+
+    void setHttpMultiPart(QSharedPointer<QHttpMultiPart> httpMultiPart);
+    QSharedPointer<QHttpMultiPart> getHttpMultiPart();
 
 public slots:
     QJsonArray getArgs() const;

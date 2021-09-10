@@ -117,6 +117,7 @@ public:
     Q_INVOKABLE QVariant cGetChannelMessages(const QVariant &context);
     Q_INVOKABLE QVariant cGetChannelMessage(const QVariant &context);
     Q_INVOKABLE QVariant cCreateMessage(const QVariant &context);
+    Q_INVOKABLE QVariant cCreateMessage(const QVariant &context, File *file);
     Q_INVOKABLE QVariant cCrosspostMessage(const QVariant &context);
     Q_INVOKABLE QVariant cCreateReaction(const QVariant &context);
     Q_INVOKABLE QVariant cDeleteOwnReaction(const QVariant &context);

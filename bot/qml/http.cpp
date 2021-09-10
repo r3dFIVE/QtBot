@@ -1,6 +1,5 @@
 #include "file.h"
 #include "http.h"
-#include "httpmultipart.h"
 #include "httpresponse.h"
 
 #include "util/httputils.h"
@@ -128,13 +127,21 @@ Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse &response) {
 }
 
 void
-Http::addHeadersToRequest(QNetworkRequest &request) {
+Http::addCommonHeadersToRequest(QNetworkRequest &request, bool isJsonPayload) {
     if (_enableBotAuth) {
         request.setRawHeader(_botAuthHeaderName, _botAuthHeaderValue);
+
+        request.setRawHeader("User-Agent", "QtBot 1.0");
+    }
+
+    if (isJsonPayload) {
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "multipart/formdata");
     }
 
     QMapIterator<QString, QString> headers(_rawHeaders);
     while (headers.hasNext()) {
+        headers.next();
+
         request.setRawHeader(headers.key().toUtf8(), headers.value().toUtf8());
     }
 }
@@ -145,7 +152,7 @@ Http::get(const QString &url) {
 
     QNetworkRequest request(url);
 
-    addHeadersToRequest(request);
+    addCommonHeadersToRequest(request);
 
     QNetworkReply *rawReply = manager.get(request);
 
@@ -158,7 +165,7 @@ Http::post(const QString &url, const QJsonObject &json) {
 
     QNetworkRequest request(url);
 
-    addHeadersToRequest(request);
+    addCommonHeadersToRequest(request);
 
     QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
 
@@ -166,17 +173,17 @@ Http::post(const QString &url, const QJsonObject &json) {
 }
 
 QJsonObject
-Http::post(const QString &url, QVariant formMultiPart) {
+Http::post(const QString &url, HttpMultiPart *formMultiPart) {
     QJsonObject json;
 
-    if (formMultiPart.isValid() && HttpMultiPart::TYPE_NAME == formMultiPart.typeName()) {
+    if (formMultiPart) {
         QNetworkAccessManager manager(this);
 
         QNetworkRequest request(url);
 
-        addHeadersToRequest(request);
+        addCommonHeadersToRequest(request, false);
 
-        QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
+        QNetworkReply *rawReply = manager.post(request, formMultiPart->get());
 
         json = processReply(QSharedPointer<QNetworkReply>(rawReply));
 
@@ -193,7 +200,7 @@ Http::put(const QString &url, const QJsonObject &json) {
 
     QNetworkRequest request(url);
 
-    addHeadersToRequest(request);
+    addCommonHeadersToRequest(request);
 
     QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
 
@@ -201,17 +208,17 @@ Http::put(const QString &url, const QJsonObject &json) {
 }
 
 QJsonObject
-Http::put(const QString &url, QVariant formMultiPart) {
+Http::put(const QString &url, HttpMultiPart *formMultiPart) {
     QJsonObject json;
 
-    if (formMultiPart.isValid() && HttpMultiPart::TYPE_NAME == formMultiPart.typeName()) {
+    if (formMultiPart) {
         QNetworkAccessManager manager(this);
 
         QNetworkRequest request(url);
 
-        addHeadersToRequest(request);
+        addCommonHeadersToRequest(request, false);
 
-        QNetworkReply *rawReply = manager.put(request, SerializationUtils::toQByteArray(json));
+        QNetworkReply *rawReply = manager.put(request, formMultiPart->get());
 
         json = processReply(QSharedPointer<QNetworkReply>(rawReply));
 
@@ -228,7 +235,7 @@ Http::patch(const QString &url, const QJsonObject &json) {
 
     QNetworkRequest request(url);
 
-    addHeadersToRequest(request);
+    addCommonHeadersToRequest(request);
 
     QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
 
@@ -236,17 +243,17 @@ Http::patch(const QString &url, const QJsonObject &json) {
 }
 
 QJsonObject
-Http::patch(const QString &url, QVariant formMultiPart) {
+Http::patch(const QString &url, HttpMultiPart *formMultiPart) {
     QJsonObject json;
 
-    if (formMultiPart.isValid() && HttpMultiPart::TYPE_NAME == formMultiPart.typeName()) {
+    if (formMultiPart) {
         QNetworkAccessManager manager(this);
 
         QNetworkRequest request(url);
 
-        addHeadersToRequest(request);
+        addCommonHeadersToRequest(request, false);
 
-        QNetworkReply *rawReply = manager.put(request, SerializationUtils::toQByteArray(json));
+        QNetworkReply *rawReply = manager.put(request, formMultiPart->get());
 
         json = processReply(QSharedPointer<QNetworkReply>(rawReply));
 
@@ -263,7 +270,7 @@ Http::del(const QString &url) {
 
     QNetworkRequest request(url);
 
-    addHeadersToRequest(request);
+    addCommonHeadersToRequest(request);
 
     QNetworkReply *rawReply = manager.deleteResource(request);
 
@@ -274,7 +281,6 @@ void
 Http::enableBotAuth(const bool enable) {
     _enableBotAuth = enable;
 }
-
 
 void
 Http::addRawHeader(const QString &headerName, const QString &headerValue) {

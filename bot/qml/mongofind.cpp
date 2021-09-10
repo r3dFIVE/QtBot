@@ -3,8 +3,6 @@
 #include "util/mongoutils.h"
 
 
-const QString MongoFind::TYPE_NAME = "MongoDB";
-
 MongoFind::MongoFind(const MongoFind &other) {
     _findArgs = other._findArgs;
 }

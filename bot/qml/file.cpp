@@ -23,8 +23,6 @@
 #include "util/mimeutils.h"
 
 
-const QString File::TYPE_NAME = "File";
-
 File::File() {
     _file = QSharedPointer<QFile>(new QFile);
 }
@@ -156,12 +154,12 @@ File::setParent(QObject *parent) {
     _file->setParent(parent);
 }
 
-QSharedPointer<QFile>
+QFile*
 File::get() {
-    if (!open()) {
-        return nullptr;
+    if (!_file->isOpen()) {
+        open();
     }
-    return _file;
+    return _file.data();
 }
 
 QString

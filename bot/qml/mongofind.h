@@ -22,8 +22,6 @@ class MongoFind : public QObject
     mongocxx::options::find _findArgs{};
 
 public:
-    static const QString TYPE_NAME;
-
     MongoFind() {}
     MongoFind(const MongoFind &other);
     ~MongoFind() {}

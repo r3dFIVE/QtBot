@@ -3,8 +3,8 @@ QT += gui websockets sql qml
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
-LIB_DIR = $$PWD/../..
-BOOST_HEADERS=$$LIB_DIR/boost_1_66_0
+LIB_DIR = $$PWD/../lib
+BOOST_HEADERS=$$LIB_DIR/boost
 MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
 MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
 

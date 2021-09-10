@@ -98,7 +98,7 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
 
     engine->globalObject().setProperty("_factory", factory);
 
-    engine->evaluate("function File(path, mode) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
+    engine->evaluate("function File(path, mode = 1) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
 
     engine->evaluate("function Http() { return _factory.createObject(\"Http\", {}); }");
 

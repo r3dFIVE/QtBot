@@ -34,8 +34,6 @@ class SqlError : public QObject
     QSqlError _sqlError;
 
 public:
-    static const QString TYPE_NAME;
-
     Q_INVOKABLE SqlError() {}
     Q_INVOKABLE SqlError(const SqlError &other);
     Q_INVOKABLE SqlError(SqlError *other);

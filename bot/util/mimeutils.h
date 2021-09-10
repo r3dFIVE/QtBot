@@ -23,7 +23,11 @@ public:
     }
 
     static QMimeType getMimeType(const QFile &file) {
-        return QMimeDatabase().mimeTypeForFile(QFileInfo(file));
+        return getMimeType(QFileInfo(file));
+    }
+
+    static QMimeType getMimeType(QFileInfo file) {
+        return QMimeDatabase().mimeTypeForFile(file);
     }
 
     static QList<QMimeType> getMimeType(const QString &fileName) {

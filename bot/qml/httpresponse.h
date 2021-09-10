@@ -14,8 +14,6 @@ class HttpResponse : public JsonSerializable
     static const QString CONTENT;
 
 public:
-    static const QString TYPE_NAME;
-
     QString content() const;
     void content(const QString &content);
     QString contentType() const;

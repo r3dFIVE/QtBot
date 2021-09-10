@@ -21,8 +21,6 @@
 #include "sqlrecord.h"
 
 
-const QString SqlRecord::TYPE_NAME = "SqlRecord";
-
 SqlRecord::SqlRecord(const QSqlRecord &other) {
     _sqlRecord = other;
 }

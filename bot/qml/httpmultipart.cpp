@@ -1,8 +1,7 @@
 #include "httpmultipart.h"
-#include "httppart.h"
 
+#include <QDebug>
 
-const QString HttpMultiPart::TYPE_NAME = "HttpMultiPart";
 
 HttpMultiPart::HttpMultiPart() {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
@@ -28,17 +27,15 @@ HttpMultiPart::operator=(const HttpMultiPart &other) {
 }
 
 void
-HttpMultiPart::append(QVariant httpPartVar) {
-    if (httpPartVar.isValid() && HttpPart::TYPE_NAME == httpPartVar.typeName()) {
-        HttpPart httpPart = httpPartVar.value<HttpPart>();
-
-        _httpMultiPart->append(httpPart.get());
+HttpMultiPart::append(HttpPart *httpPart) {
+    if (httpPart) {
+        _httpMultiPart->append(httpPart->get());
     } else {
-        _logger->warning("Failed to set http part body... Must pass in valid File.");
+        _logger->warning("Failed to append HttpPart... Must pass in valid HttpPart.");
     }
 }
 
-QSharedPointer<QHttpMultiPart>
+QHttpMultiPart*
 HttpMultiPart::get() {
-    return _httpMultiPart;
+    return _httpMultiPart.data();
 }

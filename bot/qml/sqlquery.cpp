@@ -23,8 +23,6 @@
 #include <QSql>
 
 
-const QString SqlQuery::TYPE_NAME = "SqlQuery";
-
 SqlQuery::SqlQuery(const SqlQuery &other) {
     _database = other._database;
 

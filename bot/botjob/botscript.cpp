@@ -255,6 +255,11 @@ BotScript::cCreateMessage(const QVariant &context) {
 }
 
 QVariant
+BotScript::cCreateMessage(const QVariant &context, File *file) {
+    return _discordAPI->channelCreateMessage(context, file);
+}
+
+QVariant
 BotScript::cCrosspostMessage(const QVariant &context) {
     return _discordAPI->channelCrosspostMessage(context);
 }

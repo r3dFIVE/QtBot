@@ -7,6 +7,8 @@
 
 #include "logging/logfactory.h"
 
+#include "httppart.h"
+
 
 class HttpMultiPart : public QObject
 {
@@ -17,17 +19,17 @@ class HttpMultiPart : public QObject
     QSharedPointer<QHttpMultiPart> _httpMultiPart;
 
 public:
-    static const QString TYPE_NAME;
-
     HttpMultiPart();
     HttpMultiPart(const HttpMultiPart &other);
     ~HttpMultiPart() {}
 
     Q_INVOKABLE HttpMultiPart &operator=(const HttpMultiPart &other);
 
-    Q_INVOKABLE void append(QVariant httpPartVar);
+    Q_INVOKABLE void append(HttpPart *httpPart);
 
-    QSharedPointer<QHttpMultiPart> get();
+    QHttpMultiPart* get();
 };
+
+Q_DECLARE_METATYPE(HttpMultiPart)
 
 #endif // HTTPMULTIPART_H

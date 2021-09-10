@@ -16,7 +16,6 @@ win32 {
     DEPLOY_COMMAND = $$[QT_INSTALL_BINS]\windeployqt
     DEPLOY_OPTIONS = "--no-svg --no-system-d3d-compiler --no-opengl --no-angle --no-opengl-sw"
 
-
     MONGODEPS.files += $${MONGO_C_BIN}/bson-1.0.dll
     MONGODEPS.files += $${MONGO_C_BIN}/mongoc-1.0.dll
     MONGODEPS.files += $${MONGO_CXX_BIN}/bsoncxx.dll
