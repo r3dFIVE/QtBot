@@ -7,7 +7,8 @@ Additional functionality can be added via custom Qml objects called **BotScripts
 *BotScripts* are custom Qml elements which provide access to the Discord API, as well as additional support for things like database access and file I/O.
 
 1. [Building From Source](#building-from-source)
-	* [Building on Windows 10](#building-from-windows-10)
+	* [Database Support](#database-support)
+	* [Building on Windows 10](#building-on-windows-10)
 	* [Building on Linux](#building-on-linux)
 	* [Building on MacOS](#building-on-macos)
 2. [Running QtBot](#running-qtbot)
@@ -28,7 +29,42 @@ Additional functionality can be added via custom Qml objects called **BotScripts
 
 # Building From Source
 
-Qt Framework 5.15 is designed to run anywhere, thus QtBot will run on Windows, Linux, or MacOS. Currently there is only an installer for Windows. Installers for Linux and MacOS will come in version 1.0.0.
+Qt Framework 5.15 is designed to run anywhere, thus QtBot will run on Windows, Linux, or MacOS. Currently there is only an installer for Windows. Installers for Linux and MacOS will come in later versions.
+
+## Database Support
+
+For MySQL/MariaDB and MongoDB support, the appropriate C/C++ connectors must be present on your development environment. 
+
+### MySQLMariaDB
+
+Instruction for configuring the Qt source to include MySQL/MariaDB support can be found here:
+
+	https://doc.qt.io/qt-5/sql-driver.html#qmysql
+	
+### MongoDB
+#### Windows
+
+**Boost:**
+
+MongoDB drivers require Boost library to function. Download newest release of Boost and copy to `<project_root>/lib/boost`. Remove/rename the boost folder to remove the release verionsoning, eg. `/boost_1_66_0/ -> /boost/`
+
+**MongoDB C Driver:**
+
+First you need to build the MongoDB C driver. Instructions can be found here:
+
+	http://mongoc.org/libmongoc/current/installing.html
+	
+Once the build is done, copy the build output directoy (eg. `/mongo_c_driver`) to the `<project_root>/lib/` directory.
+
+**MongoDB CXX Driver:**
+
+The final step is building the MongoDB CXX driver. Instuctions can be found here:
+
+	http://mongocxx.org/mongocxx-v3/installation/
+	
+Once the build is done, copy the build output directoy (eg. `/mongo_cxx_driver`) to the `<project_root>/lib/` directory.
+
+#### Linux
 
 ## Building on Windows 10
 
@@ -40,13 +76,13 @@ Compiling on windows has been tested using MSVC2017 and MSVC2019.
 	* [Visual Studio 2019](https://my.visualstudio.com/Downloads?q=Visual%20Studio%202019)
 2. Download and install [Qt for Windows](https://www.qt.io/download-qt-installer):
 	* Under **Qt**, select the following components:
-		* Under **Qt 5.15.0**:
+		* Under **Qt 5.15.2**:
 			1. MSVC 2019 64-bit - *(backwards compatible with 2017)*
 			2. Sources - *(required for some database support)*
 		* Under **Developer and Designer Tools**:
-			1. Qt Creator 4.13.3 CDB Debugger Support
+			1. Qt Creator CDB Debugger Support
 			2. Debugging Tools for Windows
-			3. Qt Creator 4.13.3 Debug Symbols
+			3. Qt Creator Debug Symbols
 			4. Qt Installer Framework 4.0 - *(only if you plan to build standalone installer)*
 3. Download/clone QtBot source from git.
 
@@ -54,6 +90,7 @@ Compiling on windows has been tested using MSVC2017 and MSVC2019.
 
 1. Open *QtBot.pro* in Qt Creator.
 	* If this is first time opening project, configure the project to use the *MSVC2019 64bit Kit*
+	* Make sure to set an `install` make step if you want the required libaries to auto deploy to build folder.
 2. Run qmake.
 	* `Build -> Run qmake`
 3. Build project
