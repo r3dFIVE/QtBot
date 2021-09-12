@@ -28,10 +28,15 @@
 #include <QSqlDatabase>
 #include <QMutexLocker>
 
+#include <util/enumutils.h>
+
 #include "botjob/databasecontext.h"
 #include "sqlerror.h"
 #include "sqlquery.h"
 #include "enums/sql.h"
+#include "util/globals.h"
+#include "util/enumutils.h"
+#include "logging/logfactory.h"
 
 class SqlQuery;
 
@@ -39,15 +44,17 @@ class SqlDatabase : public QObject
 {
     Q_OBJECT
 
+    Logger *_logger = LogFactory::getLogger();
+
     static QMutex _mutex;
     static QMap<QString, QList<SqlQuery *> > _queries;
 
-    DatabaseContext _defaultDatabaseContext;
     int _port = 0;
     int _type = 0;
+    QString _connectionNameBase;
     QString _connectionName;
     QString _databaseName;
-    QString _driverName;
+    QString _driverName = EnumUtils::valueToKey(SettingsParam::Database::QMYSQL);
     QString _hostName;
     QString _password;
     QString _userName;

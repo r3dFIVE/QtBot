@@ -156,7 +156,7 @@ Settings::validateDatabaseSettings() {
 
     QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
 
-    QString databaseType = _settings[SettingsParam::Database::DATABASE_TYPE].toString();
+    QString databaseType =  _settings[SettingsParam::Database::DATABASE_TYPE].toString();
 
     int typeValue = metaEnum.keyToValue(databaseType.toStdString().c_str());
 

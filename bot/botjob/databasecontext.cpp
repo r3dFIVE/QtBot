@@ -100,15 +100,10 @@ DatabaseContext::operator=(const DatabaseContext &other) {
     return *this;
 }
 
-void
-DatabaseContext::setConnectionName(const QString &scriptName, const QString &guildId) {
-    _connectionName = QString("%1|%2|%3")
+QString
+DatabaseContext::getConnectionName() const {
+    return QString("%1|%2|%3")
             .arg(scriptName)
             .arg(guildId)
             .arg(type);
-}
-
-QString
-DatabaseContext::getConnectionName() const {
-    return _connectionName;
 }

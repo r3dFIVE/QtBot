@@ -12,9 +12,6 @@ INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
 INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
 INCLUDEPATH += $$BOOST_HEADERS
 
-MONGO_CXX_BIN=$$LIB_DIR/mongo-cxx-driver/bin
-MONGO_C_BIN=$$LIB_DIR/mongo-c-driver/bin
-
 LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
 
 HEADERS += \
