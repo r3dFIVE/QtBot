@@ -3,9 +3,6 @@ QT += gui
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
-QMAKE_CXXFLAGS_RELEASE += -Zi
-QMAKE_LFLAGS_RELEASE += /DEBUG /OPT:REF
-
 DEFINES += QT_DEPRECATED_WARNINGS
 
 include(main.pri)
@@ -16,6 +13,9 @@ win32 {
     DEPLOY_COMMAND = $$[QT_INSTALL_BINS]\windeployqt
     DEPLOY_OPTIONS = "--no-svg --no-system-d3d-compiler --no-opengl --no-angle --no-opengl-sw"
 
+    LIB_DIR = $$PWD/../lib
+    MONGO_CXX_BIN=$$LIB_DIR/mongo-cxx-driver/bin
+    MONGO_C_BIN=$$LIB_DIR/mongo-c-driver/bin
     MONGODEPS.files += $${MONGO_C_BIN}/bson-1.0.dll
     MONGODEPS.files += $${MONGO_C_BIN}/mongoc-1.0.dll
     MONGODEPS.files += $${MONGO_CXX_BIN}/bsoncxx.dll
@@ -32,6 +32,10 @@ win32 {
         DEPLOY_OPTIONS += "--release"
         MONGODEPS.path = $$shell_quote($$shell_path($${OUT_PWD}/release))
     }
+
+    QMAKE_POST_LINK += $${DEPLOY_COMMAND} $${DEPLOY_OPTIONS} $${DEPLOY_TARGET}
+
+    INSTALLS += MONGODEPS
 }
 
 DISTFILES += \

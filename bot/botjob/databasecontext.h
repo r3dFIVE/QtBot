@@ -50,9 +50,7 @@ public:
 
     DatabaseContext& operator=(const DatabaseContext &other);
 
-    void setConnectionName(const QString &scriptName, const QString &guildId);
     QString getConnectionName() const;
-
 };
 
 #endif // DATABASECONTEXT_H

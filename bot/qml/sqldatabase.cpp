@@ -22,17 +22,12 @@
 
 #include <QSqlError>
 
-#include "util/globals.h"
-#include "util/enumutils.h"
-
 
 QMutex SqlDatabase::_mutex;
 QMap<QString, QList<SqlQuery *> > SqlDatabase::_queries;
 
 SqlDatabase::SqlDatabase(const SqlDatabase &other) {
     _database = other._database;
-
-    _defaultDatabaseContext = other._defaultDatabaseContext;
 
     _hostName = other._hostName;
 
@@ -42,15 +37,27 @@ SqlDatabase::SqlDatabase(const SqlDatabase &other) {
 
     _databaseName = other._databaseName;
 
+    _driverName = other._driverName;
+
     _port = other._port;
 
     _type = other._type;
 
-    _connectionName = other._connectionName;
+    _connectionNameBase = other._connectionNameBase;
 }
 
 SqlDatabase::SqlDatabase(const DatabaseContext &databaseContext) {
-    _defaultDatabaseContext = databaseContext;
+    _userName = databaseContext.userName;
+
+    _password = databaseContext.password;
+
+    _databaseName = databaseContext.databaseName;
+
+    _port = databaseContext.port;
+
+    _type = databaseContext.type;
+
+    _connectionNameBase = databaseContext.getConnectionName();
 }
 
 SqlDatabase
@@ -61,8 +68,6 @@ SqlDatabase
 
     _database = other._database;
 
-    _defaultDatabaseContext = other._defaultDatabaseContext;
-
     _hostName = other._hostName;
 
     _userName = other._userName;
@@ -75,7 +80,7 @@ SqlDatabase
 
     _type = other._type;
 
-    _connectionName = other._connectionName;
+    _connectionNameBase = other._connectionNameBase;
 
     return *this;
 }
@@ -83,41 +88,50 @@ SqlDatabase
 bool
 SqlDatabase::open(QString suffix) {
     _connectionName = QString ("%1|%2")
-            .arg(_defaultDatabaseContext.getConnectionName())
+            .arg(_connectionNameBase)
             .arg(suffix);
 
     closeExistingConnection(_connectionName);
 
-    _database = QSqlDatabase::addDatabase(_defaultDatabaseContext.driverName, _connectionName);
+    _database = QSqlDatabase::addDatabase(_driverName, _connectionName);
 
     if (_hostName.isEmpty()) {
-        _hostName = _defaultDatabaseContext.hostName;
+        _logger->warning("SQL Connection failed... Must provide a valid host name.");
 
+        return false;
+    } else {
         _database.setHostName(_hostName);
     }
 
-
     if (_userName.isEmpty()) {
-        _userName = _defaultDatabaseContext.userName;
+        _logger->warning("SQL Connection failed... Must provide a user name.");
 
+        return false;
+    } else {
         _database.setUserName(_userName);
     }
 
     if (_password.isEmpty()) {
-        _password = _defaultDatabaseContext.password;
+        _logger->warning("SQL Connection failed... Must provide a password.");
 
+        return false;
+    } else {
         _database.setPassword(_password);
     }
 
     if (_port == 0) {
-        _port = _defaultDatabaseContext.port;
+        _logger->warning("SQL Connection failed... Must provide a valid port.");
 
+        return false;
+    } else {
         _database.setPort(_port);
     }
 
     if (_databaseName.isEmpty()) {
-        _databaseName = _defaultDatabaseContext.databaseName;
+        _logger->warning("SQL Connection failed... Must provide a database name.");
 
+        return false;
+    } else {
         _database.setDatabaseName(_databaseName);
     }
 
@@ -197,28 +211,28 @@ SqlDatabase::rollback() {
 
 void
 SqlDatabase::setDatabaseName(const QString &databaseName) {
-    _defaultDatabaseContext.databaseName = databaseName;
+    _databaseName = databaseName;
 }
 
 void
 SqlDatabase::setUserName(const QString &userName) {
-    _defaultDatabaseContext.userName = userName;
+    _userName = userName;
 }
 
 void
 SqlDatabase::setPassword(const QString &password) {
-    _defaultDatabaseContext.password = password;
+    _password = password;
 }
 
 
 void
 SqlDatabase::setHostName(const QString &hostName) {
-    _defaultDatabaseContext.hostName = hostName;
+    _hostName = hostName;
 }
 
 void
 SqlDatabase::setPort(int port) {
-    _defaultDatabaseContext.port = port;
+    _port = port;
 }
 
 void
@@ -228,27 +242,27 @@ SqlDatabase::setConnectOptions(const QString &options) {
 
 QString
 SqlDatabase::databaseName() const {
-    return _defaultDatabaseContext.databaseName;
+    return _databaseName;
 }
 
 QString
 SqlDatabase::userName() const {
-    return _defaultDatabaseContext.userName;
+    return _userName;
 }
 
 QString
 SqlDatabase::hostName() const {
-    return _defaultDatabaseContext.hostName;
+    return _hostName;
 }
 
 QString
 SqlDatabase::driverName() const {
-    return _defaultDatabaseContext.driverName;
+    return _driverName;
 }
 
 int
 SqlDatabase::port() const {
-    return _defaultDatabaseContext.port;
+    return _port;
 }
 
 QString
@@ -268,7 +282,7 @@ SqlDatabase::numericalPrecisionPolicy() const {
 
 void
 SqlDatabase::setType(const QString &type) {
-    _defaultDatabaseContext.type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(type);
+    _type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(type);
 }
 
 QStringList

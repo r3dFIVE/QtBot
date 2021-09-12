@@ -123,7 +123,9 @@ void
 ScriptBuilder::buildBotScript(const QString &fileWithPath) {
     DatabaseContext databaseContext(_defaultDatabaseContext);
 
-    databaseContext.setConnectionName(_guildId, _fileName);
+    databaseContext.scriptName = _fileName;
+
+    databaseContext.guildId = _guildId;
 
     QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
 
