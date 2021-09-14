@@ -46,9 +46,6 @@ class SqlDatabase : public QObject
 
     Logger *_logger = LogFactory::getLogger();
 
-    static QMutex _mutex;
-    static QMap<QString, QList<SqlQuery *> > _queries;
-
     int _port = 0;
     int _type = 0;
     QString _connectionNameBase;
@@ -60,21 +57,21 @@ class SqlDatabase : public QObject
     QString _userName;
     QSqlDatabase _database;
 
-    void closeExistingConnection(QString suffix = QString());
     void setConnectionName();
-    static QList<SqlQuery *> getQueriesForConnection(const QString &existingConnection);
 
 public:
     Q_INVOKABLE SqlDatabase() {}
     Q_INVOKABLE SqlDatabase(const SqlDatabase &other);
     Q_INVOKABLE SqlDatabase(const DatabaseContext &context);
     Q_INVOKABLE ~SqlDatabase() {
-        _database.close();
+       _database = QSqlDatabase();
+
+       QSqlDatabase::removeDatabase(_connectionName);
     }
 
     Q_INVOKABLE SqlDatabase &operator=(const SqlDatabase &other);
 
-    Q_INVOKABLE bool open(QString connectionName = QString());
+    Q_INVOKABLE bool open(QString connectionName = QString("%1").arg(QDateTime::currentMSecsSinceEpoch()));
     Q_INVOKABLE void close();
     Q_INVOKABLE bool isOpen() const;
     Q_INVOKABLE bool isOpenError() const;
@@ -102,8 +99,6 @@ public:
     Q_INVOKABLE void setType(const QString &type);
     Q_INVOKABLE QStringList drivers() const;
     Q_INVOKABLE bool isDriverAvailable(const QString &name);
-    void addQuery(SqlQuery *query);
-    static void clearQueries(const QString &guildId, const QString &fileName);
 };
 
 Q_DECLARE_METATYPE(SqlDatabase)

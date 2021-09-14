@@ -24,23 +24,15 @@
 
 
 SqlQuery::SqlQuery(const SqlQuery &other) {
-    _database = other._database;
-
     _query = other._query;
 }
 
 SqlQuery::SqlQuery(SqlQuery *other) {
-    _database = other->_database;
-
     _query = other->_query;
 }
 
 SqlQuery::SqlQuery(SqlDatabase *database, const QString &query) {
-    _database = database;
-
-    _query = QSqlQuery(query, _database->sqlDatabase());
-
-    _database->addQuery(this);
+    _query = QSqlQuery(query, database->sqlDatabase());
 }
 
 SqlQuery::SqlQuery(const QSqlQuery &other) {
@@ -52,8 +44,6 @@ SqlQuery
     if (this == &other) {
         return *this;
     }
-
-    _database = other._database;
 
     _query = other._query;
 
@@ -108,7 +98,6 @@ SqlQuery::lastError() const {
 
     return var;
 }
-
 
 bool
 SqlQuery::isSelect() const {
@@ -252,9 +241,4 @@ SqlQuery::finish() {
 bool
 SqlQuery::nextResult() {
     return _query.nextResult();
-}
-
-SqlDatabase*
-SqlQuery::getDatabase() {
-    return _database;
 }
