@@ -23,8 +23,6 @@
 #include <QSqlError>
 
 
-QMutex SqlDatabase::_mutex;
-QMap<QString, QList<SqlQuery *> > SqlDatabase::_queries;
 
 SqlDatabase::SqlDatabase(const SqlDatabase &other) {
     _database = other._database;
@@ -91,8 +89,6 @@ SqlDatabase::open(QString suffix) {
             .arg(_connectionNameBase)
             .arg(suffix);
 
-    closeExistingConnection(_connectionName);
-
     _database = QSqlDatabase::addDatabase(_driverName, _connectionName);
 
     if (_hostName.isEmpty()) {
@@ -136,25 +132,6 @@ SqlDatabase::open(QString suffix) {
     }
 
     return _database.open();
-}
-
-void
-SqlDatabase::closeExistingConnection(QString existingConnection) {
-    if (QSqlDatabase::contains(existingConnection)) {
-        for (auto query : getQueriesForConnection(existingConnection)) {
-            if (query) {
-                SqlDatabase *db = query->getDatabase();
-
-                if (db && db->isOpen()) {
-                    db->close();
-                }
-            }
-        }
-
-        _queries[existingConnection].clear();
-
-        QSqlDatabase::removeDatabase(existingConnection);
-    }
 }
 
 void
@@ -293,37 +270,6 @@ SqlDatabase::drivers() const {
 bool
 SqlDatabase::isDriverAvailable(const QString &name) {
     return QSqlDatabase::isDriverAvailable(name);
-}
-
-void
-SqlDatabase::addQuery(SqlQuery *query) {
-    _mutex.lock();
-
-    _queries[_connectionName] << query;
-
-    _mutex.unlock();
-}
-
-QList<SqlQuery *>
-SqlDatabase::getQueriesForConnection(const QString &existingConnection) {
-    _mutex.lock();
-
-    QList<SqlQuery *> queries = _queries[existingConnection];
-
-    _mutex.unlock();
-
-    return queries;
-}
-
-void
-SqlDatabase::clearQueries(const QString &guildId, const QString &scriptName) {
-    QString targetName = QString("%1|%2").arg(guildId, scriptName);
-
-    for (auto cachedConnectionName : _queries.keys()) {
-        if (cachedConnectionName.contains(targetName)) {
-            _queries[cachedConnectionName].clear();
-        }
-    }
 }
 
 QSqlDatabase

@@ -71,6 +71,8 @@ BotScript
 void
 BotScript::setEngine(QSharedPointer<QQmlEngine> engine) {
     _engine = engine;
+
+    _engine->setParent(this);
 }
 
 void

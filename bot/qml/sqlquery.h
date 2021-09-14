@@ -37,7 +37,6 @@ class SqlQuery : public QObject
     Q_OBJECT
 
     QSqlQuery _query;
-    SqlDatabase *_database;
 
 public:
     Q_INVOKABLE SqlQuery() {}
@@ -86,7 +85,6 @@ public:
     Q_INVOKABLE QVariant lastInsertId() const;
     Q_INVOKABLE void finish();
     Q_INVOKABLE bool nextResult();
-    Q_INVOKABLE SqlDatabase *getDatabase();
 };
 
 Q_DECLARE_METATYPE(SqlQuery)

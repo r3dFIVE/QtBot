@@ -166,8 +166,6 @@ ScriptBuilder::buildBotScript(const QString &fileWithPath) {
 
     _registeredScripts << botScript;
 
-    SqlDatabase::clearQueries(_guildId, _fileName);
-
     QObject::connect(botScript.data(), &BotScript::timedBindingReadySignal,
                      _eventHandler, &EventHandler::registerTimedBinding);
 
