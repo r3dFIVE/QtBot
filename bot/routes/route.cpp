@@ -44,7 +44,7 @@ Route::buildRequest(const RequestType requestType,
 
             QString queryString = "?";
 
-            for (auto key : queryParams.keys()) {
+            for (const QString &key : queryParams.keys()) {
                 queryString += QString("%1=%2&").arg(key, queryParams[key].toString());
             }
 
@@ -75,7 +75,17 @@ void
 Route::buildHttpMultiPart(EventContext &context, File *file) {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
 
-    QFileInfo fileInfo(*file->get());
+    QFile *qfile = file->get();
+
+    if (!qfile->isOpen()) {
+        if  (!qfile->open(QIODevice::ReadOnly)) {
+            _logger->warning(QString("Failed to open file, reason: %1").arg(qfile->errorString()));
+
+            return;
+        }
+    }
+
+    QFileInfo fileInfo(*qfile);
 
     QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
 
@@ -89,7 +99,7 @@ Route::buildHttpMultiPart(EventContext &context, File *file) {
 
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
 
-    filePart.setBodyDevice(file->get());
+    filePart.setBodyDevice(qfile);
 
     _httpMultiPart->append(filePart);
 

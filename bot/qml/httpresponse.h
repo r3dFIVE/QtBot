@@ -2,25 +2,39 @@
 #define HTTPRESPONSE_H
 
 #include <QObject>
+#include <QDebug>
+#include <QJsonDocument>
 
 #include "payloads/jsonserializable.h"
 
-class HttpResponse : public JsonSerializable
+class HttpResponse : public QObject
 {
     Q_OBJECT
 
-    static const QString CONTENT_TYPE;
-    static const QString STATUS_CODE;
-    static const QString CONTENT;
+    Q_PROPERTY(QJsonArray object READ object CONSTANT)
 
-public:
-    QString content() const;
-    void content(const QString &content);
-    QString contentType() const;
+    QString _contentType;
+    QString _responseText;
+    int _statusCode = 0;
+
+public:    
+    explicit HttpResponse(QObject *parent = nullptr) : QObject(parent) {}
+    HttpResponse(const HttpResponse &other);
+    ~HttpResponse() {
+        qDebug() << "!!!!!!!!!!!!DELETED HTTPRESPONSE!!!!!!!!!!";
+    }
+
+    Q_INVOKABLE HttpResponse &operator=(const HttpResponse &other);
+
+    Q_INVOKABLE QString text() const;
+    void text(const QString &content);
+    Q_INVOKABLE QString contentType() const;
     void contentType(const QString &contentType);
-    int statusCode() const;
+    Q_INVOKABLE int statusCode() const;
     void statusCode(const int statusCode);
-
+    Q_INVOKABLE QJsonArray object();
 };
+
+Q_DECLARE_METATYPE(HttpResponse)
 
 #endif // HTTPRESPONSE_H

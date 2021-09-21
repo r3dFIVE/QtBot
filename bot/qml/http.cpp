@@ -1,13 +1,12 @@
-#include "file.h"
 #include "http.h"
-#include "httpresponse.h"
 
+#include "file.h"
 #include "util/httputils.h"
 #include "util/mimeutils.h"
 #include "util/serializationutils.h"
 
 
-Http::Http() {
+Http::Http(QObject *parent) : QObject(parent) {
     _botAuthHeaderName = QString("Authorization").toUtf8();
 
     _botAuthHeaderValue = QString("Bot %1").arg(HttpUtils::botToken()).toUtf8();
@@ -52,51 +51,62 @@ Http::operator=(const Http &other) {
     return *this;
 }
 
-QJsonObject
-Http::processReply(QSharedPointer<QNetworkReply> reply) {
+HttpResponse*
+Http::processReply(QSharedPointer<QNetworkReply> reply, QVariant fileVar)  {
     HttpUtils::waitForReply(reply);
 
-    HttpResponse response;
+    HttpResponse *response = new HttpResponse(this);
 
     if (reply->error()) {
-        response.statusCode(reply->error());
+        response->statusCode(reply->error());
 
         QString failureMessage = QString("QNetworkReply error code: %1. Reason: %2")
                 .arg(reply->error())
                 .arg(reply->errorString());
 
-        response.content(failureMessage);
+        response->text(failureMessage);
 
         _logger->warning(failureMessage);
 
-        return response.toQJsonObject();
+        return response;
     }
 
     QVariant contentType = reply->header(QNetworkRequest::ContentTypeHeader);
 
     if (contentType.isValid()) {
-        response.contentType(contentType.value<QString>());
+        response->contentType(contentType.value<QString>());
     }
 
     QVariant statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
 
     if (statusCode.isValid()) {
-        response.statusCode(statusCode.value<int>());
+        response->statusCode(statusCode.value<int>());
     }
 
 
-    if (MimeUtils::isTextContent(response.contentType())) {
-        response.content(reply->readAll());
+    if (MimeUtils::isTextContent(response->contentType())) {
+        response->text(reply->readAll());
 
     } else {
-        writeToFile(reply, response);
+        writeToFile(reply, response, fileVar);
     }
 
-    return response.toQJsonObject();
+    return response;
 }
 
 void
-Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse &response) {
+Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse *response, QVariant fileVar) {
+    if (fileVar.isValid()) {
+        File *file = fileVar.value<File*>();
+
+        write(reply->readAll(), response, file->get());
+
+        return;
+
+    } else {
+        _logger->warning("Must pass a valid existing File. Using default download directory and filename.");
+    }
+
     QString targetName = QString("%1/%2%3")
             .arg(_downloadDirectory.path())
             .arg(_filePrefix)
@@ -110,20 +120,28 @@ Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse &response) {
 
     QFile file(targetName);
 
-    if (file.open(QFile::WriteOnly)) {
-        response.content(targetName);
+    write(reply->readAll(), response, &file);
+}
 
-        file.write(reply->readAll());
+void
+Http::write(const QByteArray data, HttpResponse *response, QFile *file) {
+    if (!file->isOpen()) {
+        if (!file->open(QFile::WriteOnly)) {
+            QString failureMessage = QString("Failed to open file for writing: %1. Reason: %2")
+                    .arg(file->fileName())
+                    .arg(file->errorString());
 
-    } else {
-        QString failureMessage = QString("Failed to open file for writing: %1. Reason: %2")
-                .arg(targetName)
-                .arg(file.errorString());
+            response->text(failureMessage);
 
-        response.content(failureMessage);
+            _logger->warning(failureMessage);
 
-        _logger->warning(failureMessage);
+            return;
+        }
     }
+
+    response->text(file->fileName());
+
+    file->write(data);    
 }
 
 void
@@ -146,8 +164,8 @@ Http::addCommonHeadersToRequest(QNetworkRequest &request, bool isJsonPayload) {
     }
 }
 
-QJsonObject
-Http::get(const QString &url) {
+HttpResponse*
+Http::get(const QString &url, QVariant fileVar) {
     QNetworkAccessManager manager(this);
 
     QNetworkRequest request(url);
@@ -156,11 +174,11 @@ Http::get(const QString &url) {
 
     QNetworkReply *rawReply = manager.get(request);
 
-    return processReply(QSharedPointer<QNetworkReply>(rawReply));
+    return processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 }
 
-QJsonObject
-Http::post(const QString &url, const QJsonObject &json) {
+HttpResponse*
+Http::post(const QString &url, const QJsonObject &json, QVariant fileVar) {
     QNetworkAccessManager manager(this);
 
     QNetworkRequest request(url);
@@ -172,9 +190,9 @@ Http::post(const QString &url, const QJsonObject &json) {
     return processReply(QSharedPointer<QNetworkReply>(rawReply));
 }
 
-QJsonObject
-Http::post(const QString &url, HttpMultiPart *formMultiPart) {
-    QJsonObject json;
+HttpResponse*
+Http::post(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
+    HttpResponse *response = new HttpResponse(this);
 
     if (formMultiPart) {
         QNetworkAccessManager manager(this);
@@ -185,17 +203,17 @@ Http::post(const QString &url, HttpMultiPart *formMultiPart) {
 
         QNetworkReply *rawReply = manager.post(request, formMultiPart->get());
 
-        json = processReply(QSharedPointer<QNetworkReply>(rawReply));
+        response = processReply(QSharedPointer<QNetworkReply>(rawReply));
 
     } else {
-       json = multiPartFailure();
+       response = multiPartFailure();
     }
 
-    return json;
+    return response;
 }
 
-QJsonObject
-Http::put(const QString &url, const QJsonObject &json) {
+HttpResponse*
+Http::put(const QString &url, const QJsonObject &json, QVariant fileVar) {
     QNetworkAccessManager manager(this);
 
     QNetworkRequest request(url);
@@ -207,9 +225,9 @@ Http::put(const QString &url, const QJsonObject &json) {
     return processReply(QSharedPointer<QNetworkReply>(rawReply));
 }
 
-QJsonObject
-Http::put(const QString &url, HttpMultiPart *formMultiPart) {
-    QJsonObject json;
+HttpResponse*
+Http::put(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
+    HttpResponse *response = new HttpResponse(this);
 
     if (formMultiPart) {
         QNetworkAccessManager manager(this);
@@ -220,17 +238,17 @@ Http::put(const QString &url, HttpMultiPart *formMultiPart) {
 
         QNetworkReply *rawReply = manager.put(request, formMultiPart->get());
 
-        json = processReply(QSharedPointer<QNetworkReply>(rawReply));
+        response = processReply(QSharedPointer<QNetworkReply>(rawReply));
 
     } else {
-       json = multiPartFailure();
+       response = multiPartFailure();
     }
 
-    return json;
+    return response;
 }
 
-QJsonObject
-Http::patch(const QString &url, const QJsonObject &json) {
+HttpResponse*
+Http::patch(const QString &url, const QJsonObject &json, QVariant fileVar) {
     QNetworkAccessManager manager(this);
 
     QNetworkRequest request(url);
@@ -242,9 +260,9 @@ Http::patch(const QString &url, const QJsonObject &json) {
     return processReply(QSharedPointer<QNetworkReply>(rawReply));
 }
 
-QJsonObject
-Http::patch(const QString &url, HttpMultiPart *formMultiPart) {
-    QJsonObject json;
+HttpResponse*
+Http::patch(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
+    HttpResponse *response = new HttpResponse(this);
 
     if (formMultiPart) {
         QNetworkAccessManager manager(this);
@@ -255,16 +273,16 @@ Http::patch(const QString &url, HttpMultiPart *formMultiPart) {
 
         QNetworkReply *rawReply = manager.put(request, formMultiPart->get());
 
-        json = processReply(QSharedPointer<QNetworkReply>(rawReply));
+        response = processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 
     } else {
-       json = multiPartFailure();
+       response = multiPartFailure();
     }
 
-    return json;
+    return response;
 }
 
-QJsonObject
+HttpResponse*
 Http::del(const QString &url) {
     QNetworkAccessManager manager(this);
 
@@ -311,19 +329,19 @@ Http::filePrefix(const QString &prefix) {
     _filePrefix = prefix + "_";
 }
 
-QJsonObject
-Http::multiPartFailure() {
-    HttpResponse response;
+HttpResponse*
+Http::multiPartFailure()  {
+    HttpResponse *response = new HttpResponse(this);
 
     QString failureMessage("Must pass in a valid FormMultiPart for given POST operation.");
 
-    response.statusCode(BAD_REQUEST);
+    response->statusCode(BAD_REQUEST);
 
-    response.content(failureMessage);
+    response->text(failureMessage);
 
     _logger->warning(failureMessage);
 
-    return response.toQJsonObject();
+    return response;
 }
 
 

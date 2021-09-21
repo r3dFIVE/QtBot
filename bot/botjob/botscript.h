@@ -30,7 +30,6 @@
 #include <QVariantMap>
 
 #include "routes/discordapi.h"
-
 #include "databasecontext.h"
 #include "ibotjob.h"
 #include "payloads/eventcontext.h"
@@ -91,16 +90,18 @@ public:
      */
 
     Q_INVOKABLE QVariant bQueueTimedEvent(const QVariant &timedBindingVariant);
-    Q_INVOKABLE QString bId();
+    Q_INVOKABLE QString bId() const;
     Q_INVOKABLE void bLogTrace(QString logEvent);
     Q_INVOKABLE void bLogInfo(QString logEvent);
     Q_INVOKABLE void bLogDebug(QString logEvent);
     Q_INVOKABLE void bLogWarning(QString logEvent);
     Q_INVOKABLE void bLogCritical(QString logEvent);
     Q_INVOKABLE void bLogFatal(QString event);
-    Q_INVOKABLE QString bName();
+    Q_INVOKABLE QString bName() const;
     Q_INVOKABLE void bPause(int ms);
     Q_INVOKABLE void bRemoveTimedEventByJobId(const QVariant &contextVariant);
+    Q_INVOKABLE QString bGenerateSHA256(const QString &inputString) const;
+    Q_INVOKABLE QString bGenerateSHA256(File *inputFile) const;
 
     /*
      *  DiscordAPI RELATED FUNCTIONS

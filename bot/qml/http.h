@@ -27,28 +27,29 @@ class Http : public QObject
     QString _filePrefix;
 
     void addCommonHeadersToRequest(QNetworkRequest &request, bool isJsonPayload = true);
-    QJsonObject processReply(QSharedPointer<QNetworkReply> reply);
-    void writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse &reponse);
-    QJsonObject multiPartFailure();
+    HttpResponse* processReply(QSharedPointer<QNetworkReply> reply, QVariant fileVar = QVariant());
+    void writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse *reponse, QVariant fileVar = QVariant());
+    void write(const QByteArray data, HttpResponse *response, QFile *file);
+    HttpResponse* multiPartFailure();
 
     QByteArray _botAuthHeaderName;
     QByteArray _botAuthHeaderValue;
 
 public:
-    Http();
+    Http(QObject *parent = nullptr);
     Http(const Http &other);
     ~Http() {}
 
     Q_INVOKABLE Http &operator=(const Http &other);
 
-    Q_INVOKABLE QJsonObject get(const QString &url);
-    Q_INVOKABLE QJsonObject post(const QString &path, const QJsonObject &json);
-    Q_INVOKABLE QJsonObject post(const QString &path, HttpMultiPart *formMultiPart);
-    Q_INVOKABLE QJsonObject put(const QString &path, const QJsonObject &json);
-    Q_INVOKABLE QJsonObject put(const QString &path, HttpMultiPart *formMultiPart);
-    Q_INVOKABLE QJsonObject patch(const QString &path, const QJsonObject &json);
-    Q_INVOKABLE QJsonObject patch(const QString &path, HttpMultiPart *formMultiPart);
-    Q_INVOKABLE QJsonObject del(const QString &url);
+    Q_INVOKABLE HttpResponse* get(const QString &url, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* post(const QString &path, const QJsonObject &json, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* post(const QString &path, HttpMultiPart *formMultiPart, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* put(const QString &path, const QJsonObject &json, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* put(const QString &path, HttpMultiPart *formMultiPart, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* patch(const QString &path, const QJsonObject &json, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* patch(const QString &path, HttpMultiPart *formMultiPart, QVariant fileVariant = QVariant());
+    Q_INVOKABLE HttpResponse* del(const QString &url);
 
     Q_INVOKABLE void enableBotAuth(const bool enable);
     Q_INVOKABLE void addRawHeader(const QString &headerName, const QString &headerValue);
