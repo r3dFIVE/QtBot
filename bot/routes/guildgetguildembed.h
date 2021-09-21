@@ -34,7 +34,7 @@ public:
 
         _pathParams[Route::GUILD_ID_TOKEN] = guildId;
 
-        buildRequest(GET, PATH, guildId, context.getTargetPayload());
+        buildRequest(GET, PATH, guildId, context);
     }
 };
 

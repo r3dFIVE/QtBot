@@ -24,6 +24,10 @@
 
 
 SqlQuery::SqlQuery(const SqlQuery &other) {
+    if (this == &other) {
+        return;
+    }
+
     _query = other._query;
 }
 

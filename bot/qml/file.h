@@ -52,6 +52,8 @@ public:
 
     Q_INVOKABLE bool hasNext() const;
     Q_INVOKABLE bool open();
+    Q_INVOKABLE void close();
+
     Q_INVOKABLE bool exists() const;
     Q_INVOKABLE bool remove();
     Q_INVOKABLE bool rename(const QString &newName);

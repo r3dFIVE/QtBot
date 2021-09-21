@@ -35,7 +35,7 @@ protected:
     QJsonObject _jsonObject;
 
 public:
-    JsonSerializable() {}
+    JsonSerializable(QObject *parent = nullptr) : QObject(parent) {}
     JsonSerializable(const JsonSerializable &other) {
         _jsonObject = other._jsonObject;
     }

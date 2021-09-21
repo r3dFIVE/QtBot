@@ -66,6 +66,7 @@ Bot::Bot() {
     qRegisterMetaType<File>();
     qRegisterMetaType<HttpPart>();
     qRegisterMetaType<HttpMultiPart>();
+    qRegisterMetaType<HttpResponse*>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,

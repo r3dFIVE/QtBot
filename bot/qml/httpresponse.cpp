@@ -1,36 +1,78 @@
 #include "httpresponse.h"
 
 
-const QString HttpResponse::CONTENT_TYPE = "content_type";
-const QString HttpResponse::STATUS_CODE = "status_code";
-const QString HttpResponse::CONTENT = "content";
+HttpResponse::HttpResponse(const HttpResponse &other)  {
+    if (this == &other) {
+        return;
+    }
+
+    _responseText = other._responseText;
+
+    _contentType = other._contentType;
+
+    _statusCode = other._statusCode;
+}
+
+HttpResponse&
+HttpResponse::operator=(const HttpResponse &other)  {
+    if (this == &other) {
+        return *this;
+    }
+
+    _responseText = other._responseText;
+
+    _contentType = other._contentType;
+
+    _statusCode = other._statusCode;
+
+    return *this;
+}
 
 QString
-HttpResponse::content() const {
-    return _jsonObject[CONTENT].toString();
+HttpResponse::text() const {
+    return _responseText;
 }
 
 void
-HttpResponse::content(const QString &content) {
-    _jsonObject[CONTENT] = content;
+HttpResponse::text(const QString &text) {
+    _responseText = text;
 }
 
 QString
 HttpResponse::contentType() const {
-    return _jsonObject[CONTENT_TYPE].toString();
+    return _contentType;
 }
 
 void
 HttpResponse::contentType(const QString &contentType) {
-    _jsonObject[CONTENT_TYPE] = contentType;
+    _contentType = contentType;
+}
+
+QJsonArray
+HttpResponse::object() {
+    QJsonArray array;
+
+    QJsonDocument doc = QJsonDocument::fromJson(_responseText.toUtf8());
+
+    if (doc.isEmpty() || doc.isNull()) {
+        return array;
+    }
+
+    if (doc.isArray()) {
+        array = doc.array();
+    } else {
+        array << doc.object();
+    }
+
+    return array;
 }
 
 int
 HttpResponse::statusCode() const {
-    return _jsonObject[STATUS_CODE].toInt();
+    return _statusCode;
 }
 
 void
 HttpResponse::statusCode(int statusCode) {
-    _jsonObject[STATUS_CODE] = statusCode;
+    _statusCode = statusCode;
 }

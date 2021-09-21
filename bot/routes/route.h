@@ -34,6 +34,8 @@ class Route : public QObject
 {
     Q_OBJECT
 
+    Logger *_logger = LogFactory::getLogger();
+
 public:
     static const QString GLOBAL_BUCKET;
 

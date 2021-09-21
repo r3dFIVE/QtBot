@@ -154,6 +154,11 @@ File::setParent(QObject *parent) {
     _file->setParent(parent);
 }
 
+void
+File::close() {
+    _file->close();
+}
+
 QFile*
 File::get() {
     if (!_file->isOpen()) {

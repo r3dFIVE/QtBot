@@ -22,6 +22,7 @@
 
 #include <QSqlError>
 #include <QThread>
+#include <QCryptographicHash>
 
 #include "util/serializationutils.h"
 #include "util/enumutils.h"
@@ -163,12 +164,12 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 }
 
 QString
-BotScript::bId() {
+BotScript::bId() const {
     return _botId;
 }
 
 QString
-BotScript::bName() {
+BotScript::bName() const {
     return _botName;
 }
 
@@ -179,6 +180,20 @@ BotScript::bRemoveTimedEventByJobId(const QVariant &contextVariant) {
     SerializationUtils::fromVariant(*context.data(), contextVariant);
 
     emit removeTimedEventByJobIdSignal(context);
+}
+
+QString
+BotScript::bGenerateSHA256(const QString &inputString) const {
+    return QString(QCryptographicHash::hash(inputString.toUtf8(), QCryptographicHash::Sha256).toHex());
+}
+
+QString
+BotScript::bGenerateSHA256(File *inputFile) const {
+    QSharedPointer<QCryptographicHash> hash = QSharedPointer<QCryptographicHash>(new QCryptographicHash(QCryptographicHash::Sha256));
+
+    hash->addData(inputFile->get());
+
+    return QString(hash->result().toHex());
 }
 
 void
