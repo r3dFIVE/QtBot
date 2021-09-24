@@ -34,16 +34,17 @@ public:
     static const QString VALUE;
 
     EmbedField() {}
+    EmbedField(const QString &name, const QString &value, const bool isInline);
     EmbedField(const QByteArray &json) : JsonSerializable(json) {}
     EmbedField(const QJsonObject &json) : JsonSerializable(json) {}
     EmbedField(const QString &json) : JsonSerializable(json) {}
 
-    QJsonValue getInline() const;
-    QJsonValue getName() const;
-    QJsonValue getValue() const;
-    void setName(const QJsonValue &name);
-    void setValue(const QJsonValue &value);
-    void setInline(const QJsonValue &inln);
+    Q_INVOKABLE QJsonValue getInline() const;
+    Q_INVOKABLE QJsonValue getName() const;
+    Q_INVOKABLE QJsonValue getValue() const;
+    Q_INVOKABLE void setName(const QJsonValue &name);
+    Q_INVOKABLE void setValue(const QJsonValue &value);
+    Q_INVOKABLE void setInline(const QJsonValue &isInline);
 
     Q_PROPERTY(QJsonValue name READ getName WRITE setName)
     Q_PROPERTY(QJsonValue value READ getValue WRITE setValue)

@@ -25,6 +25,15 @@ const QString EmbedAuthor::NAME = "name";
 const QString EmbedAuthor::PROXY_ICON_URL = "proxy_icon_url";
 const QString EmbedAuthor::URL = "url";
 
+
+EmbedAuthor::EmbedAuthor(const QString &name, const QString &url, const QString &iconUrl) {
+    _jsonObject[NAME] = name;
+
+    _jsonObject[URL] = url;
+
+    _jsonObject[ICON_URL] = iconUrl;
+}
+
 QJsonValue
 EmbedAuthor::getName() const {
     return _jsonObject[NAME];

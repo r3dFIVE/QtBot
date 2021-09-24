@@ -35,6 +35,6 @@ public:
     Q_INVOKABLE QJsonArray object();
 };
 
-Q_DECLARE_METATYPE(HttpResponse)
+//Q_DECLARE_METATYPE(HttpResponse)
 
 #endif // HTTPRESPONSE_H

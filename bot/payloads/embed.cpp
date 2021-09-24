@@ -31,9 +31,18 @@ const QString Embed::FOOTER = "footer";
 const QString Embed::IMAGE = "image";
 const QString Embed::THUMBNAIL = "thumbnail";
 const QString Embed::VIDEO = "video";
-const QString Embed::PROVIDER = "provider";
 const QString Embed::AUTHOR = "author";
 const QString Embed::FIELDS = "fields";
+
+Embed::Embed(const QString &title, const QString &description, const QString &url, const int color) {
+    _jsonObject[TITLE] = title;
+
+    _jsonObject[DESCRIPTION] = description;
+
+    _jsonObject[URL] = url;
+
+    _jsonObject[COLOR] = color;
+}
 
 QJsonValue
 Embed::getTitle() const {
@@ -136,16 +145,6 @@ Embed::setVideo(const QJsonObject &video) {
 }
 
 QJsonObject
-Embed::getProvider() const {
-    return _jsonObject[PROVIDER].toObject();
-}
-
-void
-Embed::setProvider(const QJsonObject &provider) {
-    _jsonObject[PROVIDER] = provider;
-}
-
-QJsonObject
 Embed::getAuthor() const {
     return _jsonObject[AUTHOR].toObject();
 }
@@ -155,7 +154,6 @@ Embed::setAuthor(const QJsonObject &author) {
     _jsonObject[AUTHOR] = author;
 }
 
-
 QJsonArray
 Embed::getFields() const {    
     return _jsonObject[FIELDS].toArray();
@@ -164,4 +162,47 @@ Embed::getFields() const {
 void
 Embed::setFields(const QJsonArray &fields) {
     _jsonObject[FIELDS] = fields;
+}
+
+void
+Embed::addField(EmbedField *field) {
+    QJsonArray array = _jsonObject[FIELDS].toArray();
+
+    array << field->object();
+
+    _jsonObject[FIELDS] = array;
+}
+
+void
+Embed::addField(const QJsonObject &field) {
+    QJsonArray array = _jsonObject[FIELDS].toArray();
+
+    array << field;
+
+    _jsonObject[FIELDS] = array;
+}
+
+void
+Embed::setAuthor(EmbedAuthor *author) {
+    _jsonObject[AUTHOR] = author->object();
+}
+
+void
+Embed::setFooter(EmbedFooter *footer) {
+    _jsonObject[FOOTER] = footer->object();
+}
+
+void
+Embed::setImage(EmbedMedia *image) {
+    _jsonObject[IMAGE] = image->object();
+}
+
+void
+Embed::setThumbnail(EmbedMedia *thumbnail) {
+    _jsonObject[THUMBNAIL] = thumbnail->object();
+}
+
+void
+Embed::setVideo(EmbedMedia *video) {
+    _jsonObject[VIDEO] = video->object();
 }

@@ -48,8 +48,10 @@ public:
     QJsonObject fromQString(const QString &json);
     QJsonObject fromByteArray(const QByteArray &json);
     QJsonObject toQJsonObject();
-    QString toQString();    
+    QString toQString();
     void setQJsonObject(const QJsonObject &jsonObject);
+
+    Q_INVOKABLE QJsonObject object();
 };
 
 Q_DECLARE_METATYPE(JsonSerializable*)
