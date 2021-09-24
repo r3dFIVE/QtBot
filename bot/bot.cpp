@@ -58,20 +58,6 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<Route> >();
     qRegisterMetaType<QSharedPointer<EventContext> >();
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
-    qRegisterMetaType<SqlDatabase>();
-    qRegisterMetaType<MongoDB>();
-    qRegisterMetaType<MongoFind>();
-    qRegisterMetaType<MongoInsert>();
-    qRegisterMetaType<SqlQuery>();
-    qRegisterMetaType<SqlField>();
-    qRegisterMetaType<SqlRecord>();
-    qRegisterMetaType<SqlError>();
-    qRegisterMetaType<File>();
-    qRegisterMetaType<HttpPart>();
-    qRegisterMetaType<HttpMultiPart>();
-    qRegisterMetaType<HttpResponse*>();
-    qRegisterMetaType<Embed>();
-    qRegisterMetaType<EmbedField>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
