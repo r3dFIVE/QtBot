@@ -37,6 +37,9 @@
 #include "qml/httpmultipart.h"
 #include "qml/httppart.h"
 
+#include "payloads/embed.h"
+#include "payloads/embedfield.h"
+
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int Bot::BOT_API_MAJOR_VERSION = 1;
@@ -67,6 +70,8 @@ Bot::Bot() {
     qRegisterMetaType<HttpPart>();
     qRegisterMetaType<HttpMultiPart>();
     qRegisterMetaType<HttpResponse*>();
+    qRegisterMetaType<Embed>();
+    qRegisterMetaType<EmbedField>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,

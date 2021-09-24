@@ -34,15 +34,20 @@ class QmlFactory : public QObject
 
     DatabaseContext _databaseContext;
 
-public:
+    QObject *createFile(const QVariantMap& arguments);
+    QObject *createSqlQuery(const QVariantMap& arguments);
+    QObject *createEmbed(const QVariantMap &arguments);
+    QObject *createEmbedField(const QVariantMap &arguments);
+    QObject *createEmbedAuthor(const QVariantMap& arguments);
+    QObject *createEmbedFooter(const QVariantMap& arguments);
+    QObject *createEmbedMedia(const QVariantMap& arguments);
 
+public:
     QmlFactory(const DatabaseContext &context);
 
-    static void buildQmlFactory(QSharedPointer<QQmlEngine> engine,
-                                const DatabaseContext &context);
+    Q_INVOKABLE QObject *createObject(const QString& typeName, const QVariantMap& arguments);
 
-public slots:
-    QObject* createObject(const QString& typeName, const QVariantMap& arguments);
+    static void buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseContext &context);
 };
 
 #endif // QMLFACTORY_H

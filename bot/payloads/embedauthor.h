@@ -35,18 +35,19 @@ public:
     const static QString URL;
 
     EmbedAuthor() {}
+    EmbedAuthor(const QString &name, const QString &url, const QString &iconUrl);
     EmbedAuthor(const QByteArray &json) : JsonSerializable(json) {}
     EmbedAuthor(const QJsonObject &json) : JsonSerializable(json) {}
     EmbedAuthor(const QString &json) : JsonSerializable(json) {}
 
-    QJsonValue getIconUrl() const;
-    QJsonValue getName() const;
-    QJsonValue getProxyIconUrl() const;
-    QJsonValue getUrl() const;
-    void setIconUrl(const QJsonValue &iconUrl);
-    void setName(const QJsonValue &name);
-    void setProxyIconUrl(const QJsonValue &proxyIconUrl);
-    void setUrl(const QJsonValue &url);
+    Q_INVOKABLE QJsonValue getIconUrl() const;
+    Q_INVOKABLE QJsonValue getName() const;
+    Q_INVOKABLE QJsonValue getProxyIconUrl() const;
+    Q_INVOKABLE QJsonValue getUrl() const;
+    Q_INVOKABLE void setIconUrl(const QJsonValue &iconUrl);
+    Q_INVOKABLE void setName(const QJsonValue &name);
+    Q_INVOKABLE void setProxyIconUrl(const QJsonValue &proxyIconUrl);
+    Q_INVOKABLE void setUrl(const QJsonValue &url);
 
     Q_PROPERTY(QJsonValue name READ getName WRITE setName)
     Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)

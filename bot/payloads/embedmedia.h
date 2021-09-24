@@ -18,13 +18,13 @@
  *
  */
 
-#ifndef EMBEDTHUMBNAIL_H
-#define EMBEDTHUMBNAIL_H
+#ifndef EMBEDMEDIA_H
+#define EMBEDMEDIA_H
 
 #include "jsonserializable.h"
 
 
-class EmbedThumbnail : public JsonSerializable
+class EmbedMedia : public JsonSerializable
 {
     Q_OBJECT
 
@@ -34,19 +34,20 @@ public:
     static const QString URL;
     static const QString WIDTH;
 
-    EmbedThumbnail() {}
-    EmbedThumbnail(const QByteArray &json) : JsonSerializable(json) {}
-    EmbedThumbnail(const QJsonObject &json) : JsonSerializable(json) {}
-    EmbedThumbnail(const QString &json) : JsonSerializable(json) {}
+    EmbedMedia() {}
+    EmbedMedia(const QString &url, const int height, const int width);
+    EmbedMedia(const QByteArray &json) : JsonSerializable(json) {}
+    EmbedMedia(const QJsonObject &json) : JsonSerializable(json) {}
+    EmbedMedia(const QString &json) : JsonSerializable(json) {}
 
-    QJsonValue getHeight() const;
-    QJsonValue getProxyUrl() const;
-    QJsonValue getUrl() const;
-    QJsonValue getWidth() const;
-    void setHeight(const QJsonValue &height);
-    void setProxyUrl(const QJsonValue &proxyUrl);
-    void setWidth(const QJsonValue &width);
-    void setUrl(const QJsonValue &url);
+    Q_INVOKABLE QJsonValue getHeight() const;
+    Q_INVOKABLE QJsonValue getProxyUrl() const;
+    Q_INVOKABLE QJsonValue getUrl() const;
+    Q_INVOKABLE QJsonValue getWidth() const;
+    Q_INVOKABLE void setHeight(const QJsonValue &height);
+    Q_INVOKABLE void setProxyUrl(const QJsonValue &proxyUrl);
+    Q_INVOKABLE void setUrl(const QJsonValue &url);
+    Q_INVOKABLE void setWidth(const QJsonValue &width);
 
     Q_PROPERTY(QJsonValue url READ getUrl WRITE setUrl)
     Q_PROPERTY(QJsonValue proxy_url READ getProxyUrl WRITE setProxyUrl)
@@ -54,6 +55,6 @@ public:
     Q_PROPERTY(QJsonValue width READ getWidth WRITE setWidth)
 };
 
-Q_DECLARE_METATYPE(EmbedThumbnail)
+Q_DECLARE_METATYPE(EmbedMedia);
 
-#endif // EMBEDTHUMBNAIL_H
+#endif // EMBEDMEDIA_H

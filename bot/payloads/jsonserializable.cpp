@@ -39,6 +39,11 @@ JsonSerializable::setQJsonObject(const QJsonObject &jsonObject) {
 }
 
 QJsonObject
+JsonSerializable::object() {
+    return _jsonObject;
+}
+
+QJsonObject
 JsonSerializable::toQJsonObject() {
     return _jsonObject;
 }

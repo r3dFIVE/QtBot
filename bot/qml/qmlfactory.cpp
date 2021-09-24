@@ -18,21 +18,25 @@
  *
  */
 
-#include "http.h"
-#include "httpmultipart.h"
-#include "httppart.h"
-#include "mongofind.h"
-#include "mongoinsert.h"
 #include "qmlfactory.h"
 
 #include <QQmlEngine>
 #include <QVariantMap>
 
+#include "http.h"
+#include "httpmultipart.h"
+#include "httppart.h"
+#include "mongofind.h"
+#include "mongoinsert.h"
 #include "file.h"
 #include "sqldatabase.h"
 #include "sqlquery.h"
 #include "qml/mongodb.h"
 #include "routes/discordapi.h"
+#include "payloads/embed.h"
+#include "payloads/embedauthor.h"
+#include "payloads/embedfooter.h"
+#include "payloads/embedmedia.h"
 
 
 QmlFactory::QmlFactory(const DatabaseContext &databaseContext) {
@@ -42,12 +46,22 @@ QmlFactory::QmlFactory(const DatabaseContext &databaseContext) {
 QObject*
 QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) {
     if (typeName == "File"){
-        QString filePath = arguments.value("filePath").toString();
+        return createFile(arguments);
 
-        OpenMode::Mode openMode =
-                qvariant_cast<OpenMode::Mode>(arguments.value("openMode", OpenMode::ReadWrite));
+    } else if (typeName == "Embed") {
+        return createEmbed(arguments);
 
-        return new File(filePath, openMode);
+    } else if (typeName == "EmbedField") {
+        return createEmbedField(arguments);
+
+    } else if (typeName == "EmbedAuthor") {
+        return createEmbedAuthor(arguments);
+
+    } else if (typeName == "EmbedFooter") {
+        return createEmbedFooter(arguments);
+
+    } else if (typeName == "EmbedMedia") {
+        return createEmbedMedia(arguments);
 
     } else if (typeName == "Http") {
         return new Http();
@@ -71,9 +85,7 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
         return new SqlDatabase(_databaseContext);
 
     } else if (typeName == "SqlQuery") {
-        SqlDatabase *db = qvariant_cast<SqlDatabase *>(arguments.value("database"));
-
-        return new SqlQuery(db);
+        return createSqlQuery(arguments);
 
     } else if (typeName == "SqlField") {
         return new SqlField;
@@ -81,10 +93,8 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
     } else if (typeName == "SqlRecord") {
         return new SqlRecord;
 
-    } else if (typeName == "SqlError") {
-        SqlError sqlError = qvariant_cast<SqlError>(arguments.value("sqlError"));
-
-        return new SqlError(sqlError);
+    } else if (typeName == "SqlError") {        
+        return qvariant_cast<SqlError*>(arguments.value("error"));
     }
 
     return nullptr;
@@ -102,6 +112,16 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
 
     engine->evaluate("function Http() { return _factory.createObject(\"Http\", {}); }");
 
+    engine->evaluate("function Embed(title, description, url, color) { return _factory.createObject(\"Embed\", {title: title, description: description, url: url, color: color}); }");
+
+    engine->evaluate("function EmbedField(name, value, inline) { return _factory.createObject(\"EmbedField\", {name: name, value: value, inline: inline}); }");
+
+    engine->evaluate("function EmbedAuthor(name, iconUrl, url) { return _factory.createObject(\"EmbedAuthor\", {name: name, iconUrl: iconUrl, url: url,}); }");
+
+    engine->evaluate("function EmbedFooter(text, iconUrl) { return _factory.createObject(\"EmbedFooter\", {text: text, iconUrl: iconUrl}); }");
+
+    engine->evaluate("function EmbedMedia(url, height, width) { return _factory.createObject(\"EmbedMedia\", {url: url, height: height, width: width}); }");
+
     engine->evaluate("function HttpPart() { return _factory.createObject(\"HttpPart\", {}); }");
 
     engine->evaluate("function HttpMultiPart() { return _factory.createObject(\"HttpMultiPart\", {}); }");
@@ -114,12 +134,83 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
 
     engine->evaluate("function MongoInsert() { return _factory.createObject(\"MongoInsert\", {}); }");
 
-    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { database: db }); }");
+    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { db: db }); }");
 
-    engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { sqlError: error }); }");
+    engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { error: error }); }");
 
     engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
 
     engine->evaluate("function SqlField() { return _factory.createObject(\"SqlField\", {}); }");
 }
 
+QObject*
+QmlFactory::createFile(const QVariantMap& arguments) {
+    QString filePath = arguments.value("filePath", "").toString();
+
+    OpenMode::Mode openMode =
+            qvariant_cast<OpenMode::Mode>(arguments.value("openMode", OpenMode::ReadWrite));
+
+    return new File(filePath, openMode);
+}
+
+QObject*
+QmlFactory::createSqlQuery(const QVariantMap& arguments) {
+    SqlDatabase *db = qvariant_cast<SqlDatabase *>(arguments.value("db"));
+
+    return new SqlQuery(db);
+}
+
+QObject*
+QmlFactory::createEmbed(const QVariantMap& arguments) {
+    QString title = arguments.value("title", "").toString();
+
+    QString description = arguments.value("description", "").toString();
+
+    QString url = arguments.value("url", "").toString();
+
+    int color = arguments.value("color", "").toInt();
+
+    return new Embed(title, description, url, color);
+}
+
+QObject*
+QmlFactory::createEmbedField(const QVariantMap& arguments) {
+    QString name = arguments.value("name", "").toString();
+
+    QString value = arguments.value("value", "").toString();
+
+    bool isInline = arguments.value("inline", false).toBool();
+
+    return new EmbedField(name, value, isInline);
+}
+
+QObject*
+QmlFactory::createEmbedAuthor(const QVariantMap& arguments) {
+    QString text = arguments.value("name", "").toString();
+
+    QString iconUrl = arguments.value("iconUrl", "").toString();
+
+    QString url = arguments.value("url", "").toString();
+
+    return new EmbedAuthor(text, iconUrl, url);
+}
+
+QObject*
+QmlFactory::createEmbedFooter(const QVariantMap& arguments) {
+    QString text = arguments.value("text", "").toString();
+
+    QString iconUrl = arguments.value("iconUrl", "").toString();
+
+    return new EmbedFooter(text, iconUrl);
+}
+
+QObject*
+QmlFactory::createEmbedMedia(const QVariantMap& arguments) {
+    QString url = arguments.value("url", "").toString();
+
+    int height = arguments.value("height", 0).toUInt();
+
+    int width = arguments.value("width", 0).toUInt();
+
+    return new EmbedMedia(url, height, width);
+}

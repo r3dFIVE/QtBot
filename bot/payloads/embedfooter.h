@@ -33,14 +33,18 @@ public:
     static const QString PROXY_ICON_URL;
     static const QString TEXT;
 
+    EmbedFooter() {}
+    EmbedFooter(const QString &text, const QString &iconUrl);
+    EmbedFooter(const QByteArray &json) : JsonSerializable(json) {}
+    EmbedFooter(const QJsonObject &json) : JsonSerializable(json) {}
+    EmbedFooter(const QString &json) : JsonSerializable(json) {}
 
-
-    QJsonValue getIconUrl() const;
-    QJsonValue getProxyIconUrl() const;
-    QJsonValue getText() const;
-    void setIconUrl(const QJsonValue &value);
-    void setProxyIconUrl(const QJsonValue &value);
-    void setText(const QJsonValue &value);
+    Q_INVOKABLE QJsonValue getIconUrl() const;
+    Q_INVOKABLE QJsonValue getProxyIconUrl() const;
+    Q_INVOKABLE QJsonValue getText() const;
+    Q_INVOKABLE void setIconUrl(const QJsonValue &value);
+    Q_INVOKABLE void setProxyIconUrl(const QJsonValue &value);
+    Q_INVOKABLE void setText(const QJsonValue &value);
 
     Q_PROPERTY(QJsonValue text READ getText WRITE setText)
     Q_PROPERTY(QJsonValue icon_url READ getIconUrl WRITE setIconUrl)

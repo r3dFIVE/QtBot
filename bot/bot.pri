@@ -46,10 +46,7 @@ HEADERS += \
     $$PWD/payloads/embedauthor.h \
     $$PWD/payloads/embedfield.h \
     $$PWD/payloads/embedfooter.h \
-    $$PWD/payloads/embedimage.h \
-    $$PWD/payloads/embedprovider.h \
-    $$PWD/payloads/embedthumbnail.h \
-    $$PWD/payloads/embedvideo.h \
+    $$PWD/payloads/embedmedia.h \
     $$PWD/payloads/eventcontext.h \
     $$PWD/payloads/guildroledelete.h \
     $$PWD/payloads/guildroleupdate.h \
@@ -253,10 +250,7 @@ SOURCES += \
     $$PWD/payloads/embedauthor.cpp \
     $$PWD/payloads/embedfield.cpp \
     $$PWD/payloads/embedfooter.cpp \
-    $$PWD/payloads/embedimage.cpp \
-    $$PWD/payloads/embedprovider.cpp \
-    $$PWD/payloads/embedthumbnail.cpp \
-    $$PWD/payloads/embedvideo.cpp \
+    $$PWD/payloads/embedmedia.cpp \
     $$PWD/payloads/emoji.cpp \
     $$PWD/payloads/gatewaypayload.cpp \
     $$PWD/payloads/guild.cpp \

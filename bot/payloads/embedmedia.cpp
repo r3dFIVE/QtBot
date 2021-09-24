@@ -18,50 +18,62 @@
  *
  */
 
-#include "embedimage.h"
+#include "embedmedia.h"
 
 
-const QString EmbedImage::HEIGHT = "height";
-const QString EmbedImage::PROXY_URL = "proxy_url";
-const QString EmbedImage::URL = "url";
-const QString EmbedImage::WIDTH = "width";
+const QString EmbedMedia::HEIGHT = "height";
+const QString EmbedMedia::PROXY_URL = "proxy_url";
+const QString EmbedMedia::URL = "url";
+const QString EmbedMedia::WIDTH = "width";
+
+EmbedMedia::EmbedMedia(const QString &url, const int height, const int width) {
+    _jsonObject[URL] = url;
+
+    if (height > 0) {
+        _jsonObject[HEIGHT] = height;
+    }
+
+    if (width > 0) {
+        _jsonObject[WIDTH] = width;
+    }
+}
 
 QJsonValue
-EmbedImage::getUrl() const {
+EmbedMedia::getUrl() const {
     return _jsonObject[URL];
 }
 
 void
-EmbedImage::setUrl(const QJsonValue &url) {
+EmbedMedia::setUrl(const QJsonValue &url) {
     _jsonObject[URL] = url;
 }
 
 QJsonValue
-EmbedImage::getProxyUrl() const {
+EmbedMedia::getProxyUrl() const {
     return _jsonObject[PROXY_URL];
 }
 
 void
-EmbedImage::setProxyUrl(const QJsonValue &proxyUrl) {
+EmbedMedia::setProxyUrl(const QJsonValue &proxyUrl) {
     _jsonObject[PROXY_URL] = proxyUrl;
 }
 
 QJsonValue
-EmbedImage::getHeight() const {
+EmbedMedia::getHeight() const {
     return _jsonObject[HEIGHT];
 }
 
 void
-EmbedImage::setHeight(const QJsonValue &height) {
+EmbedMedia::setHeight(const QJsonValue &height) {
     _jsonObject[HEIGHT] = height;
 }
 
 QJsonValue
-EmbedImage::getWidth() const {
+EmbedMedia::getWidth() const {
     return _jsonObject[WIDTH];
 }
 
 void
-EmbedImage::setWidth(const QJsonValue &width) {
+EmbedMedia::setWidth(const QJsonValue &width) {
     _jsonObject[WIDTH] = width;
 }

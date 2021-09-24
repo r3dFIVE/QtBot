@@ -24,6 +24,14 @@ const QString EmbedField::INLINE = "inline";
 const QString EmbedField::NAME = "name";
 const QString EmbedField::VALUE = "value";
 
+EmbedField::EmbedField(const QString &name, const QString &value, const bool isInline) {
+     _jsonObject[NAME] = name;
+
+     _jsonObject[VALUE] = value;
+
+     _jsonObject[INLINE] = isInline;
+}
+
 QJsonValue
 EmbedField::getValue() const {
     return _jsonObject[VALUE];
@@ -40,8 +48,8 @@ EmbedField::getInline() const {
 }
 
 void
-EmbedField::setInline(const QJsonValue &inln) {
-    _jsonObject[INLINE] = inln;
+EmbedField::setInline(const QJsonValue &isInline) {
+    _jsonObject[INLINE] = isInline;
 }
 
 QJsonValue
@@ -49,6 +57,7 @@ EmbedField::getName() const {
     return _jsonObject[NAME];
 }
 
-void EmbedField::setName(const QJsonValue &name) {
+void
+EmbedField::setName(const QJsonValue &name) {
     _jsonObject[NAME] = name;
 }
