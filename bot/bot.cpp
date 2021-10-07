@@ -36,6 +36,7 @@
 #include "qml/enums/networkrequest.h"
 #include "qml/httpmultipart.h"
 #include "qml/httppart.h"
+#include "qml/httpresponse.h"
 
 #include "payloads/embed.h"
 #include "payloads/embedfield.h"
@@ -58,6 +59,16 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<Route> >();
     qRegisterMetaType<QSharedPointer<EventContext> >();
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
+    qRegisterMetaType<MongoFind>();
+    qRegisterMetaType<MongoInsert>();
+    qRegisterMetaType<SqlQuery>();
+    qRegisterMetaType<SqlField>();
+    qRegisterMetaType<SqlRecord>();
+    qRegisterMetaType<SqlError>();
+    qRegisterMetaType<File>();
+    qRegisterMetaType<HttpPart>();
+    qRegisterMetaType<HttpMultiPart>();
+    qRegisterMetaType<HttpResponse*>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,

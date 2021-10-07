@@ -3,12 +3,15 @@
 #include "util/globals.h"
 
 #include "util/mongoutils.h"
+#include "mongoconnectionpool.h"
 
 void
 MongoManager::init() {
     try {
         if (!_instance) {
             _instance = QSharedPointer<mongocxx::instance>(new mongocxx::instance{});
+
+            MongoConnectionPool::init(_databaseContext);
         }
 
         _uri = mongocxx::uri{ MongoUtils::buildUri(_databaseContext) };

@@ -2,6 +2,8 @@
 
 #include "util/mongoutils.h"
 
+#include <optional>
+
 
 MongoFind::MongoFind(const MongoFind &other) {
     _findArgs = other._findArgs;
@@ -31,7 +33,7 @@ MongoFind::allowDiskUse() const {
     auto result = _findArgs.allow_disk_use();
 
     if (result) {
-        allow = result.get();
+        allow = result.value();
     }
 
     return allow;
@@ -49,7 +51,7 @@ MongoFind::allowPartialResults() const {
     auto result = _findArgs.allow_partial_results();
 
     if (result) {
-        allow = result.get();
+        allow = result.value();
     }
 
     return allow;
@@ -67,7 +69,7 @@ MongoFind::batchSize() const {
     auto result = _findArgs.batch_size();
 
     if (result) {
-        size = result.get();
+        size = result.value();
     }
 
     return size;
@@ -103,7 +105,7 @@ MongoFind::limit() const {
     auto result = _findArgs.limit();
 
     if (result) {
-        limit = result.get();
+        limit = result.value();
     }
 
     return limit;
@@ -139,7 +141,7 @@ MongoFind::maxAwaitTime() const {
     auto result = _findArgs.max_await_time();
 
     if (result) {
-        time = result.get().count();
+        time = result.value().count();
     }
 
     return time;
@@ -170,7 +172,7 @@ MongoFind::noCursorTimeout() const {
     auto result = _findArgs.no_cursor_timeout();
 
     if (result) {
-        allow = result.get();
+        allow = result.value();
     }
 
     return allow;
@@ -206,7 +208,7 @@ MongoFind::returnKey() const {
     auto result = _findArgs.return_key();
 
     if (result) {
-        allow = result.get();
+        allow = result.value();
     }
 
     return allow;
@@ -224,7 +226,7 @@ MongoFind::showRecordId() const {
     auto result = _findArgs.show_record_id();
 
     if (result) {
-        allow = result.get();
+        allow = result.value();
     }
 
     return allow;
@@ -247,7 +249,7 @@ MongoFind::skip() const {
     auto result = _findArgs.limit();
 
     if (result) {
-        skipDuration = result.get();
+        skipDuration = result.value();
     }
 
     return skipDuration;

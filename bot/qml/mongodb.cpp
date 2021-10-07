@@ -184,7 +184,7 @@ MongoDB::findOne(const QVariant &filter, const QVariant &args) {
         auto result = collection.find_one(searchFilter.view(), findArgs);
 
         if (result) {
-            json = MongoUtils::toJson(result.get());
+            json = MongoUtils::toJson(result.value());
         }
     } catch (mongocxx::exception &e) {
         _logger->warning(QString("Error running findOne, reason: %1").arg(e.what()));

@@ -54,9 +54,9 @@ EntityManager::init() {
             break;
         case SettingsParam::Database::QSQLITE:
         case SettingsParam::Database::QMYSQL:
-            _manager = QSharedPointer<SqlManager>(new SqlManager(_databaseContext));
+            _manager = QSharedPointer<SqlManager>(new SqlManager(_databaseContext));     
             break;            
-    }
+    }    
 
     _manager->init();
 }

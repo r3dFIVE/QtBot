@@ -187,12 +187,12 @@ Http::post(const QString &url, const QJsonObject &json, QVariant fileVar) {
 
     QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
 
-    return processReply(QSharedPointer<QNetworkReply>(rawReply));
+    return processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 }
 
 HttpResponse*
 Http::post(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
-    HttpResponse *response = new HttpResponse(this);
+    HttpResponse *response;
 
     if (formMultiPart) {
         QNetworkAccessManager manager(this);
@@ -203,7 +203,7 @@ Http::post(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
 
         QNetworkReply *rawReply = manager.post(request, formMultiPart->get());
 
-        response = processReply(QSharedPointer<QNetworkReply>(rawReply));
+        response = processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 
     } else {
        response = multiPartFailure();
@@ -222,12 +222,12 @@ Http::put(const QString &url, const QJsonObject &json, QVariant fileVar) {
 
     QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
 
-    return processReply(QSharedPointer<QNetworkReply>(rawReply));
+    return processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 }
 
 HttpResponse*
 Http::put(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
-    HttpResponse *response = new HttpResponse(this);
+    HttpResponse *response;
 
     if (formMultiPart) {
         QNetworkAccessManager manager(this);
@@ -238,7 +238,7 @@ Http::put(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
 
         QNetworkReply *rawReply = manager.put(request, formMultiPart->get());
 
-        response = processReply(QSharedPointer<QNetworkReply>(rawReply));
+        response = processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 
     } else {
        response = multiPartFailure();
@@ -257,12 +257,12 @@ Http::patch(const QString &url, const QJsonObject &json, QVariant fileVar) {
 
     QNetworkReply *rawReply = manager.post(request, SerializationUtils::toQByteArray(json));
 
-    return processReply(QSharedPointer<QNetworkReply>(rawReply));
+    return processReply(QSharedPointer<QNetworkReply>(rawReply), fileVar);
 }
 
 HttpResponse*
 Http::patch(const QString &url, HttpMultiPart *formMultiPart, QVariant fileVar) {
-    HttpResponse *response = new HttpResponse(this);
+    HttpResponse *response;
 
     if (formMultiPart) {
         QNetworkAccessManager manager(this);
@@ -327,6 +327,16 @@ Http::filePrefix() {
 void
 Http::filePrefix(const QString &prefix) {
     _filePrefix = prefix + "_";
+}
+
+void
+Http::ignoreSslErrors(const bool ignore) {
+    _ignoreSslErrors = ignore;
+}
+
+bool
+Http::ignoreSslErrors() {
+    return _ignoreSslErrors;
 }
 
 HttpResponse*

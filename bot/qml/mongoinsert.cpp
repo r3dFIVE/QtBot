@@ -23,7 +23,7 @@ MongoInsert::bypassDocumentValidation() {
     auto result = _insertOpts.bypass_document_validation();
 
     if (result) {
-        allow = result.get();
+        allow = result.value();
     }
 
     return allow;
@@ -41,7 +41,7 @@ MongoInsert::ordered() {
     auto result = _insertOpts.bypass_document_validation();
 
     if (result) {
-        ordered = result.get();
+        ordered = result.value();
     }
 
     return ordered;
