@@ -98,7 +98,7 @@ public:
 
         uri.append(hostPort);
 
-        uri.append(QString("/?minPoolSize=%1&maxPoolSize=%2").arg(ctx.minPoolSize).arg(ctx.maxPoolSize));
+        uri.append(QString("/?maxPoolSize=%1").arg(ctx.maxPoolSize));
 
         if (requiresAuth) {
             uri.append("&authSource=admin");

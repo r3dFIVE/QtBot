@@ -42,12 +42,7 @@ class EntityManager : public QObject
 
 
 public:
-    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {
-        if (_databaseContext.type == SettingsParam::Database::QMONGODB) {
-            MongoConnectionPool::init(_databaseContext);
-        }
-    }
-
+    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {}
 
 signals:
     void guildInitialized(QSharedPointer<GuildEntity> guildEntity);

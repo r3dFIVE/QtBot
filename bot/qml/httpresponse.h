@@ -20,9 +20,7 @@ class HttpResponse : public QObject
 public:    
     explicit HttpResponse(QObject *parent = nullptr) : QObject(parent) {}
     HttpResponse(const HttpResponse &other);
-    ~HttpResponse() {
-        qDebug() << "!!!!!!!!!!!!DELETED HTTPRESPONSE!!!!!!!!!!";
-    }
+    ~HttpResponse() {}
 
     Q_INVOKABLE HttpResponse &operator=(const HttpResponse &other);
 
@@ -35,6 +33,6 @@ public:
     Q_INVOKABLE QJsonArray object();
 };
 
-//Q_DECLARE_METATYPE(HttpResponse)
+Q_DECLARE_METATYPE(HttpResponse*)
 
 #endif // HTTPRESPONSE_H

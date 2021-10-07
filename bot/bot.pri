@@ -3,16 +3,24 @@ QT += gui websockets sql qml
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
-LIB_DIR = $$PWD/../lib
-BOOST_HEADERS=$$LIB_DIR/boost
-MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
-MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
 
-INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
-INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
-INCLUDEPATH += $$BOOST_HEADERS
+win32 {
+    LIB_DIR = $$PWD/../lib
+    BOOST_HEADERS=$$LIB_DIR/boost
+    MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
+    MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
 
-LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
+    INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
+    INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
+    INCLUDEPATH += $$BOOST_HEADERS
+
+    LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
+} else {
+    LIBS += -L/usr/local/lib -lmongocxx -lbsoncxx
+    INCLUDEPATH += /usr/local/include/bsoncxx/v_noabi
+    INCLUDEPATH += /usr/local/include/mongocxx/v_noabi
+}
+
 
 HEADERS += \
     $$PWD/botjob/commandbinding.h \
