@@ -22,6 +22,7 @@ class Http : public QObject
     const int BAD_REQUEST = 400;
 
     bool _enableBotAuth = false;
+    bool _ignoreSslErrors = false;
     QMap<QString, QString> _rawHeaders;
     QDir _downloadDirectory = QDir(QString("downloads"));
     QString _filePrefix;
@@ -58,6 +59,8 @@ public:
     Q_INVOKABLE void downloadDirectory(const QString &dir);
     Q_INVOKABLE QString filePrefix();
     Q_INVOKABLE void filePrefix(const QString &prefix);
+    Q_INVOKABLE void ignoreSslErrors(const bool ignore);
+    Q_INVOKABLE bool ignoreSslErrors();
 };
 
 Q_DECLARE_METATYPE(Http)
