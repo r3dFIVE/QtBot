@@ -69,7 +69,7 @@ Settings::parseSettingsFile() {
 
 bool
 Settings::isComment(QString line) {
-    return line.at(0) == "#" || line.at(0) == ";";
+    return line.at(0) == '#' || line.at(0) == ';';
 }
 
 void
