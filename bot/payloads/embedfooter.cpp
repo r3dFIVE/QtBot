@@ -28,7 +28,7 @@ const QString EmbedFooter::TEXT = "text";
 EmbedFooter::EmbedFooter(const QString &text, const QString &iconUrl) {
      _jsonObject[TEXT] = text;
 
-     _jsonObject[TEXT] = iconUrl;
+     _jsonObject[ICON_URL] = iconUrl;
 }
 
 QJsonValue
