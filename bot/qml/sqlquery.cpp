@@ -95,13 +95,9 @@ SqlQuery::numRowsAffected() const {
     return _query.numRowsAffected();
 }
 
-QVariant
+SqlError*
 SqlQuery::lastError() const {
-    SqlError sqlError(_query.lastError());
-
-    QVariant var = QVariant::fromValue<SqlError>(sqlError);
-
-    return var;
+    return new SqlError(_query.lastError());
 }
 
 bool
