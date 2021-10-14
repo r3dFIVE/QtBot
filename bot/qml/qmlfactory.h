@@ -43,7 +43,7 @@ class QmlFactory : public QObject
     QObject *createEmbedMedia(const QVariantMap& arguments);
 
 public:
-    QmlFactory(const DatabaseContext &context);
+    QmlFactory(const DatabaseContext &context, QObject *parent = nullptr);
 
     Q_INVOKABLE QObject *createObject(const QString& typeName, const QVariantMap& arguments);
 

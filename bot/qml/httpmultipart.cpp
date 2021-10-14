@@ -3,11 +3,11 @@
 #include <QDebug>
 
 
-HttpMultiPart::HttpMultiPart() {
+HttpMultiPart::HttpMultiPart(QObject *parent) : QObject(parent) {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
 }
 
-HttpMultiPart::HttpMultiPart(const HttpMultiPart &other) {
+HttpMultiPart::HttpMultiPart(const HttpMultiPart &other, QObject *parent) : QObject(parent) {
     if (this == &other) {
         return;
     }

@@ -23,23 +23,24 @@
 #include <QSql>
 
 
-SqlQuery::SqlQuery(const SqlQuery &other) {
+SqlQuery::SqlQuery(const SqlQuery &other, QObject *parent) : QObject(parent) {
     if (this == &other) {
         return;
     }
 
     _query = other._query;
+
+   setParent(other.parent());
 }
 
-SqlQuery::SqlQuery(SqlQuery *other) {
-    _query = other->_query;
-}
 
-SqlQuery::SqlQuery(SqlDatabase *database, const QString &query) {
+SqlQuery::SqlQuery(SqlDatabase *database, const QString &query, QObject *parent) : QObject(parent) {
     _query = QSqlQuery(query, database->sqlDatabase());
+
+
 }
 
-SqlQuery::SqlQuery(const QSqlQuery &other) {
+SqlQuery::SqlQuery(const QSqlQuery &other, QObject *parent) : QObject(parent) {
     _query = other;
 }
 
@@ -117,10 +118,6 @@ SqlQuery::isForwardOnly() const {
     return _query.isForwardOnly();
 }
 
-SqlRecord
-SqlQuery::record() const {
-    return SqlRecord(_query.record());
-}
 
 void
 SqlQuery::setForwardOnly(bool forward) {

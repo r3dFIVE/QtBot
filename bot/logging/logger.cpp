@@ -44,30 +44,30 @@ Logger::~Logger() {
 
 void
 Logger::trace(QString message) {
-    logEvent(LogContext::LogLevel::TRACE, message);
+    emit logEvent(LogContext::LogLevel::TRACE, message);
 }
 
 void
 Logger::info(QString message) {
-    logEvent(LogContext::LogLevel::INFO, message);
+    emit logEvent(LogContext::LogLevel::INFO, message);
 }
 
 void
 Logger::debug(QString message) {
-    logEvent(LogContext::LogLevel::DEBUG, message);
+    emit logEvent(LogContext::LogLevel::DEBUG, message);
 }
 
 void
 Logger::warning(QString message) {
-    logEvent(LogContext::LogLevel::WARNING, message);
+    emit logEvent(LogContext::LogLevel::WARNING, message);
 }
 
 void
 Logger::critical(QString message) {
-    logEvent(LogContext::LogLevel::CRITICAL, message);
+    emit logEvent(LogContext::LogLevel::CRITICAL, message);
 }
 
 void
 Logger::fatal(QString message) {
-    logEvent(LogContext::LogLevel::FATAL, message);
+    emit logEvent(LogContext::LogLevel::FATAL, message);
 }

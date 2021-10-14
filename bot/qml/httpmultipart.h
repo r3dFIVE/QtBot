@@ -19,8 +19,8 @@ class HttpMultiPart : public QObject
     QSharedPointer<QHttpMultiPart> _httpMultiPart;
 
 public:
-    HttpMultiPart();
-    HttpMultiPart(const HttpMultiPart &other);
+    HttpMultiPart(QObject *parent = nullptr);
+    HttpMultiPart(const HttpMultiPart &other, QObject *parent = nullptr);
     ~HttpMultiPart() {}
 
     Q_INVOKABLE HttpMultiPart &operator=(const HttpMultiPart &other);

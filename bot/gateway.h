@@ -65,7 +65,7 @@ class Gateway : public QObject
     void processPayload(QSharedPointer<GatewayPayload> payload);
     void processReady(QSharedPointer<GatewayPayload> payload);
     void processReconnect();
-    void processResumed(QSharedPointer<GatewayPayload> payload);
+    void processResumed();
     void onBinaryMessageReceived(QByteArray messageArray);
     void onDisconnected();
     void tooManyReconnects();

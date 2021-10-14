@@ -28,10 +28,15 @@
 class LogContext : public QObject {
     Q_OBJECT
 
-public:
-    LogContext () {}
 
-    LogContext(const LogContext& ctx) {
+public:
+    LogContext (QObject *parent = nullptr) : QObject(parent) {}
+
+    LogContext(const LogContext& ctx) : QObject(ctx.parent()) {
+        if (this == &ctx) {
+            return;
+        }
+
         fileName = ctx.fileName;
 
         directoryPath = ctx.directoryPath;

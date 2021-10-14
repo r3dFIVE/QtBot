@@ -1,6 +1,6 @@
 QT -= gui
 
-CONFIG += c++latest console
+CONFIG += c++latest console object_with_source
 CONFIG -= app_bundle
 
 DEFINES += QT_DEPRECATED_WARNINGS

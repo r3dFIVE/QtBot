@@ -23,12 +23,13 @@
 #include "util/mimeutils.h"
 
 
-File::File() {
+File::File(QObject *parent) : QObject(parent) {
     _file = QSharedPointer<QFile>(new QFile);
 }
 
 File::File(const QString &fileName,
-           const OpenMode::Mode openMode) {
+           const OpenMode::Mode openMode,
+           QObject *parent) : QObject(parent) {
 
     _fileName = fileName;
 
@@ -37,7 +38,7 @@ File::File(const QString &fileName,
     _file = QSharedPointer<QFile>(new QFile);
 }
 
-File::File(const File &other) {
+File::File(const File &other, QObject *parent) : QObject(parent) {
     if (this == &other) {
         return;
     }

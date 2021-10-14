@@ -12,7 +12,7 @@ Http::Http(QObject *parent) : QObject(parent) {
     _botAuthHeaderValue = QString("Bot %1").arg(HttpUtils::botToken()).toUtf8();
 }
 
-Http::Http(const Http &other) {
+Http::Http(const Http &other, QObject *parent) : QObject(parent) {
     if (this == &other) {
         return;
     }

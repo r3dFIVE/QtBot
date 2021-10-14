@@ -39,9 +39,9 @@
 #include "payloads/embedmedia.h"
 
 
-QmlFactory::QmlFactory(const DatabaseContext &databaseContext) {
+QmlFactory::QmlFactory(const DatabaseContext &databaseContext, QObject *parent) : QObject(parent)  {
     _databaseContext = databaseContext;
-}
+ }
 
 QObject*
 QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) {
@@ -86,15 +86,6 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
 
     } else if (typeName == "SqlQuery") {
         return createSqlQuery(arguments);
-
-    } else if (typeName == "SqlField") {
-        return new SqlField;
-
-    } else if (typeName == "SqlRecord") {
-        return new SqlRecord;
-
-    } else if (typeName == "SqlError") {        
-        return qvariant_cast<SqlError*>(arguments.value("error"));
     }
 
     return nullptr;
@@ -128,19 +119,13 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
 
     engine->evaluate("function SqlDatabase() { return _factory.createObject(\"SqlDatabase\", {}); }");
 
+    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { db: db }); }");
+
     engine->evaluate("function MongoDB() { return _factory.createObject(\"MongoDB\", {}); }");
 
     engine->evaluate("function MongoFind() { return _factory.createObject(\"MongoFind\", {}); }");
 
     engine->evaluate("function MongoInsert() { return _factory.createObject(\"MongoInsert\", {}); }");
-
-    engine->evaluate("function SqlQuery(db) { return _factory.createObject(\"SqlQuery\", { db: db }); }");
-
-    engine->evaluate("function SqlError(error) { return _factory.createObject(\"SqlError\", { error: error }); }");
-
-    engine->evaluate("function SqlRecord() { return _factory.createObject(\"SqlRecord\", {}); }");
-
-    engine->evaluate("function SqlField() { return _factory.createObject(\"SqlField\", {}); }");
 }
 
 QObject*

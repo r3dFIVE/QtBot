@@ -3,9 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
-#include <QJsonDocument>
-
-#include "payloads/jsonserializable.h"
+#include <QJsonArray>
 
 class HttpResponse : public QObject
 {
@@ -19,7 +17,7 @@ class HttpResponse : public QObject
 
 public:    
     explicit HttpResponse(QObject *parent = nullptr) : QObject(parent) {}
-    HttpResponse(const HttpResponse &other);
+    HttpResponse(const HttpResponse &other, QObject *parent = nullptr);
     ~HttpResponse() {}
 
     Q_INVOKABLE HttpResponse &operator=(const HttpResponse &other);

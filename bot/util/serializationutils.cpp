@@ -81,6 +81,8 @@ SerializationUtils::writeToJson(const JsonSerializable &source, QJsonObject &tar
             case QMetaType::QJsonArray: {
                 target[property.name()] = variant.toJsonArray();
                 break;
+            default:
+                break;
             }
         }
     }

@@ -9,5 +9,7 @@ IDBManager::notImplemented(QString name) {
 
 void
 IDBManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
+    Q_UNUSED(payload);
+
     notImplemented("saveEvent");
 }

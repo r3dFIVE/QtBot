@@ -1,7 +1,9 @@
 #include "httpresponse.h"
 
+#include <QJsonObject>
+#include <QJsonDocument>
 
-HttpResponse::HttpResponse(const HttpResponse &other)  {
+HttpResponse::HttpResponse(const HttpResponse &other, QObject *parent) : QObject(parent) {
     if (this == &other) {
         return;
     }
