@@ -21,15 +21,15 @@
 #include "jsonserializable.h"
 
 
-JsonSerializable::JsonSerializable(const QJsonObject &json) {
+JsonSerializable::JsonSerializable(const QJsonObject &json, QObject *parent) : QObject(parent) {
     _jsonObject = json;
 }
 
-JsonSerializable::JsonSerializable(const QString &json) {
+JsonSerializable::JsonSerializable(const QString &json, QObject *parent) : QObject(parent) {
     _jsonObject = fromQString(json);
 }
 
-JsonSerializable::JsonSerializable(const QByteArray &json) {
+JsonSerializable::JsonSerializable(const QByteArray &json, QObject *parent) : QObject(parent) {
     _jsonObject = fromByteArray(json);
 }
 

@@ -24,7 +24,7 @@
 
 
 
-SqlDatabase::SqlDatabase(const SqlDatabase &other) {
+SqlDatabase::SqlDatabase(const SqlDatabase &other, QObject *parent) : QObject(parent) {
     _database = other._database;
 
     _hostName = other._hostName;
@@ -44,7 +44,7 @@ SqlDatabase::SqlDatabase(const SqlDatabase &other) {
     _connectionNameBase = other._connectionNameBase;
 }
 
-SqlDatabase::SqlDatabase(const DatabaseContext &databaseContext) {
+SqlDatabase::SqlDatabase(const DatabaseContext &databaseContext, QObject *parent) : QObject(parent) {
     _userName = databaseContext.userName;
 
     _password = databaseContext.password;

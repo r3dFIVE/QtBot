@@ -43,9 +43,9 @@ class File : public QObject
     QDataStream _dataStream;
 
 public:
-    Q_INVOKABLE File();
-    Q_INVOKABLE File(const File &other);
-    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode);
+    Q_INVOKABLE File(QObject *parent = nullptr);
+    Q_INVOKABLE File(const File &other, QObject *parent = nullptr);
+    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
     Q_INVOKABLE ~File() {}
 
     Q_INVOKABLE File &operator=(const File &other);

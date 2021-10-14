@@ -2,7 +2,7 @@
 
 #include "util/serializationutils.h"
 
-HttpPart::HttpPart(const HttpPart &other) {
+HttpPart::HttpPart(const HttpPart &other, QObject *parent) : QObject(parent){
     if (this == &other) {
         return;
     }

@@ -242,11 +242,13 @@ Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
         processReady(payload);
         return;
     case GatewayEvent::RESUMED:
-        processResumed(payload);
+        processResumed();
         return;
     case GatewayEvent::GUILD_CREATE:
         processGuildCreate(payload);
         return;
+    default:
+        break;
     }
 
     emit dispatchEvent(payload);
@@ -283,7 +285,7 @@ Gateway::processReady(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-Gateway::processResumed(QSharedPointer<GatewayPayload> payload) {
+Gateway::processResumed() {
     _logger->info("Gateway connection sucessfully resumed.");
 
     _retryCount = 0;

@@ -104,9 +104,7 @@ HEADERS += \
     $$PWD/qml/mongoupdate.h \
     $$PWD/qml/sqldatabase.h \
     $$PWD/qml/sqlerror.h \
-    $$PWD/qml/sqlfield.h \
     $$PWD/qml/sqlquery.h \
-    $$PWD/qml/sqlrecord.h \
     $$PWD/routes/bucket.h \
     $$PWD/routes/channeladdpinnedchannelmessage.h \
     $$PWD/routes/channelbulkmessagesdelete.h \
@@ -298,9 +296,7 @@ SOURCES += \
     $$PWD/qml/sqldatabase.cpp \
     $$PWD/qml/mongodb.cpp \
     $$PWD/qml/sqlerror.cpp \
-    $$PWD/qml/sqlfield.cpp \
     $$PWD/qml/sqlquery.cpp \
-    $$PWD/qml/sqlrecord.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \

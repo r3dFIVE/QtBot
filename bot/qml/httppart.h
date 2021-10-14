@@ -17,8 +17,8 @@ class HttpPart : public QObject
     QHttpPart _httpPart;
 
 public:
-    Q_INVOKABLE HttpPart() {};
-    Q_INVOKABLE HttpPart(const HttpPart &other);
+    Q_INVOKABLE HttpPart(QObject *parent = nullptr) : QObject(parent) {};
+    Q_INVOKABLE HttpPart(const HttpPart &other, QObject *parent = nullptr);
     Q_INVOKABLE ~HttpPart() {};
 
     Q_INVOKABLE HttpPart &operator=(const HttpPart &other);

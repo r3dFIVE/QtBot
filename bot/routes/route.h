@@ -34,6 +34,8 @@ class Route : public QObject
 {
     Q_OBJECT
 
+    Q_DISABLE_COPY(Route)
+
     Logger *_logger = LogFactory::getLogger();
 
 public:
@@ -77,8 +79,7 @@ public:
     }
 
 protected:
-    Route() {}
-    Route(const Route &other) { Q_UNUSED(other) }
+    Route(QObject *parent = nullptr) : QObject(parent) {}
     ~Route() {}
 
     QSharedPointer<QHttpMultiPart> _httpMultiPart;

@@ -22,8 +22,8 @@ class MongoFind : public QObject
     mongocxx::options::find _findArgs{};
 
 public:
-    MongoFind() {}
-    MongoFind(const MongoFind &other);
+    MongoFind(QObject *parent = nullptr) : QObject(parent) {}
+    MongoFind(const MongoFind &other, QObject *parent = nullptr);
     ~MongoFind() {}
 
     MongoFind& operator=(const MongoFind &other);

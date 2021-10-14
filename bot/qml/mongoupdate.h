@@ -18,8 +18,8 @@ class MongoUpdate : public QObject
     mongocxx::options::update _updateOpts;
 
 public:
-    MongoUpdate() {}
-    MongoUpdate(const MongoUpdate &other);
+    MongoUpdate(QObject *parent = nullptr) : QObject(parent) {}
+    MongoUpdate(const MongoUpdate &other, QObject *parent = nullptr);
     ~MongoUpdate() {}
 
     Q_INVOKABLE MongoUpdate& operator=(const MongoUpdate &other);

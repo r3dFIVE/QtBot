@@ -36,12 +36,12 @@ protected:
 
 public:
     JsonSerializable(QObject *parent = nullptr) : QObject(parent) {}
-    JsonSerializable(const JsonSerializable &other) {
+    JsonSerializable(const JsonSerializable &other, QObject *parent = nullptr) : QObject(parent) {
         _jsonObject = other._jsonObject;
     }
-    JsonSerializable(const QByteArray &json);
-    JsonSerializable(const QJsonObject &json);
-    JsonSerializable(const QString &json);
+    JsonSerializable(const QByteArray &json, QObject *parent = nullptr);
+    JsonSerializable(const QJsonObject &json, QObject *parent = nullptr);
+    JsonSerializable(const QString &json, QObject *parent = nullptr);
     ~JsonSerializable() {}
 
     QByteArray toByteArray();

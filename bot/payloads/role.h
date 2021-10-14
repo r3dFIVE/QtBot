@@ -38,19 +38,13 @@ public:
     static const QString MANAGED;
     static const QString MENTIONABLE;
 
-    Role() {}
-    Role(const QByteArray &json) : JsonSerializable(json) {}
-    Role(const QJsonObject &json) : JsonSerializable(json) {}
-    Role(const QString &json) : JsonSerializable(json) {}
-    Role &operator=(const Role &other) {
-        if (this == &other) {
-            return *this;
-        }
+    Role(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Role(const Role &role, QObject *parent = nullptr) : JsonSerializable(role, parent) {};
+    Role(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Role(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Role(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
-        _jsonObject = other._jsonObject;
-
-        return *this;
-    }
+    Role &operator=(const Role &other);
 
     QJsonValue getColor() const;
     QJsonValue getHoist() const;

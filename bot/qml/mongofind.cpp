@@ -5,7 +5,7 @@
 #include <optional>
 
 
-MongoFind::MongoFind(const MongoFind &other) {
+MongoFind::MongoFind(const MongoFind &other, QObject *parent) : QObject(parent) {
     _findArgs = other._findArgs;
 }
 

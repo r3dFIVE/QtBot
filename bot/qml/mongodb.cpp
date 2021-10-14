@@ -6,7 +6,7 @@
 #include "util/mongoutils.h"
 
 
-MongoDB::MongoDB(const MongoDB &other) {
+MongoDB::MongoDB(const MongoDB &other, QObject *parent) : QObject(parent) {
     _port = other._port;
 
     _databaseName = other._databaseName;
@@ -18,7 +18,7 @@ MongoDB::MongoDB(const MongoDB &other) {
     _userName = other._userName;
 }
 
-MongoDB::MongoDB(const DatabaseContext &context) {
+MongoDB::MongoDB(const DatabaseContext &context, QObject *parent) : QObject(parent) {
     _port = context.port;
 
     _databaseName = context.databaseName.toStdString();

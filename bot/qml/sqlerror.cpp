@@ -22,15 +22,11 @@
 #include <QDebug>
 
 
-SqlError::SqlError(const SqlError &other) {
+SqlError::SqlError(const SqlError &other, QObject *parent) : QObject(parent) {
     _sqlError = other._sqlError;
 }
 
-SqlError::SqlError(SqlError *other) {
-    _sqlError = other->_sqlError;
-}
-
-SqlError::SqlError(const QSqlError &other) {
+SqlError::SqlError(const QSqlError &other, QObject *parent) : QObject(parent) {
     _sqlError = other;
 }
 

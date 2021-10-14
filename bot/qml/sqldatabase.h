@@ -60,10 +60,10 @@ class SqlDatabase : public QObject
     void setConnectionName();
 
 public:
-    Q_INVOKABLE SqlDatabase() {}
-    Q_INVOKABLE SqlDatabase(const SqlDatabase &other);
-    Q_INVOKABLE SqlDatabase(const DatabaseContext &context);
-    Q_INVOKABLE ~SqlDatabase() {
+    SqlDatabase(QObject *parent = nullptr) : QObject(parent) {}
+    SqlDatabase(const SqlDatabase &other, QObject *parent = nullptr);
+    SqlDatabase(const DatabaseContext &context, QObject *parent = nullptr);
+    ~SqlDatabase() {
        _database = QSqlDatabase();
 
        QSqlDatabase::removeDatabase(_connectionName);

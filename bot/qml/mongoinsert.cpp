@@ -1,7 +1,7 @@
 #include "mongoinsert.h"
 
 
-MongoInsert::MongoInsert(const MongoInsert &other) {
+MongoInsert::MongoInsert(const MongoInsert &other, QObject *parent) : QObject(parent) {
     _insertOpts = other._insertOpts;
 }
 

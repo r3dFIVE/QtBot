@@ -1,7 +1,7 @@
 #include "mongoupdate.h"
 
 
-MongoUpdate::MongoUpdate(const MongoUpdate &other) {
+MongoUpdate::MongoUpdate(const MongoUpdate &other, QObject *parent) : QObject(parent) {
     _updateOpts = other._updateOpts;
 }
 

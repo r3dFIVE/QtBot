@@ -38,7 +38,7 @@ class Http : public QObject
 
 public:
     Http(QObject *parent = nullptr);
-    Http(const Http &other);
+    Http(const Http &other, QObject *parent = nullptr);
     ~Http() {}
 
     Q_INVOKABLE Http &operator=(const Http &other);

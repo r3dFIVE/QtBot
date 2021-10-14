@@ -3,11 +3,11 @@
 #include "util/mongoutils.h"
 
 
-MongoHint::MongoHint(const MongoHint &other) {
+MongoHint::MongoHint(const MongoHint &other, QObject *parent) : QObject(parent) {
     _hint = QSharedPointer<mongocxx::hint>(new mongocxx::hint{*other._hint.get()});
 }
 
-MongoHint::MongoHint(const QJsonObject &hint) {
+MongoHint::MongoHint(const QJsonObject &hint, QObject *parent) : QObject(parent) {
     _hint = QSharedPointer<mongocxx::hint>(new mongocxx::hint{MongoUtils::toViewOrValue(hint)});
 }
 

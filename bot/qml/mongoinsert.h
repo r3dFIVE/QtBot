@@ -17,8 +17,8 @@ class MongoInsert : public QObject
     mongocxx::options::insert _insertOpts{};
 
 public:
-    MongoInsert() {}
-    MongoInsert(const MongoInsert &other);
+    MongoInsert(QObject *parent = nullptr) : QObject(parent) {}
+    MongoInsert(const MongoInsert &other, QObject *parent = nullptr);
     ~MongoInsert() {}
 
     MongoInsert& operator=(const MongoInsert &other);

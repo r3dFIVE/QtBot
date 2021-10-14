@@ -33,7 +33,9 @@ CommandRestrictions::RestrictionState GuildEntity::DEFAULT_STATE;
 
 GuildEntity::GuildEntity(const Guild &guild) {
     for (auto jsonRole : guild.getRoles()) {
-        updateRole(Role(jsonRole.toObject()));
+        Role role(jsonRole.toObject());
+
+        updateRole(role);
     }
 }
 
@@ -137,6 +139,8 @@ GuildEntity::processEvent(QSharedPointer<EventContext> context) {
         break;
     case GatewayEvent::GUILD_ROLE_DELETE:
         removeRole(context->getRoleId().toString());
+        break;
+    default:
         break;
     }
 

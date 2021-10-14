@@ -62,8 +62,6 @@ Bot::Bot() {
     qRegisterMetaType<MongoFind>();
     qRegisterMetaType<MongoInsert>();
     qRegisterMetaType<SqlQuery>();
-    qRegisterMetaType<SqlField>();
-    qRegisterMetaType<SqlRecord>();
     qRegisterMetaType<SqlError>();
     qRegisterMetaType<File>();
     qRegisterMetaType<HttpPart>();

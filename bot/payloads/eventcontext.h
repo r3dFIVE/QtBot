@@ -63,12 +63,12 @@ public:
     static const QString SOURCE_PAYLOAD;
     static const QString TARGET_PAYLOAD;
 
-    EventContext() {
+    EventContext(QObject *parent = nullptr) : JsonSerializable(parent) {
         _jsonObject[TARGET_PAYLOAD] = QJsonObject();
     }
-    EventContext(const QByteArray &json);
-    EventContext(const QJsonObject &json);
-    EventContext(const EventContext &other);
+    EventContext(const QByteArray &json, QObject *parent = nullptr);
+    EventContext(const QJsonObject &json, QObject *parent = nullptr);
+    EventContext(const EventContext &other, QObject *parent = nullptr);
     ~EventContext() {}
 
     EventContext &operator=(const EventContext &other) {

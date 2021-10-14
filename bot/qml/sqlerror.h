@@ -34,11 +34,10 @@ class SqlError : public QObject
     QSqlError _sqlError;
 
 public:
-    Q_INVOKABLE SqlError() {}
-    Q_INVOKABLE SqlError(const SqlError &other);
-    Q_INVOKABLE SqlError(SqlError *other);
-    Q_INVOKABLE SqlError(const QSqlError &other);
-    Q_INVOKABLE ~SqlError() {}
+    SqlError(QObject *parent = nullptr) : QObject(parent) {}
+    SqlError(const SqlError &other, QObject *parent = nullptr);
+    SqlError(const QSqlError &other, QObject *parent = nullptr);
+    ~SqlError() {}
 
     Q_INVOKABLE SqlError &operator=(const SqlError &other);
     Q_INVOKABLE SqlError &operator=(SqlError &&other) noexcept;

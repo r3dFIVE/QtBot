@@ -35,9 +35,9 @@ class MongoDB : public QObject
     mongocxx::options::insert parseInsertOpts(const QVariant &opts);
 
 public:
-    MongoDB() {}
-    MongoDB(const MongoDB &other);
-    MongoDB(const DatabaseContext &context);
+    MongoDB(QObject *parent = nullptr) : QObject(parent) {}
+    MongoDB(const MongoDB &other, QObject *parent = nullptr);
+    MongoDB(const DatabaseContext &context, QObject *parent = nullptr);
     ~MongoDB() {}
 
     Q_INVOKABLE QString collectionName();

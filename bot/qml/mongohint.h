@@ -19,9 +19,9 @@ class MongoHint : public QObject
     QSharedPointer<mongocxx::hint> _hint;
 
 public:
-    MongoHint() {};
-    MongoHint(const QJsonObject &hint);
-    MongoHint(const MongoHint &other);
+    MongoHint(QObject *parent = nullptr) : QObject(parent) {}
+    MongoHint(const QJsonObject &hint, QObject *parent = nullptr);
+    MongoHint(const MongoHint &other, QObject *parent = nullptr);
 
     Q_INVOKABLE MongoHint& operator=(const MongoHint &other);
 

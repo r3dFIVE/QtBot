@@ -28,7 +28,6 @@
 #include "enums/sql.h"
 #include "sqldatabase.h"
 #include "sqlerror.h"
-#include "sqlrecord.h"
 
 class SqlDatabase;
 
@@ -39,12 +38,14 @@ class SqlQuery : public QObject
     QSqlQuery _query;
 
 public:
-    Q_INVOKABLE SqlQuery() {}
-    Q_INVOKABLE SqlQuery(const SqlQuery &other);
-    Q_INVOKABLE SqlQuery(SqlQuery *other);
-    Q_INVOKABLE SqlQuery(const QSqlQuery &other);
-    Q_INVOKABLE ~SqlQuery() {}
-    Q_INVOKABLE SqlQuery(SqlDatabase *database, const QString &query = QString());
+     SqlQuery(QObject *parent = nullptr) : QObject(parent) {}
+     SqlQuery(const SqlQuery &other, QObject *parent = nullptr);
+     SqlQuery(const QSqlQuery &other, QObject *parent = nullptr);
+     SqlQuery(SqlDatabase *database,
+              const QString &query = QString(),
+              QObject *parent = nullptr);
+     ~SqlQuery() {}
+
     Q_INVOKABLE SqlQuery& operator=(const SqlQuery& other);
     Q_INVOKABLE bool isValid() const;
     Q_INVOKABLE bool isActive() const;
@@ -58,7 +59,6 @@ public:
     Q_INVOKABLE bool isSelect() const;
     Q_INVOKABLE int size() const;
     Q_INVOKABLE bool isForwardOnly() const;
-    Q_INVOKABLE SqlRecord record() const;
     Q_INVOKABLE void setForwardOnly(bool forward);
     Q_INVOKABLE bool exec(const QString& query);
     Q_INVOKABLE QVariant value(int i) const;

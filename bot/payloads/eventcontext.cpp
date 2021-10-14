@@ -48,15 +48,15 @@ const QString EventContext::QUERY_PARAMS = "query_params";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
 const QString EventContext::TARGET_PAYLOAD = "target_payload";
 
-EventContext::EventContext(const QByteArray &json) {
+EventContext::EventContext(const QByteArray &json, QObject *parent) : JsonSerializable(parent) {
     buildContext(QJsonDocument::fromJson(json).object());
 }
 
-EventContext::EventContext(const QJsonObject &json) {
+EventContext::EventContext(const QJsonObject &json, QObject *parent) : JsonSerializable(parent) {
     buildContext(json);
 }
 
-EventContext::EventContext(const EventContext &other) {
+EventContext::EventContext(const EventContext &other, QObject *parent) : JsonSerializable(parent) {
     buildContext(other._jsonObject);
 }
 
