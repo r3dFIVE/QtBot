@@ -55,7 +55,7 @@ public:
     Q_INVOKABLE QString lastErrorText() const;
     Q_INVOKABLE QString lastQuery() const;
     Q_INVOKABLE int numRowsAffected() const;
-    Q_INVOKABLE QVariant lastError() const;
+    Q_INVOKABLE SqlError* lastError() const;
     Q_INVOKABLE bool isSelect() const;
     Q_INVOKABLE int size() const;
     Q_INVOKABLE bool isForwardOnly() const;
