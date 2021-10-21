@@ -64,6 +64,8 @@ public:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) override;
     void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) override;
     void saveEvent(QSharedPointer<GatewayPayload> payload) override {
+        Q_UNUSED(payload)
+
         notImplemented("SqlManager saveEvent");
     }
 };
