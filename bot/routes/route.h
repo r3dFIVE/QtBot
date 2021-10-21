@@ -22,11 +22,14 @@
 #define ROUTE_H
 
 #include <QNetworkRequest>
+#include <QHttpMultiPart>
 #include <QObject>
 
 #include "payloads/eventcontext.h"
 #include "payloads/jsonserializable.h"
 #include "payloads/message.h"
+#include "logging/logfactory.h"
+#include "qml/file.h"
 #include "util/serializationutils.h"
 
 
@@ -125,7 +128,7 @@ protected:
         buildRequest(requestType, route, GLOBAL_BUCKET, EventContext());
     }
 
-    void buildHttpMultiPart(EventContext &context, File *file);
+    void buildHttpMultiPart(const EventContext &context, File *file);
 };
 
 

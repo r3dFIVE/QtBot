@@ -6,10 +6,3 @@ void
 IDBManager::notImplemented(QString name) {
     _logger->trace(QString("%1 is not currently implement for given database type.").arg(name));
 }
-
-void
-IDBManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
-    Q_UNUSED(payload);
-
-    notImplemented("saveEvent");
-}

@@ -66,8 +66,12 @@ public:
     EventHandler(QSharedPointer<Settings> settings);
 
 public slots:
-    void clear(const EventContext &context);
-    void toggleCommand(const EventContext &context, CommandRestrictions::RestrictionState state);
+    void removeRestrictionState(const EventContext &context);
+    void removeAllRestrictionStates(const EventContext &context);
+    void removeRestrictionStatesForCommand(const EventContext &context);
+    void removeRestrictionStatesForId(const EventContext &context);
+    void updateRestrictionState(const EventContext &context, CommandRestrictions::RestrictionState state);
+    void updateAllRestrictionStates(const EventContext &context, CommandRestrictions::RestrictionState state);
     void displayTimedJobs(EventContext context);
     void guildReady(QSharedPointer<GuildEntity> guild);
     void init();

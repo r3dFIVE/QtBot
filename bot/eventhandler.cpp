@@ -107,6 +107,10 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
     context->setEventName(eventName);
 
+    if (eventName.contains("MESSAGE") && context->getMessageId().toString().isEmpty()) {
+        context->setMessageId(context->getSourcePayload()[EventContext::ID].toString());
+    }
+
     QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
 
     _jobQueue << guild->processEvent(context);
@@ -290,9 +294,8 @@ EventHandler::stopTimedJob(const EventContext &context) {
     }
 }
 
-
 void
-EventHandler::toggleCommand(const EventContext &context, CommandRestrictions::RestrictionState state) {
+EventHandler::updateRestrictionState(const EventContext &context, CommandRestrictions::RestrictionState state) {
     QString guildId = context.getGuildId().toString();
 
     if (isGuildReady(guildId) && context.getArgs().size() > 2) {
@@ -300,31 +303,75 @@ EventHandler::toggleCommand(const EventContext &context, CommandRestrictions::Re
 
         QString targetId = context.getArgs()[2].toString();
 
-        _availableGuilds[guildId]->toggleCommand(commandName, targetId, state);
+        _availableGuilds[guildId]->updateRestrictionState(commandName, targetId, state);
     } else {
         _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
     }
 }
 
 void
-EventHandler::clear(const EventContext &context) {
+EventHandler::updateAllRestrictionStates(const EventContext &context, CommandRestrictions::RestrictionState state) {
     QString guildId = context.getGuildId().toString();
 
-    int argCount = context.getArgs().size();
-
-    if (isGuildReady(guildId) && argCount > 1) {
-        QString commandName = context.getArgs()[1].toString();
-
+    if (isGuildReady(guildId)) {
         QString targetId;
 
-        if (argCount > 2) {
-            targetId = context.getArgs()[2].toString();
+        if (context.getArgs().size() > 1) {
+            targetId = context.getArgs()[1].toString();
+        } else {
+            targetId = guildId;
         }
 
-        _availableGuilds[guildId]->clear(commandName, targetId);
-    } else {
-        _logger->debug(QString("\"%1\" requires a scriptName or command name...").arg(context.getContent().toString()));
+         _availableGuilds[guildId]->updateAllRestrictionStates(targetId, state);
     }
 }
 
+void
+EventHandler::removeRestrictionState(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
 
+    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
+        QString commandName = context.getArgs()[1].toString();
+
+        QString targetId = context.getArgs()[2].toString();
+
+        _availableGuilds[guildId]->removeRestrictionState(commandName, targetId);
+    } else {
+        _logger->debug(QString("\"%1\" requires a scriptName/commandName and target id...").arg(context.getContent().toString()));
+    }
+}
+
+void
+EventHandler::removeAllRestrictionStates(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId)) {
+         _availableGuilds[guildId]->removeAllRestrictionStates();
+    }
+}
+
+void
+EventHandler::removeRestrictionStatesForCommand(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
+        QString commandName = context.getArgs()[1].toString();
+
+         _availableGuilds[guildId]->removeRestrictionState(commandName, QString());
+    } else {
+        _logger->debug(QString("\"%1\" requires a scriptName/commandName...").arg(context.getContent().toString()));
+    }
+}
+
+void
+EventHandler::removeRestrictionStatesForId(const EventContext &context) {
+    QString guildId = context.getGuildId().toString();
+
+    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
+        QString targetId = context.getArgs()[1].toString();
+
+         _availableGuilds[guildId]->removeRestrictionState(QString(), targetId);
+    } else {
+        _logger->debug(QString("\"%1\" requires a targetId...").arg(context.getContent().toString()));
+    }
+}

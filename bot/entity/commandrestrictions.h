@@ -30,6 +30,14 @@ class CommandRestrictions : public QObject
 
 public:
 
+    enum RemovalType {
+        UPDATE,
+        REMOVE_BY_NAME,
+        REMOVE_BY_ID,
+        REMOVE_ALL
+    };
+    Q_ENUM(RemovalType)
+
     enum RestrictionState {
         REMOVED = -1,
         DISABLED = 0,
@@ -39,8 +47,19 @@ public:
 
     CommandRestrictions(const QString &guildId,
                         const QString &targetId,
-                        const QMap<QString, RestrictionState> &restrictions)
-        : _guildId(guildId), _targetId(targetId), _restrictions(restrictions) {}
+                        const QMap<QString, RestrictionState> &restrictions,
+                        const RemovalType type)
+        : _guildId(guildId), _targetId(targetId), _type(type) {
+
+        QMapIterator<QString, RestrictionState> it(restrictions);
+
+        while(it.hasNext()) {
+            it.next();
+
+            //convert to hex to avoid special character issues when storing command names
+            _restrictions[QString(it.key().toLatin1().toHex())] = it.value();
+        }
+    }
 
     inline QString getGuildId() const {
         return _guildId;
@@ -54,10 +73,15 @@ public:
         return _restrictions;
     }
 
+    inline RemovalType getType() const {
+        return _type;
+    }
+
 private:
     QString _guildId;
     QString _targetId;
     QMap<QString, RestrictionState> _restrictions;
+    RemovalType _type;
 };
 
 #endif // COMMANDRESTRICTIONS_H

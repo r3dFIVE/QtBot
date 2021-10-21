@@ -20,8 +20,7 @@
 
 #include "eventcontext.h"
 
-#include "util/globals.h"
-
+#include "util/enumutils.h"
 
 const QString EventContext::ID = "id";
 const QString EventContext::EVENT_NAME = "event_name";
@@ -61,13 +60,12 @@ EventContext::EventContext(const EventContext &other, QObject *parent) : JsonSer
 }
 
 void
-EventContext::setHttpMultiPart(QSharedPointer<QHttpMultiPart> httpMultiPart) {
-    _httpMultiPart = httpMultiPart;
-}
+EventContext::processEventParams(const GatewayEvent::Event event, const QString &mainParamKey) {
+    _jsonObject[EVENT_NAME] = EnumUtils::valueToKey<GatewayEvent::Event>(event);
 
-QSharedPointer<QHttpMultiPart>
-EventContext::getHttpMultiPart() {
-    return _httpMultiPart;
+    if (!mainParamKey.isEmpty()) {
+        _jsonObject[mainParamKey] = _jsonObject[SOURCE_PAYLOAD].toObject()[ID];
+    }
 }
 
 void
@@ -82,6 +80,10 @@ EventContext::buildContext(const QJsonObject &json) {
 
     if (json.contains(OVERWRITE_ID)) {
         _jsonObject[OVERWRITE_ID] = json[OVERWRITE_ID];
+    }
+
+    if (json.contains(MESSAGE_ID)) {
+        _jsonObject[MESSAGE_ID] = json[MESSAGE_ID];
     }
 
     if (json.contains(CHANNEL_ID)) {
@@ -136,10 +138,6 @@ EventContext::buildContext(const QJsonObject &json) {
 
     if (json.contains(EMOJI)) {
         _jsonObject[EMOJI] = json[EMOJI];
-    }
-
-    if (json.contains(MESSAGE_ID)) {
-        _jsonObject[MESSAGE_ID] = json[MESSAGE_ID];
     }
 
     if (json.contains(JOB_ID)) {

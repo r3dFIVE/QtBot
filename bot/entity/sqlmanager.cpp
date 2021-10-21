@@ -98,16 +98,18 @@ SqlManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions)
 
     QSqlQuery query(_database);
 
-    QMap<QString, CommandRestrictions::RestrictionState> restrictionMap = restrictions->getRestrictions();
+    QMapIterator<QString, CommandRestrictions::RestrictionState> it(restrictions->getRestrictions());
 
-    for (auto commandName : restrictionMap.keys()) {
+    while (it.hasNext()) {
+        it.next();
+
         query.prepare(SQL_SELECT_COMMAND_RESTRICTION_ID);
 
         query.bindValue(0, restrictions->getGuildId());
 
         query.bindValue(1, restrictions->getTargetId());
 
-        query.bindValue(2, commandName);
+        query.bindValue(2, it.key());
 
         if (!query.exec()) {
             _logger->warning(query.lastError().databaseText());
@@ -123,20 +125,24 @@ SqlManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions)
 
         if (count > 0) {
             updateRestriction(restrictions->getGuildId(),
-                              commandName,
+                              it.key(),
                               restrictions->getTargetId(),
-                              restrictionMap[commandName]);
+                              it.value());
         } else {
             insertRestriction(restrictions->getGuildId(),
-                              commandName,
+                              it.key(),
                               restrictions->getTargetId(),
-                              restrictionMap[commandName]);
+                              it.value());
         }
     }
 }
 
 void
 SqlManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
+    if (!isDbOpen()) {
+        return;
+    }
+
     if (restrictions->getTargetId().isEmpty()) {
         clearCommand(restrictions);
     } else {
@@ -150,12 +156,22 @@ SqlManager::clearCommand(QSharedPointer<CommandRestrictions> restrictions) {
 
     QMap<QString, CommandRestrictions::RestrictionState> restrictionMap = restrictions->getRestrictions();
 
-    for (auto commandName : restrictionMap.keys()) {
+    if (restrictionMap.isEmpty()) {
+        notImplemented("clearAll");
+
+        return;
+    }
+
+    QMapIterator<QString, CommandRestrictions::RestrictionState> it(restrictionMap);
+
+    while (it.hasNext()) {
+        it.next();
+
         query.prepare(SQL_REMOVE_COMMAND_RESTRICTION);
 
         query.bindValue(0, restrictions->getGuildId());
 
-        query.bindValue(1, commandName);
+        query.bindValue(1, it.key());
 
         query.exec();
 
@@ -171,12 +187,22 @@ SqlManager::clearCommandForId(QSharedPointer<CommandRestrictions> restrictions) 
 
     QMap<QString, CommandRestrictions::RestrictionState> restrictionMap = restrictions->getRestrictions();
 
-    for (auto commandName : restrictionMap.keys()) {
+    if (restrictionMap.isEmpty()) {
+        notImplemented("clearAll");
+
+        return;
+    }
+
+    QMapIterator<QString, CommandRestrictions::RestrictionState> it(restrictionMap);
+
+    while (it.hasNext()) {
+        it.next();
+
         query.prepare(SQL_REMOVE_COMMAND_RESTRICTION_FOR_ID);
 
         query.bindValue(0, restrictions->getGuildId());
 
-        query.bindValue(1, commandName);
+        query.bindValue(1, it.key());
 
         query.bindValue(2, restrictions->getTargetId());
 
