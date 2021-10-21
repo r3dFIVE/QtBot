@@ -123,6 +123,7 @@
 
 #include "payloads/ratelimit.h"
 #include "util/httputils.h"
+#include "util/globals.h"
 
 
 const QByteArray DiscordAPI::X_RATELIMIT_GLOBAL = "x-ratelimit-global";
@@ -439,34 +440,35 @@ DiscordAPI::channelGetChannelMessage(const QVariant &context) {
 
 QVariant
 DiscordAPI::channelCreateMessage(const QVariant &contextVar, File *file) {
-    EventContext context = buildRequestContext(contextVar);
+    ChannelCreateMessage createMessage(buildRequestContext(contextVar), file);
 
-    ChannelCreateMessage createMessage(context, file);
+    QSharedPointer<EventContext> apiResponse = processRoute(createMessage);
 
-    return buildResponseVariant(processRoute(createMessage));
-}
+    apiResponse->processEventParams(GatewayEvent::MESSAGE_CREATE, EventContext::MESSAGE_ID);
 
-QVariant
-DiscordAPI::channelCreateMessage(const QVariant &contextVar) {
-    EventContext context = buildRequestContext(contextVar);
-
-    ChannelCreateMessage createMessage(context);
-
-    return buildResponseVariant(processRoute(createMessage));
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant
 DiscordAPI::channelCrosspostMessage(const QVariant &context) {
     ChannelCrosspostMessage crosspostMessage(buildRequestContext(context));
 
-    return buildResponseVariant(processRoute(crosspostMessage));
+    QSharedPointer<EventContext> apiResponse = processRoute(crosspostMessage);
+
+    apiResponse->processEventParams(GatewayEvent::MESSAGE_CREATE, EventContext::MESSAGE_ID);
+
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant
 DiscordAPI::channelCreateReaction(const QVariant &context) {
     ChannelCreateReaction createReaction(buildRequestContext(context));
 
-    return buildResponseVariant(processRoute(createReaction));
+    QSharedPointer<EventContext> apiResponse = processRoute(createReaction);
+
+    apiResponse->processEventParams(GatewayEvent::MESSAGE_REACTION_ADD);
+
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant
@@ -505,24 +507,36 @@ DiscordAPI::channelDeleteAllReactionsForEmoji(const QVariant &context) {
 }
 
 QVariant
-DiscordAPI::channelEditMessage(const QVariant &context) {
+DiscordAPI::channelEditMessage(const QVariant &context) {        
     ChannelEditMessage editMessage(buildRequestContext(context));
 
-    return buildResponseVariant(processRoute(editMessage));
+    QSharedPointer<EventContext> apiResponse = processRoute(editMessage);
+
+    apiResponse->processEventParams(GatewayEvent::MESSAGE_UPDATE, EventContext::MESSAGE_ID);
+
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant
 DiscordAPI::channelDeleteMessage(const QVariant &context) {
-    ChannelDeleteMessage deleteMessage(buildRequestContext(context));
+    ChannelEditMessage deleteMessage(buildRequestContext(context));
 
-    return buildResponseVariant(processRoute(deleteMessage));
+    QSharedPointer<EventContext> apiResponse = processRoute(deleteMessage);
+
+    apiResponse->processEventParams(GatewayEvent::MESSAGE_DELETE, EventContext::MESSAGE_ID);
+
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant
 DiscordAPI::channelBulkDeleteMessages(const QVariant &context) {
-    ChannelBulkDeleteMessages bulkDeleteMessage(buildRequestContext(context));
+    ChannelEditMessage bulkDeleteMessage(buildRequestContext(context));
 
-    return buildResponseVariant(processRoute(bulkDeleteMessage));
+    QSharedPointer<EventContext> apiResponse = processRoute(bulkDeleteMessage);
+
+    apiResponse->setEventName(GatewayEvent::MESSAGE_DELETE_BULK);
+
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant

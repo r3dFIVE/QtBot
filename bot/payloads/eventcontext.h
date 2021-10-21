@@ -23,16 +23,13 @@
 
 #include "payloads/jsonserializable.h"
 
-#include "qml/file.h"
+#include "util/globals.h"
 
-#include <QHttpMultiPart>
 
 
 class EventContext : public JsonSerializable
 {
     Q_OBJECT
-
-    QSharedPointer<QHttpMultiPart> _httpMultiPart;
 
     void buildContext(const QJsonObject &json);
 
@@ -77,6 +74,8 @@ public:
         return *this;
     }
 
+    void processEventParams(const GatewayEvent::Event event, const QString &mainParamKey = QString());
+
     Q_PROPERTY(QJsonArray args READ getArgs WRITE setArgs)
     Q_PROPERTY(QJsonValue emoji READ getEmoji WRITE setEmoji)
     Q_PROPERTY(QJsonValue channel_id READ getChannelId WRITE setChannelId)
@@ -99,69 +98,50 @@ public:
     Q_PROPERTY(QJsonObject source_payload READ getSourcePayload WRITE setSourcePayload)
     Q_PROPERTY(QJsonObject target_payload READ getTargetPayload WRITE setTargetPayload)
 
-    inline void removePropertyFromTarget(const QString &key) {
-        _jsonObject[TARGET_PAYLOAD].toObject().remove(key);
-    }
 
-    inline void addPropertyToTarget(const QString &key, const QJsonValue &value) {
-        if (_jsonObject.contains(TARGET_PAYLOAD)) {
-            QJsonObject obj = _jsonObject[TARGET_PAYLOAD].toObject();
-
-            obj[key] = value;
-
-            _jsonObject[TARGET_PAYLOAD] = obj;
-        } else {
-            _jsonObject[TARGET_PAYLOAD] = QJsonObject{{key, value}};
-        }
-    }
-
-    void setHttpMultiPart(QSharedPointer<QHttpMultiPart> httpMultiPart);
-    QSharedPointer<QHttpMultiPart> getHttpMultiPart();
-
-public slots:
-    QJsonArray getArgs() const;
-    QJsonArray getRoleIds() const;
-    QJsonObject getAuthor() const;
-    QJsonObject getQueryParams() const;
-    QJsonObject getSourcePayload() const;
-    QJsonObject getTargetPayload() const;
-    QJsonValue getChannelId() const;
-    QJsonValue getContent() const;
-    QJsonValue getEmoji() const;
-    QJsonValue getEventName() const;
-    QJsonValue getMessageId() const;
-    QJsonValue getOverwriteId() const;
-    QJsonValue getGuildId() const;
-    QJsonValue getJobId() const;
-    QJsonValue getRoleId() const;
-    QJsonValue getUserId() const;
-    QJsonValue getUsername() const;
-    QJsonValue getWebhookId() const;
-    QJsonValue getWebhookToken() const;
-    QJsonValue getIntegrationId() const;
-    QJsonValue getInviteCode() const;
-    void setArgs(const QJsonArray &args) const;
-    void setAuthor(const QJsonObject &author);
-    void setChannelId(const QJsonValue &channelId);
-    void setContent(const QJsonValue &content);
-    void setEmoji(const QJsonValue &emoji);
-    void setEventName(const QJsonValue &eventName);
-    void setGuildId(const QJsonValue &guildId);
-    void setJobId(const QJsonValue &jobId);
-    void setRoleId(const QJsonValue &roleId);
-    void setRoleIds(const QJsonValue &roleIds);
-    void setMessageId(const QJsonValue &messageId);
-    void setOverwriteId(const QJsonValue &overwriteId);
-    void setQueryParams(const QJsonObject &queryParams);
-    void setSourcePayload(const QJsonObject &sourcePayload);
-    void setTargetPayload(const QJsonObject &targetPayload);
-    void setUserId(const QJsonValue &userId);
-    void setUsername(const QJsonValue &username);
-    void setIntegrationId(const QJsonValue &webhookId);
-    void setInviteCode(const QJsonValue &inviteCode);
-    void setWebhookId(const QJsonValue &webhookId);
-    void setWebhookToken(const QJsonValue &webhookToken);
-    void splitArgs();
+    Q_INVOKABLE QJsonArray getArgs() const;
+    Q_INVOKABLE QJsonArray getRoleIds() const;
+    Q_INVOKABLE QJsonObject getAuthor() const;
+    Q_INVOKABLE QJsonObject getQueryParams() const;
+    Q_INVOKABLE QJsonObject getSourcePayload() const;
+    Q_INVOKABLE QJsonObject getTargetPayload() const;
+    Q_INVOKABLE QJsonValue getChannelId() const;
+    Q_INVOKABLE QJsonValue getContent() const;
+    Q_INVOKABLE QJsonValue getEmoji() const;
+    Q_INVOKABLE QJsonValue getEventName() const;
+    Q_INVOKABLE QJsonValue getMessageId() const;
+    Q_INVOKABLE QJsonValue getOverwriteId() const;
+    Q_INVOKABLE QJsonValue getGuildId() const;
+    Q_INVOKABLE QJsonValue getJobId() const;
+    Q_INVOKABLE QJsonValue getRoleId() const;
+    Q_INVOKABLE QJsonValue getUserId() const;
+    Q_INVOKABLE QJsonValue getUsername() const;
+    Q_INVOKABLE QJsonValue getWebhookId() const;
+    Q_INVOKABLE QJsonValue getWebhookToken() const;
+    Q_INVOKABLE QJsonValue getIntegrationId() const;
+    Q_INVOKABLE QJsonValue getInviteCode() const;
+    Q_INVOKABLE void setArgs(const QJsonArray &args) const;
+    Q_INVOKABLE void setAuthor(const QJsonObject &author);
+    Q_INVOKABLE void setChannelId(const QJsonValue &channelId);
+    Q_INVOKABLE void setContent(const QJsonValue &content);
+    Q_INVOKABLE void setEmoji(const QJsonValue &emoji);
+    Q_INVOKABLE void setEventName(const QJsonValue &eventName);
+    Q_INVOKABLE void setGuildId(const QJsonValue &guildId);
+    Q_INVOKABLE void setJobId(const QJsonValue &jobId);
+    Q_INVOKABLE void setRoleId(const QJsonValue &roleId);
+    Q_INVOKABLE void setRoleIds(const QJsonValue &roleIds);
+    Q_INVOKABLE void setMessageId(const QJsonValue &messageId);
+    Q_INVOKABLE void setOverwriteId(const QJsonValue &overwriteId);
+    Q_INVOKABLE void setQueryParams(const QJsonObject &queryParams);
+    Q_INVOKABLE void setSourcePayload(const QJsonObject &sourcePayload);
+    Q_INVOKABLE void setTargetPayload(const QJsonObject &targetPayload);
+    Q_INVOKABLE void setUserId(const QJsonValue &userId);
+    Q_INVOKABLE void setUsername(const QJsonValue &username);
+    Q_INVOKABLE void setIntegrationId(const QJsonValue &webhookId);
+    Q_INVOKABLE void setInviteCode(const QJsonValue &inviteCode);
+    Q_INVOKABLE void setWebhookId(const QJsonValue &webhookId);
+    Q_INVOKABLE void setWebhookToken(const QJsonValue &webhookToken);
+    Q_INVOKABLE void splitArgs();
 };
 
 Q_DECLARE_METATYPE(EventContext)

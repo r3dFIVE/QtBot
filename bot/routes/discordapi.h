@@ -32,8 +32,9 @@
 
 #include "bucket.h"
 #include "logging/logfactory.h"
-#include "routes/route.h"
 #include "payloads/eventcontext.h"
+#include "qml/file.h"
+#include "routes/route.h"
 #include "util/settings.h"
 #include "util/httputils.h"
 
@@ -91,8 +92,7 @@ public:
     QVariant channelDeleteChannel(const QVariant &context);
     QVariant channelGetChannelMessages(const QVariant &context);
     QVariant channelGetChannelMessage(const QVariant &context);
-    QVariant channelCreateMessage(const QVariant &context);
-    QVariant channelCreateMessage(const QVariant &context, File *file);
+    QVariant channelCreateMessage(const QVariant &context, File *file = nullptr);
     QVariant channelCrosspostMessage(const QVariant &context);
     QVariant channelCreateReaction(const QVariant &context);
     QVariant channelDeleteOwnReaction(const QVariant &context);

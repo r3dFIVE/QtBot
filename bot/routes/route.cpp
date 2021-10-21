@@ -72,7 +72,7 @@ Route::buildRequest(const RequestType requestType,
 }
 
 void
-Route::buildHttpMultiPart(EventContext &context, File *file) {
+Route::buildHttpMultiPart(const EventContext &context, File *file) {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
 
     QFile *qfile = file->get();

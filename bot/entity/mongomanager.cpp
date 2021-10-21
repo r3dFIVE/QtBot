@@ -5,6 +5,12 @@
 #include "util/mongoutils.h"
 #include "mongoconnectionpool.h"
 
+using namespace bsoncxx::builder::stream;
+using namespace mongocxx;
+
+const QString MongoManager::SET_OPERATION = "$set";
+const QString MongoManager::UNSET_OPERATION = "$unset";
+
 void
 MongoManager::init() {
     try {
@@ -23,29 +29,47 @@ MongoManager::init() {
     } catch (const mongocxx::exception& e) {
         _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %1").arg(e.what()));
     }
-
-    for (auto name : listCollectionNames()) {
-        _availableCollections << name;
-    }
 }
 
 void
 MongoManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
+    setCollection(GuildEntity::GUILD_RESTRICTIONS);
+
+    bsoncxx::document::view_or_value doc = document{}
+            << "id" << guildEntity->getId().toStdString()
+        << finalize;
+
+    bsoncxx::stdx::optional<bsoncxx::document::value> result;
+
+    try {
+        result = _collection.find_one(doc);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Failed to execute find_one during guild init. REASON: %1").arg(e.what()));
+
+        return;
+    }
+
+    if (result) {
+        guildEntity->initRestrictionStates(MongoUtils::toJson(result.value()));
+    } else {
+
+        try {
+            _collection.insert_one(doc);
+
+        } catch (mongocxx::exception &e) {
+            _logger->warning(QString("Failed create command restrictions for guildID: %1, REASON: %2")
+                             .arg(guildEntity->getId())
+                             .arg(e.what()));
+        }
+    }
 
 }
 
 void
 MongoManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
     if (payload->getOp().toInt() == GatewayEvent::DISPATCH) {
-        QString collectionName = payload->getT().toString();
-
-        if (!_availableCollections.contains(collectionName)) {
-            createCollection(collectionName);
-
-            _availableCollections << collectionName;
-        }
-
-        setCollection(collectionName);
+        setCollection(payload->getT().toString());
 
         insertOne(payload->getD());
     }
@@ -53,27 +77,121 @@ MongoManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
 
 void
 MongoManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
+    setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
+    QString guildId = restrictions->getGuildId();
+
+    QString targetId = restrictions->getTargetId();
+
+    QMap<QString, CommandRestrictions::RestrictionState> mappings = restrictions->getRestrictions();
+
+    switch (restrictions->getType()) {
+        case CommandRestrictions::REMOVE_ALL:
+            restrictionsRemoveAll(guildId);
+            break;
+        case CommandRestrictions::REMOVE_BY_NAME:
+            restrictionsRemoveByName(guildId, mappings);
+            break;
+        case CommandRestrictions::REMOVE_BY_ID:
+            update(restrictions, UNSET_OPERATION);
+            break;
+        default:
+            break;
+    }
+}
+
+void
+MongoManager::restrictionsRemoveByName(const QString &guildId, const QMap<QString, CommandRestrictions::RestrictionState> &mappings) {
+    setCollection(GuildEntity::GUILD_RESTRICTIONS);
+
+    auto remove = document{};
+
+    remove << "$unset" << open_document;
+
+    QMapIterator<QString, CommandRestrictions::RestrictionState> it(mappings);
+
+    while (it.hasNext()) {
+        it.next();
+
+        remove << QString("'%1'.'%2'")
+                    .arg(GuildEntity::RESTRICTIONS)
+                    .arg(it.key())
+                    .toStdString()
+               << "";
+    }
+
+    bsoncxx::document::view_or_value value = remove << finalize;
+
+    try {
+        _collection.update_one(buildSearchByGuildId(guildId), value);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Failed to remove command restrictions by name. REASON: %1").arg(e.what()));
+    }
+}
+
+void
+MongoManager::restrictionsRemoveAll(const QString &guildId) {
+    setCollection(GuildEntity::GUILD_RESTRICTIONS);
+
+    auto remove = document{};
+
+    remove << "$unset" << open_document;
+
+    remove << GuildEntity::RESTRICTIONS.toStdString() << "" << close_document;
+
+    bsoncxx::document::view_or_value value = remove << finalize;
+
+    try {
+        _collection.update_one(buildSearchByGuildId(guildId), value);
+
+    }  catch (mongocxx::exception &e) {
+        _logger->warning(QString("Failed to remove all command restrictions. REASON: %1").arg(e.what()));
+    }
 }
 
 void
 MongoManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) {
-
+    update(restrictions, SET_OPERATION);
 }
 
-QSet<QString>
-MongoManager::listDatabaseNames() {
-    QSet<QString> databaseNames;
+void
+MongoManager::update(QSharedPointer<CommandRestrictions> restrictions, const QString &operation) {
+    setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    try {
-        for (auto name : _database.list_collection_names()) {
-            databaseNames << QString::fromStdString(name);
+    auto update = document{};
+
+    update << operation.toStdString() << open_document;
+
+    QMapIterator<QString, CommandRestrictions::RestrictionState> m_it(restrictions->getRestrictions());
+
+    while (m_it.hasNext()) {
+        m_it.next();
+
+        QString targetId = restrictions->getTargetId();
+
+        if (!targetId.isEmpty()) {
+            targetId = QString(".%1").arg(targetId);
         }
-    } catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to list database names. REASON: %1").arg(e.what()));
+
+        update << QString("%1.%2%3")
+                    .arg(GuildEntity::RESTRICTIONS)
+                    .arg(m_it.key())
+                    .arg(targetId)
+                    .toStdString()
+              << m_it.value();
     }
 
-    return databaseNames;
+    update << close_document;
+
+    bsoncxx::document::view_or_value value = update << finalize;
+
+    try {
+        _collection.update_one(buildSearchByGuildId(restrictions->getGuildId()), value);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Failed to update/remove command restrictions. REASON: %1").arg(e.what()));
+    }
 }
 
 void
@@ -86,26 +204,6 @@ MongoManager::setCollection(const QString &collectionName) {
     }
 }
 
-QSet<QString>
-MongoManager::listCollectionNames() {
-    QSet<QString> collectionNames;
-
-    try {
-        for (auto name : _database.list_collection_names()) {
-            collectionNames << QString::fromStdString(name);
-        }
-    } catch(const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to list collection names. REASON: %1").arg(e.what()));
-    }
-
-    return collectionNames;
-}
-
-QString
-MongoManager::getCollectionName() {
-    return QString::fromStdString(_collection.name().to_string());
-}
-
 void
 MongoManager::insertOne(const QJsonObject &json) {
     try {
@@ -116,12 +214,9 @@ MongoManager::insertOne(const QJsonObject &json) {
     }
 }
 
-void
-MongoManager::createCollection(const QString &collectionName) {
-    try {
-        _database.create_collection(collectionName.toStdString());
-
-    }  catch (const mongocxx::exception& e) {
-        _logger->warning(QString("Failed to create collection: %1. REASON: %2").arg(collectionName, e.what()));
-    }
+bsoncxx::document::view_or_value
+MongoManager::buildSearchByGuildId(const QString &guildId) {
+    return document{}
+            << "id" << guildId.toStdString()
+        << finalize;
 }

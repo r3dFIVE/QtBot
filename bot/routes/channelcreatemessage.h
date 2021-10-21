@@ -31,7 +31,7 @@ class ChannelCreateMessage : public Route
 public:
     const QString PATH = "/channels/{channel.id}/messages";
 
-    ChannelCreateMessage(EventContext &context, File *file = nullptr) {
+    ChannelCreateMessage(const EventContext &context, File *file = nullptr) {
         _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();;
 
         if (file) {

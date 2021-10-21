@@ -39,36 +39,8 @@ class GuildEntity : public QObject
 {
     Q_OBJECT
 
-public:
-    GuildEntity() {}
-    GuildEntity(const Guild &guild);
+    Logger *_logger = LogFactory::getLogger();
 
-    bool hasAdminRole(QSharedPointer<EventContext> context);
-    QList<Job *> processEvent(QSharedPointer<EventContext> context);
-    QList<TimedBinding> getTimedBindings() const;
-    QString getId() const;
-    void addRole(const Role &role);
-    void setCommandBindings(const QList<CommandBinding> &commandBindings);
-    void setGatewayBindings(const QList<GatewayBinding> &gatewayBindings);
-    void setId(const QString &id);
-    void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
-    void setMappedStateIdsByCommand(QMap<QString, QMap<QString,
-                                    CommandRestrictions::RestrictionState> > mappedStateIdsByCommand);
-    void setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts);
-    void setTimedBindings(const QList<TimedBinding> &timedBindings);
-    void toggleCommand(const QString &commandName,
-                       const QString &targetId,
-                       CommandRestrictions::RestrictionState state);
-    void updateRole(const Role &role);
-    void removeRole(const QString &roleId);
-    void clear(const QString &commandName, const QString &targetId);
-
-    static void setAdminRoleName(const QString &roleName);
-    static void setBotOwnerId(const QString &userId);
-    static void setDefaultRestrictionState(const QString &state);
-    static QString getBotOwnerId();
-
-private:
     static CommandRestrictions::RestrictionState DEFAULT_STATE;
     static QString ADMIN_ROLE_NAME;
     static QString BOT_OWNER_ID;
@@ -88,6 +60,44 @@ private:
     QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context) const;
     QString parseCommandToken(const QString &content) const;
     void clearCommand(const QString &commandName, const QString &targetId);
+
+public:
+    GuildEntity() {}
+    GuildEntity(const Guild &guild);
+
+    static const QString GUILD_RESTRICTIONS;
+    static const QString RESTRICTIONS;
+
+    void initRestrictionStates(const QJsonObject &json);
+    bool hasAdminRole(QSharedPointer<EventContext> context);
+    QList<Job *> processEvent(QSharedPointer<EventContext> context);
+    QList<TimedBinding> getTimedBindings() const;
+    QString getId() const;
+    void addRole(const Role &role);
+    void setCommandBindings(const QList<CommandBinding> &commandBindings);
+    void setGatewayBindings(const QList<GatewayBinding> &gatewayBindings);
+    void setId(const QString &id);
+    void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
+    void setMappedStateIdsByCommand(QMap<QString, QMap<QString,
+                                    CommandRestrictions::RestrictionState> > mappedStateIdsByCommand);
+    void setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts);
+    void setTimedBindings(const QList<TimedBinding> &timedBindings);
+    void updateRole(const Role &role);
+    void removeRole(const QString &roleId);
+    void removeRestrictionState(const QString &commandName, const QString &targetId);
+    void removeRestrictionStatesForCommand(const QString &commandName);
+    void removeRestrictionsById(const QString &targetId);
+    void removeAllRestrictionStates();
+    void updateRestrictionState(const QString &commandName,
+                       const QString &targetId,
+                       CommandRestrictions::RestrictionState state);
+    void updateAllRestrictionStates(const QString &targetId,
+                                    CommandRestrictions::RestrictionState state);
+
+    static void setAdminRoleName(const QString &roleName);
+    static void setBotOwnerId(const QString &userId);
+    static void setDefaultRestrictionState(const QString &state);
+    static QString getBotOwnerId();   
 
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
