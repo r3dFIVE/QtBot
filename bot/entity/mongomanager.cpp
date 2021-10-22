@@ -125,14 +125,14 @@ MongoManager::update(QSharedPointer<CommandRestrictions> restrictions, const QSt
 
     QMapIterator<QString, CommandRestrictions::RestrictionState> m_it(restrictions->getRestrictions());
 
+    QString targetId = restrictions->getTargetId();
+
+    if (!targetId.isEmpty()) {
+        targetId = QString(".%1").arg(targetId);
+    }
+
     while (m_it.hasNext()) {
         m_it.next();
-
-        QString targetId = restrictions->getTargetId();
-
-        if (!targetId.isEmpty()) {
-            targetId = QString(".%1").arg(targetId);
-        }
 
         update << QString("%1.%2%3")
                     .arg(GuildEntity::RESTRICTIONS)
