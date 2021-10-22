@@ -35,13 +35,14 @@ class MongoManager : public IDBManager
     mongocxx::database _database;
     mongocxx::uri _uri;
 
+
+    bsoncxx::document::view_or_value buildSearchByGuildId(const QString &guildId);
     QString getCollectionName();
     void createCollection(const QString &collectionName);
     void insertOne(const QJsonObject &json);
     void setCollection(const QString &collectionName);
     void update(QSharedPointer<CommandRestrictions> restrictions, const QString &operation);
-    bsoncxx::document::view_or_value buildRestrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
-    bsoncxx::document::view_or_value buildSearchByGuildId(const QString &guildId);
+    void restrictionsRemoveAll(const QString &guildId);
 
 public:
 
@@ -56,8 +57,6 @@ public:
     void init() override;
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) override;
     void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) override;
-    void restrictionsRemoveAll(const QString &guildId);
-    void restrictionsRemoveByName(const QString &guildId, const QMap<QString, CommandRestrictions::RestrictionState> &mappings);
     void saveEvent(QSharedPointer<GatewayPayload> payload) override;
 };
 

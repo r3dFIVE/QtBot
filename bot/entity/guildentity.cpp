@@ -45,7 +45,7 @@ GuildEntity::initRestrictionStates(const QJsonObject &json) {
     QJsonObject restrictions = json[GuildEntity::RESTRICTIONS].toObject();
 
     QJsonObject::iterator i;
-    for(i = restrictions.begin(); i != restrictions.end(); ++i) {
+    for (i = restrictions.begin(); i != restrictions.end(); ++i) {
         QMap<QString, CommandRestrictions::RestrictionState> mappings;
 
         QJsonObject jsonMappings = i->toObject();

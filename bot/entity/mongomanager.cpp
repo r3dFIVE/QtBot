@@ -79,54 +79,16 @@ void
 MongoManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    QString guildId = restrictions->getGuildId();
-
-    QString targetId = restrictions->getTargetId();
-
-    QMap<QString, CommandRestrictions::RestrictionState> mappings = restrictions->getRestrictions();
-
     switch (restrictions->getType()) {
         case CommandRestrictions::REMOVE_ALL:
-            restrictionsRemoveAll(guildId);
+            restrictionsRemoveAll(restrictions->getGuildId());
             break;
         case CommandRestrictions::REMOVE_BY_NAME:
-            restrictionsRemoveByName(guildId, mappings);
-            break;
         case CommandRestrictions::REMOVE_BY_ID:
             update(restrictions, UNSET_OPERATION);
             break;
         default:
             break;
-    }
-}
-
-void
-MongoManager::restrictionsRemoveByName(const QString &guildId, const QMap<QString, CommandRestrictions::RestrictionState> &mappings) {
-    setCollection(GuildEntity::GUILD_RESTRICTIONS);
-
-    auto remove = document{};
-
-    remove << "$unset" << open_document;
-
-    QMapIterator<QString, CommandRestrictions::RestrictionState> it(mappings);
-
-    while (it.hasNext()) {
-        it.next();
-
-        remove << QString("'%1'.'%2'")
-                    .arg(GuildEntity::RESTRICTIONS)
-                    .arg(it.key())
-                    .toStdString()
-               << "";
-    }
-
-    bsoncxx::document::view_or_value value = remove << finalize;
-
-    try {
-        _collection.update_one(buildSearchByGuildId(guildId), value);
-
-    } catch (mongocxx::exception &e) {
-        _logger->warning(QString("Failed to remove command restrictions by name. REASON: %1").arg(e.what()));
     }
 }
 
