@@ -35,14 +35,12 @@ void
 MongoManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    bsoncxx::document::view_or_value doc = document{}
-            << "id" << guildEntity->getId().toStdString()
-        << finalize;
+    bsoncxx::document::view_or_value guildDoc = buildSearchByGuildId(guildEntity->getId());
 
     bsoncxx::stdx::optional<bsoncxx::document::value> result;
 
     try {
-        result = _collection.find_one(doc);
+        result = _collection.find_one(guildDoc);
 
     } catch (mongocxx::exception &e) {
         _logger->warning(QString("Failed to execute find_one during guild init. REASON: %1").arg(e.what()));
@@ -55,7 +53,7 @@ MongoManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     } else {
 
         try {
-            _collection.insert_one(doc);
+            _collection.insert_one(guildDoc);
 
         } catch (mongocxx::exception &e) {
             _logger->warning(QString("Failed create command restrictions for guildID: %1, REASON: %2")
