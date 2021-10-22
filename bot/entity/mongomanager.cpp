@@ -77,41 +77,13 @@ void
 MongoManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    switch (restrictions->getType()) {
-        case CommandRestrictions::REMOVE_ALL:
-            restrictionsRemoveAll(restrictions->getGuildId());
-            break;
-        case CommandRestrictions::REMOVE_BY_NAME:
-        case CommandRestrictions::REMOVE_BY_ID:
-            update(restrictions, UNSET_OPERATION);
-            break;
-        default:
-            break;
-    }
-}
-
-void
-MongoManager::restrictionsRemoveAll(const QString &guildId) {
-    setCollection(GuildEntity::GUILD_RESTRICTIONS);
-
-    auto remove = document{};
-
-    remove << "$unset" << open_document;
-
-    remove << GuildEntity::RESTRICTIONS.toStdString() << "" << close_document;
-
-    bsoncxx::document::view_or_value value = remove << finalize;
-
-    try {
-        _collection.update_one(buildSearchByGuildId(guildId), value);
-
-    }  catch (mongocxx::exception &e) {
-        _logger->warning(QString("Failed to remove all command restrictions. REASON: %1").arg(e.what()));
-    }
+    update(restrictions, UNSET_OPERATION);
 }
 
 void
 MongoManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) {
+    setCollection(GuildEntity::GUILD_RESTRICTIONS);
+
     update(restrictions, SET_OPERATION);
 }
 
@@ -123,23 +95,27 @@ MongoManager::update(QSharedPointer<CommandRestrictions> restrictions, const QSt
 
     update << operation.toStdString() << open_document;
 
-    QMapIterator<QString, CommandRestrictions::RestrictionState> m_it(restrictions->getRestrictions());
+    if (!restrictions->getRestrictions().isEmpty()) {
+        QString targetId = restrictions->getTargetId();
 
-    QString targetId = restrictions->getTargetId();
+        if (!targetId.isEmpty()) {
+            targetId = QString(".%1").arg(targetId);
+        }
 
-    if (!targetId.isEmpty()) {
-        targetId = QString(".%1").arg(targetId);
-    }
+        QMapIterator<QString, CommandRestrictions::RestrictionState> m_it(restrictions->getRestrictions());
 
-    while (m_it.hasNext()) {
-        m_it.next();
+        while (m_it.hasNext()) {
+            m_it.next();
 
-        update << QString("%1.%2%3")
-                    .arg(GuildEntity::RESTRICTIONS)
-                    .arg(m_it.key())
-                    .arg(targetId)
-                    .toStdString()
-              << m_it.value();
+            update << QString("%1.%2%3")
+                        .arg(GuildEntity::RESTRICTIONS)
+                        .arg(m_it.key())
+                        .arg(targetId)
+                        .toStdString()
+                  << m_it.value();
+        }
+    } else {
+        update << GuildEntity::RESTRICTIONS.toStdString() << "";
     }
 
     update << close_document;

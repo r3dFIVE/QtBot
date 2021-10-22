@@ -237,7 +237,7 @@ GuildEntity::updateRestrictionState(const QString &name,
     }
 
     if (!entityRestrictionsUpdate.isEmpty()) {
-        emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate, CommandRestrictions::UPDATE)));
+        emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
     }
 }
 
@@ -261,7 +261,7 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
     }
 
     if (!entityRestrictionsUpdate.isEmpty()) {
-        emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate, CommandRestrictions::UPDATE)));
+        emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
     }
 }
 
@@ -312,7 +312,7 @@ GuildEntity::removeRestrictionState(const QString &name, const QString &targetId
     }
 
     if (!entityRestrictionsUpdate.isEmpty()) {
-        emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate, CommandRestrictions::REMOVE_BY_ID)));
+        emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
     }
 }
 
@@ -333,7 +333,7 @@ GuildEntity::removeRestrictionsById(const QString &targetId) {
     }
 
     if (!entityRestrictionsUpdate.isEmpty()) {
-        emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate, CommandRestrictions::REMOVE_BY_ID)));
+        emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
     }
 }
 
@@ -341,7 +341,7 @@ void GuildEntity::removeAllRestrictionStates()
 {
     _mappedStateIdsByCommand.clear();
 
-    emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, QString(), QMap<QString, CommandRestrictions::RestrictionState>(), CommandRestrictions::REMOVE_ALL)));
+    emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, QString(), QMap<QString, CommandRestrictions::RestrictionState>())));
 }
 
 Job*
