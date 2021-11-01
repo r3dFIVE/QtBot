@@ -98,10 +98,11 @@ HEADERS += \
     $$PWD/qml/httppart.h \
     $$PWD/qml/httpresponse.h \
     $$PWD/qml/mongodb.h \
-    $$PWD/qml/mongofind.h \
+    $$PWD/qml/mongodeleteoptions.h \
+    $$PWD/qml/mongofindoptions.h \
     $$PWD/qml/mongohint.h \
-    $$PWD/qml/mongoinsert.h \
-    $$PWD/qml/mongoupdate.h \
+    $$PWD/qml/mongoinsertoptions.h \
+    $$PWD/qml/mongoupdateoptions.h \
     $$PWD/qml/sqldatabase.h \
     $$PWD/qml/sqlerror.h \
     $$PWD/qml/sqlquery.h \
@@ -289,10 +290,11 @@ SOURCES += \
     $$PWD/qml/httpmultipart.cpp \
     $$PWD/qml/httppart.cpp \
     $$PWD/qml/httpresponse.cpp \
-    $$PWD/qml/mongofind.cpp \
+    $$PWD/qml/mongodeleteoptions.cpp \
+    $$PWD/qml/mongofindoptions.cpp \
     $$PWD/qml/mongohint.cpp \
-    $$PWD/qml/mongoinsert.cpp \
-    $$PWD/qml/mongoupdate.cpp \
+    $$PWD/qml/mongoinsertoptions.cpp \
+    $$PWD/qml/mongoupdateoptions.cpp \
     $$PWD/qml/sqldatabase.cpp \
     $$PWD/qml/mongodb.cpp \
     $$PWD/qml/sqlerror.cpp \

@@ -1,5 +1,5 @@
-#ifndef MONGOFIND_H
-#define MONGOFIND_H
+#ifndef MONGOFINDOPTIONS_H
+#define MONGOFINDOPTIONS_H
 
 #include <QJsonObject>
 #include <QObject>
@@ -13,20 +13,40 @@
 #include "logging/logfactory.h"
 
 
-class MongoFind : public QObject
+class MongoFindOptions : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    static const QString ALLOW_DISK_USE;
+    static const QString ALLOW_PARTIAL_RESULTS;
+    static const QString BATCH_SIZE;
+    static const QString COLLATION;
+    static const QString COMMENT;
+    static const QString HINT;
+    static const QString LIMIT;
+    static const QString MAX;
+    static const QString MAX_AWAIT_TIME;
+    static const QString MAX_TIME;
+    static const QString MIN;
+    static const QString NO_CURSOR_TIMEOUT;
+    static const QString PROJECTION;
+    static const QString RETURN_KEY;
+    static const QString SHOW_RECORD_ID;
+    static const QString SKIP;
+    static const QString SORT;
 
-    mongocxx::options::find _findArgs{};
+    Logger *_logger = LogFactory::getLogger();
+    mongocxx::options::find _findOptions{};
 
 public:
-    MongoFind(QObject *parent = nullptr) : QObject(parent) {}
-    MongoFind(const MongoFind &other, QObject *parent = nullptr);
-    ~MongoFind() {}
+    static mongocxx::options::find fromJson(const QJsonObject &options);
+    static mongocxx::options::find fromVariant(const QVariant &options);
 
-    MongoFind& operator=(const MongoFind &other);
+    MongoFindOptions(QObject *parent = nullptr) : QObject(parent) {}
+    MongoFindOptions(const MongoFindOptions &other, QObject *parent = nullptr);
+    ~MongoFindOptions() {}
+
+    MongoFindOptions& operator=(const MongoFindOptions &other);
 
     Q_INVOKABLE void allowDiskUse(bool allow);
     Q_INVOKABLE bool allowDiskUse() const;
@@ -34,6 +54,8 @@ public:
     Q_INVOKABLE bool allowPartialResults() const;
     Q_INVOKABLE void batchSize(int batchSize);
     Q_INVOKABLE int batchSize() const;
+    Q_INVOKABLE void collation(const QJsonObject &json);
+    Q_INVOKABLE QJsonObject collation();
     Q_INVOKABLE void hint(const QJsonObject &json);
     Q_INVOKABLE QJsonObject hint() const;
     Q_INVOKABLE void limit(long hint);
@@ -62,6 +84,6 @@ public:
 
 };
 
-Q_DECLARE_METATYPE(MongoFind)
+Q_DECLARE_METATYPE(MongoFindOptions)
 
-#endif // MONGOFIND_H
+#endif // MONGOFINDOPTIONS_H

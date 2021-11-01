@@ -1,9 +1,13 @@
 #include "mongodb.h"
+#include "mongodeleteoptions.h"
+#include "mongoupdateoptions.h"
 
-#include "mongofind.h"
-#include "mongoinsert.h"
+#include "mongofindoptions.h"
+#include "mongoinsertoptions.h"
 #include "entity/mongoconnectionpool.h"
 #include "util/mongoutils.h"
+
+#include <util/serializationutils.h>
 
 
 MongoDB::MongoDB(const MongoDB &other, QObject *parent) : QObject(parent) {
@@ -50,6 +54,8 @@ MongoDB::collectionName() {
     return QString::fromStdString(_collectionName);
 }
 
+
+
 void
 MongoDB::databaseName(const QString &databaseName) {
     _databaseName = databaseName.toStdString();
@@ -91,26 +97,49 @@ MongoDB::userName() {
 }
 
 void
-MongoDB::insertOne(const QVariant &document, const QVariant &args) {
+MongoDB::deleteOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::delete_options &options) {
     auto client = MongoConnectionPool::acquire();
 
     auto collection = (*client)[_databaseName][_collectionName];
 
     try {
-        auto doc = MongoUtils::fromVariant(document);
-
-        auto insertArgs = parseInsertOpts(args);
-
-        collection.insert_one(doc, insertArgs);
+        collection.delete_one(filter, options);
 
     } catch (mongocxx::exception &e) {
-        _logger->warning(QString("Error running find, reason: %1").arg(e.what()));
+        _logger->warning(QString("Error deleting document, reason: %1").arg(e.what()));
     }
+}
 
+void
+MongoDB::deleteMany(const bsoncxx::document::view_or_value &filter, const mongocxx::options::delete_options &options) {
+    auto client = MongoConnectionPool::acquire();
+
+    auto collection = (*client)[_databaseName][_collectionName];
+
+    try {
+        collection.delete_many(filter, options);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Error deleting document, reason: %1").arg(e.what()));
+    }
+}
+
+void
+MongoDB::insertOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::insert &options) {
+    auto client = MongoConnectionPool::acquire();
+
+    auto collection = (*client)[_databaseName][_collectionName];
+
+    try {
+        collection.insert_one(filter, options);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Error inserting document, reason: %1").arg(e.what()));
+    }
 }
 
 QJsonArray
-MongoDB::find(const QVariant &filter, const QVariant &args) {
+MongoDB::find(const bsoncxx::document::view_or_value &filter, const mongocxx::options::find &options) {
     auto client = MongoConnectionPool::acquire();
 
     auto collection = (*client)[_databaseName][_collectionName];
@@ -118,13 +147,9 @@ MongoDB::find(const QVariant &filter, const QVariant &args) {
     QJsonArray results;
 
     try {
-        auto searchFilter = MongoUtils::fromVariant(filter);
+        auto cursor = collection.find(filter, options);
 
-        auto findArgs = parseFindOpts(args);
-
-        auto cursor = collection.find(searchFilter.view(), findArgs);
-
-        for(auto doc : cursor) {
+        for (auto doc : cursor) {
             results.push_back(MongoUtils::toJson(doc));
         }
     } catch (mongocxx::exception &e) {
@@ -134,42 +159,8 @@ MongoDB::find(const QVariant &filter, const QVariant &args) {
     return results;
 }
 
-mongocxx::options::insert
-MongoDB::parseInsertOpts(const QVariant &opts) {
-    mongocxx::options::insert insertOpts{};
-
-    if (opts.isValid())  {
-        auto insert = qvariant_cast<MongoInsert*>(opts);
-
-        if (insert) {
-            insertOpts = insert->get();
-        }
-    } else {
-        insertOpts = mongocxx::options::insert{};
-    }
-
-    return insertOpts;
-}
-
-mongocxx::options::find
-MongoDB::parseFindOpts(const QVariant &args) {
-    mongocxx::options::find findArgs{};
-
-    if (args.isValid())  {
-        auto find = qvariant_cast<MongoFind*>(args);
-
-        if (find) {
-            findArgs = find->get();
-        }
-    } else {
-        findArgs = mongocxx::options::find{};
-    }
-
-    return findArgs;
-}
-
 QJsonObject
-MongoDB::findOne(const QVariant &filter, const QVariant &args) {
+MongoDB::findOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::find &options) {
     auto client = MongoConnectionPool::acquire();
 
     auto collection = (*client)[_databaseName][_collectionName];
@@ -177,11 +168,7 @@ MongoDB::findOne(const QVariant &filter, const QVariant &args) {
     QJsonObject json;
 
     try {
-        auto findArgs = parseFindOpts(args);
-
-        auto searchFilter = MongoUtils::fromVariant(filter);
-
-        auto result = collection.find_one(searchFilter.view(), findArgs);
+        auto result = collection.find_one(filter, options);
 
         if (result) {
             json = MongoUtils::toJson(result.value());
@@ -191,4 +178,114 @@ MongoDB::findOne(const QVariant &filter, const QVariant &args) {
     }
 
     return json;
+}
+
+void
+MongoDB::updateOne(const bsoncxx::document::view_or_value &filter,
+                   const bsoncxx::document::view_or_value &update,
+                   const mongocxx::options::update &options) {
+    auto client = MongoConnectionPool::acquire();
+
+    auto collection = (*client)[_databaseName][_collectionName];
+
+    try {
+        collection.update_one(filter, update, options);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Error updating document, reason: %1").arg(e.what()));
+    }
+}
+
+void
+MongoDB::updateMany(const bsoncxx::document::view_or_value &filter,
+                    const bsoncxx::document::view_or_value &update,
+                    const mongocxx::options::update &options) {
+    auto client = MongoConnectionPool::acquire();
+
+    auto collection = (*client)[_databaseName][_collectionName];
+
+    try {
+        collection.update_many(filter, update, options);
+
+    } catch (mongocxx::exception &e) {
+        _logger->warning(QString("Error updating documents, reason: %1").arg(e.what()));
+    }
+}
+
+void
+MongoDB::insertOne(const QVariant &document, const QVariant &options) {
+    insertOne(MongoUtils::toViewOrValue(document), MongoInsertOptions::fromVariant(options));
+}
+
+void
+MongoDB::insertOne(const QVariant &document, const QJsonObject &options) {
+    insertOne(MongoUtils::toViewOrValue(document), MongoInsertOptions::fromJson(options));
+}
+
+QJsonArray
+MongoDB::find(const QVariant &filter, const QVariant &options) {
+    return find(MongoUtils::toViewOrValue(filter), MongoFindOptions::fromVariant(options));
+}
+
+QJsonArray
+MongoDB::find(const QVariant &filter, const QJsonObject &options) {
+    return find(MongoUtils::toViewOrValue(filter), MongoFindOptions::fromJson(options));
+}
+
+QJsonObject
+MongoDB::findOne(const QVariant &filter, const QVariant &options) {
+    return findOne(MongoUtils::toViewOrValue(filter), MongoFindOptions::fromVariant(options));
+}
+
+QJsonObject
+MongoDB::findOne(const QVariant &filter, const QJsonObject &options) {
+    return findOne(MongoUtils::toViewOrValue(filter), MongoFindOptions::fromJson(options));
+}
+
+void
+MongoDB::updateOne(const QVariant &filter, const QVariant &update, const QJsonObject &options) {
+    updateOne(MongoUtils::toViewOrValue(filter),
+              MongoUtils::toViewOrValue(update),
+              MongoUpdateOptions::fromJson(options));
+}
+
+void
+MongoDB::updateOne(const QVariant &filter, const QVariant &update, const QVariant &options) {
+    updateOne(MongoUtils::toViewOrValue(filter),
+              MongoUtils::toViewOrValue(update),
+              MongoUpdateOptions::fromVariant(options));
+}
+
+void
+MongoDB::updateMany(const QVariant &filter, const QVariant &update, const QJsonObject &options) {
+    updateMany(MongoUtils::toViewOrValue(filter),
+               MongoUtils::toViewOrValue(update),
+               MongoUpdateOptions::fromJson(options));
+}
+
+void
+MongoDB::updateMany(const QVariant &filter, const QVariant &update, const QVariant &options) {
+    updateMany(MongoUtils::toViewOrValue(filter),
+               MongoUtils::toViewOrValue(update),
+               MongoUpdateOptions::fromVariant(options));
+}
+
+void
+MongoDB::deleteOne(const QVariant &filter, const QJsonObject &options) {
+    deleteOne(MongoUtils::toViewOrValue(filter), MongoDeleteOptions::fromJson(options));
+}
+
+void
+MongoDB::deleteOne(const QVariant &filter, const QVariant &options) {
+    deleteOne(MongoUtils::toViewOrValue(filter), MongoDeleteOptions::fromVariant(options));
+}
+
+void
+MongoDB::deleteMany(const QVariant &filter, const QJsonObject &options) {
+    deleteMany(MongoUtils::toViewOrValue(filter), MongoDeleteOptions::fromJson(options));
+}
+
+void
+MongoDB::deleteMany(const QVariant &filter, const QVariant &options) {
+    deleteMany(MongoUtils::toViewOrValue(filter), MongoDeleteOptions::fromVariant(options));
 }
