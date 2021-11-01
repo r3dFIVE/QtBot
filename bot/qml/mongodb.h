@@ -22,6 +22,9 @@ class MongoDB : public QObject
 {
     Q_OBJECT
 
+    static const QString BYPASS_DOCUMENT_VALIDATION;
+
+
     Logger *_logger = LogFactory::getLogger();
 
     int _port;
@@ -42,10 +45,32 @@ public:
 
     Q_INVOKABLE QString collectionName();
 
+    void deleteOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::delete_options &options);
+    void deleteMany(const bsoncxx::document::view_or_value &filter, const mongocxx::options::delete_options &options);
+    void insertOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::insert &options);
+    QJsonArray find(const bsoncxx::document::view_or_value &filter, const mongocxx::options::find &options);
+    QJsonObject findOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::find &options);
+    void updateOne(const bsoncxx::document::view_or_value &filter,
+                   const bsoncxx::document::view_or_value &update,
+                   const mongocxx::options::update &options);
+    void updateMany(const bsoncxx::document::view_or_value &filter,
+                    const bsoncxx::document::view_or_value &update,
+                    const mongocxx::options::update &options);
 
-    Q_INVOKABLE void insertOne(const QVariant &filter, const QVariant &args = QVariant());
-    Q_INVOKABLE QJsonArray find(const QVariant &filter, const QVariant &args = QVariant());
-    Q_INVOKABLE QJsonObject findOne(const QVariant &filter, const QVariant &args = QVariant());
+    Q_INVOKABLE void deleteOne(const QVariant &filter, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE void deleteOne(const QVariant &filter, const QVariant &options);
+    Q_INVOKABLE void deleteMany(const QVariant &filter, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE void deleteMany(const QVariant &filter, const QVariant &options);
+    Q_INVOKABLE void insertOne(const QVariant &filter, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE void insertOne(const QVariant &filter, const QVariant &options);
+    Q_INVOKABLE QJsonArray find(const QVariant &filter, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE QJsonArray find(const QVariant &filter, const QVariant &options);
+    Q_INVOKABLE QJsonObject findOne(const QVariant &filter, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE QJsonObject findOne(const QVariant &filter, const QVariant &options);
+    Q_INVOKABLE void updateOne(const QVariant &filter, const QVariant &update, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE void updateOne(const QVariant &filter, const QVariant &update, const QVariant &options);
+    Q_INVOKABLE void updateMany(const QVariant &filter, const QVariant &update, const QJsonObject &options = QJsonObject());
+    Q_INVOKABLE void updateMany(const QVariant &filter, const QVariant &update, const QVariant &options);
     Q_INVOKABLE void databaseName(const QString &databaseName);
     Q_INVOKABLE QString databaseName();
     Q_INVOKABLE void collectionName(const QString &collectionName);

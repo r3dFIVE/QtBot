@@ -8,8 +8,8 @@
 using namespace bsoncxx::builder::stream;
 using namespace mongocxx;
 
-const QString MongoManager::SET_OPERATION = "$set";
-const QString MongoManager::UNSET_OPERATION = "$unset";
+const std::string MongoManager::SET_OPERATION = "$set";
+const std::string MongoManager::UNSET_OPERATION = "$unset";
 
 void
 MongoManager::init() {
@@ -50,6 +50,7 @@ MongoManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
 
     if (result) {
         guildEntity->initRestrictionStates(MongoUtils::toJson(result.value()));
+
     } else {
 
         try {
@@ -61,7 +62,6 @@ MongoManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
                              .arg(e.what()));
         }
     }
-
 }
 
 void
@@ -77,23 +77,23 @@ void
 MongoManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    update(restrictions, UNSET_OPERATION);
+    updateRestrictions(restrictions, UNSET_OPERATION);
 }
 
 void
 MongoManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    update(restrictions, SET_OPERATION);
+    updateRestrictions(restrictions, SET_OPERATION);
 }
 
 void
-MongoManager::update(QSharedPointer<CommandRestrictions> restrictions, const QString &operation) {
+MongoManager::updateRestrictions(QSharedPointer<CommandRestrictions> restrictions, const std::string &operation) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
     auto update = document{};
 
-    update << operation.toStdString() << open_document;
+    update << operation << open_document;
 
     if (!restrictions->getRestrictions().isEmpty()) {
         QString targetId = restrictions->getTargetId();

@@ -18,6 +18,8 @@
  *
  */
 
+#include "mongodeleteoptions.h"
+#include "mongoupdateoptions.h"
 #include "qmlfactory.h"
 
 #include <QQmlEngine>
@@ -26,8 +28,8 @@
 #include "http.h"
 #include "httpmultipart.h"
 #include "httppart.h"
-#include "mongofind.h"
-#include "mongoinsert.h"
+#include "mongofindoptions.h"
+#include "mongoinsertoptions.h"
 #include "file.h"
 #include "sqldatabase.h"
 #include "sqlquery.h"
@@ -75,11 +77,17 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
     } else if (typeName == "MongoDB") {
         return new MongoDB(_databaseContext);
 
-    } else if (typeName == "MongoFind") {
-        return new MongoFind();
+    } else if (typeName == "MongoFindOptions") {
+        return new MongoFindOptions();
 
-    } else if (typeName == "MongoInsert") {
-        return new MongoInsert();
+    } else if (typeName == "MongoInsertOptions") {
+        return new MongoInsertOptions();
+
+    } else if (typeName == "MongoUpdateOptions") {
+        return new MongoUpdateOptions();
+
+    } else if (typeName == "MongoDeleteOptions") {
+        return new MongoDeleteOptions();
 
     } else if (typeName == "SqlDatabase") {
         return new SqlDatabase(_databaseContext);
@@ -123,9 +131,13 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
 
     engine->evaluate("function MongoDB() { return _factory.createObject(\"MongoDB\", {}); }");
 
-    engine->evaluate("function MongoFind() { return _factory.createObject(\"MongoFind\", {}); }");
+    engine->evaluate("function MongoFindOptions() { return _factory.createObject(\"MongoFindOptions\", {}); }");
 
-    engine->evaluate("function MongoInsert() { return _factory.createObject(\"MongoInsert\", {}); }");
+    engine->evaluate("function MongoInsertOptions() { return _factory.createObject(\"MongoInsertOptions\", {}); }");
+
+    engine->evaluate("function MongoUpdateOptions() { return _factory.createObject(\"MongoUpdateOptions\", {}); }");
+
+    engine->evaluate("function MongoDeleteOptions() { return _factory.createObject(\"MongoDeleteOptions\", {}); }");
 }
 
 QObject*

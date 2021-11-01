@@ -41,13 +41,13 @@ class MongoManager : public IDBManager
     void createCollection(const QString &collectionName);
     void insertOne(const QJsonObject &json);
     void setCollection(const QString &collectionName);
-    void update(QSharedPointer<CommandRestrictions> restrictions, const QString &operation);
+    void updateRestrictions(QSharedPointer<CommandRestrictions> restrictions, const std::string &operation);
     void restrictionsRemoveAll(const QString &guildId);
 
 public:
 
-    static const QString SET_OPERATION;
-    static const QString UNSET_OPERATION;
+    static const std::string SET_OPERATION;
+    static const std::string UNSET_OPERATION;
 
     MongoManager(DatabaseContext context) {
         _databaseContext = context;

@@ -31,8 +31,8 @@
 #include "qml/sqldatabase.h"
 #include "qml/sqlquery.h"
 #include "qml/http.h"
-#include "qml/mongofind.h"
-#include "qml/mongoinsert.h"
+#include "qml/mongofindoptions.h"
+#include "qml/mongoinsertoptions.h"
 #include "qml/enums/networkrequest.h"
 #include "qml/httpmultipart.h"
 #include "qml/httppart.h"
@@ -59,8 +59,8 @@ Bot::Bot() {
     qRegisterMetaType<QSharedPointer<Route> >();
     qRegisterMetaType<QSharedPointer<EventContext> >();
     qRegisterMetaType<QSharedPointer<CommandRestrictions> >();
-    qRegisterMetaType<MongoFind>();
-    qRegisterMetaType<MongoInsert>();
+    qRegisterMetaType<MongoFindOptions>();
+    qRegisterMetaType<MongoInsertOptions*>();
     qRegisterMetaType<SqlQuery>();
     qRegisterMetaType<SqlError*>();
     qRegisterMetaType<File>();
