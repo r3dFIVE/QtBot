@@ -86,7 +86,7 @@ MongoUpdateOptions::bypassDocumentValidation() {
     auto result = _updateOptions.bypass_document_validation();
 
     if (result) {
-        bypass = result.get();
+        bypass = result.value();
     }
 
     return bypass;
@@ -122,7 +122,7 @@ MongoUpdateOptions::upsert() {
     auto result = _updateOptions.bypass_document_validation();
 
     if (result) {
-        bypass = result.get();
+        bypass = result.value();
     }
 
     return bypass;
