@@ -23,8 +23,8 @@
 
 #include <QObject>
 
+#include "util/gatewayevent.h"
 #include "jsonserializable.h"
-#include "util/globals.h"
 
 class Heartbeat : public JsonSerializable
 {

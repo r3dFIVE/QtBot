@@ -25,9 +25,10 @@
 
 #include "entitymanager.h"
 #include "eventhandler.h"
-#include "util/globals.h"
-#include "qml/mongodb.h"
 #include "logging/logfactory.h"
+#include "payloads/embed.h"
+#include "payloads/embedfield.h"
+#include "qml/mongodb.h"
 #include "qml/sqldatabase.h"
 #include "qml/sqlquery.h"
 #include "qml/http.h"
@@ -37,10 +38,6 @@
 #include "qml/httpmultipart.h"
 #include "qml/httppart.h"
 #include "qml/httpresponse.h"
-
-#include "payloads/embed.h"
-#include "payloads/embedfield.h"
-
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int Bot::BOT_API_MAJOR_VERSION = 1;
@@ -93,8 +90,8 @@ Bot::Bot() {
 }
 
 void
-Bot::run(QSharedPointer<Settings> settings) {
-    Gateway *gateway = new Gateway(settings);
+Bot::run() {
+    Gateway *gateway = new Gateway();
 
     gateway->moveToThread(&_gatewayThread);
 
@@ -102,13 +99,13 @@ Bot::run(QSharedPointer<Settings> settings) {
 
     connect(&_gatewayThread, &QThread::started, gateway, &Gateway::init);
 
-    EventHandler *eventHandler = new EventHandler(settings);
+    EventHandler *eventHandler = new EventHandler();
 
-    _scriptBuilder = new ScriptBuilder(eventHandler, settings);
+    _scriptBuilder = new ScriptBuilder(eventHandler);
 
     eventHandler->moveToThread(&_eventHandlerThread);
 
-    EntityManager *entityManager = new EntityManager(settings);
+    EntityManager *entityManager = new EntityManager();
 
     entityManager->moveToThread(&_entityManagerThread);
 

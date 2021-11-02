@@ -65,6 +65,7 @@ public:
     GuildEntity() {}
     GuildEntity(const Guild &guild);
 
+    static const QString DEFAULT_GUILD_ID;
     static const QString GUILD_RESTRICTIONS;
     static const QString RESTRICTIONS;
 

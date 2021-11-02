@@ -42,14 +42,14 @@
 #include "timedbinding.h"
 
 
-ScriptBuilder::ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings)
-    : _defaultDatabaseContext(settings) {
+ScriptBuilder::ScriptBuilder(EventHandler *eventHandler) {
+    _defaultDatabaseContext.init();
 
     _eventHandler = eventHandler;
 
     _logger = LogFactory::getLogger();
 
-    _scriptDir = settings->value(SettingsParam::Script::SCRIPT_DIRECTORY).toString();
+    _scriptDir = Settings::scriptDirectory();
 }
 
 void
@@ -299,7 +299,7 @@ ScriptBuilder::registerGatewayBinding(QSharedPointer<BotScript> botScript, const
         return;
     }
 
-    if (binding[GatewayBinding::SINGLETON].toBool() && _guildId != DEFAULT_GUILD_ID) {
+    if (binding[GatewayBinding::SINGLETON].toBool() && _guildId != GuildEntity::DEFAULT_GUILD_ID) {
         return; // Singleton only run on Default Guild ID 0
     }
 
@@ -322,7 +322,7 @@ void
 ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding) {
     QString functionName = binding[IBinding::FUNCTION].toString();
 
-    if (binding[TimedBinding::SINGLETON].toBool() && _guildId != DEFAULT_GUILD_ID) {
+    if (binding[TimedBinding::SINGLETON].toBool() && _guildId != GuildEntity::DEFAULT_GUILD_ID) {
         return; // Singleton only run on Default Guild ID 0
     }
 

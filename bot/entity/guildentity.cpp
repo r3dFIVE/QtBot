@@ -26,6 +26,7 @@
 #include "botjob/ibotjob.h"
 #include "util/enumutils.h"
 
+const QString GuildEntity::DEFAULT_GUILD_ID = "0";
 const QString GuildEntity::GUILD_RESTRICTIONS = "GUILD_RESTRICTIONS";
 const QString GuildEntity::RESTRICTIONS = "restrictions";
 QString GuildEntity::ADMIN_ROLE_NAME = QString();

@@ -24,8 +24,9 @@
 #include "logger.h"
 
 #include <QString>
-#include <util/settings.h>
 #include <QSharedPointer>
+
+#include "util/settings.h"
 
 class LogFactory
 {
@@ -36,7 +37,7 @@ private:
 
 public:
     static Logger* getLogger();
-    static Logger* init(QSharedPointer<Settings> settings);
+    static void init();
 };
 
 #endif // LOGSERVICE_H

@@ -20,8 +20,8 @@
 
 #include "echoserver.h"
 #include "payloads/gatewaypayload.h"
-#include "util/globals.h"
 #include "util/serializationutils.h"
+#include "util/gatewayevent.h"
 #include "payloads/hello.h"
 #include "QtWebSockets/qwebsocketserver.h"
 #include "QtWebSockets/qwebsocket.h"

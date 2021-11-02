@@ -26,24 +26,44 @@
 
 #include "logging/logcontext.h"
 #include "entity/guildentity.h"
+#include "util/databasetype.h"
 #include "settings.h"
-#include "globals.h"
 #include "enumutils.h"
 
 
-Settings::Settings(QString path) : _path(path) {
-    parseSettingsFile();    
-    validateSettings();
-}
+QMap<QString, QVariant> Settings::_settings = QMap<QString, QVariant>();
+const QString Settings::CONNECTION_URL = QString("connection_url");
+const QString Settings::MAX_RETRIES = QString("max_retries");
+const QString Settings::API_VERSION = QString("api_version");
+const QString Settings::BOT_TOKEN = QString("bot_token");
+const QString Settings::OWNER_ID = QString("owner_id");
+const QString Settings::ADMIN_ROLE_NAME = QString("admin_role_name");
+const QString Settings::RESTRICTION_STATE = QString("restriction_state");
+const QString Settings::CONSOLE_LOG_LEVEL = QString("console_log_level");
+const QString Settings::FILE_LOG_LEVEL = QString("file_log_level");
+const QString Settings::LOG_FILE_SIZE = QString("log_file_size");
+const QString Settings::LOG_ROLLOVER_COUNT = QString("log_rollover_count");
+const QString Settings::LOG_FILE_DIRECTORY = QString("log_file_directory");
+const QString Settings::LOG_FILE_NAME = QString("log_file_name");
+const QString Settings::DATABASE_HOST = QString("database_host");
+const QString Settings::DATABASE_PORT = QString("database_port");
+const QString Settings::DATABASE_USER = QString("database_user");
+const QString Settings::DATABASE_PASSWORD = QString("database_password");
+const QString Settings::DATABASE_TYPE = QString("database_type");
+const QString Settings::DATABASE_NAME = QString("database_name");
+const QString Settings::GATEWAY_INTENTS = QString("gateway_intents");
+const QString Settings::MAX_POOL_SIZE = QString("max_pool_size");
+const QString Settings::SCRIPT_DIRECTORY = QString("script_directory");
+
 
 void
-Settings::parseSettingsFile() {
-    QFile settingsFile(_path);
+Settings::load(const QString &path) {
+    QFile settingsFile(path);
 
     settingsFile.open(QIODevice::ReadOnly);
 
     if (!settingsFile.isOpen()) {
-        qDebug().noquote() << QString("Error initializing opening %1. . . exiting.\n").arg(_path);
+        qDebug().noquote() << QString("Error initializing opening %1. . . exiting.\n").arg(path);
 
         exit(EXIT_FAILURE);
     }
@@ -65,6 +85,8 @@ Settings::parseSettingsFile() {
 
         line = stream.readLine();
     }
+
+    validateSettings();
 }
 
 bool
@@ -82,149 +104,130 @@ Settings::validateSettings() {
 
 void
 Settings::validateBotSettings() {
-    if (_settings[SettingsParam::Bot::TOKEN].toString().isEmpty()) {
+    if (_settings[BOT_TOKEN].toString().isEmpty()) {
         qDebug() << "Bot Token must be set in your options file for successful conenctions";
 
         exit(EXIT_FAILURE);
     }
 
-    if (_settings[SettingsParam::Bot::OWNER_ID].toString().isEmpty()) {
+    if (_settings[OWNER_ID].toString().isEmpty()) {
         qDebug() << "Bot Owner (discord user id) must be set in your options file.";
 
         exit(EXIT_FAILURE);
     }
 
-    if (_settings[SettingsParam::Bot::ADMIN_ROLE_NAME].toString().isEmpty()) {
+    if (_settings[ADMIN_ROLE_NAME].toString().isEmpty()) {
         qDebug() << "Guild level bot admin role name must be set in your options file.";
 
         exit(EXIT_FAILURE);
     }
 
-    if (_settings[SettingsParam::Script::SCRIPT_DIRECTORY].toString().isEmpty()) {
-        _settings[SettingsParam::Script::SCRIPT_DIRECTORY] = "./scripts/";
+    if (_settings[SCRIPT_DIRECTORY].toString().isEmpty()) {
+        _settings[SCRIPT_DIRECTORY] = "./scripts/";
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<CommandRestrictions::RestrictionState>();
 
-    QString restrictionState = _settings[SettingsParam::Bot::RESTRICTION_STATE].toString();
+    QString restrictionState = _settings[RESTRICTION_STATE].toString();
 
     int typeValue = metaEnum.keyToValue(restrictionState.toUtf8());
 
     if (typeValue < 0) {
-        invalidEnumValue(SettingsParam::Bot::RESTRICTION_STATE, restrictionState, metaEnum);
+        invalidEnumValue(RESTRICTION_STATE, restrictionState, metaEnum);
     }
 }
 
 void
 Settings::validateGatewaySettings() {
-    if (_settings[SettingsParam::Connection::CONNECTION_URL].toString().isEmpty()) {
-        _settings[SettingsParam::Connection::CONNECTION_URL] = "wss://gateway.discord.gg";
+    if (_settings[CONNECTION_URL].toString().isEmpty()) {
+        _settings[CONNECTION_URL] = "wss://gateway.discord.gg";
     }
 
-    int max_retries = _settings[SettingsParam::Connection::MAX_RETRIES].toInt();
+    int max_retries = _settings[MAX_RETRIES].toInt();
 
     if (max_retries <= 0) {
-        _settings[SettingsParam::Connection::MAX_RETRIES] = 10;
+        _settings[MAX_RETRIES] = 10;
     }
 
-    if (_settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString().isEmpty()) {
-        _settings[SettingsParam::Gateway::GATEWAY_INTENTS] = "GUILD_MESSAGES";
+    if (_settings[GATEWAY_INTENTS].toString().isEmpty()) {
+        _settings[GATEWAY_INTENTS] = "GUILD_MESSAGES";
     }
 
-    if (_settings[SettingsParam::Connection::API_VERSION].toString().isEmpty()) {
-        _settings[SettingsParam::Connection::API_VERSION] = 9;
+    if (_settings[API_VERSION].toString().isEmpty()) {
+        _settings[API_VERSION] = 9;
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<Gateway::Intents>();
 
-    QString intents = _settings[SettingsParam::Gateway::GATEWAY_INTENTS].toString();
+    QString intents = _settings[GATEWAY_INTENTS].toString();
 
     for (QString intentToken : intents.split(",")) {
         int typeValue = metaEnum.keyToValue(intentToken.toStdString().c_str());
 
         if (typeValue < 0) {
-            invalidEnumValue(SettingsParam::Gateway::GATEWAY_INTENTS, intentToken, metaEnum);
+            invalidEnumValue(GATEWAY_INTENTS, intentToken, metaEnum);
         }
     }
 }
 
 void
 Settings::validateDatabaseSettings() {
-    if (_settings[SettingsParam::Database::DATABASE_TYPE].toString().isEmpty()) {
-        _settings[SettingsParam::Database::DATABASE_TYPE] = SettingsParam::Database::DatabaseType::QMONGODB;
+    if (_settings[DATABASE_TYPE].toString().isEmpty()) {
+        _settings[DATABASE_TYPE] = DatabaseType::QMONGODB;
     }
 
-    QMetaEnum metaEnum = QMetaEnum::fromType<SettingsParam::Database::DatabaseType>();
+    QMetaEnum metaEnum = QMetaEnum::fromType<DatabaseType::Type>();
 
-    QString databaseType =  _settings[SettingsParam::Database::DATABASE_TYPE].toString();
+    QString databaseType =  _settings[DATABASE_TYPE].toString();
 
     int typeValue = metaEnum.keyToValue(databaseType.toStdString().c_str());
 
     if (typeValue < 0) {
-        invalidEnumValue(SettingsParam::Database::DATABASE_TYPE, databaseType, metaEnum);
+        invalidEnumValue(DATABASE_TYPE, databaseType, metaEnum);
     }
 
-    if (_settings[SettingsParam::Database::DATABASE_NAME].toString().isEmpty()) {
-        invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_NAME);
+    if (_settings[DATABASE_NAME].toString().isEmpty()) {
+        invalidDatabaseProperty(databaseType, DATABASE_NAME);
     }
 
-    if (typeValue == SettingsParam::Database::DatabaseType::QMONGODB) {
-        if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
-            _settings[SettingsParam::Database::DATABASE_HOST] = "127.0.0.1";
+    if (typeValue == DatabaseType::QMONGODB) {
+        if (_settings[DATABASE_HOST].toString().isEmpty()) {
+            _settings[DATABASE_HOST] = "127.0.0.1";
         }
 
-        if (_settings[SettingsParam::Database::DATABASE_PORT].toInt() == 0) {
-            _settings[SettingsParam::Database::DATABASE_PORT] = 27017;
+        if (_settings[DATABASE_PORT].toInt() == 0) {
+            _settings[DATABASE_PORT] = 27017;
         }
 
-    } else if (typeValue != SettingsParam::Database::DatabaseType::QSQLITE) {
-        if (_settings[SettingsParam::Database::DATABASE_HOST].toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_HOST);
+    } else if (typeValue != DatabaseType::QSQLITE) {
+        if (_settings[DATABASE_HOST].toString().isEmpty()) {
+            invalidDatabaseProperty(databaseType, DATABASE_HOST);
         }
 
-        if (_settings[SettingsParam::Database::DATABASE_PORT].toInt() == 0) {
-            invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_PORT);
+        if (_settings[DATABASE_PORT].toInt() == 0) {
+            invalidDatabaseProperty(databaseType, DATABASE_PORT);
         }
 
-        if (_settings[SettingsParam::Database::DATABASE_USER].toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_USER);
+        if (_settings[DATABASE_USER].toString().isEmpty()) {
+            invalidDatabaseProperty(databaseType, DATABASE_USER);
         }
 
-        if (_settings[SettingsParam::Database::DATABASE_PASSWORD].toString().isEmpty()) {
-            invalidDatabaseProperty(databaseType, SettingsParam::Database::DATABASE_PASSWORD);
+        if (_settings[DATABASE_PASSWORD].toString().isEmpty()) {
+            invalidDatabaseProperty(databaseType, DATABASE_PASSWORD);
         }
     }
 
-    if (!_settings[SettingsParam::Database::MIN_POOL_SIZE].toString().isEmpty()
-            && _settings[SettingsParam::Database::MIN_POOL_SIZE].toInt() == 0) {
 
-        _settings[SettingsParam::Database::MIN_POOL_SIZE] = 2;
+    if (_settings[MAX_POOL_SIZE].toString().isEmpty()) {
 
+        _settings[MAX_POOL_SIZE] = 10;
     }
 
-    if (_settings[SettingsParam::Database::MAX_POOL_SIZE].toString().isEmpty()) {
+    int maxPoolSize = _settings[MAX_POOL_SIZE].toInt();
 
-        _settings[SettingsParam::Database::MAX_POOL_SIZE] = 10;
-    }
-
-    int minPoolSize = _settings[SettingsParam::Database::MIN_POOL_SIZE].toInt();
-
-    int maxPoolSize = _settings[SettingsParam::Database::MAX_POOL_SIZE].toInt();
-
-    if (minPoolSize < 0) {
-        qDebug() << QString("min_pool_size (%1) must be greater than or equal to 0").arg(minPoolSize);
-
-        exit(EXIT_FAILURE);
-    }
 
     if (maxPoolSize <= 0) {
         qDebug() << QString("max_pool_size (%1) must be greater 0").arg(maxPoolSize);
-
-        exit(EXIT_FAILURE);
-    }
-
-    if (minPoolSize != 0 && minPoolSize > maxPoolSize) {
-        qDebug() << QString("min_pool_size (%1) must be less than or equal to max_pool_size (%2)").arg(minPoolSize, maxPoolSize);
 
         exit(EXIT_FAILURE);
     }
@@ -232,39 +235,39 @@ Settings::validateDatabaseSettings() {
 
 void
 Settings::validateLoggingSettings() {
-    QString consoleLogLevel = _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL].toString();
+    QString consoleLogLevel = _settings[CONSOLE_LOG_LEVEL].toString();
     if (consoleLogLevel.isEmpty()) {
-        _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
+        _settings[CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
 
     } else {
-        validateLogLevel(SettingsParam::Logging::CONSOLE_LOG_LEVEL, consoleLogLevel);
+        validateLogLevel(CONSOLE_LOG_LEVEL, consoleLogLevel);
 
-        _settings[SettingsParam::Logging::CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
+        _settings[CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
     }
 
 
-    QString fileLogLevel = _settings[SettingsParam::Logging::FILE_LOG_LEVEL].toString();
+    QString fileLogLevel = _settings[FILE_LOG_LEVEL].toString();
     if (fileLogLevel.isEmpty()) {
-        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = LogContext::DEBUG;
+        _settings[FILE_LOG_LEVEL] = LogContext::DEBUG;
 
     } else {
-        validateLogLevel(SettingsParam::Logging::FILE_LOG_LEVEL, fileLogLevel);
+        validateLogLevel(FILE_LOG_LEVEL, fileLogLevel);
 
-        _settings[SettingsParam::Logging::FILE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
+        _settings[FILE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
     }
 
-    if (_settings[SettingsParam::Logging::LOG_FILE_SIZE].toInt() == 0) {
-        _settings[SettingsParam::Logging::LOG_FILE_SIZE] = 1048576;
+    if (_settings[LOG_FILE_SIZE].toInt() == 0) {
+        _settings[LOG_FILE_SIZE] = 1048576;
     }
 
-    if (_settings[SettingsParam::Logging::LOG_ROLLOVER_COUNT].toInt() == 0) {
-        _settings[SettingsParam::Logging::LOG_ROLLOVER_COUNT] = 10;
+    if (_settings[LOG_ROLLOVER_COUNT].toInt() == 0) {
+        _settings[LOG_ROLLOVER_COUNT] = 10;
     }
 
-    if (_settings[SettingsParam::Logging::LOG_FILE_DIRECTORY].toString().isEmpty()) {
+    if (_settings[LOG_FILE_DIRECTORY].toString().isEmpty()) {
         QString path = QDir::currentPath().append("/logs");
 
-        _settings[SettingsParam::Logging::LOG_FILE_DIRECTORY] = path;
+        _settings[LOG_FILE_DIRECTORY] = path;
     }
 }
 
@@ -279,11 +282,9 @@ Settings::validateLogLevel(QString property, QString logLevel) {
 
 void
 Settings::invalidEnumValue(QString property, QString value, QMetaEnum metaEnum) {
-    qDebug().noquote() << QString("[%1]").arg(_path) << "\n";
-
     qDebug().noquote() << QString("Invalid %1: %2\n").arg(property, value);
 
-    qDebug() << "Possible values:";
+    qDebug().noquote() << "Possible values:";
 
     for (int i = 0; i < metaEnum.keyCount(); ++i) {
         qDebug().noquote() << "\t" << metaEnum.key(i);
@@ -294,10 +295,6 @@ Settings::invalidEnumValue(QString property, QString value, QMetaEnum metaEnum) 
 
 void
 Settings::invalidDatabaseProperty(QString databaseType, QString propertyName) {
-    QString fileName = QString("[%1]").arg(_path);
-
-    qDebug().noquote() << fileName << "\n";
-
     qDebug().noquote() << "Database Type: " << databaseType << "\n";
 
     qDebug().noquote() << QString("ERROR: Property \"%1\" cannot be blank.\n").arg(propertyName);
@@ -305,7 +302,112 @@ Settings::invalidDatabaseProperty(QString databaseType, QString propertyName) {
     exit(EXIT_FAILURE);
 }
 
-QVariant
-Settings::value(QString key) {
-    return _settings[key];
+QString
+Settings::connectionUrl() {
+    return _settings[CONNECTION_URL].toString();
+}
+
+int
+Settings::maxRetries() {
+    return _settings[MAX_RETRIES].toInt();
+}
+
+int
+Settings::apiVersion() {
+    return _settings[API_VERSION].toInt();
+}
+
+QString
+Settings::botToken() {
+    return _settings[BOT_TOKEN].toString();
+}
+
+QString
+Settings::ownerId() {
+    return _settings[OWNER_ID].toString();
+}
+
+QString
+Settings::adminRoleName() {
+    return _settings[ADMIN_ROLE_NAME].toString();
+}
+
+QString
+Settings::restrictionState() {
+    return _settings[RESTRICTION_STATE].toString();
+}
+
+int
+Settings::consoleLogLevel() {
+    return _settings[CONSOLE_LOG_LEVEL].toInt();
+}
+
+QString
+Settings::databaseHost() {
+    return _settings[DATABASE_HOST].toString();
+}
+
+int
+Settings::databasePort() {
+    return _settings[DATABASE_PORT].toInt();
+}
+
+QString
+Settings::databaseUser() {
+    return _settings[DATABASE_USER].toString();
+}
+
+QString
+Settings::databasePassword() {
+    return _settings[DATABASE_PASSWORD].toString();
+}
+
+QString
+Settings::databaseType() {
+    return _settings[DATABASE_TYPE].toString();
+}
+
+QString
+Settings::databaseName() {
+    return _settings[DATABASE_NAME].toString();
+}
+
+QString
+Settings::gatewayIntents() {
+    return _settings[GATEWAY_INTENTS].toString();
+}
+
+int
+Settings::maxPoolSize() {
+    return _settings[MAX_POOL_SIZE].toInt();
+}
+
+int
+Settings::fileLogLevel() {
+    return _settings[FILE_LOG_LEVEL].toInt();
+}
+
+int
+Settings::logFileSize() {
+    return _settings[LOG_FILE_SIZE].toInt();
+}
+
+int
+Settings::logRolloverCount() {
+    return _settings[LOG_ROLLOVER_COUNT].toInt();
+}
+
+QString
+Settings::logFileDirectory() {
+    return _settings[LOG_FILE_DIRECTORY].toString();
+}
+
+QString
+Settings::logFileName() {
+    return _settings[LOG_FILE_NAME].toString();
+}
+
+QString
+Settings::scriptDirectory() {
+    return _settings[SCRIPT_DIRECTORY].toString();
 }

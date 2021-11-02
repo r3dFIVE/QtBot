@@ -210,12 +210,13 @@ HEADERS += \
     $$PWD/routes/webhookgetwebhookwithtoken.h \
     $$PWD/routes/webhookmodifywebhook.h \
     $$PWD/routes/webhookmodifywebhookwithtoken.h \
+    $$PWD/util/databasetype.h \
     $$PWD/util/enumutils.h \
+    $$PWD/util/gatewayevent.h \
     $$PWD/util/mimeutils.h \
     $$PWD/util/mongoutils.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
-    $$PWD/util/globals.h \
     $$PWD/entity/guildentity.h
 
 DISTFILES += \

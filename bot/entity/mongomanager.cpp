@@ -1,7 +1,5 @@
 #include "mongomanager.h"
 
-#include "util/globals.h"
-
 #include "util/mongoutils.h"
 #include "mongoconnectionpool.h"
 

@@ -1,0 +1,82 @@
+#ifndef GATEWAYEVENT_H
+#define GATEWAYEVENT_H
+
+#include <QObject>
+
+namespace GatewayEvent {
+    Q_NAMESPACE
+
+    enum Event {
+        /* Invalid Event */
+        INVALID = -1,
+
+        /* Gateway Opcodes */
+        DISPATCH = 0,
+        HEARTBEAT = 1,
+        IDENTIFY = 2,
+        STATUS_UPDATE = 3,
+        VOICE_STATUS_UPDATE = 4,
+        RESUME = 6,
+        RECONNECT = 7,
+        REQUEST_GUILD_MEMBERS = 8,
+        INVALID_SESSION = 9,
+        HELLO = 10,
+        HEARTBEAT_ACK = 11,
+
+        /* Gateway Dispatches */
+        READY,
+        RESUMED,
+        APPLICATION_COMMAND_CREATE,
+        APPLICATION_COMMAND_UPDATE,
+        APPLICATION_COMMAND_DELETE,
+        CHANNEL_CREATE,
+        CHANNEL_UPDATE,
+        CHANNEL_DELETE,
+        CHANNEL_PINS_UPDATE,
+        THREAD_CREATE,
+        THREAD_UPDATE,
+        THREAD_DELETE,
+        THREAD_LIST_SYNC,
+        THREAD_MEMBER_UPDATE,
+        THREAD_MEMBERS_UPDATE,
+        GUILD_CREATE,
+        GUILD_UPDATE,
+        GUILD_DELETE,
+        GUILD_BAN_ADD,
+        GUILD_BAN_REMOVE,
+        GUILD_EMOJIS_UPDATE,
+        GUILD_INTEGRATIONS_UPDATE,
+        GUILD_MEMBER_ADD,
+        GUILD_MEMBER_REMOVE,
+        GUILD_MEMBER_UPDATE,
+        GUILD_MEMBERS_CHUNK,
+        GUILD_ROLE_CREATE,
+        GUILD_ROLE_UPDATE,
+        GUILD_ROLE_DELETE,
+        INTEGRATION_CREATE,
+        INTEGRATION_UPDATE,
+        INTEGRATION_DELETE,
+        INTERACTION_CREATE,
+        INVITE_CREATE,
+        INVITE_DELETE,
+        MESSAGE_CREATE,
+        MESSAGE_UPDATE,
+        MESSAGE_DELETE,
+        MESSAGE_DELETE_BULK,
+        MESSAGE_REACTION_ADD,
+        MESSAGE_REACTION_REMOVE,
+        MESSAGE_REACTION_REMOVE_ALL,
+        PRESENCE_UPDATE,
+        STAGE_INSTANCE_CREATE,
+        STAGE_INSTANCE_DELETE,
+        STAGE_INSTANCE_UPDATE,
+        TYPING_START,
+        USER_UPDATE,
+        VOICE_STATE_UPDATE,
+        VOICE_SERVER_UPDATE,
+        WEBHOOKS_UPDATE
+    };
+    Q_ENUM_NS(Event)
+}
+
+#endif // GATEWAYEVENT_H

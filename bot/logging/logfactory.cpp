@@ -19,7 +19,6 @@
  */
 
 #include "logfactory.h"
-#include "util/globals.h"
 
 #include <QVariant>
 
@@ -32,37 +31,28 @@ LogFactory::~LogFactory() { delete _logger; }
 Logger*
 LogFactory::getLogger() {
     if (_logger == nullptr) {
-
-        qDebug("Logger not initialized, using default console logging...");
-
-        LogContext ctx;
-
-        _logger = new Logger(ctx);
+        init();
     }
 
     return _logger;
 }
 
-Logger*
-LogFactory::init(QSharedPointer<Settings> settings) {
+void
+LogFactory::init() {
 
     LogContext ctx;
 
-    ctx.maxFileSize = settings->value(SettingsParam::Logging::LOG_FILE_SIZE).toInt();
+    ctx.maxFileSize = Settings::logFileSize();
 
-    ctx.maxRolloverFiles = settings->value(SettingsParam::Logging::LOG_ROLLOVER_COUNT).toInt();
+    ctx.maxRolloverFiles = Settings::logRolloverCount();
 
-    ctx.directoryPath = settings->value(SettingsParam::Logging::LOG_FILE_DIRECTORY).toString();
+    ctx.directoryPath = Settings::logFileDirectory();
 
-    ctx.fileName = settings->value(SettingsParam::Logging::LOG_FILE_NAME).toString();
+    ctx.fileName = Settings::logFileName();
 
-    ctx.consoleLogLevel = LogContext::LogLevel(settings->value(SettingsParam::Logging::CONSOLE_LOG_LEVEL).toInt());
+    ctx.consoleLogLevel = LogContext::LogLevel(Settings::consoleLogLevel());
 
-    ctx.fileLogLevel = LogContext::LogLevel(settings->value(SettingsParam::Logging::FILE_LOG_LEVEL).toInt());
+    ctx.fileLogLevel = LogContext::LogLevel(Settings::fileLogLevel());
 
-    if (_logger == nullptr) {
-        _logger = new Logger(ctx);
-    }
-
-    return _logger;
+    _logger = new Logger(ctx);
 }

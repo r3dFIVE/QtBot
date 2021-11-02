@@ -44,12 +44,12 @@ public:
     QString guildId;
 
     DatabaseContext() {}
-    DatabaseContext(QSharedPointer<Settings> settings);
     DatabaseContext(const DatabaseContext &other);
     ~DatabaseContext() {}
 
     DatabaseContext& operator=(const DatabaseContext &other);
 
+    void init();
     QString getConnectionName() const;
 };
 

@@ -20,27 +20,27 @@
 
 #include "databasecontext.h"
 
-#include "util/globals.h"
+#include "util/databasetype.h"
 #include "util/enumutils.h"
 
-DatabaseContext::DatabaseContext(QSharedPointer<Settings> settings) {
-    hostName = settings->value(SettingsParam::Database::DATABASE_HOST).toString();
 
-    port = settings->value(SettingsParam::Database::DATABASE_PORT).toInt();
+void
+DatabaseContext::init() {
+    hostName = Settings::databaseHost();
 
-    userName = settings->value(SettingsParam::Database::DATABASE_USER).toString();
+    port = Settings::databasePort();
 
-    password = settings->value(SettingsParam::Database::DATABASE_PASSWORD).toString();
+    userName = Settings::databaseUser();
 
-    driverName = settings->value(SettingsParam::Database::DATABASE_TYPE).toString();
+    password = Settings::databasePassword();
 
-    databaseName = settings->value(SettingsParam::Database::DATABASE_NAME).toString();
+    driverName = Settings::databaseType();
 
-    type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(driverName);
+    databaseName = Settings::databaseName();
 
-    minPoolSize = settings->value(SettingsParam::Database::MIN_POOL_SIZE).toInt();
+    type = EnumUtils::keyToValue<DatabaseType::Type>(driverName);
 
-    maxPoolSize = settings->value(SettingsParam::Database::MAX_POOL_SIZE).toInt();
+    maxPoolSize = Settings::maxPoolSize();
 }
 
 DatabaseContext::DatabaseContext(const DatabaseContext &other) {

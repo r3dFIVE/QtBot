@@ -30,12 +30,13 @@
 
 #include <util/enumutils.h>
 
+#include "entity/idbmanager.h"
 #include "botjob/databasecontext.h"
 #include "sqlerror.h"
 #include "sqlquery.h"
 #include "enums/sql.h"
-#include "util/globals.h"
 #include "util/enumutils.h"
+#include "util/databasetype.h"
 #include "logging/logfactory.h"
 
 class SqlQuery;
@@ -51,7 +52,7 @@ class SqlDatabase : public QObject
     QString _connectionNameBase;
     QString _connectionName;
     QString _databaseName;
-    QString _driverName = EnumUtils::valueToKey(SettingsParam::Database::QMYSQL);
+    QString _driverName = EnumUtils::valueToKey(DatabaseType::QMYSQL);
     QString _hostName;
     QString _password;
     QString _userName;
