@@ -27,25 +27,69 @@
 class Settings
 {
 public:
-    Settings(QString path);
+    static void load(const QString &path);
+    static QVariant value(const QString &key);
 
-    QVariant value(QString key);
+    static QString connectionUrl();
+    static int maxRetries();
+    static int apiVersion();
+    static QString botToken();
+    static QString ownerId();
+    static QString adminRoleName();
+    static QString restrictionState();
+    static int consoleLogLevel();
+    static QString databaseHost();
+    static int databasePort();
+    static QString databaseUser();
+    static QString databasePassword();
+    static QString databaseType();
+    static QString databaseName();
+    static QString gatewayIntents();
+    static int maxPoolSize();
+    static int fileLogLevel();
+    static int logFileSize();
+    static int logRolloverCount();
+    static QString logFileDirectory();
+    static QString logFileName();
+    static QString scriptDirectory();
 
 private:
-    QMap<QString, QVariant> _settings;
-    QString _path;
 
-    void parseSettingsFile();
-    void validateSettings();
-    void validateBotSettings();    
-    void validateDatabaseSettings();
-    void validateGatewaySettings();
-    void validateLoggingSettings();
-    void validateLogLevel(QString property, QString logLevel);
-    void invalidDatabaseProperty [[ noreturn ]] (QString databaseType, QString propertyName);
-    void invalidEnumValue [[ noreturn ]] (QString property, QString value, QMetaEnum metaEnum);
-    bool isComment(QString);
-    int valueFromEnumKey(QString key);
+    static const QString CONNECTION_URL;
+    static const QString MAX_RETRIES;
+    static const QString API_VERSION;
+    static const QString BOT_TOKEN;
+    static const QString OWNER_ID;
+    static const QString ADMIN_ROLE_NAME;
+    static const QString RESTRICTION_STATE;
+    static const QString CONSOLE_LOG_LEVEL;
+    static const QString DATABASE_HOST;
+    static const QString DATABASE_PORT;
+    static const QString DATABASE_USER;
+    static const QString DATABASE_PASSWORD;
+    static const QString DATABASE_TYPE;
+    static const QString DATABASE_NAME;
+    static const QString GATEWAY_INTENTS;
+    static const QString MAX_POOL_SIZE;
+    static const QString FILE_LOG_LEVEL;
+    static const QString LOG_FILE_SIZE;
+    static const QString LOG_ROLLOVER_COUNT;
+    static const QString LOG_FILE_DIRECTORY;
+    static const QString LOG_FILE_NAME;
+    static const QString SCRIPT_DIRECTORY;
+
+    static QMap<QString, QVariant> _settings;
+
+    static void validateSettings();
+    static void validateBotSettings();
+    static void validateDatabaseSettings();
+    static void validateGatewaySettings();
+    static void validateLoggingSettings();
+    static void validateLogLevel(QString property, QString logLevel);
+    static void invalidDatabaseProperty [[ noreturn ]] (QString databaseType, QString propertyName);
+    static void invalidEnumValue [[ noreturn ]] (QString property, QString value, QMetaEnum metaEnum);
+    static bool isComment(QString);
+    static int valueFromEnumKey(QString key);
 };
 
 

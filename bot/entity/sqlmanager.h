@@ -23,6 +23,7 @@
 
 #include <QObject>
 
+#include "util/databasetype.h"
 #include "idbmanager.h"
 
 

@@ -55,7 +55,7 @@ public:
     static const QString NO_CREATABLE_ENUM;
 
     Bot();
-    void run(QSharedPointer<Settings> settings);
+    void run();
 };
 
 #endif // BOT_H

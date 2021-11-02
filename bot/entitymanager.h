@@ -42,7 +42,9 @@ class EntityManager : public QObject
 
 
 public:
-    EntityManager(QSharedPointer<Settings> settings) : _databaseContext(settings) {}
+    EntityManager() {
+        _databaseContext.init();
+    }
 
 signals:
     void guildInitialized(QSharedPointer<GuildEntity> guildEntity);

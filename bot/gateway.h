@@ -54,9 +54,9 @@ class Gateway : public QObject
     QString _botToken;
     QString _sessionId;
 
-    void calculateGatewayIntents(QSharedPointer<Settings> settings);
+    void calculateGatewayIntents();
     void closeConnection(QWebSocketProtocol::CloseCode closeCode);
-    void buildConnectionUrl(QSharedPointer<Settings> settings);
+    void buildConnectionUrl();
     void processAck();
     void processDispatch(QSharedPointer<GatewayPayload> payload);
     void processGuildCreate(QSharedPointer<GatewayPayload> payload);
@@ -78,8 +78,12 @@ class Gateway : public QObject
     void sendTextPayload(const QString &payload);
 
 public:
-    Gateway(QSharedPointer<Settings> settings);
+    Gateway();
     ~Gateway();    
+
+    static const int MS_FIVE_SECONDS;
+    static const int IMMEDIATE;
+    static const QString DEFAULT_GUILD_ID;
 
     enum CloseCodes {
         CLOSE_NORMAL = 1000, //Unresumable! Considered a graceful shutdown not meant to resume!!

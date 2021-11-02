@@ -43,11 +43,11 @@ SqlManager::init() {
 
     _database.setDatabaseName(_databaseContext.databaseName);
 
-    int type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(_databaseContext.driverName);
+    int type = EnumUtils::keyToValue<DatabaseType::Type>(_databaseContext.driverName);
 
     QString query;
 
-    if (type != SettingsParam::Database::QSQLITE) {
+    if (type != DatabaseType::QSQLITE) {
         _database.setHostName(_databaseContext.hostName);
 
         _database.setUserName(_databaseContext.userName);

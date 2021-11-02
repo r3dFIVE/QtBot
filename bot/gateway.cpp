@@ -33,25 +33,25 @@
 #include "payloads/resume.h"
 #include "payloads/user.h"
 #include "routes/discordapi.h"
-#include "util/globals.h"
 #include "util/enumutils.h"
-
 #include "util/httputils.h"
 
+const int Gateway::MS_FIVE_SECONDS = 5000;
+const int Gateway::IMMEDIATE = 0;
 
-Gateway::Gateway(QSharedPointer<Settings> settings)
+Gateway::Gateway()
 {    
-    _botToken = settings->value(SettingsParam::Bot::TOKEN).toString();
+    _botToken = Settings::botToken();
 
     HttpUtils::setBotToken(_botToken);
 
-    _maxRetries = settings->value(SettingsParam::Connection::MAX_RETRIES).toInt();
+    _maxRetries = Settings::maxRetries();
 
     _logger = LogFactory::getLogger();
 
-    buildConnectionUrl(settings);
+    buildConnectionUrl();
 
-    calculateGatewayIntents(settings);
+    calculateGatewayIntents();
 }
 
 Gateway::~Gateway() {
@@ -199,10 +199,9 @@ Gateway::processPayload(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-Gateway::calculateGatewayIntents(QSharedPointer<Settings> settings) {
-    QString gatewayIntents = settings->value(SettingsParam::Gateway::GATEWAY_INTENTS).toString();
+Gateway::calculateGatewayIntents() {
 
-    QStringList intentTokens = gatewayIntents.split(",");
+    QStringList intentTokens = Settings::gatewayIntents().split(",");
 
     if (intentTokens.contains(EnumUtils::valueToKey(ALL_INTENTS))) {
         _gatewayIntents = (0 | (1 << ALL_INTENTS)) - 1;
@@ -396,14 +395,10 @@ Gateway::sendTextPayload(const QString &payload) {
 }
 
 void
-Gateway::buildConnectionUrl(QSharedPointer<Settings> settings) {
-    QString baseUrl = settings->value(SettingsParam::Connection::CONNECTION_URL).toString();
-
-    int apiVersion = settings->value(SettingsParam::Connection::API_VERSION).toInt();
-
+Gateway::buildConnectionUrl() {
     _gatewayUrl = QUrl(QString("%1/?v=%2&encoding=json")
-                .arg(baseUrl)
-                .arg(apiVersion));
+                .arg(Settings::connectionUrl())
+                .arg(Settings::apiVersion()));
 }
 
 void

@@ -259,7 +259,7 @@ SqlDatabase::numericalPrecisionPolicy() const {
 
 void
 SqlDatabase::setType(const QString &type) {
-    _type = EnumUtils::keyToValue<SettingsParam::Database::DatabaseType>(type);
+    _type = EnumUtils::keyToValue<DatabaseType::Type>(type);
 }
 
 QStringList

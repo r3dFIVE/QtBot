@@ -22,7 +22,6 @@
 #define GATEWAYBINDING_H
 
 #include "ibinding.h"
-#include "util/globals.h"
 
 
 class GatewayBinding : public IBinding

@@ -19,7 +19,9 @@
  */
 
 #include "jobqueue.h"
-#include "util/globals.h"
+
+#include "gateway.h"
+
 
 JobQueue&
 operator<<(JobQueue &jobQueue, Job *job) {
@@ -117,7 +119,7 @@ JobQueue::hasJobs() const {
 
 void
 JobQueue::clear(const QString &guildId) {
-    if (guildId == DEFAULT_GUILD_ID) {
+    if (guildId == GuildEntity::DEFAULT_GUILD_ID) {
         _jobQueue.clear();
     } else {
         _jobQueue[guildId].clear();

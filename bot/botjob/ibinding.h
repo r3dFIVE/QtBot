@@ -24,7 +24,6 @@
 #include "botscript.h"
 #include "ibotjob.h"
 #include "logging/logfactory.h"
-#include "util/globals.h"
 
 
 class IBinding : public QObject

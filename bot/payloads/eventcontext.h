@@ -21,10 +21,10 @@
 #ifndef EVENTCONTEXT_H
 #define EVENTCONTEXT_H
 
+#include <QObject>
+
 #include "payloads/jsonserializable.h"
-
-#include "util/globals.h"
-
+#include "util/gatewayevent.h"
 
 
 class EventContext : public JsonSerializable

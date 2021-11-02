@@ -96,7 +96,7 @@ TimedJobs::registerTimedBinding(const QString &guildId, TimedBinding &timedBindi
 
 void
 TimedJobs::clear(const QString &guildId) {
-    if (guildId == DEFAULT_GUILD_ID) {
+    if (guildId == GuildEntity::DEFAULT_GUILD_ID) {
         _timedBindings.clear();
     } else {
         _timedBindings[guildId].clear();

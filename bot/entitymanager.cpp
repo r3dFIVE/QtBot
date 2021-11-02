@@ -49,11 +49,11 @@ EntityManager::initGuildFromPayload(QSharedPointer<GatewayPayload> payload) {
 void
 EntityManager::init() {
     switch (_databaseContext.type) {
-        case SettingsParam::Database::QMONGODB:
+        case DatabaseType::QMONGODB:
             _manager = QSharedPointer<MongoManager>(new MongoManager(_databaseContext));
             break;
-        case SettingsParam::Database::QSQLITE:
-        case SettingsParam::Database::QMYSQL:
+        case DatabaseType::QSQLITE:
+        case DatabaseType::QMYSQL:
             _manager = QSharedPointer<SqlManager>(new SqlManager(_databaseContext));     
             break;            
     }    

@@ -88,13 +88,11 @@ int main(int argc, char *argv[])
         }
     }      
 
-    QSharedPointer<Settings> settings = QSharedPointer<Settings>(new Settings(targetSettingsFile));
-
-    LogFactory::init(settings);
+    Settings::load(targetSettingsFile);
 
     Bot bot;
 
-    bot.run(settings);
+    bot.run();
 
     return app.exec();
 }

@@ -23,7 +23,6 @@
 #include <QDebug>
 #include <QThreadPool>
 
-#include "util/globals.h"
 #include "util/enumutils.h"
 #include "botjob/botscript.h"
 #include "botjob/job.h"
@@ -31,14 +30,12 @@
 
 const int EventHandler::JOB_POLL_MS = 500;
 
-EventHandler::EventHandler(QSharedPointer<Settings> settings) {
-    GuildEntity::setBotOwnerId(settings->value(SettingsParam::Bot::OWNER_ID).toString());
+EventHandler::EventHandler() {
+    GuildEntity::setBotOwnerId(Settings::ownerId());
 
-    GuildEntity::setAdminRoleName(settings->value(SettingsParam::Bot::ADMIN_ROLE_NAME).toString());
+    GuildEntity::setAdminRoleName(Settings::adminRoleName());
 
-    QString defaultScheme = settings->value(SettingsParam::Bot::RESTRICTION_STATE).toString();
-
-    GuildEntity::setDefaultRestrictionState(defaultScheme);
+    GuildEntity::setDefaultRestrictionState(Settings::restrictionState());
 
     _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
 }
@@ -142,7 +139,7 @@ void
 EventHandler::reloadGuild(const EventContext &context) {
     QString guildId = context.getGuildId().toString();
 
-    if (guildId == DEFAULT_GUILD_ID) {
+    if (guildId == GuildEntity::DEFAULT_GUILD_ID) {
         QString userId = context.getUserId().toString();
 
         if (userId == GuildEntity::getBotOwnerId()) {

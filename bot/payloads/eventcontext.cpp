@@ -20,7 +20,9 @@
 
 #include "eventcontext.h"
 
+#include "entity/guildentity.h"
 #include "util/enumutils.h"
+
 
 const QString EventContext::ID = "id";
 const QString EventContext::EVENT_NAME = "event_name";
@@ -93,7 +95,7 @@ EventContext::buildContext(const QJsonObject &json) {
     if (json.contains(GUILD_ID)) {
         _jsonObject[GUILD_ID] = json[GUILD_ID];
     } else {
-        _jsonObject[GUILD_ID] = DEFAULT_GUILD_ID;
+        _jsonObject[GUILD_ID] = GuildEntity::DEFAULT_GUILD_ID;
     }
 
     if (json.contains(INTEGRATION_ID)) {

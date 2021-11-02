@@ -123,7 +123,6 @@
 
 #include "payloads/ratelimit.h"
 #include "util/httputils.h"
-#include "util/globals.h"
 
 
 const QByteArray DiscordAPI::X_RATELIMIT_GLOBAL = "x-ratelimit-global";

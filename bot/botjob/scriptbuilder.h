@@ -70,7 +70,7 @@ class ScriptBuilder : public QObject
     void registerEventBindings(QSharedPointer<BotScript> botScript);
 
 public:
-    ScriptBuilder(EventHandler *eventHandler, QSharedPointer<Settings> settings);
+    ScriptBuilder(EventHandler *eventHandler);
 
     void init(const QString &botToken, const QString &scriptDir);
 

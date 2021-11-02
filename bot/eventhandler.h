@@ -63,7 +63,7 @@ signals:
     void reloadScripts(QSharedPointer<GuildEntity> guild);
 
 public:
-    EventHandler(QSharedPointer<Settings> settings);
+    EventHandler();
 
 public slots:
     void removeRestrictionState(const EventContext &context);

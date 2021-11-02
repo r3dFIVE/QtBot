@@ -34,7 +34,7 @@
 #include "ibotjob.h"
 #include "payloads/eventcontext.h"
 #include "qml/file.h"
-#include "util/globals.h"
+
 
 class TimedBinding;
 
