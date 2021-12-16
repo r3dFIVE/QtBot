@@ -51,6 +51,7 @@ const QString Settings::DATABASE_USER = QString("database_user");
 const QString Settings::DATABASE_PASSWORD = QString("database_password");
 const QString Settings::DATABASE_TYPE = QString("database_type");
 const QString Settings::DATABASE_NAME = QString("database_name");
+const QString Settings::SAVE_ATTACHMENTS = QString("save_attachments");
 const QString Settings::GATEWAY_INTENTS = QString("gateway_intents");
 const QString Settings::MAX_POOL_SIZE = QString("max_pool_size");
 const QString Settings::SCRIPT_DIRECTORY = QString("script_directory");
@@ -217,7 +218,6 @@ Settings::validateDatabaseSettings() {
         }
     }
 
-
     if (_settings[MAX_POOL_SIZE].toString().isEmpty()) {
 
         _settings[MAX_POOL_SIZE] = 10;
@@ -225,11 +225,25 @@ Settings::validateDatabaseSettings() {
 
     int maxPoolSize = _settings[MAX_POOL_SIZE].toInt();
 
-
     if (maxPoolSize <= 0) {
         qDebug() << QString("max_pool_size (%1) must be greater 0").arg(maxPoolSize);
 
         exit(EXIT_FAILURE);
+    }
+
+    if (typeValue == DatabaseType::QMONGODB) {
+        QString boolStr = _settings[SAVE_ATTACHMENTS].toString().toLower();
+
+        if (boolStr != "false" && boolStr != "true") {
+            qDebug() << QString("%1 must be either 'true' or 'false', was given: %2. Defaulting to 'false'")
+                        .arg(SAVE_ATTACHMENTS, boolStr);
+
+            boolStr = "false";
+        }
+
+        _settings[SAVE_ATTACHMENTS] = QVariant(boolStr).toBool();
+    } else {
+         _settings[SAVE_ATTACHMENTS] = false;
     }
 }
 
@@ -257,7 +271,7 @@ Settings::validateLoggingSettings() {
     }
 
     if (_settings[LOG_FILE_SIZE].toInt() == 0) {
-        _settings[LOG_FILE_SIZE] = 1048576;
+        _settings[LOG_FILE_SIZE] = 10485760;
     }
 
     if (_settings[LOG_ROLLOVER_COUNT].toInt() == 0) {
@@ -410,4 +424,9 @@ Settings::logFileName() {
 QString
 Settings::scriptDirectory() {
     return _settings[SCRIPT_DIRECTORY].toString();
+}
+
+bool
+Settings::saveAttachments() {
+    return _settings[SAVE_ATTACHMENTS].toBool();
 }

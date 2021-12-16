@@ -75,17 +75,19 @@ void
 Route::buildHttpMultiPart(const EventContext &context, File *file) {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
 
-    QFile *qfile = file->get();
+    QIODevice *dev = file->get();
 
-    if (!qfile->isOpen()) {
-        if  (!qfile->open(QIODevice::ReadOnly)) {
-            _logger->warning(QString("Failed to open file, reason: %1").arg(qfile->errorString()));
+    if (!dev->isOpen()) {
+        if  (!dev->open(QIODevice::ReadOnly)) {
+            _logger->warning(QString("Failed to open file, reason: %1").arg(file->errorString()));
 
             return;
         }
     }
 
-    QFileInfo fileInfo(*qfile);
+    file->open();
+
+    QFileInfo fileInfo = QFileInfo(QFile(dev));
 
     QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
 
@@ -99,7 +101,7 @@ Route::buildHttpMultiPart(const EventContext &context, File *file) {
 
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
 
-    filePart.setBodyDevice(qfile);
+    filePart.setBodyDevice(dev);
 
     _httpMultiPart->append(filePart);
 

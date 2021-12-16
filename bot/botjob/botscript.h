@@ -47,7 +47,6 @@ class BotScript : public IBotJob
     DatabaseContext _databaseContext;
     QJsonArray _eventBindingsJson;
     QMap<QString, QVariant> _commands;
-    QMutex _runLock;
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlQuery _query;
@@ -79,7 +78,6 @@ public:
     void setEngine(QSharedPointer<QQmlEngine> engine);
     void setScriptName(const QString &scriptName);
 
-    bool invokable() override;
     void execute(const QByteArray &command, const EventContext &message) override;
 
     static void setBotId(const QString &botId);

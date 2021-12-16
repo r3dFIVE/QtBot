@@ -99,7 +99,7 @@ Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse *response, Q
     if (fileVar.isValid()) {
         File *file = fileVar.value<File*>();
 
-        write(reply->readAll(), response, file->get());
+        write(reply->readAll(), response, file->get(), file->filename());
 
         return;
 
@@ -120,15 +120,15 @@ Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse *response, Q
 
     QFile file(targetName);
 
-    write(reply->readAll(), response, &file);
+    write(reply->readAll(), response, &file, targetName);
 }
 
 void
-Http::write(const QByteArray data, HttpResponse *response, QFile *file) {
+Http::write(const QByteArray data, HttpResponse *response, QIODevice *file, const QString &fileName) {
     if (!file->isOpen()) {
         if (!file->open(QFile::WriteOnly)) {
             QString failureMessage = QString("Failed to open file for writing: %1. Reason: %2")
-                    .arg(file->fileName())
+                    .arg(fileName)
                     .arg(file->errorString());
 
             response->text(failureMessage);
@@ -139,7 +139,7 @@ Http::write(const QByteArray data, HttpResponse *response, QFile *file) {
         }
     }
 
-    response->text(file->fileName());
+    response->text(fileName);
 
     file->write(data);    
 }

@@ -52,6 +52,7 @@ public:
     static QString logFileDirectory();
     static QString logFileName();
     static QString scriptDirectory();
+    static bool saveAttachments();
 
 private:
 
@@ -69,6 +70,7 @@ private:
     static const QString DATABASE_PASSWORD;
     static const QString DATABASE_TYPE;
     static const QString DATABASE_NAME;
+    static const QString SAVE_ATTACHMENTS;
     static const QString GATEWAY_INTENTS;
     static const QString MAX_POOL_SIZE;
     static const QString FILE_LOG_LEVEL;

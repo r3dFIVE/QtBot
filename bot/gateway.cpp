@@ -36,7 +36,7 @@
 #include "util/enumutils.h"
 #include "util/httputils.h"
 
-const int Gateway::MS_FIVE_SECONDS = 5000;
+const int Gateway::MS_TEN_SECONDS = 10000;
 const int Gateway::IMMEDIATE = 0;
 
 Gateway::Gateway()
@@ -91,7 +91,7 @@ Gateway::onSocketError(QAbstractSocket::SocketError errorCode) {
                    .arg(EnumUtils::valueToKey(errorCode)));
 
     if (_retryCount++ <= _maxRetries) {
-        reconnect(MS_FIVE_SECONDS);
+        reconnect(MS_TEN_SECONDS);
     } else {
         tooManyReconnects();
     }
@@ -111,7 +111,7 @@ Gateway::onDisconnected() {
         case QWebSocketProtocol::CloseCodeGoingAway:
         case QWebSocketProtocol::CloseCodeAbnormalDisconnection:
         case QWebSocketProtocol::CloseCodeTooMuchData:
-            reconnect(MS_FIVE_SECONDS);
+            reconnect(MS_TEN_SECONDS);
 
             break;
         case QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART):
@@ -140,6 +140,8 @@ Gateway::tooManyReconnects() {
 void
 Gateway::reconnect(int mSleep) {
     QThread::msleep(mSleep);
+
+    _heartbeatTimer->stop();
 
     _logger->debug(QString("Reconnect attempt %1/%2.").arg(_retryCount).arg(_maxRetries));
 
@@ -232,7 +234,7 @@ Gateway::processReconnect() {
 
 void
 Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
-    _lastSequenceNumber = payload->getS().toInt();
+     _lastSequenceNumber = payload->getS().toInt();
 
     GatewayEvent::Event gatewayEvent = EnumUtils::keyToValue<GatewayEvent::Event>(payload->getT());
 

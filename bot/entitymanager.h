@@ -26,7 +26,6 @@
 
 #include "entity/guildentity.h"
 #include "entity/sqlmanager.h"
-#include "entity/mongoconnectionpool.h"
 #include "payloads/guild.h"
 #include "payloads/gatewaypayload.h"
 

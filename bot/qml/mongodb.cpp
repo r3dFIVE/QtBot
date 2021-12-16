@@ -1,46 +1,54 @@
 #include "mongodb.h"
 
+#include "file.h"
 #include "mongodeleteoptions.h"
 #include "mongoupdateoptions.h"
 #include "mongofindoptions.h"
 #include "mongoinsertoptions.h"
-#include "entity/mongoconnectionpool.h"
+#include "entity/gridfsfile.h"
 #include "util/mongoutils.h"
+#include "util/enumutils.h"
+#include "util/databasetype.h"
 #include "util/serializationutils.h"
 
+using namespace bsoncxx::builder::stream;
+
+const int MongoDB::TEN_MEGABYTES = 10485760;
+const std::string MongoDB::ATTACHMENTS = "ATTACHMENTS";
+const std::string MongoDB::ATTACHMENTS_FILES = ATTACHMENTS + ".files";
+const std::string MongoDB::ATTACHMENTS_CHUNKS = ATTACHMENTS + ".chunks";
+
+MongoDB::MongoDB(QObject *parent) : QObject(parent) {
+    _databaseContext.init();
+}
 
 MongoDB::MongoDB(const MongoDB &other, QObject *parent) : QObject(parent) {
-    _port = other._port;
+    if (this == &other) {
+        return;
+    }
+
+    _databaseContext = other._databaseContext;
+
+    _collectionName = other._collectionName;
 
     _databaseName = other._databaseName;
 
-    _hostName = other._hostName;
-
-    _password = other._password;
-
-    _userName = other._userName;
 }
 
 MongoDB::MongoDB(const DatabaseContext &context, QObject *parent) : QObject(parent) {
-    _port = context.port;
+    _databaseContext = context;
 
     _databaseName = context.databaseName.toStdString();
-
-    _hostName = context.hostName;
-
-    _password = context.password;
-
-    _userName = context.userName;
 }
 
 void
 MongoDB::port(int port) {
-    _port = port;
+    _databaseContext.port = port;
 }
 
 int
 MongoDB::port() {
-    return _port;
+    return _databaseContext.port;
 }
 
 void
@@ -52,8 +60,6 @@ QString
 MongoDB::collectionName() {
     return QString::fromStdString(_collectionName);
 }
-
-
 
 void
 MongoDB::databaseName(const QString &databaseName) {
@@ -67,39 +73,39 @@ MongoDB::databaseName() {
 
 void
 MongoDB::hostName(const QString &hostName) {
-    _hostName = hostName;
+    _databaseContext.hostName = hostName;
 }
 
 QString
 MongoDB::hostName() {
-    return _hostName;
+    return _databaseContext.hostName;
 }
 
 void
 MongoDB::password(const QString &password) {
-    _password = password;
+    _databaseContext.password = password;
 }
 
 QString
 MongoDB::password() {
-    return _password;
+    return _databaseContext.password;
 }
 
 void
 MongoDB::userName(const QString &userName) {
-    _userName = userName;
+    _databaseContext.userName = userName;
 }
 
 QString
 MongoDB::userName() {
-    return _userName;
+    return _databaseContext.userName;
 }
 
 void
 MongoDB::deleteOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::delete_options &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     try {
         collection.delete_one(filter, options);
@@ -111,9 +117,9 @@ MongoDB::deleteOne(const bsoncxx::document::view_or_value &filter, const mongocx
 
 void
 MongoDB::deleteMany(const bsoncxx::document::view_or_value &filter, const mongocxx::options::delete_options &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     try {
         collection.delete_many(filter, options);
@@ -125,9 +131,9 @@ MongoDB::deleteMany(const bsoncxx::document::view_or_value &filter, const mongoc
 
 void
 MongoDB::insertOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::insert &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     try {
         collection.insert_one(filter, options);
@@ -139,9 +145,9 @@ MongoDB::insertOne(const bsoncxx::document::view_or_value &filter, const mongocx
 
 QJsonArray
 MongoDB::find(const bsoncxx::document::view_or_value &filter, const mongocxx::options::find &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     QJsonArray results;
 
@@ -160,9 +166,9 @@ MongoDB::find(const bsoncxx::document::view_or_value &filter, const mongocxx::op
 
 QJsonObject
 MongoDB::findOne(const bsoncxx::document::view_or_value &filter, const mongocxx::options::find &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     QJsonObject json;
 
@@ -183,9 +189,9 @@ void
 MongoDB::updateOne(const bsoncxx::document::view_or_value &filter,
                    const bsoncxx::document::view_or_value &update,
                    const mongocxx::options::update &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     try {
         collection.update_one(filter, update, options);
@@ -199,9 +205,9 @@ void
 MongoDB::updateMany(const bsoncxx::document::view_or_value &filter,
                     const bsoncxx::document::view_or_value &update,
                     const mongocxx::options::update &options) {
-    auto client = MongoConnectionPool::acquire();
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = (*client)[_databaseName][_collectionName];
+    auto collection = client[_databaseName][_collectionName];
 
     try {
         collection.update_many(filter, update, options);
@@ -211,6 +217,48 @@ MongoDB::updateMany(const bsoncxx::document::view_or_value &filter,
     }
 }
 
+File*
+MongoDB::findFileByFilename(const QString &fileName) {
+    auto filter = document{} << "filename" << fileName.toStdString() << finalize;
+
+    _collectionName = ATTACHMENTS_FILES;
+
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
+
+    auto collection = client[_databaseName][_collectionName];
+
+    auto result = collection.find_one(filter.view(), mongocxx::options::find{});
+
+    if (!result) {
+        _logger->debug(QString("No files found uploaded with filename: %1").arg(fileName));
+
+        return nullptr;
+    }
+
+    mongocxx::options::gridfs::bucket options{};
+
+    options.bucket_name(ATTACHMENTS);
+
+    options.chunk_size_bytes(TEN_MEGABYTES);
+
+    auto bucket = client[_databaseName].gridfs_bucket(options);
+
+    bsoncxx::types::bson_value::view id = result->view()[GridFSFile::OBJECT_ID.toStdString()].get_value();
+
+    auto downloader = bucket.open_download_stream(id);
+
+    File* file = new File();
+
+    unsigned char *data = 0;
+
+    auto length = downloader.file_length();
+
+    downloader.read(data, length);
+
+    file->writeRawData(reinterpret_cast<const char*>(data), length);
+
+    return file;
+}
 void
 MongoDB::insertOne(const QVariant &document, const QVariant &options) {
     insertOne(MongoUtils::toViewOrValue(document), MongoInsertOptions::fromVariant(options));
