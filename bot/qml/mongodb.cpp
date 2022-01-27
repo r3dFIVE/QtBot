@@ -1,6 +1,5 @@
 #include "mongodb.h"
 
-#include "file.h"
 #include "mongodeleteoptions.h"
 #include "mongoupdateoptions.h"
 #include "mongofindoptions.h"
@@ -10,6 +9,8 @@
 #include "util/enumutils.h"
 #include "util/databasetype.h"
 #include "util/serializationutils.h"
+
+#include <payloads/attachment.h>
 
 using namespace bsoncxx::builder::stream;
 
@@ -217,20 +218,55 @@ MongoDB::updateMany(const bsoncxx::document::view_or_value &filter,
     }
 }
 
-File*
-MongoDB::findFileByFilename(const QString &fileName) {
-    auto filter = document{} << "filename" << fileName.toStdString() << finalize;
-
-    _collectionName = ATTACHMENTS_FILES;
+QVariantList
+MongoDB::findFilesByMessageId(const QString &messageId) {
+    QVariantList tempFiles;
 
     auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
 
-    auto collection = client[_databaseName][_collectionName];
+    auto collection = client[_databaseName][ATTACHMENTS];
+
+    auto filter = document{} << "message_id" << messageId.toStdString() << finalize;
+
+    auto cursor = collection.find(filter.view(), mongocxx::options::find{});
+
+
+    for (auto doc : cursor) {
+        QJsonObject attachmentMetadata = MongoUtils::toJson(doc);
+
+        QString checksum = attachmentMetadata[Attachment::CHECKSUM].toString();
+
+        QString targetFilename = attachmentMetadata[Attachment::FILENAME].toString();
+
+        File *file = findFileByChecksum(checksum, client, targetFilename);
+
+        if (!file) {
+            continue;
+        }       
+
+        tempFiles << QVariant::fromValue(file);
+    }
+
+    if (tempFiles.isEmpty()) {
+        _logger->debug(QString("No files found for message_id: %1").arg(messageId));
+
+        return tempFiles;
+    }    
+
+    return tempFiles;
+}
+
+TempFile*
+MongoDB::findFileByChecksum(const QString &checksum, mongocxx::client &client, const QString &fileName) {
+    auto collection = client[_databaseName][ATTACHMENTS_FILES];
+
+    // Use 'checksum' from ATTACHMENTS collection as filename;
+    auto filter = document{} << "filename" << checksum.toStdString() << finalize;
 
     auto result = collection.find_one(filter.view(), mongocxx::options::find{});
 
     if (!result) {
-        _logger->debug(QString("No files found uploaded with filename: %1").arg(fileName));
+        _logger->debug(QString("No files found uploaded with checksum: %1").arg(checksum));
 
         return nullptr;
     }
@@ -247,17 +283,26 @@ MongoDB::findFileByFilename(const QString &fileName) {
 
     auto downloader = bucket.open_download_stream(id);
 
-    File* file = new File();
-
-    unsigned char *data = 0;
+    TempFile* tempFile = new TempFile(fileName);
 
     auto length = downloader.file_length();
 
-    downloader.read(data, length);
+    std::vector<std::uint8_t> downloaded(length);
 
-    file->writeRawData(reinterpret_cast<const char*>(data), length);
+    downloader.read(downloaded.data(), length);
 
-    return file;
+    tempFile->writeRawData(reinterpret_cast<const char*>(downloaded.data()), length);
+
+    tempFile->close();
+
+    return tempFile;
+}
+
+TempFile*
+MongoDB::findFileByChecksum(const QString &checksum, const QString &fileName) {
+    auto client = mongocxx::client{MongoUtils::buildUri(_databaseContext)};
+
+    return findFileByChecksum(checksum, client, fileName);
 }
 void
 MongoDB::insertOne(const QVariant &document, const QVariant &options) {

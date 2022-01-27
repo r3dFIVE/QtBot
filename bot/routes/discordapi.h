@@ -92,7 +92,7 @@ public:
     QVariant channelDeleteChannel(const QVariant &context);
     QVariant channelGetChannelMessages(const QVariant &context);
     QVariant channelGetChannelMessage(const QVariant &context);
-    QVariant channelCreateMessage(const QVariant &context, File *file = nullptr);
+    QVariant channelCreateMessage(const QVariant &context, const QVariantList &files = QVariantList());
     QVariant channelCrosspostMessage(const QVariant &context);
     QVariant channelCreateReaction(const QVariant &context);
     QVariant channelDeleteOwnReaction(const QVariant &context);

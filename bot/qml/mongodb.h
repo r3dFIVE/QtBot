@@ -22,6 +22,7 @@
 
 #include "botjob/databasecontext.h"
 #include "file.h"
+#include "tempfile.h"
 #include "logging/logfactory.h"
 
 
@@ -37,15 +38,13 @@ class MongoDB : public QObject
     Logger *_logger = LogFactory::getLogger();
     DatabaseContext _databaseContext;
 
-//    int _port;
     std::string _databaseName;
     std::string _collectionName;
-//    QString _hostName;
-//    QString _password;
-//    QString _userName;
 
     mongocxx::options::find parseFindOpts(const QVariant &opts);
     mongocxx::options::insert parseInsertOpts(const QVariant &opts);
+
+    TempFile* findFileByChecksum(const QString &checksum, mongocxx::client &client, const QString &filename = QString());
 
 public:
     MongoDB(QObject *parent = nullptr);
@@ -92,7 +91,8 @@ public:
     Q_INVOKABLE void port(int port);
     Q_INVOKABLE QString userName();
     Q_INVOKABLE void userName(const QString &userName);
-    Q_INVOKABLE File* findFileByFilename(const QString &fileName);
+    Q_INVOKABLE TempFile* findFileByChecksum(const QString &checksum, const QString &filename = QString());
+    Q_INVOKABLE QVariantList findFilesByMessageId(const QString &messageId);
 };
 
 Q_DECLARE_METATYPE(MongoDB)

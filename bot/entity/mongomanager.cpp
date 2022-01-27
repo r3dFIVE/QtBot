@@ -226,7 +226,7 @@ MongoManager::storeAttachmentData(QByteArray &data, Attachment &attachment) {
     std::string fileName = attachment.getChecksum().toString().toStdString(); // We use checksum for "unique" file name
 
     try {
-        if (!isAlreadyPersisted(fileName)) {
+        if (!isPersisted(fileName)) {
             auto uploader = bucket.open_upload_stream(fileName);
 
             uploader.write(reinterpret_cast<unsigned char *>(data.data()), data.length());
@@ -244,7 +244,7 @@ MongoManager::storeAttachmentData(QByteArray &data, Attachment &attachment) {
 }
 
 bool
-MongoManager::isAlreadyPersisted(const std::string &fileName) {
+MongoManager::isPersisted(const std::string &fileName) {
     _collection = _database[ATTACHMENTS_FILES];
 
     auto searchFilter = document{} << "filename" << fileName << finalize;

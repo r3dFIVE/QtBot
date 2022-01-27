@@ -72,38 +72,13 @@ Route::buildRequest(const RequestType requestType,
 }
 
 void
-Route::buildHttpMultiPart(const EventContext &context, File *file) {
+Route::buildHttpMultiPart(const EventContext &context, const QVariantList &files) {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
 
-    QIODevice *dev = file->get();
 
-    if (!dev->isOpen()) {
-        if  (!dev->open(QIODevice::ReadOnly)) {
-            _logger->warning(QString("Failed to open file, reason: %1").arg(file->errorString()));
-
-            return;
-        }
+    for (QVariant file : files) {
+        appendFilePart(file);
     }
-
-    file->open();
-
-    QFileInfo fileInfo = QFileInfo(QFile(dev));
-
-    QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
-
-    QHttpPart filePart;
-
-    QString mimeTypeStr(mimeType.name());
-
-    filePart.setHeader(QNetworkRequest::ContentTypeHeader, mimeTypeStr);
-
-    QString dispostionValue = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileInfo.fileName());
-
-    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
-
-    filePart.setBodyDevice(dev);
-
-    _httpMultiPart->append(filePart);
 
     QHttpPart jsonPart;
 
@@ -112,4 +87,38 @@ Route::buildHttpMultiPart(const EventContext &context, File *file) {
     jsonPart.setBody(SerializationUtils::toQByteArray(context.getTargetPayload()));
 
     _httpMultiPart->append(jsonPart);
+}
+
+void
+Route::appendFilePart(const QVariant &fileVariant) {
+
+    QFile *qfile = qvariant_cast<File*>(fileVariant)->get();
+
+    if (!qfile->isOpen()) {
+        if  (!qfile->open(QIODevice::ReadOnly)) {
+            _logger->warning(QString("Failed to open file, reason: %1").arg(qfile->errorString()));
+
+            return;
+        }
+    }
+
+    QFileInfo fileInfo(*qfile);
+
+    QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
+
+    QString mimeTypeStr(mimeType.name());
+
+    QHttpPart filePart;
+
+    filePart.setHeader(QNetworkRequest::ContentTypeHeader, mimeTypeStr);
+
+    QString dispostionValue = QString("form-data; name=\"files[%1]\"; filename=\"%2\"")
+            .arg(_fileNumber++)
+            .arg(fileInfo.fileName());
+
+    filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
+
+    filePart.setBodyDevice(qfile);
+
+    _httpMultiPart->append(filePart);
 }

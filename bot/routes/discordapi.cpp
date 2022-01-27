@@ -438,14 +438,20 @@ DiscordAPI::channelGetChannelMessage(const QVariant &context) {
 }
 
 QVariant
-DiscordAPI::channelCreateMessage(const QVariant &contextVar, File *file) {
-    ChannelCreateMessage createMessage(buildRequestContext(contextVar), file);
+DiscordAPI::channelCreateMessage(const QVariant &contextVar, const QVariantList &files) {
+    ChannelCreateMessage createMessage(buildRequestContext(contextVar), files);
 
     QSharedPointer<EventContext> apiResponse = processRoute(createMessage);
 
-    apiResponse->processEventParams(GatewayEvent::MESSAGE_CREATE, EventContext::MESSAGE_ID);
+    QVariant responseVariant;
 
-    return buildResponseVariant(apiResponse);
+    if (apiResponse) {
+        apiResponse->processEventParams(GatewayEvent::MESSAGE_CREATE, EventContext::MESSAGE_ID);
+
+        responseVariant = buildResponseVariant(apiResponse);
+    }
+
+    return responseVariant;
 }
 
 QVariant

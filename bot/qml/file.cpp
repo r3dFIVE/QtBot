@@ -20,14 +20,15 @@
 
 #include "file.h"
 
+#include <QDir>
+
 #include "util/mimeutils.h"
-#include "util/enumutils.h"
 
 
 File::File(QObject *parent) : QObject(parent) {
     _openMode = OpenMode::ReadWrite;
 
-    _tempFile = QSharedPointer<QTemporaryFile>(new QTemporaryFile);
+    _file = QSharedPointer<QFile>(new QFile);
 }
 
 File::File(const QString &fileName,
@@ -48,11 +49,9 @@ File::File(const File &other, QObject *parent) : QObject(parent) {
 
     _fileName = other._fileName;
 
-    _openMode = other._openMode;    
+    _openMode = other._openMode;
 
     _file = other._file;
-
-    _tempFile = other._tempFile;
 }
 
 File
@@ -67,8 +66,6 @@ File
 
     _file = other._file;
 
-    _tempFile = other._tempFile;
-
     return *this;
 }
 
@@ -79,32 +76,21 @@ File::hasNext() const {
 
 bool
 File::open() {
-    if (!_file) {
-        _file->setFileName(_fileName);
+    _file->setFileName(_fileName);
 
-        if (!_file->open(QIODevice::OpenMode(_openMode))) {
-            _logger->warning(QString("Failed to open %1, with openmode: %2. Reason: %3")
-                             .arg(_fileName)
-                             .arg(OpenMode::Mode(_openMode))
-                             .arg(_file->errorString()));
+    if (!_file->open(QIODevice::OpenMode(_openMode))) {
+        _logger->warning(QString("Failed to open %1, with openmode: %2. Reason: %3")
+                         .arg(_fileName)
+                         .arg(OpenMode::Mode(_openMode))
+                         .arg(_file->errorString()));
 
-            return false;
-        }
+        return false;
+    }
 
-        if (MimeUtils::isTextContent(*_file)) {
-            _textStream.setDevice(_file.data());
-        } else {
-            _dataStream.setDevice(_file.data());
-        }
+    if (MimeUtils::isTextContent(*_file)) {
+        _textStream.setDevice(_file.data());
     } else {
-        if (!_tempFile->open()) {
-            _logger->warning(QString("Failed to open temporary file, REASON: %1")
-                             .arg(_tempFile->errorString()));
-
-            return false;
-        }
-
-        _dataStream.setDevice(_tempFile.data());
+        _dataStream.setDevice(_file.data());
     }
 
     return true;
@@ -121,17 +107,8 @@ File::remove() {
 }
 
 bool
-File::rename(const QString &newName) {
-    return _file->rename(newName);
-}
-
-void
-File::setFilename(const QString &string) {
-    if (!_file) {
-        _file = QSharedPointer<QFile>(new QFile);
-    }
-
-    _file->setFileName(string);
+File::rename(const QString &name) {
+    return _file->rename(name);
 }
 
 void
@@ -166,19 +143,31 @@ int
 File::writeRawData(const char *data, int len) {
     int byteWritten = 0;
 
+    open();
+
     if (_dataStream.status() == QDataStream::Ok) {
-        byteWritten = _dataStream.writeRawData(data, len);
+       byteWritten = _dataStream.writeRawData(data, len);
 
     } else {
-        _logger->warning(QString("Failed to writeRawData, STATUS: %1").arg(_dataStream.status()));
+       _logger->warning(QString("Failed to writeRawData, STATUS: %1").arg(_dataStream.status()));
     }
 
     return byteWritten;
 }
 
+void
+File::setFileName(const QString &fileName) {
+    _fileName = fileName;
+}
+
 QString
-File::filename() const {
+File::fileName() const {
     return _file->fileName();
+}
+
+QString
+File::getPath() {
+    return QFileInfo(*_file.data()).absolutePath();
 }
 
 QString
@@ -201,26 +190,12 @@ File::close() {
     _file->close();
 }
 
-QIODevice*
+QFile*
 File::get() {
-    QIODevice *file = nullptr;
-
-    if (_file) {
-        if (!_file->isOpen()) {
-            open();
-        }
-
-        file = _file.data();
-
-    } else {
-        if (!_tempFile->isOpen()) {
-            open();
-        }
-
-        file = _tempFile.data();
+    if (!_file->isOpen()) {
+        open();
     }
-
-    return file;
+    return _file.data();
 }
 
 QString

@@ -31,11 +31,11 @@ class ChannelCreateMessage : public Route
 public:
     const QString PATH = "/channels/{channel.id}/messages";
 
-    ChannelCreateMessage(const EventContext &context, File *file = nullptr) {
+    ChannelCreateMessage(const EventContext &context, const QVariantList &files) {
         _pathParams[Route::CHANNEL_ID_TOKEN] = context.getChannelId().toString();;
 
-        if (file) {
-            buildHttpMultiPart(context, file);
+        if (!files.isEmpty()) {
+            buildHttpMultiPart(context, files);
         }
 
         buildRequest(POST, PATH, _pathParams[Route::CHANNEL_ID_TOKEN], context);

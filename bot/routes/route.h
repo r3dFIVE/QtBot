@@ -39,7 +39,11 @@ class Route : public QObject
 
     Q_DISABLE_COPY(Route)
 
+    int _fileNumber = 0;
+
     Logger *_logger = LogFactory::getLogger();
+
+    void appendFilePart(const QVariant &file);
 
 public:
     static const QString GLOBAL_BUCKET;
@@ -128,7 +132,7 @@ protected:
         buildRequest(requestType, route, GLOBAL_BUCKET, EventContext());
     }
 
-    void buildHttpMultiPart(const EventContext &context, File *file);
+    void buildHttpMultiPart(const EventContext &context, const QVariantList &files);
 };
 
 

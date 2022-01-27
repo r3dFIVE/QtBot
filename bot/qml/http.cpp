@@ -99,7 +99,7 @@ Http::writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse *response, Q
     if (fileVar.isValid()) {
         File *file = fileVar.value<File*>();
 
-        write(reply->readAll(), response, file->get(), file->filename());
+        write(reply->readAll(), response, file->get(), file->fileName());
 
         return;
 

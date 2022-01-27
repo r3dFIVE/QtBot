@@ -106,6 +106,7 @@ HEADERS += \
     $$PWD/qml/sqldatabase.h \
     $$PWD/qml/sqlerror.h \
     $$PWD/qml/sqlquery.h \
+    $$PWD/qml/tempfile.h \
     $$PWD/routes/bucket.h \
     $$PWD/routes/channeladdpinnedchannelmessage.h \
     $$PWD/routes/channelbulkmessagesdelete.h \

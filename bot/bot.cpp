@@ -38,6 +38,7 @@
 #include "qml/httpmultipart.h"
 #include "qml/httppart.h"
 #include "qml/httpresponse.h"
+#include "qml/tempfile.h"
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int Bot::BOT_API_MAJOR_VERSION = 1;
@@ -60,10 +61,11 @@ Bot::Bot() {
     qRegisterMetaType<MongoInsertOptions*>();
     qRegisterMetaType<SqlQuery>();
     qRegisterMetaType<SqlError*>();
-    qRegisterMetaType<File>();
+    qRegisterMetaType<File*>();
     qRegisterMetaType<HttpPart>();
     qRegisterMetaType<HttpMultiPart>();
     qRegisterMetaType<HttpResponse*>();
+    qRegisterMetaType<TempFile*>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,

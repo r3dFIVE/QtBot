@@ -148,24 +148,24 @@ QList<Job *>
 GuildEntity::processEvent(QSharedPointer<EventContext> context) {
     GatewayEvent::Event gatewayEvent = EnumUtils::keyToValue<GatewayEvent::Event>(context->getEventName());
 
-    QList<Job *> jobs; //QThreadPool will auto delete jobs on completion.
-
     Job *commandJob = nullptr;
 
     switch (gatewayEvent) {
-    case GatewayEvent::MESSAGE_CREATE:
-    case GatewayEvent::MESSAGE_UPDATE:
-        commandJob = getCommandJob(context);
-        break;
-    case GatewayEvent::GUILD_ROLE_UPDATE:
-        updateRole(Role(context->getSourcePayload()[GuildRoleUpdate::ROLE].toObject()));
-        break;
-    case GatewayEvent::GUILD_ROLE_DELETE:
-        removeRole(context->getRoleId().toString());
-        break;
-    default:
-        break;
+        case GatewayEvent::MESSAGE_CREATE:
+        case GatewayEvent::MESSAGE_UPDATE:
+            commandJob = getCommandJob(context);
+            break;
+        case GatewayEvent::GUILD_ROLE_UPDATE:
+            updateRole(Role(context->getSourcePayload()[GuildRoleUpdate::ROLE].toObject()));
+            break;
+        case GatewayEvent::GUILD_ROLE_DELETE:
+            removeRole(context->getRoleId().toString());
+            break;
+        default:
+            break;
     }
+
+    QList<Job *> jobs; //QThreadPool will auto delete jobs on completion.
 
     if (commandJob) {
         jobs << commandJob;

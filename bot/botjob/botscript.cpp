@@ -256,13 +256,8 @@ BotScript::cGetChannelMessage(const QVariant &context) {
 }
 
 QVariant
-BotScript::cCreateMessage(const QVariant &context) {
-    return _discordAPI->channelCreateMessage(context);
-}
-
-QVariant
-BotScript::cCreateMessage(const QVariant &context, File *file) {
-    return _discordAPI->channelCreateMessage(context, file);
+BotScript::cCreateMessage(const QVariant &context, const QVariantList &files) {
+    return _discordAPI->channelCreateMessage(context, files);
 }
 
 QVariant

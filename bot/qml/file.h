@@ -24,7 +24,6 @@
 #include <QDataStream>
 #include <QFile>
 #include <QQmlContext>
-#include <QTemporaryFile>
 #include <QTextStream>
 
 #include "logging/logfactory.h"
@@ -35,20 +34,23 @@ class File : public QObject
 {
     Q_OBJECT
 
+protected:
+
     Logger *_logger = LogFactory::getLogger();
 
     int _openMode;
     QSharedPointer<QFile> _file;
-    QSharedPointer<QTemporaryFile> _tempFile;
     QString _fileName;
     QTextStream _textStream;
     QDataStream _dataStream;
 
+
+
 public:
-    File(QObject *parent = nullptr);
-    File(const File &other, QObject *parent = nullptr);
-    File(const QString &filePath, const OpenMode::Mode openMode = OpenMode::ReadWrite, QObject *parent = nullptr);
-    ~File() {}
+    Q_INVOKABLE File(QObject *parent = nullptr);
+    Q_INVOKABLE File(const File &other, QObject *parent = nullptr);
+    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
+    Q_INVOKABLE ~File() {}
 
     Q_INVOKABLE File &operator=(const File &other);
 
@@ -58,20 +60,22 @@ public:
 
     Q_INVOKABLE bool exists() const;
     Q_INVOKABLE bool remove();
-    Q_INVOKABLE bool rename(const QString &newName);
-    Q_INVOKABLE void setFilename(const QString &string);
+    Q_INVOKABLE bool rename(const QString &name);
+
     Q_INVOKABLE void write(const QString &string);
     Q_INVOKABLE void write(const QStringList &string);
     Q_INVOKABLE void writeLine(const QString &string);
     Q_INVOKABLE void writeLine(const QStringList &strings);
-    Q_INVOKABLE QString filename() const;
+    Q_INVOKABLE void setFileName(const QString &fileName);
+    Q_INVOKABLE QString fileName() const;
     Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE QString readAll();
     Q_INVOKABLE QString readLine();
 
-    int writeRawData(const char *data, int len);
     void setParent(QObject *parent);
-    QIODevice* get();
+    QFile* get();
+    int writeRawData(const char *data, int len);
+    QString getPath();
 };
 
 Q_DECLARE_METATYPE(File)

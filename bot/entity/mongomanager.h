@@ -44,7 +44,7 @@ class MongoManager : public IDBManager
     bsoncxx::document::view_or_value buildSearchById(const QString &guildId);
     QString getCollectionName() const;
     QString runSHA256(QTemporaryFile &file) const;
-    bool isAlreadyPersisted(const std::string &fileName);
+    bool isPersisted(const std::string &fileName);
     void createCollection(const QString &collectionName);
     void insertOne(const QJsonObject &json);
     void insertOne(JsonSerializable &json);
