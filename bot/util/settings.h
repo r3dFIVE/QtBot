@@ -53,7 +53,8 @@ public:
     static QString logFileName();
     static QString scriptDirectory();
     static QString tempDirectory();
-    static bool saveAttachments();
+    static bool saveAttachments();    
+    static int cacheTimer();
 
 private:
 
@@ -81,6 +82,7 @@ private:
     static const QString LOG_FILE_NAME;
     static const QString SCRIPT_DIRECTORY;
     static const QString TEMP_DIRECTORY;
+    static const QString CACHE_TIMER;
 
     static QMap<QString, QVariant> _settings;
 

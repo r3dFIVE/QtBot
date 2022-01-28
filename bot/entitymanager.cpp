@@ -26,6 +26,20 @@
 #include "util/enumutils.h"
 
 
+EntityManager::EntityManager() {
+    clearFileCache();
+
+    _cacheTimer = QSharedPointer<QTimer>(new QTimer(this));
+
+    _cacheTimer->setInterval(Settings::cacheTimer() * 1000);
+
+    connect(_cacheTimer.data(), &QTimer::timeout, this, &EntityManager::clearFileCache);
+
+    _cacheTimer->start();
+
+    _databaseContext.init();
+}
+
 void
 EntityManager::initGuildFromPayload(QSharedPointer<GatewayPayload> payload) {
     Guild jsonGuild(payload->getD());
@@ -75,6 +89,9 @@ EntityManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restricti
 void
 EntityManager::clearFileCache() {
     QDir tempDir(Settings::tempDirectory());
+
+    _logger->trace(QString("Cleaning temporary file cache located at: %1")
+                   .arg(Settings::tempDirectory()));
 
     tempDir.removeRecursively();
 }

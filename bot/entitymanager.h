@@ -35,6 +35,7 @@ class EntityManager : public QObject
     Q_OBJECT
 
     QSharedPointer<IDBManager> _manager;
+    QSharedPointer<QTimer> _cacheTimer;
 
     DatabaseContext _databaseContext;
     Logger *_logger = LogFactory::getLogger();
@@ -42,11 +43,7 @@ class EntityManager : public QObject
     void clearFileCache();
 
 public:
-    EntityManager() {
-        clearFileCache();
-
-        _databaseContext.init();
-    }
+    EntityManager();
 
 signals:
     void guildInitialized(QSharedPointer<GuildEntity> guildEntity);

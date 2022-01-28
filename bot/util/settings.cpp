@@ -56,6 +56,7 @@ const QString Settings::GATEWAY_INTENTS = QString("gateway_intents");
 const QString Settings::MAX_POOL_SIZE = QString("max_pool_size");
 const QString Settings::SCRIPT_DIRECTORY = QString("script_directory");
 const QString Settings::TEMP_DIRECTORY = QString("temp_directory");
+const QString Settings::CACHE_TIMER = QString("cache_timer");
 
 
 void
@@ -130,6 +131,25 @@ Settings::validateBotSettings() {
 
     if (_settings[TEMP_DIRECTORY].toString().isEmpty()) {
         _settings[TEMP_DIRECTORY] = QString("%1/qtbot").arg(QDir::tempPath());
+    }
+
+    QString cacheTimer = _settings[CACHE_TIMER].toString();
+
+    if (cacheTimer.isEmpty()) {
+        _settings[CACHE_TIMER] = 600;
+
+    } else {
+        bool isNumber = false;
+
+        int timer = cacheTimer.toInt(&isNumber, 10);
+
+        if (!isNumber || timer < 1) {
+            qDebug() << "cache_timer must be a valid amount of seconds greater than 0";
+
+            qDebug() << "Given: " << cacheTimer << ". Defaulting to 600 seconds.";
+
+            _settings[CACHE_TIMER] = 600;
+        }
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<CommandRestrictions::RestrictionState>();
@@ -434,6 +454,11 @@ Settings::scriptDirectory() {
 QString
 Settings::tempDirectory() {
     return _settings[TEMP_DIRECTORY].toString();
+}
+
+int
+Settings::cacheTimer() {
+    return _settings[CACHE_TIMER].toInt();
 }
 
 bool
