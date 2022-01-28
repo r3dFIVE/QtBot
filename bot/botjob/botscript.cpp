@@ -86,17 +86,6 @@ BotScript::getEventBindingsJson() const {
     return _eventBindingsJson;
 }
 
-bool
-BotScript::invokable() {
-    bool canLock = _runLock.tryLock();
-
-    if (canLock) {
-        _runLock.unlock();
-    }
-
-    return canLock;
-}
-
 QString
 BotScript::findFunctionMapping(const QString &command) const {
     return _commands[command].toString();
@@ -114,14 +103,14 @@ BotScript::setScriptCommands(const QMap<QString, QVariant> &commands) {
 
 void
 BotScript::execute(const QByteArray &command, const EventContext &context) {
-    QMutexLocker lock(&_runLock);
-
     QVariant returnValue;
 
     QMetaObject::invokeMethod(this, command,
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, returnValue),
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
+
+    _runLock.unlock();
 }
 
 void
@@ -267,13 +256,20 @@ BotScript::cGetChannelMessage(const QVariant &context) {
 }
 
 QVariant
-BotScript::cCreateMessage(const QVariant &context) {
-    return _discordAPI->channelCreateMessage(context);
+BotScript::cCreateMessage(const QVariant &context, File *file) {
+    QVariantList files;
+
+    if (file) {
+        files << QVariant::fromValue(file);
+    }
+
+    return _discordAPI->channelCreateMessage(context, files);
 }
 
+
 QVariant
-BotScript::cCreateMessage(const QVariant &context, File *file) {
-    return _discordAPI->channelCreateMessage(context, file);
+BotScript::cCreateMessage(const QVariant &context, const QVariantList &files) {
+    return _discordAPI->channelCreateMessage(context, files);
 }
 
 QVariant

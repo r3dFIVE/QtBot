@@ -20,6 +20,9 @@
 
 #include "attachment.h"
 
+const QString Attachment::DESCRIPTION = "description";
+const QString Attachment::CONTENT_TYPE = "content_type";
+const QString Attachment::CHECKSUM = "checksum";
 const QString Attachment::ID = "id";
 const QString Attachment::FILENAME = "filename";
 const QString Attachment::SIZE = "size";
@@ -27,73 +30,147 @@ const QString Attachment::URL = "url";
 const QString Attachment::PROXY_URL = "proxy_url";
 const QString Attachment::HEIGHT = "height";
 const QString Attachment::WIDTH = "width";
+const QString Attachment::MESSAGE_ID = "message_id";
+const QString Attachment::CHANNEL_ID = "channel_id";
+const QString Attachment::GUILD_ID = "guild_id";
+const QString Attachment::USER_ID = "user_id";
 
 QJsonValue
-Attachment::getId() {
+Attachment::getDescription() const {
+    return _jsonObject[DESCRIPTION];
+}
+
+void
+Attachment::setDescription(const QJsonValue &description) {
+    _jsonObject[DESCRIPTION] = description;
+}
+
+QJsonValue
+Attachment::getContentType() const {
+    return _jsonObject[CONTENT_TYPE];
+}
+
+void
+Attachment::setContentType(const QJsonValue &contentType) {
+    _jsonObject[CONTENT_TYPE] = contentType;
+}
+
+QJsonValue
+Attachment::getChecksum() const {
+    return _jsonObject[CHECKSUM];
+}
+
+void
+Attachment::setChecksum(const QJsonValue &checksum) {
+    _jsonObject[CHECKSUM] = checksum;
+}
+
+QJsonValue
+Attachment::getId() const {
     return _jsonObject[ID];
 }
 
 void
-Attachment::setId(QJsonValue id) {
+Attachment::setId(const QJsonValue &id) {
     _jsonObject[ID] = id;
 }
 
 QJsonValue
-Attachment::getFilename() {
+Attachment::getFilename() const {
     return _jsonObject[FILENAME];
 }
 
 void
-Attachment::setFilename(QJsonValue filename) {
+Attachment::setFilename(const QJsonValue &filename) {
     _jsonObject[FILENAME] = filename;
 }
 
 QJsonValue
-Attachment::getSize() {
+Attachment::getSize() const {
     return _jsonObject[SIZE];
 }
 
 void
-Attachment::setSize(QJsonValue size) {
+Attachment::setSize(const QJsonValue &size) {
     _jsonObject[SIZE] = size;
 }
 
 QJsonValue
-Attachment::getUrl() {
+Attachment::getUrl() const {
     return _jsonObject[URL];
 }
 
 void
-Attachment::setUrl(QJsonValue url) {
+Attachment::setUrl(const QJsonValue &url) {
     _jsonObject[URL] = url;
 }
 
 QJsonValue
-Attachment::getProxyUrl() {
+Attachment::getProxyUrl() const {
     return _jsonObject[PROXY_URL];
 }
 
 void
-Attachment::setProxyUrl(QJsonValue proxy_url) {
+Attachment::setProxyUrl(const QJsonValue &proxy_url) {
     _jsonObject[PROXY_URL] = proxy_url;
 }
 
 QJsonValue
-Attachment::getHeight() {
+Attachment::getHeight() const {
     return _jsonObject[HEIGHT];
 }
 
 void
-Attachment::setHeight(QJsonValue height) {
+Attachment::setHeight(const QJsonValue &height) {
     _jsonObject[HEIGHT] = height;
 }
 
 QJsonValue
-Attachment::getWidth() {
+Attachment::getWidth() const {
     return _jsonObject[WIDTH];
 }
 
 void
-Attachment::setWidth(QJsonValue width) {
+Attachment::setWidth(const QJsonValue &width) {
     _jsonObject[WIDTH] = width;
+}
+
+QJsonValue
+Attachment::getMessageId() const {
+    return _jsonObject[MESSAGE_ID];
+}
+
+void
+Attachment::setMessageId(const QJsonValue &messageId) {
+    _jsonObject[MESSAGE_ID] = messageId;
+}
+
+QJsonValue
+Attachment::getUserId() const {
+    return _jsonObject[USER_ID];
+}
+
+void
+Attachment::setUserId(const QJsonValue &userId) {
+    _jsonObject[USER_ID] = userId;
+}
+
+QJsonValue
+Attachment::getGuildId() const {
+    return _jsonObject[GUILD_ID];
+}
+
+void
+Attachment::setGuildId(const QJsonValue &guildId) {
+    _jsonObject[GUILD_ID] = guildId;
+}
+
+QJsonValue
+Attachment::getChannelId() const {
+    return _jsonObject[CHANNEL_ID];
+}
+
+void
+Attachment::setChannelId(const QJsonValue &channelId) {
+    _jsonObject[CHANNEL_ID] = channelId;
 }

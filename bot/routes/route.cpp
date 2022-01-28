@@ -25,6 +25,8 @@
 
 #include "util/mimeutils.h"
 
+#include <qml/tempfile.h>
+
 const QString Route::GLOBAL_BUCKET = "GLOBAL_BUCKET";
 
 void
@@ -72,10 +74,34 @@ Route::buildRequest(const RequestType requestType,
 }
 
 void
-Route::buildHttpMultiPart(const EventContext &context, File *file) {
+Route::buildHttpMultiPart(const EventContext &context, const QVariantList &files) {
     _httpMultiPart = QSharedPointer<QHttpMultiPart>(new QHttpMultiPart(QHttpMultiPart::FormDataType));
 
-    QFile *qfile = file->get();
+
+    for (QVariant file : files) {
+        appendFilePart(file);
+    }
+
+    QHttpPart jsonPart;
+
+    jsonPart.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"payload_json\"");
+
+    jsonPart.setBody(SerializationUtils::toQByteArray(context.getTargetPayload()));
+
+    _httpMultiPart->append(jsonPart);
+}
+
+void
+Route::appendFilePart(const QVariant &fileVariant) {    
+    QFile *qfile;
+
+    TempFile *tempFile = qvariant_cast<TempFile*>(fileVariant);
+
+    if (tempFile) {
+        qfile = tempFile->get();
+    } else {
+        qfile = fileVariant.value<File*>()->get();
+    }
 
     if (!qfile->isOpen()) {
         if  (!qfile->open(QIODevice::ReadOnly)) {
@@ -89,25 +115,19 @@ Route::buildHttpMultiPart(const EventContext &context, File *file) {
 
     QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
 
-    QHttpPart filePart;
-
     QString mimeTypeStr(mimeType.name());
+
+    QHttpPart filePart;
 
     filePart.setHeader(QNetworkRequest::ContentTypeHeader, mimeTypeStr);
 
-    QString dispostionValue = QString("form-data; name=\"file\"; filename=\"%1\"").arg(fileInfo.fileName());
+    QString dispostionValue = QString("form-data; name=\"files[%1]\"; filename=\"%2\"")
+            .arg(_fileNumber++)
+            .arg(fileInfo.fileName());
 
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
 
     filePart.setBodyDevice(qfile);
 
     _httpMultiPart->append(filePart);
-
-    QHttpPart jsonPart;
-
-    jsonPart.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"payload_json\"");
-
-    jsonPart.setBody(SerializationUtils::toQByteArray(context.getTargetPayload()));
-
-    _httpMultiPart->append(jsonPart);
 }

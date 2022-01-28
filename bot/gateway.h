@@ -81,7 +81,7 @@ public:
     Gateway();
     ~Gateway();    
 
-    static const int MS_FIVE_SECONDS;
+    static const int MS_TEN_SECONDS;
     static const int IMMEDIATE;
     static const QString DEFAULT_GUILD_ID;
 

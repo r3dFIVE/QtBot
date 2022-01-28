@@ -34,6 +34,8 @@ class File : public QObject
 {
     Q_OBJECT
 
+protected:
+
     Logger *_logger = LogFactory::getLogger();
 
     int _openMode;
@@ -43,10 +45,10 @@ class File : public QObject
     QDataStream _dataStream;
 
 public:
-    Q_INVOKABLE File(QObject *parent = nullptr);
-    Q_INVOKABLE File(const File &other, QObject *parent = nullptr);
-    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
-    Q_INVOKABLE ~File() {}
+    File(QObject *parent = nullptr);
+    File(const File &other, QObject *parent = nullptr);
+    File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
+    ~File() {}
 
     Q_INVOKABLE File &operator=(const File &other);
 
@@ -56,12 +58,13 @@ public:
 
     Q_INVOKABLE bool exists() const;
     Q_INVOKABLE bool remove();
-    Q_INVOKABLE bool rename(const QString &newName);
+    Q_INVOKABLE bool rename(const QString &name);
 
     Q_INVOKABLE void write(const QString &string);
     Q_INVOKABLE void write(const QStringList &string);
     Q_INVOKABLE void writeLine(const QString &string);
     Q_INVOKABLE void writeLine(const QStringList &strings);
+    Q_INVOKABLE void setFileName(const QString &fileName);
     Q_INVOKABLE QString fileName() const;
     Q_INVOKABLE QString errorString() const;
     Q_INVOKABLE QString readAll();
@@ -69,6 +72,8 @@ public:
 
     void setParent(QObject *parent);
     QFile* get();
+    int writeRawData(const char *data, int len);
+    QString getPath();
 };
 
 Q_DECLARE_METATYPE(File)

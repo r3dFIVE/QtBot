@@ -20,10 +20,14 @@
 
 #include "file.h"
 
+#include <QDir>
+
 #include "util/mimeutils.h"
 
 
 File::File(QObject *parent) : QObject(parent) {
+    _openMode = OpenMode::ReadWrite;
+
     _file = QSharedPointer<QFile>(new QFile);
 }
 
@@ -103,8 +107,8 @@ File::remove() {
 }
 
 bool
-File::rename(const QString &newName) {
-    return _file->rename(newName);
+File::rename(const QString &name) {
+    return _file->rename(name);
 }
 
 void
@@ -135,9 +139,35 @@ File::writeLine(const QStringList &strings) {
     }
 }
 
+int
+File::writeRawData(const char *data, int len) {
+    int byteWritten = 0;
+
+    open();
+
+    if (_dataStream.status() == QDataStream::Ok) {
+       byteWritten = _dataStream.writeRawData(data, len);
+
+    } else {
+       _logger->warning(QString("Failed to writeRawData, STATUS: %1").arg(_dataStream.status()));
+    }
+
+    return byteWritten;
+}
+
+void
+File::setFileName(const QString &fileName) {
+    _fileName = fileName;
+}
+
 QString
 File::fileName() const {
     return _file->fileName();
+}
+
+QString
+File::getPath() {
+    return QFileInfo(*_file.data()).absolutePath();
 }
 
 QString

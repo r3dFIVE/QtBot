@@ -30,7 +30,7 @@ class Http : public QObject
     void addCommonHeadersToRequest(QNetworkRequest &request, bool isJsonPayload = true);
     HttpResponse* processReply(QSharedPointer<QNetworkReply> reply, QVariant fileVar = QVariant());
     void writeToFile(QSharedPointer<QNetworkReply> reply, HttpResponse *reponse, QVariant fileVar = QVariant());
-    void write(const QByteArray data, HttpResponse *response, QFile *file);
+    void write(const QByteArray data, HttpResponse *response, QIODevice *file, const QString &fileName);
     HttpResponse* multiPartFailure();
 
     QByteArray _botAuthHeaderName;

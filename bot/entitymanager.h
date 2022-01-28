@@ -26,7 +26,6 @@
 
 #include "entity/guildentity.h"
 #include "entity/sqlmanager.h"
-#include "entity/mongoconnectionpool.h"
 #include "payloads/guild.h"
 #include "payloads/gatewaypayload.h"
 
@@ -36,15 +35,15 @@ class EntityManager : public QObject
     Q_OBJECT
 
     QSharedPointer<IDBManager> _manager;
+    QSharedPointer<QTimer> _cacheTimer;
 
     DatabaseContext _databaseContext;
     Logger *_logger = LogFactory::getLogger();
 
+    void clearFileCache();
 
 public:
-    EntityManager() {
-        _databaseContext.init();
-    }
+    EntityManager();
 
 signals:
     void guildInitialized(QSharedPointer<GuildEntity> guildEntity);

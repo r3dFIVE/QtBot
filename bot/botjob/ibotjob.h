@@ -32,11 +32,15 @@ class IBotJob : public QObject
 
 protected:
     QString _guildId;
+    QMutex _runLock;
 
 public:
     typedef QPair<QString, IBotJob *> FunctionMapping;
 
-    virtual bool invokable() = 0;
+    bool invokable() {
+        return _runLock.tryLock();
+    }
+
     virtual void execute(const QByteArray &command, const EventContext &context) = 0;
 
     QString getGuildId() { return _guildId; }

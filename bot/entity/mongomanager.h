@@ -2,6 +2,7 @@
 #define MONGOMANAGER_H
 
 #include <QObject>
+#include <QNetworkAccessManager>
 
 #ifndef Q_MOC_RUN
 
@@ -10,6 +11,7 @@
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
 #include <mongocxx/instance.hpp>
+#include <bsoncxx/types/bson_value/view.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/array.hpp>
@@ -18,6 +20,7 @@
 #endif
 
 #include "idbmanager.h"
+#include "payloads/attachment.h"
 #include "qml/mongodb.h"
 
 
@@ -29,6 +32,8 @@ class MongoManager : public IDBManager
 
     QSet<QString> _availableCollections;
     QSharedPointer<mongocxx::instance> _instance;
+    QSharedPointer<QNetworkAccessManager> _networkManager;
+    QMap<QString, Attachment> _pendingDownloads;
 
     mongocxx::client _client;
     mongocxx::collection _collection;
@@ -36,18 +41,29 @@ class MongoManager : public IDBManager
     mongocxx::uri _uri;
 
 
-    bsoncxx::document::view_or_value buildSearchByGuildId(const QString &guildId);
-    QString getCollectionName();
+    bsoncxx::document::view_or_value buildSearchById(const QString &guildId);
+    QString getCollectionName() const;
+    QString runSHA256(QTemporaryFile &file) const;
+    bool isPersisted(const std::string &fileName);
     void createCollection(const QString &collectionName);
     void insertOne(const QJsonObject &json);
+    void insertOne(JsonSerializable &json);
     void setCollection(const QString &collectionName);
     void updateRestrictions(QSharedPointer<CommandRestrictions> restrictions, const std::string &operation);
     void restrictionsRemoveAll(const QString &guildId);
+    void saveAttachments(QSharedPointer<GatewayPayload> payload);
+    void queueDownload(const Attachment &attachment);
+    void storeAttachmentData(QByteArray &data, Attachment &attachment);
+
 
 public:
 
+    static const int TEN_MEGABYTES;
     static const std::string SET_OPERATION;
     static const std::string UNSET_OPERATION;
+    static const std::string ATTACHMENTS;
+    static const std::string ATTACHMENTS_FILES;
+    static const std::string ATTACHMENTS_CHUNKS;
 
     MongoManager(DatabaseContext context) {
         _databaseContext = context;
@@ -58,6 +74,10 @@ public:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) override;
     void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) override;
     void saveEvent(QSharedPointer<GatewayPayload> payload) override;
+
+private slots:
+    void processDownload(QNetworkReply* reply);
+
 };
 
 #endif // MONGOMANAGER_H

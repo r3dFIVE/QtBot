@@ -32,7 +32,6 @@ class CoreCommand : public IBotJob {
 
     std::function<void(const EventContext &context)> _command;
 
-    QMutex _runLock;
     QString _commandName;
 
 public:
@@ -41,7 +40,6 @@ public:
     CoreCommand(const CoreCommand &other) { Q_UNUSED(other) }
     ~CoreCommand() {}
 
-    bool invokable() override;
     void execute(const QByteArray &command, const EventContext &context) override;
 };
 

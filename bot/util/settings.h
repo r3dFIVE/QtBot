@@ -52,6 +52,9 @@ public:
     static QString logFileDirectory();
     static QString logFileName();
     static QString scriptDirectory();
+    static QString tempDirectory();
+    static bool saveAttachments();    
+    static int cacheTimer();
 
 private:
 
@@ -69,6 +72,7 @@ private:
     static const QString DATABASE_PASSWORD;
     static const QString DATABASE_TYPE;
     static const QString DATABASE_NAME;
+    static const QString SAVE_ATTACHMENTS;
     static const QString GATEWAY_INTENTS;
     static const QString MAX_POOL_SIZE;
     static const QString FILE_LOG_LEVEL;
@@ -77,6 +81,8 @@ private:
     static const QString LOG_FILE_DIRECTORY;
     static const QString LOG_FILE_NAME;
     static const QString SCRIPT_DIRECTORY;
+    static const QString TEMP_DIRECTORY;
+    static const QString CACHE_TIMER;
 
     static QMap<QString, QVariant> _settings;
 

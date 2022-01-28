@@ -47,7 +47,6 @@ class BotScript : public IBotJob
     DatabaseContext _databaseContext;
     QJsonArray _eventBindingsJson;
     QMap<QString, QVariant> _commands;
-    QMutex _runLock;
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlQuery _query;
@@ -79,7 +78,6 @@ public:
     void setEngine(QSharedPointer<QQmlEngine> engine);
     void setScriptName(const QString &scriptName);
 
-    bool invokable() override;
     void execute(const QByteArray &command, const EventContext &message) override;
 
     static void setBotId(const QString &botId);
@@ -117,7 +115,7 @@ public:
     Q_INVOKABLE QVariant cDeleteChannel(const QVariant &context);
     Q_INVOKABLE QVariant cGetChannelMessages(const QVariant &context);
     Q_INVOKABLE QVariant cGetChannelMessage(const QVariant &context);
-    Q_INVOKABLE QVariant cCreateMessage(const QVariant &context);
+    Q_INVOKABLE QVariant cCreateMessage(const QVariant &context, const QVariantList &files = QVariantList());
     Q_INVOKABLE QVariant cCreateMessage(const QVariant &context, File *file);
     Q_INVOKABLE QVariant cCrosspostMessage(const QVariant &context);
     Q_INVOKABLE QVariant cCreateReaction(const QVariant &context);

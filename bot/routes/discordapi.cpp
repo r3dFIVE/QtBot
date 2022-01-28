@@ -190,6 +190,12 @@ DiscordAPI::processRoute(Route &route) {
         }
     }
 
+    if (!context) {
+        _logger->debug(QString("There was no valid reponse calling: %1").arg(routeWithMethod));
+
+        context = QSharedPointer<EventContext>(new EventContext);
+    }
+
     return context;
 }
 
@@ -367,7 +373,7 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
         return nullptr;
     }
 
-    QNetworkReply *rawReply;
+    QNetworkReply *rawReply = nullptr;
 
     route.addRawHeader(_botAuthHeaderName, _botAuthHeaderValue);
 
@@ -377,6 +383,7 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
             break;
         } case Route::POST: {
             QHttpMultiPart *multipPart = route.getHttpMultiPart();
+
             if (multipPart) {
                 rawReply = networkManager.post(route.request(), route.getHttpMultiPart());
             } else {
@@ -395,7 +402,7 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
         }
     }
 
-    QSharedPointer<QNetworkReply> reply(rawReply);
+    QSharedPointer<QNetworkReply> reply(rawReply);   
 
     HttpUtils::waitForReply(reply);
 
@@ -438,8 +445,8 @@ DiscordAPI::channelGetChannelMessage(const QVariant &context) {
 }
 
 QVariant
-DiscordAPI::channelCreateMessage(const QVariant &contextVar, File *file) {
-    ChannelCreateMessage createMessage(buildRequestContext(contextVar), file);
+DiscordAPI::channelCreateMessage(const QVariant &contextVar, const QVariantList &files) {
+    ChannelCreateMessage createMessage(buildRequestContext(contextVar), files);
 
     QSharedPointer<EventContext> apiResponse = processRoute(createMessage);
 

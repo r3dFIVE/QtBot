@@ -144,6 +144,10 @@ QObject*
 QmlFactory::createFile(const QVariantMap& arguments) {
     QString filePath = arguments.value("filePath", "").toString();
 
+    if (filePath.isEmpty()) {
+        return new File;
+    }
+
     OpenMode::Mode openMode =
             qvariant_cast<OpenMode::Mode>(arguments.value("openMode", OpenMode::ReadWrite));
 

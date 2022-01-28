@@ -51,21 +51,17 @@ JobQueue::get() {
     }
 
     for(int i = _lastJobGuildIndex; i < _jobQueue.size(); ++i) {
-        Job *availableJob = getJobFromQueue(i);
+        readyJob = getJobFromQueue(i);
 
-        if (availableJob) {
-            readyJob = availableJob;
-
+        if (readyJob) {
             return readyJob;
         }
     }
 
     for(int i = 0; i < _lastJobGuildIndex; ++i) {
-        Job *availableJob = getJobFromQueue(i);
+        readyJob = getJobFromQueue(i);
 
-        if (availableJob) {
-            readyJob = availableJob;
-
+        if (readyJob) {
             return readyJob;
         }
     }

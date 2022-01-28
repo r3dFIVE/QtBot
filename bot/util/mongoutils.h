@@ -24,6 +24,16 @@
 class MongoUtils {   
 public:
 
+    QString
+    static toQString(const bsoncxx::document::value &value) {
+        return QString::fromStdString(bsoncxx::to_json(value));
+    }
+
+
+    QString
+    static toQString(const bsoncxx::types::bson_value::view &view) {
+       return QString::fromStdString(view.get_utf8().value.to_string());
+    }
 
     QJsonObject
     static toJson(const bsoncxx::document::value &value) {
@@ -31,7 +41,6 @@ public:
 
         return QJsonDocument::fromJson(valueStr.toUtf8()).object();
     }
-
 
     QJsonObject
     static toJson(const bsoncxx::types::bson_value::view &view) {
@@ -41,25 +50,10 @@ public:
     }
 
     QJsonObject
-    static toJson(const bsoncxx::document::view_or_value &view_or_value) {
-        QJsonObject json;
+    static toJson(const bsoncxx::document::view_or_value &view_or_value) {    
+        QString valueStr = QString::fromStdString(bsoncxx::to_json(view_or_value.view()));
 
-        try {
-
-            if (view_or_value.view().empty()) {
-                LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::value from variant. Reason: View was empty"));
-
-            } else {
-                QString valueStr = QString::fromStdString(bsoncxx::to_json(view_or_value.view()));
-
-                json = QJsonDocument::fromJson(valueStr.toUtf8()).object();
-            }
-
-        } catch (const mongocxx::exception &e) {
-            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::value from variant. Reason: %1").arg(e.what()));
-        }
-
-        return json;
+        return QJsonDocument::fromJson(valueStr.toUtf8()).object();
     }
 
     bsoncxx::document::view_or_value
@@ -69,7 +63,7 @@ public:
 
             return bsoncxx::from_json(doc.toStdString());
         } catch (const mongocxx::exception &e) {
-            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QVariant. Reason: %1").arg(e.what()));
+            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QVariant. REASON: %1").arg(e.what()));
 
             return bsoncxx::builder::basic::document().extract();
         }
@@ -82,7 +76,7 @@ public:
 
             return bsoncxx::from_json(jsonData.toStdString());
         } catch (const mongocxx::exception &e) {
-            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QJsonObject. Reason: %1").arg(e.what()));
+            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QJsonObject. REASON: %1").arg(e.what()));
 
             return bsoncxx::builder::basic::document().extract();
         }
