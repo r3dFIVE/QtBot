@@ -98,8 +98,6 @@ Route::appendFilePart(const QVariant &fileVariant) {
     TempFile *tempFile = qvariant_cast<TempFile*>(fileVariant);
 
     if (tempFile) {
-        qDebug() << QQmlEngine::objectOwnership(tempFile);
-
         qfile = tempFile->get();
     } else {
         qfile = fileVariant.value<File*>()->get();
