@@ -39,9 +39,12 @@ class EntityManager : public QObject
     DatabaseContext _databaseContext;
     Logger *_logger = LogFactory::getLogger();
 
+    void clearFileCache();
 
 public:
     EntityManager() {
+        clearFileCache();
+
         _databaseContext.init();
     }
 

@@ -25,6 +25,8 @@
 
 #include "util/mimeutils.h"
 
+#include <qml/tempfile.h>
+
 const QString Route::GLOBAL_BUCKET = "GLOBAL_BUCKET";
 
 void
@@ -90,9 +92,18 @@ Route::buildHttpMultiPart(const EventContext &context, const QVariantList &files
 }
 
 void
-Route::appendFilePart(const QVariant &fileVariant) {
+Route::appendFilePart(const QVariant &fileVariant) {    
+    QFile *qfile;
 
-    QFile *qfile = qvariant_cast<File*>(fileVariant)->get();
+    TempFile *tempFile = qvariant_cast<TempFile*>(fileVariant);
+
+    if (tempFile) {
+        qDebug() << QQmlEngine::objectOwnership(tempFile);
+
+        qfile = tempFile->get();
+    } else {
+        qfile = fileVariant.value<File*>()->get();
+    }
 
     if (!qfile->isOpen()) {
         if  (!qfile->open(QIODevice::ReadOnly)) {

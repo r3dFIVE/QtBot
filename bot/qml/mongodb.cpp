@@ -1,5 +1,7 @@
 #include "mongodb.h"
 
+#include <QQmlEngine>
+
 #include "mongodeleteoptions.h"
 #include "mongoupdateoptions.h"
 #include "mongofindoptions.h"
@@ -238,17 +240,17 @@ MongoDB::findFilesByMessageId(const QString &messageId) {
 
         QString targetFilename = attachmentMetadata[Attachment::FILENAME].toString();
 
-        File *file = findFileByChecksum(checksum, client, targetFilename);
+        TempFile *file = findFileByChecksum(checksum, client, targetFilename);
 
         if (!file) {
             continue;
-        }       
+        }
 
         tempFiles << QVariant::fromValue(file);
     }
 
     if (tempFiles.isEmpty()) {
-        _logger->debug(QString("No files found for message_id: %1").arg(messageId));
+        _logger->debug(QString("No files found for message_id: %1. Is save_attachments enabled in settings.ini?").arg(messageId));
 
         return tempFiles;
     }    
@@ -283,7 +285,9 @@ MongoDB::findFileByChecksum(const QString &checksum, mongocxx::client &client, c
 
     auto downloader = bucket.open_download_stream(id);
 
-    TempFile* tempFile = new TempFile(fileName);
+    TempFile *tempFile = new TempFile(fileName);
+
+    QQmlEngine::setObjectOwnership(tempFile, QQmlEngine::JavaScriptOwnership);
 
     auto length = downloader.file_length();
 

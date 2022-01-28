@@ -44,13 +44,11 @@ protected:
     QTextStream _textStream;
     QDataStream _dataStream;
 
-
-
 public:
-    Q_INVOKABLE File(QObject *parent = nullptr);
-    Q_INVOKABLE File(const File &other, QObject *parent = nullptr);
-    Q_INVOKABLE File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
-    Q_INVOKABLE ~File() {}
+    File(QObject *parent = nullptr);
+    File(const File &other, QObject *parent = nullptr);
+    File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
+    ~File() {}
 
     Q_INVOKABLE File &operator=(const File &other);
 

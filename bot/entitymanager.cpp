@@ -73,6 +73,13 @@ EntityManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restricti
 }
 
 void
+EntityManager::clearFileCache() {
+    QDir tempDir(Settings::tempDirectory());
+
+    tempDir.removeRecursively();
+}
+
+void
 EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     _manager->initGuild(guildEntity);
 

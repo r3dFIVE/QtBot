@@ -44,7 +44,7 @@ class MongoDB : public QObject
     mongocxx::options::find parseFindOpts(const QVariant &opts);
     mongocxx::options::insert parseInsertOpts(const QVariant &opts);
 
-    TempFile* findFileByChecksum(const QString &checksum, mongocxx::client &client, const QString &filename = QString());
+    Q_INVOKABLE TempFile* findFileByChecksum(const QString &checksum, mongocxx::client &client, const QString &filename = QString());
 
 public:
     MongoDB(QObject *parent = nullptr);

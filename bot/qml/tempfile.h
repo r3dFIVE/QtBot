@@ -2,20 +2,20 @@
 #define TEMPFILE_H
 
 #include "file.h"
-
+#include <QDebug>
 #include <QObject>
 #include <QDir>
 #include <QUuid>
+#include <QQmlEngine>
 
 
 class TempFile : public File
 {
     Q_OBJECT
 
-
     QString makeTempPath() const {
-        QString tempPath = QString("%1/qtbot/%2")
-                .arg(QDir::tempPath())
+        QString tempPath = QString("%1/%2")
+                .arg(Settings::tempDirectory())
                 .arg(QUuid::createUuid().toString(QUuid::Id128));
 
         QDir().mkpath(tempPath);
@@ -40,6 +40,14 @@ public:
                     .arg(makeTempPath())
                     .arg(QUuid::createUuid().toString(QUuid::Id128));
         }
+    }
+
+    ~TempFile() {        
+        QDir dir(QFileInfo(*_file.get()).absolutePath());
+
+        _file->close();
+
+        dir.removeRecursively();
     }
 };
 

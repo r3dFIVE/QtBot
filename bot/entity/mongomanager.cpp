@@ -223,11 +223,14 @@ MongoManager::storeAttachmentData(QByteArray &data, Attachment &attachment) {
 
     auto bucket = _database.gridfs_bucket(options);
 
-    std::string fileName = attachment.getChecksum().toString().toStdString(); // We use checksum for "unique" file name
+
 
     try {
-        if (!isPersisted(fileName)) {
-            auto uploader = bucket.open_upload_stream(fileName);
+        // We use checksum for "unique" file name
+        std::string checksum = attachment.getChecksum().toString().toStdString();
+
+        if (!isPersisted(checksum)) {
+            auto uploader = bucket.open_upload_stream(checksum);
 
             uploader.write(reinterpret_cast<unsigned char *>(data.data()), data.length());
 

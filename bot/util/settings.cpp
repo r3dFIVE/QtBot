@@ -55,6 +55,7 @@ const QString Settings::SAVE_ATTACHMENTS = QString("save_attachments");
 const QString Settings::GATEWAY_INTENTS = QString("gateway_intents");
 const QString Settings::MAX_POOL_SIZE = QString("max_pool_size");
 const QString Settings::SCRIPT_DIRECTORY = QString("script_directory");
+const QString Settings::TEMP_DIRECTORY = QString("temp_directory");
 
 
 void
@@ -125,6 +126,10 @@ Settings::validateBotSettings() {
 
     if (_settings[SCRIPT_DIRECTORY].toString().isEmpty()) {
         _settings[SCRIPT_DIRECTORY] = "./scripts/";
+    }
+
+    if (_settings[TEMP_DIRECTORY].toString().isEmpty()) {
+        _settings[TEMP_DIRECTORY] = QString("%1/qtbot").arg(QDir::tempPath());
     }
 
     QMetaEnum metaEnum = QMetaEnum::fromType<CommandRestrictions::RestrictionState>();
@@ -424,6 +429,11 @@ Settings::logFileName() {
 QString
 Settings::scriptDirectory() {
     return _settings[SCRIPT_DIRECTORY].toString();
+}
+
+QString
+Settings::tempDirectory() {
+    return _settings[TEMP_DIRECTORY].toString();
 }
 
 bool

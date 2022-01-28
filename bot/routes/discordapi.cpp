@@ -367,7 +367,7 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
         return nullptr;
     }
 
-    QNetworkReply *rawReply;
+    QNetworkReply *rawReply = nullptr;
 
     route.addRawHeader(_botAuthHeaderName, _botAuthHeaderValue);
 
@@ -377,6 +377,7 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
             break;
         } case Route::POST: {
             QHttpMultiPart *multipPart = route.getHttpMultiPart();
+
             if (multipPart) {
                 rawReply = networkManager.post(route.request(), route.getHttpMultiPart());
             } else {
@@ -395,7 +396,7 @@ DiscordAPI::executeRoute(QNetworkAccessManager &networkManager, Route &route) {
         }
     }
 
-    QSharedPointer<QNetworkReply> reply(rawReply);
+    QSharedPointer<QNetworkReply> reply(rawReply);   
 
     HttpUtils::waitForReply(reply);
 
