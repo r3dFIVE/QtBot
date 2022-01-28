@@ -190,6 +190,12 @@ DiscordAPI::processRoute(Route &route) {
         }
     }
 
+    if (!context) {
+        _logger->debug(QString("There was no valid reponse calling: %1").arg(routeWithMethod));
+
+        context = QSharedPointer<EventContext>(new EventContext);
+    }
+
     return context;
 }
 
@@ -444,15 +450,9 @@ DiscordAPI::channelCreateMessage(const QVariant &contextVar, const QVariantList 
 
     QSharedPointer<EventContext> apiResponse = processRoute(createMessage);
 
-    QVariant responseVariant;
+    apiResponse->processEventParams(GatewayEvent::MESSAGE_CREATE, EventContext::MESSAGE_ID);
 
-    if (apiResponse) {
-        apiResponse->processEventParams(GatewayEvent::MESSAGE_CREATE, EventContext::MESSAGE_ID);
-
-        responseVariant = buildResponseVariant(apiResponse);
-    }
-
-    return responseVariant;
+    return buildResponseVariant(apiResponse);
 }
 
 QVariant
