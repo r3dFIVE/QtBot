@@ -147,12 +147,18 @@ EventHandler::reloadGuild(const EventContext &context) {
 
             _jobQueueTimer->stop();
 
+            bool validate = true;
+
             for (auto guild : _availableGuilds.values()) {
                 _timedJobs.clear(guild->getId());
 
                 _jobQueue.clear(guild->getId());
 
-                emit reloadScripts(guild);
+                emit reloadScripts(guild, validate);
+
+                if (validate) {
+                    validate = false; // only validate once.
+                }
             }
         } else {
             _logger->warning(QString("User %1 attempted to .reload all guilds but they are not Bot Owner...").arg(userId));
@@ -162,7 +168,7 @@ EventHandler::reloadGuild(const EventContext &context) {
 
         _jobQueue.clear(guildId);
 
-        emit reloadScripts(_availableGuilds[guildId]);
+        emit reloadScripts(_availableGuilds[guildId], true);
     }
 }
 

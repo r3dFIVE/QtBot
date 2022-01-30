@@ -48,6 +48,14 @@ public:
     Attachment(const QByteArray &json) : JsonSerializable(json) {}
     Attachment(const QJsonObject &json) : JsonSerializable(json) {}
     Attachment(const QString &json) : JsonSerializable(json) {}
+    Attachment(const Attachment &other) {
+        if (this == &other) {
+            return;
+        }
+
+        _jsonObject = other._jsonObject;
+    }
+
     Attachment operator=(const Attachment &other) {
         if (this == &other) {
             return *this;

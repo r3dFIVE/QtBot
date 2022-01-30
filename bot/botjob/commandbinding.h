@@ -26,9 +26,8 @@
 class CommandBinding : public IBinding
 {
 
-    bool _adminOnly = false;
+    bool _ignoreAdmin = false;
     QString _commandName;
-
 
 public:
     static const QString COMMAND;
@@ -41,10 +40,9 @@ public:
 
     CommandBinding &operator=(const CommandBinding &other);
 
-    bool isAdminOnly() const;
     QString getCommandName() const;
-    void setAdminOnly(const bool adminOnly);
-    void setCommandName(const QString &commandName);
+
+    void setCommandName(const QString &commandName); 
 
     bool isValid(const QMetaObject &metaObject) const override;
 };

@@ -39,7 +39,9 @@ BotScript::BotScript() {
 }
 
 BotScript::~BotScript() {
-    _engine->clearComponentCache();
+    if (_engine) {
+        _engine->clearComponentCache();
+    }
 }
 
 BotScript::BotScript(const BotScript &other) {

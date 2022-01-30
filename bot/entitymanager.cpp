@@ -100,7 +100,7 @@ void
 EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     _manager->initGuild(guildEntity);
 
-    emit guildInitialized(guildEntity);
+    emit guildInitialized(guildEntity, false);
 }
 
 void

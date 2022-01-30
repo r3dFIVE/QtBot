@@ -35,6 +35,7 @@ class QmlFactory : public QObject
     DatabaseContext _databaseContext;
 
     QObject *createFile(const QVariantMap& arguments);
+    QObject *createTempFile(const QVariantMap& arguments);
     QObject *createSqlQuery(const QVariantMap& arguments);
     QObject *createEmbed(const QVariantMap &arguments);
     QObject *createEmbedField(const QVariantMap &arguments);

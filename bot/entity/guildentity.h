@@ -48,16 +48,17 @@ class GuildEntity : public QObject
     QList<QSharedPointer<IBotJob> > _registeredScripts;
     QList<TimedBinding> _timedBindings;
     QMap<QString, Role> _rolesByRoleId;
-    QMap<QString, QList<GatewayBinding> > _gatewayBindings;
+    QMap<QString, QList<GatewayBinding> > _gatewayBindingsByEventName;
     QMap<QString, CommandBinding> _commandBindings;
     QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > _mappedStateIdsByCommand;
     QMap<QString, QStringList> _commandNamesByScriptName;
     QString _id = DEFAULT_GUILD_ID;
     QStringList _adminRoleIds;
+    QMap<QString, GatewayBinding> _gatewayBindingsByBindingName;
 
     bool canInvoke(QSharedPointer<EventContext> context, const QString &command);
     Job* getCommandJob(QSharedPointer<EventContext> context);
-    QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context) const;
+    QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context);
     QString parseCommandToken(const QString &content) const;
     void clearCommand(const QString &commandName, const QString &targetId);
 

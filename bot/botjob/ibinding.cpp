@@ -27,13 +27,20 @@ const QString IBinding::BINDING_TYPE_GATEWAY = "gateway";
 const QString IBinding::BINDING_TYPE_TIMED = "timed";
 const QString IBinding::FUNCTION = "function";
 const QString IBinding::DESCRIPTION = "description";
+const QString IBinding::IGNORE_ADMIN = "ignore_admin";
 
 bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
+
+
     if (_functionMapping.first.isEmpty() || !_functionMapping.second) {
         _logger->warning(QString("Invalid command mapping. First: %1, Second: %2... Discarding binding.")
                          .arg(_functionMapping.first.isEmpty() )
                          .arg(!_functionMapping.second ? "nullptr" : _functionMapping.second->objectName()));
 
+        return false;
+    }
+
+    if (!isValidParam(_functionMapping.first)) {
         return false;
     }
 
@@ -48,6 +55,55 @@ bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
 
     return true;
 }
+
+
+bool
+IBinding::isAdminOnly() const {
+    return _adminOnly;
+}
+
+void
+IBinding::setAdminOnly(const bool adminOnly) {
+    _adminOnly = adminOnly;
+}
+
+bool
+IBinding::ignoreAdmin() {
+    return _ignoreAdmin;
+}
+
+void
+IBinding::setIgnoreAdmin(bool ignoreAdmin) {
+    _ignoreAdmin = ignoreAdmin;
+}
+
+bool
+IBinding::isValidParam(const QString &param) const {
+    if (param.isEmpty()) {
+        _logger->warning(QString("Script parameters can not be empty."));
+
+        return false;
+    }
+
+    if (param.simplified().contains(" ")) {
+        _logger->warning(QString("Script parameters can not have any whitespace characters: %1").arg(param));
+
+        return false;
+    }
+
+    bool isNumber = false;
+
+    param.toDouble(&isNumber);
+
+    if (isNumber) {
+        _logger->warning(QString("Script parameters must not be only numeric values: %1").arg(param));
+
+        return false;
+    }
+
+    return true;
+}
+
 
 IBotJob::FunctionMapping
 IBinding::getFunctionMapping() const {

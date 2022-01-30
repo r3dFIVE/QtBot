@@ -40,6 +40,8 @@ CommandBinding::CommandBinding(const CommandBinding &other) {
     _commandName = other._commandName;
 
     _adminOnly = other._adminOnly;
+
+    _ignoreAdmin = other._ignoreAdmin;
 }
 
 CommandBinding
@@ -58,17 +60,9 @@ CommandBinding
 
     _adminOnly = other._adminOnly;
 
+    _ignoreAdmin = other._ignoreAdmin;
+
     return *this;
-}
-
-bool
-CommandBinding::isAdminOnly() const {
-    return _adminOnly;
-}
-
-void
-CommandBinding::setAdminOnly(const bool adminOnly) {
-    _adminOnly = adminOnly;
 }
 
 QString

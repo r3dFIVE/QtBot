@@ -107,6 +107,8 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
 
     engine->globalObject().setProperty("_factory", factory);
 
+    engine->evaluate("function TempFile(path, mode = 1) { return _factory.createObject(\"TempFile\", { filePath: path, openMode: mode }); }");
+
     engine->evaluate("function File(path, mode = 1) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
 
     engine->evaluate("function Http() { return _factory.createObject(\"Http\", {}); }");
@@ -152,6 +154,20 @@ QmlFactory::createFile(const QVariantMap& arguments) {
             qvariant_cast<OpenMode::Mode>(arguments.value("openMode", OpenMode::ReadWrite));
 
     return new File(filePath, openMode);
+}
+
+QObject*
+QmlFactory::createTempFile(const QVariantMap& arguments) {
+    QString filePath = arguments.value("filePath", "").toString();
+
+    if (filePath.isEmpty()) {
+        return new TempFile;
+    }
+
+    OpenMode::Mode openMode =
+            qvariant_cast<OpenMode::Mode>(arguments.value("openMode", OpenMode::ReadWrite));
+
+    return new TempFile(filePath, openMode);
 }
 
 QObject*

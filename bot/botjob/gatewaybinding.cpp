@@ -25,6 +25,7 @@
 
 const QString GatewayBinding::GATEWAY_EVENT = "gateway_event";
 const QString GatewayBinding::SINGLETON = "singleton";
+const QString GatewayBinding::BINDING_NAME = "binding_name";
 
 GatewayBinding::GatewayBinding(const QString &eventName) {
     _eventName = eventName;
@@ -35,9 +36,13 @@ GatewayBinding::GatewayBinding(const GatewayBinding &other) {
 
     _logger = other._logger;
 
+    _ignoreAdmin = other._ignoreAdmin;
+
     _description = other._description;
 
     _eventName = other._eventName;
+
+    _bindingName = other._bindingName;
 }
 
 GatewayBinding
@@ -50,9 +55,13 @@ GatewayBinding
 
     _logger = other._logger;
 
+    _ignoreAdmin = other._ignoreAdmin;
+
     _description = other._description;
 
     _eventName = other._eventName;
+
+    _bindingName = other._bindingName;
 
     return *this;
 }
@@ -66,7 +75,21 @@ void GatewayBinding::setEventName(const QString &eventName) {
     _eventName = eventName;
 }
 
+QString
+GatewayBinding::getBindingName() {
+    return _bindingName;
+}
+
+void
+GatewayBinding::setBindingName(const QString &bindingName) {
+    _bindingName = bindingName;
+}
+
 bool GatewayBinding::isValid(const QMetaObject &metaObject) const {
+    if (!isValidParam(_bindingName)) {
+        return false;
+    }
+
     if (!validateFunctionMapping(metaObject)) {
         return false;
     }
