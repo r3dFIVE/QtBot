@@ -37,10 +37,11 @@ public:
     static const QString DEAF;
     static const QString MUTE;
 
-    GuildMember() {}
-    GuildMember(const QByteArray &json) : JsonSerializable(json) {}
-    GuildMember(const QJsonObject &json) : JsonSerializable(json) {}
-    GuildMember(const QString &json) : JsonSerializable(json) {}
+    GuildMember(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    GuildMember(const GuildMember &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    GuildMember(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GuildMember(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GuildMember(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getRoles() const;
     QJsonObject getUser() const;

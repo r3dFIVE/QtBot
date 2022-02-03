@@ -26,7 +26,7 @@ const QString ActivityAssets::SMALL_IMAGE = "small_image";
 const QString ActivityAssets::SMALL_TEXT = "small_text";
 
 QJsonValue
-ActivityAssets::getLargeText() {
+ActivityAssets::getLargeText() const {
     return _jsonObject[LARGE_TEXT].toString();
 }
 
@@ -36,7 +36,7 @@ ActivityAssets::setLargeText(const QJsonValue &largeText) {
 }
 
 QJsonValue
-ActivityAssets::getSmallImage() {
+ActivityAssets::getSmallImage() const {
     return _jsonObject[SMALL_IMAGE].toString();
 }
 
@@ -46,7 +46,7 @@ ActivityAssets::setSmallImage(const QJsonValue &smallImage) {
 }
 
 QJsonValue
-ActivityAssets::getSmallText() {
+ActivityAssets::getSmallText() const {
     return _jsonObject[SMALL_TEXT].toString();
 }
 
@@ -56,7 +56,7 @@ ActivityAssets::setSmallText(const QJsonValue &smallText) {
 }
 
 QJsonValue
-ActivityAssets::getLargeImage() {
+ActivityAssets::getLargeImage() const {
     return _jsonObject[LARGE_IMAGE].toString();
 }
 

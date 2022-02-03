@@ -31,10 +31,11 @@ class Hello : public JsonSerializable
 public:
     static const QString HEARTBEAT_INTERVAL;
 
-    Hello() {}
-    Hello(const QByteArray &json) : JsonSerializable(json) {}
-    Hello(const QJsonObject &json) : JsonSerializable(json) {}
-    Hello(const QString &json) : JsonSerializable(json) {}
+    Hello(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Hello(const Hello &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Hello(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Hello(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Hello(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     int getHeartbeatInterval();
     void setHeartbeatInterval(int interval);

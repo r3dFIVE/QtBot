@@ -34,9 +34,11 @@ public:
     static const QString S;
     static const QString T;
 
-    GatewayPayload() {}
-    GatewayPayload(const QJsonObject &json) : JsonSerializable(json) {}
-    GatewayPayload(const QString &json) : JsonSerializable(json) {}
+    GatewayPayload(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    GatewayPayload(const GatewayPayload &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    GatewayPayload(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GatewayPayload(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GatewayPayload(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonObject getD() const;
     QJsonValue getV() const;

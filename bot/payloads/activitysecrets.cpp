@@ -25,7 +25,7 @@ const QString ActivitySecrets::MATCH = "match";
 const QString ActivitySecrets::SPECTATE = "spectate";
 
 QJsonValue
-ActivitySecrets::getJoin() {
+ActivitySecrets::getJoin() const {
     return _jsonObject[JOIN].toString();
 }
 
@@ -35,7 +35,7 @@ ActivitySecrets::setJoin(const QJsonValue &join) {
 }
 
 QJsonValue
-ActivitySecrets::getSpectate() {
+ActivitySecrets::getSpectate() const {
     return _jsonObject[SPECTATE].toString();
 }
 
@@ -45,7 +45,7 @@ ActivitySecrets::setSpectate(const QJsonValue &spectate) {
 }
 
 QJsonValue
-ActivitySecrets::getMatch() {
+ActivitySecrets::getMatch() const {
     return _jsonObject[MATCH].toString();
 }
 

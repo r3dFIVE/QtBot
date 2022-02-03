@@ -33,10 +33,11 @@ public:
     static const QString ID;
     static const QString ANIMATED;
 
-    ActivityEmoji() {}
-    ActivityEmoji(const QByteArray &json) : JsonSerializable(json) {}
-    ActivityEmoji(const QJsonObject &json) : JsonSerializable(json) {}
-    ActivityEmoji(const QString &json) : JsonSerializable(json) {}
+    ActivityEmoji(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ActivityEmoji(const ActivityEmoji &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ActivityEmoji(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivityEmoji(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivityEmoji(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getAnimated() const;
     QJsonValue getId() const;

@@ -35,10 +35,11 @@ public:
     static const QString TYPE;
     static const QString NAME;
 
-    ChannelMention() {}
-    ChannelMention(const QByteArray &json) : JsonSerializable(json) {}
-    ChannelMention(const QJsonObject &json) : JsonSerializable(json) {}
-    ChannelMention(const QString &json) : JsonSerializable(json) {}
+    ChannelMention(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ChannelMention(const ChannelMention &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ChannelMention(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ChannelMention(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ChannelMention(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getGuildId() const;
     QJsonValue getId() const;

@@ -44,7 +44,6 @@ public:
     Role(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
     Role(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
-    Role &operator=(const Role &other);
 
     QJsonValue getColor() const;
     QJsonValue getHoist() const;

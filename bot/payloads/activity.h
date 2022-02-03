@@ -52,10 +52,11 @@ public:
     static const QString INSTANCE;
     static const QString FLAGS;
 
-    Activity() {}
-    Activity(const QByteArray &json) : JsonSerializable(json) {}
-    Activity(const QJsonObject &json) : JsonSerializable(json) {}
-    Activity(const QString &json) : JsonSerializable(json) {}
+    Activity(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Activity(const Activity &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Activity(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Activity(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Activity(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonObject getAssets() const;
     QJsonObject getEmoji() const;

@@ -33,10 +33,11 @@ public:
     static const QString GUILD_ID;
     static const QString MESSAGE_ID;
 
-    MessageReference() {}
-    MessageReference(const QByteArray &json) : JsonSerializable(json) {}
-    MessageReference(const QJsonObject &json) : JsonSerializable(json) {}
-    MessageReference(const QString &json) : JsonSerializable(json) {}
+    MessageReference(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    MessageReference(const MessageReference &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    MessageReference(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    MessageReference(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    MessageReference(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getChannelId() const;
     QJsonValue getGuildId() const;

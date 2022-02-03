@@ -34,15 +34,16 @@ public:
     static const QString SMALL_IMAGE;
     static const QString SMALL_TEXT;
 
-    ActivityAssets() {}
-    ActivityAssets(const QByteArray &json) : JsonSerializable(json) {}
-    ActivityAssets(const QJsonObject &json) : JsonSerializable(json) {}
-    ActivityAssets(const QString &json) : JsonSerializable(json) {}
+    ActivityAssets(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ActivityAssets(const ActivityAssets &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ActivityAssets(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivityAssets(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivityAssets(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
-    QJsonValue getLargeText();
-    QJsonValue getSmallImage();
-    QJsonValue getSmallText();
-    QJsonValue getLargeImage();
+    QJsonValue getLargeText() const;
+    QJsonValue getSmallImage() const;
+    QJsonValue getSmallText() const;
+    QJsonValue getLargeImage() const;
     void setLargeImage(const QJsonValue &largeImage);
     void setLargeText(const QJsonValue &largeText);
     void setSmallImage(const QJsonValue &smallImage);

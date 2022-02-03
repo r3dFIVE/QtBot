@@ -35,10 +35,11 @@ public:
     static const QString NAME;
     static const QString ICON;
 
-    MessageApplication() {}
-    MessageApplication(const QByteArray &json) : JsonSerializable(json) {}
-    MessageApplication(const QJsonObject &json) : JsonSerializable(json) {}
-    MessageApplication(const QString &json) : JsonSerializable(json) {}
+    MessageApplication(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    MessageApplication(const MessageApplication &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    MessageApplication(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    MessageApplication(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    MessageApplication(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getCoverImage() const;
     QJsonValue getDescription() const;

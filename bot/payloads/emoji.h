@@ -38,10 +38,11 @@ public:
     static const QString ANIMATED;
     static const QString AVAILABLE;
 
-    Emoji() {}
-    Emoji(const QByteArray &json) : JsonSerializable(json) {}
-    Emoji(const QJsonObject &json) : JsonSerializable(json) {}
-    Emoji(const QString &json) : JsonSerializable(json) {}
+    Emoji(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Emoji(const Emoji &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Emoji(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Emoji(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Emoji(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getRoles() const;
     QJsonObject getUser() const;

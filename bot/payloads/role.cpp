@@ -30,16 +30,6 @@ const QString Role::PERMISSIONS = "permissions";
 const QString Role::MANAGED = "managed";
 const QString Role::MENTIONABLE = "mentionable";
 
-Role
-&Role::operator=(const Role &other) {
-    if (this == &other) {
-        return *this;
-    }
-
-    _jsonObject = other._jsonObject;
-
-    return *this;
-}
 
 QJsonValue
 Role::getId() const {

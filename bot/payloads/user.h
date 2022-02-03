@@ -43,10 +43,11 @@ public:
     static const QString PREMIUM_TYPE;
     static const QString PUBLIC_FLAGS;
 
-    User() {}
-    User(const QByteArray &json) : JsonSerializable(json) {}
-    User(const QJsonObject &json) : JsonSerializable(json) {}
-    User(const QString &json) : JsonSerializable(json) {}
+    User(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    User(const User &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    User(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    User(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    User(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getAvatar() const;
     QJsonValue getBot() const;

@@ -72,7 +72,6 @@ public:
     void initGuild(QSharedPointer<GuildEntity> guildEntity) override;
     void init() override;
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) override;
-    void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) override;
     void saveEvent(QSharedPointer<GatewayPayload> payload) override;
 
 private slots:

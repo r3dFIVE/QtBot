@@ -26,7 +26,10 @@ const QString EmbedMedia::PROXY_URL = "proxy_url";
 const QString EmbedMedia::URL = "url";
 const QString EmbedMedia::WIDTH = "width";
 
-EmbedMedia::EmbedMedia(const QString &url, const int height, const int width) {
+EmbedMedia::EmbedMedia(const QString &url,
+                       const int height,
+                       const int width,
+                       QObject *parent) : JsonSerializable(parent) {
     _jsonObject[URL] = url;
 
     if (height > 0) {

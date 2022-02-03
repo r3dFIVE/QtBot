@@ -33,10 +33,10 @@ public:
     static const QString SESSION_ID;
     static const QString SEQ;
 
-    Resume() {}
-    Resume(const QByteArray &json) : JsonSerializable(json) {}
-    Resume(const QJsonObject &json) : JsonSerializable(json) {}
-    Resume(const QString &json) : JsonSerializable(json) {}
+    Resume(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Resume(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Resume(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Resume(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getSeq()const;
     QJsonValue getSessionId() const;

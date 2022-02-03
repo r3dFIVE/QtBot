@@ -54,10 +54,11 @@ public:
     static const QString MESSAGE_REFERENCE;
     static const QString FLAGS;
 
-    Message() {}
-    Message(const QByteArray &json) : JsonSerializable(json) {}
-    Message(const QJsonObject &json) : JsonSerializable(json) {}
-    Message(const QString &json) : JsonSerializable(json) {}
+    Message(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Message(const Message &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Message(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Message(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Message(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getAttachments() const;
     QJsonArray getEmbeds() const;

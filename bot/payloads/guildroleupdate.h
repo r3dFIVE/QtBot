@@ -34,10 +34,11 @@ public:
     static const QString GUILD_ID;
     static const QString ROLE;
 
-    GuildRoleUpdate() {}
-    GuildRoleUpdate(const QByteArray &json) : JsonSerializable(json) {}
-    GuildRoleUpdate(const QJsonObject &json) : JsonSerializable(json) {}
-    GuildRoleUpdate(const QString &json) : JsonSerializable(json) {}
+    GuildRoleUpdate(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    GuildRoleUpdate(const GuildRoleUpdate &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    GuildRoleUpdate(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GuildRoleUpdate(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GuildRoleUpdate(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getGuildId() const;
     QJsonObject getRole() const;

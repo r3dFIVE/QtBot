@@ -44,27 +44,11 @@ public:
     static const QString CHANNEL_ID;
     static const QString GUILD_ID;
 
-    Attachment() {}
-    Attachment(const QByteArray &json) : JsonSerializable(json) {}
-    Attachment(const QJsonObject &json) : JsonSerializable(json) {}
-    Attachment(const QString &json) : JsonSerializable(json) {}
-    Attachment(const Attachment &other) {
-        if (this == &other) {
-            return;
-        }
-
-        _jsonObject = other._jsonObject;
-    }
-
-    Attachment operator=(const Attachment &other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        _jsonObject = other._jsonObject;
-
-        return *this;
-    }
+    Attachment(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Attachment(const Attachment &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Attachment(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Attachment(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Attachment(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getDescription() const;
     QJsonValue getContentType() const;

@@ -32,10 +32,11 @@ public:
     static const QString ID;
     static const QString SIZE;
 
-    ActivityParty() {}
-    ActivityParty(const QByteArray &json) : JsonSerializable(json) {}
-    ActivityParty(const QJsonObject &json) : JsonSerializable(json) {}
-    ActivityParty(const QString &json) : JsonSerializable(json) {}
+    ActivityParty(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ActivityParty(const ActivityParty &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ActivityParty(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json) {}
+    ActivityParty(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json) {}
+    ActivityParty(const QString &json, QObject *parent = nullptr) : JsonSerializable(json) {}
 
     QJsonArray getSize() const;
     QJsonValue getId() const;

@@ -67,8 +67,7 @@ public:
 public slots:
     void removeRestrictionState(const EventContext &context);
     void removeAllRestrictionStates(const EventContext &context);
-    void removeRestrictionStatesForCommand(const EventContext &context);
-    void removeRestrictionStatesForId(const EventContext &context);
+
     void updateRestrictionState(const EventContext &context, CommandRestrictions::RestrictionState state);
     void updateAllRestrictionStates(const EventContext &context, CommandRestrictions::RestrictionState state);
     void displayTimedJobs(EventContext context);

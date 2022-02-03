@@ -33,10 +33,11 @@ public:
     static const QString MESSAGE;
     static const QString RETRY_AFTER;
 
-    RateLimit() {}
-    RateLimit(const QByteArray &json) : JsonSerializable(json) {}
-    RateLimit(const QJsonObject &json) : JsonSerializable(json) {}
-    RateLimit(const QString &json) : JsonSerializable(json) {}
+    RateLimit(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    RateLimit(const RateLimit &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    RateLimit(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    RateLimit(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    RateLimit(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getGlobal() const;
     QJsonValue getMessage() const;

@@ -138,20 +138,6 @@ public:
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".clearcommand", true, [&](const EventContext &context) -> void {
-            QMetaObject::invokeMethod(&eventHandler,
-                                      "removeRestrictionStatesForCommand",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(EventContext, context));
-        });
-
-        addCommand(".clearid", true, [&](const EventContext &context) -> void {
-            QMetaObject::invokeMethod(&eventHandler,
-                                      "removeRestrictionStatesForId",
-                                      Qt::QueuedConnection,
-                                      Q_ARG(EventContext, context));
-        });
-
         return commands;
     }
 };

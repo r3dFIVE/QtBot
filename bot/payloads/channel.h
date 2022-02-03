@@ -48,29 +48,30 @@ public:
     static const QString PARENT_ID;
     static const QString LAST_PIN_TIMESTAMP;
 
-    Channel() {}
-    Channel(const QByteArray &json) : JsonSerializable(json) {}
-    Channel(const QJsonObject &json) : JsonSerializable(json) {}
-    Channel(const QString &json) : JsonSerializable(json) {}
+    Channel(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Channel(const Channel &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Channel(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Channel(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Channel(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
-    QJsonValue getApplicationId();
-    QJsonValue getBitrate();
-    QJsonValue getGuildId();
-    QJsonValue getIcon();
-    QJsonValue getId();
-    QJsonValue getLastMessageId();
-    QJsonValue getLastPinTimestamp();
-    QJsonValue getOwnerId();
-    QJsonValue getName();
-    QJsonValue getNsfw();
-    QJsonValue getParentId();
-    QJsonValue getPosition();
-    QJsonValue getRateLimitPerUser();
-    QJsonValue getTopic();
-    QJsonValue getType();
-    QJsonValue getUserLimit();
-    QJsonArray getRecipients();
-    QJsonArray getPermissionOverwrites();
+    QJsonValue getApplicationId() const;
+    QJsonValue getBitrate() const;
+    QJsonValue getGuildId() const;
+    QJsonValue getIcon() const;
+    QJsonValue getId() const;
+    QJsonValue getLastMessageId() const;
+    QJsonValue getLastPinTimestamp() const;
+    QJsonValue getOwnerId() const;
+    QJsonValue getName() const;
+    QJsonValue getNsfw() const;
+    QJsonValue getParentId() const;
+    QJsonValue getPosition() const;
+    QJsonValue getRateLimitPerUser() const;
+    QJsonValue getTopic() const;
+    QJsonValue getType() const;
+    QJsonValue getUserLimit() const;
+    QJsonArray getRecipients() const;
+    QJsonArray getPermissionOverwrites() const;
     void setId(const QJsonValue &id);
     void setType(const QJsonValue &type);
     void setGuildId(const QJsonValue &guildId);

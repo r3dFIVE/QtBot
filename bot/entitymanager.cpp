@@ -50,8 +50,6 @@ EntityManager::initGuildFromPayload(QSharedPointer<GatewayPayload> payload) {
 
     guildEntity->setId(guild.getId().toString());
 
-    QObject::connect(guildEntity.data(), &GuildEntity::restrictionsRemoval, this, &EntityManager::restrictionsRemoval);
-
     QObject::connect(guildEntity.data(), &GuildEntity::restrictionsUpdate, this, &EntityManager::restrictionsUpdate);
 
     initGuild(guildEntity);
@@ -79,11 +77,6 @@ EntityManager::init() {
 void
 EntityManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) {
     _manager->restrictionsUpdate(restrictions);
-}
-
-void
-EntityManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
-    _manager->restrictionsRemoval(restrictions);
 }
 
 void

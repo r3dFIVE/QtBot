@@ -31,10 +31,11 @@ public:
     static const QString D;
     static const QString OP;
 
-    InvalidSession() {}
-    InvalidSession(const QByteArray &json) : JsonSerializable(json) {}
-    InvalidSession(const QJsonObject &json) : JsonSerializable(json) {}
-    InvalidSession(const QString &json) : JsonSerializable(json) {}
+    InvalidSession(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    InvalidSession(const InvalidSession &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    InvalidSession(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    InvalidSession(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    InvalidSession(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getD() const;
     QJsonValue getOP() const;

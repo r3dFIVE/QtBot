@@ -29,6 +29,8 @@
 const QString GuildEntity::DEFAULT_GUILD_ID = "0";
 const QString GuildEntity::GUILD_RESTRICTIONS = "GUILD_RESTRICTIONS";
 const QString GuildEntity::RESTRICTIONS = "restrictions";
+//first channel_id == guild_id for guild, use -1 for guild-level alias
+const QString GuildEntity::GUILD_ID_ALIAS = "-1";
 QString GuildEntity::ADMIN_ROLE_NAME = QString();
 QString GuildEntity::BOT_OWNER_ID = QString();
 CommandRestrictions::RestrictionState GuildEntity::DEFAULT_STATE;
@@ -153,8 +155,8 @@ GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &comm
 
         QString guildId = context->getGuildId().toString();
 
-        if (mappedStateById.contains(guildId)) {
-            return mappedStateById[guildId];
+        if (mappedStateById.contains(GUILD_ID_ALIAS)) {
+            return mappedStateById[GUILD_ID_ALIAS];
         }
     }
 
@@ -225,24 +227,27 @@ GuildEntity::removeRole(const QString &roleId) {
 }
 
 void
-GuildEntity::updateRestrictionState(const QString &name,
+GuildEntity::updateRestrictionStates(const QString &name,
                                      const QString &targetId,
                                      CommandRestrictions::RestrictionState state) {
+
+    if (name.isEmpty()) {
+        updateAllRestrictionStates(targetId, state);
+
+        return;
+    }
 
     QMap<QString, CommandRestrictions::RestrictionState> entityRestrictionsUpdate;
 
     if (_gatewayBindingsByBindingName.contains(name)) {
 
-        _mappedStateIdsByCommand[name][targetId] = state;
-
-        entityRestrictionsUpdate[name] = state;
+        updateState(entityRestrictionsUpdate, name, targetId, state);
 
     } else if (_commandNamesByScriptName.contains(name)) {
         // Script name provided, update all commands
         for (auto cmd : _commandNamesByScriptName[name]) {
-            _mappedStateIdsByCommand[cmd][targetId] = state;
+            updateState(entityRestrictionsUpdate, name, targetId, state);
 
-            entityRestrictionsUpdate[cmd] = state;
         }
     } else {
         // Check each script's commands.
@@ -253,15 +258,38 @@ GuildEntity::updateRestrictionState(const QString &name,
             it.next();
 
             if (it.value().contains(name)) {
-                _mappedStateIdsByCommand[name][targetId] = state;
-
-                entityRestrictionsUpdate[name] = state;
+                updateState(entityRestrictionsUpdate, name, targetId, state);
             }
         }
     }
 
     if (!entityRestrictionsUpdate.isEmpty()) {
         emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
+    }
+}
+
+void
+GuildEntity::updateState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                         const QString &name,
+                         const QString &targetId,
+                         CommandRestrictions::RestrictionState state) {
+
+    if (state == CommandRestrictions::REMOVED) {
+        if (targetId.isEmpty()) {
+            _mappedStateIdsByCommand[name].clear();
+
+            restrictionUpdates[name] = CommandRestrictions::REMOVED;
+
+        } else {
+            _mappedStateIdsByCommand[name].remove(targetId);
+
+            restrictionUpdates[name] = CommandRestrictions::REMOVED;
+        }
+
+    } else {
+        _mappedStateIdsByCommand[name][targetId] = state;
+
+        restrictionUpdates[name] = state;
     }
 }
 
@@ -278,9 +306,7 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
 
         for (auto cmd : c_it.value()) {
 
-            _mappedStateIdsByCommand[cmd][targetId] = state;
-
-            entityRestrictionsUpdate[cmd] = state;
+            updateState(entityRestrictionsUpdate, cmd, targetId, state);
         }
     }
 
@@ -289,9 +315,7 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
     while(g_it.hasNext()) {
         g_it.next();
 
-        _mappedStateIdsByCommand[g_it.key()][targetId] = state;
-
-        entityRestrictionsUpdate[g_it.key()] = state;
+        updateState(entityRestrictionsUpdate, g_it.key(), targetId, state);
     }
 
     if (!entityRestrictionsUpdate.isEmpty()) {
@@ -299,99 +323,11 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
     }
 }
 
-
-void
-GuildEntity::removeRestrictionState(const QString &name, const QString &targetId) {
-    QMap<QString, CommandRestrictions::RestrictionState> entityRestrictionsUpdate;
-
-     if (name.isEmpty()) {
-        removeRestrictionsById(targetId);
-
-        return;
-    }
-
-    if (_gatewayBindingsByBindingName.contains(name)) {
-        QMapIterator<QString, GatewayBinding> it(_gatewayBindingsByBindingName);
-
-        while(it.hasNext()) {
-            it.next();
-
-            if (targetId.isEmpty()) {
-                _mappedStateIdsByCommand[it.key()].clear();
-
-                entityRestrictionsUpdate[it.key()] = CommandRestrictions::REMOVED;
-            } else {
-                _mappedStateIdsByCommand[it.key()].remove(targetId);
-
-                entityRestrictionsUpdate[it.key()] = CommandRestrictions::REMOVED;
-            }
-        }
-    } else if (_commandNamesByScriptName.contains(name)) {
-        // Script name provided, update all commands
-        for (auto cmd : _commandNamesByScriptName[name]) {
-            if (targetId.isEmpty()) {
-                _mappedStateIdsByCommand[cmd].clear();
-
-                entityRestrictionsUpdate[cmd] = CommandRestrictions::REMOVED;
-
-            } else {
-                _mappedStateIdsByCommand[cmd].remove(targetId);
-
-                entityRestrictionsUpdate[cmd] = CommandRestrictions::REMOVED;
-            }
-        }
-    } else {
-        QMapIterator<QString, QStringList> it(_commandNamesByScriptName);
-
-        while (it.hasNext()) {
-
-            it.next();
-
-            if (it.value().contains(name)) {
-                if (targetId.isEmpty()) {                    
-                    _mappedStateIdsByCommand[name].clear();
-
-                    entityRestrictionsUpdate[name] = CommandRestrictions::REMOVED;
-                } else if (_mappedStateIdsByCommand[name].contains(targetId)) {
-                    _mappedStateIdsByCommand[name].remove(targetId);
-
-                    entityRestrictionsUpdate[name] = CommandRestrictions::REMOVED;
-                }
-            }
-        }
-    }
-
-    if (!entityRestrictionsUpdate.isEmpty()) {
-        emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
-    }
-}
-
-void
-GuildEntity::removeRestrictionsById(const QString &targetId) {
-    QMap<QString, CommandRestrictions::RestrictionState> entityRestrictionsUpdate;
-
-    QMapIterator<QString, QMap<QString, CommandRestrictions::RestrictionState>> it(_mappedStateIdsByCommand);
-
-    while (it.hasNext()) {
-        it.next();
-
-        if (it.value().contains(targetId)) {
-             _mappedStateIdsByCommand[it.key()].remove(targetId);
-
-             entityRestrictionsUpdate[it.key()] = CommandRestrictions::REMOVED;
-        }
-    }
-
-    if (!entityRestrictionsUpdate.isEmpty()) {
-        emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
-    }
-}
-
 void
 GuildEntity::removeAllRestrictionStates() {
     _mappedStateIdsByCommand.clear();
 
-    emit restrictionsRemoval(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, QString(), QMap<QString, CommandRestrictions::RestrictionState>())));
+    emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, QString(), QMap<QString, CommandRestrictions::RestrictionState>())));
 }
 
 Job*

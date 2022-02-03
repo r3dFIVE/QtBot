@@ -33,10 +33,11 @@ public:
     static const QString MOBILE;
     static const QString WEB;
 
-    ClientStatus() {}
-    ClientStatus(const QByteArray &json) : JsonSerializable(json) {}
-    ClientStatus(const QJsonObject &json) : JsonSerializable(json) {}
-    ClientStatus(const QString &json) : JsonSerializable(json) {}
+    ClientStatus(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ClientStatus(const ClientStatus &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ClientStatus(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ClientStatus(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ClientStatus(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getDesktop() const;
     QJsonValue getMobile() const;
