@@ -49,6 +49,15 @@ public:
     Attachment(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
     Attachment(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
     Attachment(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Attachment& operator=(const Attachment &other) {
+        if (this == &other) {
+            return *this;
+        }
+
+        _jsonObject = other._jsonObject;
+
+        return *this;
+    }
 
     QJsonValue getDescription() const;
     QJsonValue getContentType() const;
