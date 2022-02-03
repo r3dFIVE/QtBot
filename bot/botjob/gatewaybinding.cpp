@@ -32,6 +32,10 @@ GatewayBinding::GatewayBinding(const QString &eventName) {
 }
 
 GatewayBinding::GatewayBinding(const GatewayBinding &other) {
+    if (this == &other) {
+        return;
+    }
+
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;
