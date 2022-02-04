@@ -48,19 +48,24 @@ class GuildEntity : public QObject
     QList<QSharedPointer<IBotJob> > _registeredScripts;
     QList<TimedBinding> _timedBindings;
     QMap<QString, Role> _rolesByRoleId;
-    QMap<QString, QList<GatewayBinding> > _gatewayBindings;
+    QMap<QString, QList<GatewayBinding> > _gatewayBindingsByEventName;
     QMap<QString, CommandBinding> _commandBindings;
     QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > _mappedStateIdsByCommand;
     QMap<QString, QStringList> _commandNamesByScriptName;
     QString _id = DEFAULT_GUILD_ID;
     QStringList _adminRoleIds;
+    QMap<QString, GatewayBinding> _gatewayBindingsByBindingName;
 
     bool canInvoke(QSharedPointer<EventContext> context, const QString &command);
     Job* getCommandJob(QSharedPointer<EventContext> context);
-    QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context) const;
+    QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context);
     QString parseCommandToken(const QString &content) const;
     void clearCommand(const QString &commandName, const QString &targetId);
 
+    void updateState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                     const QString &name,
+                     const QString &targetId,
+                     CommandRestrictions::RestrictionState state);
 public:
     GuildEntity() {}
     GuildEntity(const Guild &guild);
@@ -68,6 +73,7 @@ public:
     static const QString DEFAULT_GUILD_ID;
     static const QString GUILD_RESTRICTIONS;
     static const QString RESTRICTIONS;
+    static const QString GUILD_ID_ALIAS;
 
     void initRestrictionStates(const QJsonObject &json);
     bool hasAdminRole(QSharedPointer<EventContext> context);
@@ -85,15 +91,12 @@ public:
     void setTimedBindings(const QList<TimedBinding> &timedBindings);
     void updateRole(const Role &role);
     void removeRole(const QString &roleId);
-    void removeRestrictionState(const QString &commandName, const QString &targetId);
-    void removeRestrictionStatesForCommand(const QString &commandName);
-    void removeRestrictionsById(const QString &targetId);
     void removeAllRestrictionStates();
-    void updateRestrictionState(const QString &commandName,
+    void updateAllRestrictionStates(const QString &targetId,
+                                            CommandRestrictions::RestrictionState state);
+    void updateRestrictionStates(const QString &commandName,
                        const QString &targetId,
                        CommandRestrictions::RestrictionState state);
-    void updateAllRestrictionStates(const QString &targetId,
-                                    CommandRestrictions::RestrictionState state);
 
     static void setAdminRoleName(const QString &roleName);
     static void setBotOwnerId(const QString &userId);
@@ -102,7 +105,6 @@ public:
 
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
-    void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions);
 };
 
 #endif // GUILDENTITY_H

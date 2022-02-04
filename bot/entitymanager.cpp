@@ -50,8 +50,6 @@ EntityManager::initGuildFromPayload(QSharedPointer<GatewayPayload> payload) {
 
     guildEntity->setId(guild.getId().toString());
 
-    QObject::connect(guildEntity.data(), &GuildEntity::restrictionsRemoval, this, &EntityManager::restrictionsRemoval);
-
     QObject::connect(guildEntity.data(), &GuildEntity::restrictionsUpdate, this, &EntityManager::restrictionsUpdate);
 
     initGuild(guildEntity);
@@ -82,11 +80,6 @@ EntityManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictio
 }
 
 void
-EntityManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
-    _manager->restrictionsRemoval(restrictions);
-}
-
-void
 EntityManager::clearFileCache() {
     QDir tempDir(Settings::tempDirectory());
 
@@ -100,7 +93,7 @@ void
 EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     _manager->initGuild(guildEntity);
 
-    emit guildInitialized(guildEntity);
+    emit guildInitialized(guildEntity, false);
 }
 
 void

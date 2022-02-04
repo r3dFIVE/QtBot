@@ -21,6 +21,14 @@
 #include "jsonserializable.h"
 
 
+JsonSerializable::JsonSerializable(const JsonSerializable &other, QObject *parent) : QObject(parent) {
+    if (this == &other) {
+        return;
+    }
+
+    _jsonObject = other._jsonObject;
+}
+
 JsonSerializable::JsonSerializable(const QJsonObject &json, QObject *parent) : QObject(parent) {
     _jsonObject = json;
 }
@@ -31,6 +39,17 @@ JsonSerializable::JsonSerializable(const QString &json, QObject *parent) : QObje
 
 JsonSerializable::JsonSerializable(const QByteArray &json, QObject *parent) : QObject(parent) {
     _jsonObject = fromByteArray(json);
+}
+
+JsonSerializable&
+JsonSerializable::operator=(const JsonSerializable &other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    _jsonObject = other._jsonObject;
+
+    return *this;
 }
 
 void

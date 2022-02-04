@@ -32,10 +32,11 @@ public:
     static const QString COUNT;
     static const QString ME;
 
-    Reaction() {}
-    Reaction(const QByteArray &json) : JsonSerializable(json) {}
-    Reaction(const QJsonObject &json) : JsonSerializable(json) {}
-    Reaction(const QString &json) : JsonSerializable(json) {}
+    Reaction(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Reaction(const Reaction &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Reaction(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Reaction(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Reaction(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonObject getEmoji() const;
     QJsonValue getCount() const;

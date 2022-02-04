@@ -42,6 +42,20 @@ public:
         }
     }
 
+    TempFile(const QString &fileName, const OpenMode::Mode openMode, QObject *parent = nullptr) : File{parent} {
+        if (!fileName.isEmpty()) {
+            _fileName = QString("%1/%2")
+                    .arg(makeTempPath())
+                    .arg(fileName);
+        } else {
+            _fileName = QString("%1/%2")
+                    .arg(makeTempPath())
+                    .arg(QUuid::createUuid().toString(QUuid::Id128));
+        }
+
+        _openMode = openMode;
+    }
+
     ~TempFile() {        
         QDir dir(QFileInfo(*_file.get()).absolutePath());
 

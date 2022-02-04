@@ -24,7 +24,10 @@ const QString EmbedField::INLINE = "inline";
 const QString EmbedField::NAME = "name";
 const QString EmbedField::VALUE = "value";
 
-EmbedField::EmbedField(const QString &name, const QString &value, const bool isInline) {
+EmbedField::EmbedField(const QString &name,
+                       const QString &value,
+                       const bool isInline,
+                       QObject *parent) : JsonSerializable(parent) {
      _jsonObject[NAME] = name;
 
      _jsonObject[VALUE] = value;

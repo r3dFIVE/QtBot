@@ -39,10 +39,11 @@ public:
     static const QString PREMIUM_SINCE;
     static const QString NICK;
 
-    PresenceUpdate() {}
-    PresenceUpdate(const QByteArray &json) : JsonSerializable(json) {}
-    PresenceUpdate(const QJsonObject &json) : JsonSerializable(json) {}
-    PresenceUpdate(const QString &json) : JsonSerializable(json) {}
+    PresenceUpdate(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    PresenceUpdate(const PresenceUpdate &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    PresenceUpdate(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    PresenceUpdate(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    PresenceUpdate(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getActivities() const;
     QJsonArray getRoles() const;

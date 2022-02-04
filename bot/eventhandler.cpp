@@ -30,6 +30,7 @@
 
 const int EventHandler::JOB_POLL_MS = 500;
 
+
 EventHandler::EventHandler() {
     GuildEntity::setBotOwnerId(Settings::ownerId());
 
@@ -147,12 +148,18 @@ EventHandler::reloadGuild(const EventContext &context) {
 
             _jobQueueTimer->stop();
 
+            bool validate = true;
+
             for (auto guild : _availableGuilds.values()) {
                 _timedJobs.clear(guild->getId());
 
                 _jobQueue.clear(guild->getId());
 
-                emit reloadScripts(guild);
+                emit reloadScripts(guild, validate);
+
+                if (validate) {
+                    validate = false; // only validate once.
+                }
             }
         } else {
             _logger->warning(QString("User %1 attempted to .reload all guilds but they are not Bot Owner...").arg(userId));
@@ -162,7 +169,7 @@ EventHandler::reloadGuild(const EventContext &context) {
 
         _jobQueue.clear(guildId);
 
-        emit reloadScripts(_availableGuilds[guildId]);
+        emit reloadScripts(_availableGuilds[guildId], true);
     }
 }
 
@@ -300,7 +307,7 @@ EventHandler::updateRestrictionState(const EventContext &context, CommandRestric
 
         QString targetId = context.getArgs()[2].toString();
 
-        _availableGuilds[guildId]->updateRestrictionState(commandName, targetId, state);
+        _availableGuilds[guildId]->updateRestrictionStates(commandName, targetId, state);
     } else {
         _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
     }
@@ -316,10 +323,10 @@ EventHandler::updateAllRestrictionStates(const EventContext &context, CommandRes
         if (context.getArgs().size() > 1) {
             targetId = context.getArgs()[1].toString();
         } else {
-            targetId = guildId;
+            targetId = GuildEntity::GUILD_ID_ALIAS;
         }
 
-         _availableGuilds[guildId]->updateAllRestrictionStates(targetId, state);
+         _availableGuilds[guildId]->updateRestrictionStates(QString(), targetId, state);
     }
 }
 
@@ -332,7 +339,7 @@ EventHandler::removeRestrictionState(const EventContext &context) {
 
         QString targetId = context.getArgs()[2].toString();
 
-        _availableGuilds[guildId]->removeRestrictionState(commandName, targetId);
+        _availableGuilds[guildId]->updateRestrictionStates(commandName, targetId, CommandRestrictions::REMOVED);
     } else {
         _logger->debug(QString("\"%1\" requires a scriptName/commandName and target id...").arg(context.getContent().toString()));
     }
@@ -344,31 +351,5 @@ EventHandler::removeAllRestrictionStates(const EventContext &context) {
 
     if (isGuildReady(guildId)) {
          _availableGuilds[guildId]->removeAllRestrictionStates();
-    }
-}
-
-void
-EventHandler::removeRestrictionStatesForCommand(const EventContext &context) {
-    QString guildId = context.getGuildId().toString();
-
-    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
-        QString commandName = context.getArgs()[1].toString();
-
-         _availableGuilds[guildId]->removeRestrictionState(commandName, QString());
-    } else {
-        _logger->debug(QString("\"%1\" requires a scriptName/commandName...").arg(context.getContent().toString()));
-    }
-}
-
-void
-EventHandler::removeRestrictionStatesForId(const EventContext &context) {
-    QString guildId = context.getGuildId().toString();
-
-    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
-        QString targetId = context.getArgs()[1].toString();
-
-         _availableGuilds[guildId]->removeRestrictionState(QString(), targetId);
-    } else {
-        _logger->debug(QString("\"%1\" requires a targetId...").arg(context.getContent().toString()));
     }
 }

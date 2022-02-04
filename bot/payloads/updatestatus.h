@@ -34,10 +34,11 @@ public:
     static const QString SINCE;
     static const QString STATUS;
 
-    UpdateStatus() {}
-    UpdateStatus(const QByteArray &json) : JsonSerializable(json) {}
-    UpdateStatus(const QJsonObject &json) : JsonSerializable(json) {}
-    UpdateStatus(const QString &json) : JsonSerializable(json) {}
+    UpdateStatus(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    UpdateStatus(const UpdateStatus &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    UpdateStatus(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    UpdateStatus(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    UpdateStatus(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonObject getGame() const;
     QJsonValue getAfk() const;

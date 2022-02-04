@@ -34,10 +34,11 @@ public:
     static const QString ALLOW;
     static const QString DENY;
 
-    PermissionOverwrite() {}
-    PermissionOverwrite(const QByteArray &json) : JsonSerializable(json) {}
-    PermissionOverwrite(const QJsonObject &json) : JsonSerializable(json) {}
-    PermissionOverwrite(const QString &json) : JsonSerializable(json) {}
+    PermissionOverwrite(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    PermissionOverwrite(const PermissionOverwrite &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    PermissionOverwrite(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    PermissionOverwrite(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    PermissionOverwrite(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getAllow() const;
     QJsonValue getDeny() const;

@@ -34,11 +34,15 @@ public:
     static const QString URL;
     static const QString WIDTH;
 
-    EmbedMedia() {}
-    EmbedMedia(const QString &url, const int height, const int width);
-    EmbedMedia(const QByteArray &json) : JsonSerializable(json) {}
-    EmbedMedia(const QJsonObject &json) : JsonSerializable(json) {}
-    EmbedMedia(const QString &json) : JsonSerializable(json) {}
+    EmbedMedia(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    EmbedMedia(const EmbedMedia &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    EmbedMedia(const QString &url,
+               const int height,
+               const int width,
+               QObject *parent = nullptr);
+    EmbedMedia(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    EmbedMedia(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    EmbedMedia(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     Q_INVOKABLE QJsonValue getHeight() const;
     Q_INVOKABLE QJsonValue getProxyUrl() const;

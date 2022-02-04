@@ -36,10 +36,11 @@ public:
     static const QString SESSION_ID;
     static const QString SHARD;
 
-    Ready() {}
-    Ready(const QByteArray &json) : JsonSerializable(json) {}
-    Ready(const QJsonObject &json) : JsonSerializable(json) {}
-    Ready(const QString &json) : JsonSerializable(json) {}
+    Ready(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Ready(const Ready &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Ready(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Ready(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Ready(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getShard() const;
     QJsonArray getGuilds() const;

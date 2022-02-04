@@ -52,15 +52,15 @@ public:
         }
     }
 
-    inline QString getGuildId() const {
+    QString getGuildId() const {
         return _guildId;
     }
 
-    inline QString getTargetId() const {
+    QString getTargetId() const {
         return _targetId;
     }
 
-    inline QMap<QString, RestrictionState> getRestrictions() const {
+    QMap<QString, RestrictionState> getRestrictions() const {
         return _restrictions;
     }
 

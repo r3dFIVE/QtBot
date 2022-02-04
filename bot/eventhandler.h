@@ -31,7 +31,6 @@
 #include "payloads/gatewaypayload.h"
 #include "payloads/message.h"
 #include "payloads/guild.h"
-#include "botjob/scriptbuilder.h"
 #include "botjob/corecommand.h"
 #include "util/settings.h"
 #include "logging/logfactory.h"
@@ -60,7 +59,7 @@ class EventHandler : public QObject
     void processMessageUpdate(QSharedPointer<EventContext> context);
 
 signals:
-    void reloadScripts(QSharedPointer<GuildEntity> guild);
+    void reloadScripts(QSharedPointer<GuildEntity> guild, bool validate);
 
 public:
     EventHandler();
@@ -68,8 +67,7 @@ public:
 public slots:
     void removeRestrictionState(const EventContext &context);
     void removeAllRestrictionStates(const EventContext &context);
-    void removeRestrictionStatesForCommand(const EventContext &context);
-    void removeRestrictionStatesForId(const EventContext &context);
+
     void updateRestrictionState(const EventContext &context, CommandRestrictions::RestrictionState state);
     void updateAllRestrictionStates(const EventContext &context, CommandRestrictions::RestrictionState state);
     void displayTimedJobs(EventContext context);

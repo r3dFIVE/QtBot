@@ -46,14 +46,13 @@ public:
     EntityManager();
 
 signals:
-    void guildInitialized(QSharedPointer<GuildEntity> guildEntity);
+    void guildInitialized(QSharedPointer<GuildEntity> guildEntity, bool validate);
 
 public slots:
     void initGuild(QSharedPointer<GuildEntity> payload);
     void initGuildFromPayload(QSharedPointer<GatewayPayload> payload);
     void init();
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
-    void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions);
     void saveEvent(QSharedPointer<GatewayPayload> payload);
 };
 

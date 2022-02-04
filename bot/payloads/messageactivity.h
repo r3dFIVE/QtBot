@@ -32,10 +32,11 @@ public:
     static const QString PARTY_ID;
     static const QString TYPE;
 
-    MessageActivity() {}
-    MessageActivity(const QByteArray &json) : JsonSerializable(json) {}
-    MessageActivity(const QJsonObject &json) : JsonSerializable(json) {}
-    MessageActivity(const QString &json) : JsonSerializable(json) {}
+    MessageActivity(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    MessageActivity(const MessageActivity &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    MessageActivity(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    MessageActivity(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    MessageActivity(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getPartyId() const;
     QJsonValue getType() const;

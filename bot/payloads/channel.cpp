@@ -40,7 +40,7 @@ const QString Channel::PARENT_ID = "parent_id";
 const QString Channel::LAST_PIN_TIMESTAMP = "last_pin_timestamp";
 
 QJsonValue
-Channel::getId() {
+Channel::getId() const {
     return _jsonObject[ID];
 }
 
@@ -50,7 +50,7 @@ Channel::setId(const QJsonValue &id) {
 }
 
 QJsonValue
-Channel::getType() {
+Channel::getType() const {
     return _jsonObject[TYPE];
 }
 
@@ -60,7 +60,7 @@ Channel::setType(const QJsonValue &type) {
 }
 
 QJsonValue
-Channel::getGuildId() {
+Channel::getGuildId() const {
     return _jsonObject[GUILD_ID];
 }
 
@@ -70,7 +70,7 @@ Channel::setGuildId(const QJsonValue &guildId) {
 }
 
 QJsonValue
-Channel::getPosition() {
+Channel::getPosition() const {
     return _jsonObject[POSITION];
 }
 
@@ -80,7 +80,7 @@ Channel::setPosition(const QJsonValue &position) {
 }
 
 QJsonArray
-Channel::getPermissionOverwrites() {
+Channel::getPermissionOverwrites() const {
     return _jsonObject[PERMISSION_OVERWRITES].toArray();
 }
 
@@ -90,7 +90,7 @@ Channel::setPermissionOverwrites(const QJsonArray &permissionOverwrites) {
 }
 
 QJsonValue
-Channel::getName() {
+Channel::getName() const {
    return _jsonObject[NAME];
 }
 
@@ -100,7 +100,7 @@ Channel::setName(const QJsonValue &name) {
 }
 
 QJsonValue
-Channel::getTopic() {
+Channel::getTopic() const {
     return _jsonObject[TOPIC];
 }
 
@@ -110,7 +110,7 @@ Channel::setTopic(const QJsonValue &topic) {
 }
 
 QJsonValue
-Channel::getNsfw() {
+Channel::getNsfw() const {
     return _jsonObject[NSFW];
 }
 
@@ -120,7 +120,7 @@ Channel::setNsfw(const QJsonValue &nsfw) {
 }
 
 QJsonValue
-Channel::getLastMessageId() {
+Channel::getLastMessageId() const {
     return _jsonObject[LAST_MESSAGE_ID];
 }
 
@@ -130,7 +130,7 @@ Channel::setLastMessageId(const QJsonValue &last_message_id) {
 }
 
 QJsonValue
-Channel::getBitrate() {
+Channel::getBitrate() const {
     return _jsonObject[BITRATE];
 }
 
@@ -140,7 +140,7 @@ Channel::setBitrate(const QJsonValue &bitrate) {
 }
 
 QJsonValue
-Channel::getUserLimit() {
+Channel::getUserLimit() const {
     return _jsonObject[USER_LIMIT];
 }
 
@@ -150,7 +150,7 @@ Channel::setUserLimit(const QJsonValue &userLimit) {
 }
 
 QJsonValue
-Channel::getRateLimitPerUser() {
+Channel::getRateLimitPerUser() const {
     return _jsonObject[RATE_LIMIT_PER_USER];
 }
 
@@ -160,7 +160,7 @@ Channel::setRateLimitPerUser(const QJsonValue &rateLimitPerUser) {
 }
 
 QJsonArray
-Channel::getRecipients() {
+Channel::getRecipients() const {
     return _jsonObject[RECIPIENTS].toArray();
 }
 
@@ -170,7 +170,7 @@ Channel::setRecipients(const QJsonArray &recipients) {
 }
 
 QJsonValue
-Channel::getIcon() {
+Channel::getIcon() const {
     return _jsonObject[ICON];
 }
 
@@ -180,7 +180,7 @@ Channel::setIcon(const QJsonValue &icon) {
 }
 
 QJsonValue
-Channel::getOwnerId() {
+Channel::getOwnerId() const {
     return _jsonObject[OWNER_ID];
 }
 
@@ -190,7 +190,7 @@ Channel::setOwnerId(const QJsonValue &ownerId) {
 }
 
 QJsonValue
-Channel::getApplicationId() {
+Channel::getApplicationId() const {
     return _jsonObject[APPLICATION_ID];
 }
 
@@ -200,7 +200,7 @@ Channel::setApplicationId(const QJsonValue &applicationId) {
 }
 
 QJsonValue
-Channel::getParentId() {
+Channel::getParentId() const {
     return _jsonObject[PARENT_ID];
 }
 
@@ -210,7 +210,7 @@ Channel::setParentId(const QJsonValue &parentId) {
 }
 
 QJsonValue
-Channel::getLastPinTimestamp() {
+Channel::getLastPinTimestamp() const {
     return _jsonObject[LAST_PIN_TIMESTAMP];
 }
 

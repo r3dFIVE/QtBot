@@ -108,10 +108,11 @@ public:
     static const QString APPROXIMATE_MEMBER_COUNT;
     static const QString APPROXIMATE_PRESENCE_COUNT;
 
-    Guild() {}
-    Guild(const QByteArray &json) : JsonSerializable(json) {}
-    Guild(const QJsonObject &json) : JsonSerializable(json) {}
-    Guild(const QString &json) : JsonSerializable(json) {}
+    Guild(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Guild(const Guild &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Guild(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Guild(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Guild(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getChannels() const;
     QJsonArray getEmojis() const;

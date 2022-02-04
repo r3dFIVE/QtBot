@@ -26,7 +26,6 @@ public:
     virtual void initGuild(QSharedPointer<GuildEntity> payload) = 0;
     virtual void init() = 0;
     virtual void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) = 0;
-    virtual void restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) = 0;
     virtual void saveEvent(QSharedPointer<GatewayPayload> payload) = 0;
 };
 

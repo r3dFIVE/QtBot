@@ -44,11 +44,12 @@ public:
     static const QString CHANNEL_ID;
     static const QString GUILD_ID;
 
-    Attachment() {}
-    Attachment(const QByteArray &json) : JsonSerializable(json) {}
-    Attachment(const QJsonObject &json) : JsonSerializable(json) {}
-    Attachment(const QString &json) : JsonSerializable(json) {}
-    Attachment operator=(const Attachment &other) {
+    Attachment(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Attachment(const Attachment &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Attachment(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Attachment(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Attachment(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Attachment& operator=(const Attachment &other) {
         if (this == &other) {
             return *this;
         }

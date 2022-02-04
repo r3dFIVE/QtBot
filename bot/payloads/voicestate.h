@@ -41,10 +41,11 @@ public:
     static const QString SELF_STREAM;
     static const QString SUPPRESS;
 
-    VoiceState() {}
-    VoiceState(const QByteArray &json) : JsonSerializable(json) {}
-    VoiceState(const QJsonObject &json) : JsonSerializable(json) {}
-    VoiceState(const QString &json) : JsonSerializable(json) {}
+    VoiceState(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    VoiceState(const VoiceState &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    VoiceState(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    VoiceState(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    VoiceState(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonObject getMember() const;
     QJsonValue getChannelId() const;

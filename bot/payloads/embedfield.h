@@ -33,11 +33,15 @@ public:
     static const QString NAME;
     static const QString VALUE;
 
-    EmbedField() {}
-    EmbedField(const QString &name, const QString &value, const bool isInline);
-    EmbedField(const QByteArray &json) : JsonSerializable(json) {}
-    EmbedField(const QJsonObject &json) : JsonSerializable(json) {}
-    EmbedField(const QString &json) : JsonSerializable(json) {}
+    EmbedField(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    EmbedField(const EmbedField &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    EmbedField(const QString &name,
+               const QString &value,
+               const bool isInline,
+               QObject *parent = nullptr);
+    EmbedField(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    EmbedField(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    EmbedField(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     Q_INVOKABLE QJsonValue getInline() const;
     Q_INVOKABLE QJsonValue getName() const;

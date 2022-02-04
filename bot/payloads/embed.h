@@ -47,11 +47,16 @@ public:
     static const QString AUTHOR;
     static const QString FIELDS;
 
-    Embed() {}
-    Embed(const QString &title, const QString &description, const QString &url, const int color);
-    Embed(const QByteArray &json) : JsonSerializable(json) {}
-    Embed(const QJsonObject &json) : JsonSerializable(json) {}
-    Embed(const QString &json) : JsonSerializable(json) {}
+    Embed(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Embed(const Embed &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Embed(const QString &title,
+          const QString &description,
+          const QString &url,
+          const int color,
+          QObject *parent = nullptr);
+    Embed(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Embed(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Embed(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     Q_INVOKABLE QJsonArray getFields() const;
     Q_INVOKABLE QJsonObject getAuthor() const;

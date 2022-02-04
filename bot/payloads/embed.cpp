@@ -34,7 +34,11 @@ const QString Embed::VIDEO = "video";
 const QString Embed::AUTHOR = "author";
 const QString Embed::FIELDS = "fields";
 
-Embed::Embed(const QString &title, const QString &description, const QString &url, const int color) {
+Embed::Embed(const QString &title,
+             const QString &description,
+             const QString &url,
+             const int color,
+             QObject *parent) :JsonSerializable(parent) {
     _jsonObject[TITLE] = title;
 
     _jsonObject[DESCRIPTION] = description;

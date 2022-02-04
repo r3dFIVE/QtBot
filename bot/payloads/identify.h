@@ -38,10 +38,11 @@ public:
     static const QString GUILD_SUBSCRIPTIONS;
     static const QString INTENTS;
 
-    Identify() {}
-    Identify(const QByteArray &json) : JsonSerializable(json) {}
-    Identify(const QJsonObject &json) : JsonSerializable(json) {}
-    Identify(const QString &json) : JsonSerializable(json) {}
+    Identify(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    Identify(const Identify &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    Identify(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Identify(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Identify(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonArray getShard() const;
     QJsonObject getPresence() const;

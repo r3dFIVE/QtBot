@@ -16,19 +16,11 @@ public:
     static const QString FILENAME;
     static const QString METADATA;
 
-    GridFSFile() {}
-    GridFSFile(const QByteArray &json) : JsonSerializable(json) {}
-    GridFSFile(const QJsonObject &json) : JsonSerializable(json) {}
-    GridFSFile(const QString &json) : JsonSerializable(json) {}
-    GridFSFile operator=(const GridFSFile &other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        _jsonObject = other._jsonObject;
-
-        return *this;
-    }
+    GridFSFile(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    GridFSFile(const GridFSFile &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    GridFSFile(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GridFSFile(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    GridFSFile(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getObjectId() const;
     QJsonValue getLength() const;

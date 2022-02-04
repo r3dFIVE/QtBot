@@ -32,10 +32,11 @@ public:
     static const QString START;
     static const QString END;
 
-    ActivityTimestamps() {}
-    ActivityTimestamps(const QByteArray &json) : JsonSerializable(json) {}
-    ActivityTimestamps(const QJsonObject &json) : JsonSerializable(json) {}
-    ActivityTimestamps(const QString &json) : JsonSerializable(json) {}
+    ActivityTimestamps(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ActivityTimestamps(const ActivityTimestamps &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ActivityTimestamps(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivityTimestamps(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivityTimestamps(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     void setEnd(const QJsonValue &end);
     void setStart(const QJsonValue &start);

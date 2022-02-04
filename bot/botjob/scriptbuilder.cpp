@@ -20,8 +20,7 @@
 
 #include "scriptbuilder.h"
 
-#include <QDir>
-#include <QFile>
+
 #include <QQmlComponent>
 #include <QMutableListIterator>
 #include <QSharedPointer>
@@ -50,15 +49,19 @@ ScriptBuilder::ScriptBuilder(EventHandler *eventHandler) {
     _logger = LogFactory::getLogger();
 
     _scriptDir = Settings::scriptDirectory();
+
+    validateScripts();
 }
 
 void
-ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
-    _guildId = guildEntity->getId();
+ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity, bool validate) {
+    if (validate || _validScripts.size() == 0) {
+        validateScripts();
+    }
 
-    loadCoreCommands();
+    loadCoreCommands(guildEntity->getId());
 
-    builldBotScripts(_scriptDir);
+    buildValidBotScripts(guildEntity->getId());
 
     guildEntity->setCommandBindings(_commandBindings);
 
@@ -86,52 +89,42 @@ ScriptBuilder::buildScripts(QSharedPointer<GuildEntity> guildEntity) {
 }
 
 void
-ScriptBuilder::loadCoreCommands() {
-    QMap<QSharedPointer<CoreCommand>, CommandBinding> coreCommandMappings = CoreCommands::buildCoreCommandBindings(*_eventHandler, _guildId);
+ScriptBuilder::validateScripts() {
+    _validScripts.clear();
 
-    for (auto key : coreCommandMappings.keys()) {
-        CommandBinding binding = coreCommandMappings[key];
+    loadCoreCommands(GuildEntity::DEFAULT_GUILD_ID);
 
-        _coreCommandNames << binding.getCommandName();
+    QDir directory(_scriptDir);
 
-        _commandBindings << binding;
+    directory.setFilter(QDir::NoDotAndDotDot | QDir::Files);
 
-        _registeredScripts << key;
-    }
-}
+    for (QFileInfo fileInfo : directory.entryInfoList()) {
 
-void
-ScriptBuilder::builldBotScripts(const QString &scriptDir) {
-    QDir directory(scriptDir);
+        if (isBotScript(fileInfo.absoluteFilePath())) {
+            _logger->debug(QString("Validating bot script: %1").arg(fileInfo.fileName()));
 
-    QStringList scripts = directory.entryList(QStringList() << "*.*", QDir::Files);
-
-    for (QString fileName : scripts) {
-        QString fileWithPath = directory.absoluteFilePath(fileName);
-
-        if (isBotScript(fileWithPath)) {
-            _logger->debug(QString("Loading bot script: %1").arg(fileName));           
-
-            _fileName = fileName;
-
-            buildBotScript(fileWithPath);
+            validate(fileInfo);
         }
     }
+
+    _commandBindings.clear();
+
+    _gatewayBindings.clear();
+
+    _registeredScripts.clear();
+
+    _scriptNamesByCommand.clear();
+
+    _timedBindings.clear();
+
+    _functionNameByEventNameByScriptName.clear();
 }
 
 void
-ScriptBuilder::buildBotScript(const QString &fileWithPath) {
-    DatabaseContext databaseContext(_defaultDatabaseContext);
+ScriptBuilder::validate(const QFileInfo &fileInfo) {
+    QQmlEngine validator;
 
-    databaseContext.scriptName = _fileName;
-
-    databaseContext.guildId = _guildId;
-
-    QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
-
-    QmlFactory::buildQmlFactory(engine, databaseContext);
-
-    QQmlComponent comp(engine.data(), fileWithPath);
+    QQmlComponent comp(&validator, fileInfo.absoluteFilePath());
 
     if (comp.errors().size() > 0) {
         _logger->debug(comp.errorString());
@@ -149,18 +142,238 @@ ScriptBuilder::buildBotScript(const QString &fileWithPath) {
 
     if (botScript->getEventBindingsJson().isEmpty() && botScript->getScriptCommands().isEmpty()) {
         _logger->debug(QString("No Script Commands or Event Bindings set for \"%1\", skipping.")
-                       .arg(fileWithPath));
+                       .arg(fileInfo.absoluteFilePath()));
 
         return;
     }
 
-    validateScriptName(botScript);
+    if (!validateScriptName(botScript->getScriptName(), fileInfo.absoluteFilePath())) {
+        return;
+    }
+
+    for (QString command : botScript->getScriptCommands().keys()) {
+        if (!validateScriptCommandName(command, fileInfo.absoluteFilePath())) {
+            return;
+        }
+    }
+
+    if (!validateScriptCommands(botScript, fileInfo)) {
+        return;
+    }
+
+    for (QJsonValue binding : botScript->getEventBindingsJson()) {
+        QString eventType = binding[IBinding::BINDING_TYPE].toString();
+
+        if (QString::compare(eventType, IBinding::BINDING_TYPE_COMMAND, Qt::CaseInsensitive) == 0) {
+            if (!validateCommandBinding(botScript, binding, fileInfo)) {
+                return;
+            }
+
+        } else if (QString::compare(eventType, IBinding::BINDING_TYPE_GATEWAY, Qt::CaseInsensitive) == 0) {
+            if (!validateGatewayBinding(botScript, binding, fileInfo)) {
+                return;
+            }
+
+        } else if (QString::compare(eventType, IBinding::BINDING_TYPE_TIMED, Qt::CaseInsensitive) == 0) {
+            if (!validateTimedBinding(botScript, binding, GuildEntity::DEFAULT_GUILD_ID)) {
+                return;
+            }
+
+        } else {
+            _logger->warning(QString("Invalid binding_type: %1").arg(eventType));
+
+            return;
+        }
+    }
+
+    _validScripts << fileInfo;
+}
+
+bool
+ScriptBuilder::validateScriptCommands(QSharedPointer<BotScript> botScript, const QFileInfo &fileInfo) {
+    for (QString command : botScript->getScriptCommands().keys()) {
+
+        if (!validateScriptCommandName(command, fileInfo.absoluteFilePath())) {
+            return false;
+        }
+
+        QString functionName = botScript->findFunctionMapping(command);
+
+        IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript.data());
+
+        CommandBinding commandBinding(command, functionMapping);
+
+        if (commandBinding.isValid(*botScript->metaObject())) {
+            _scriptNamesByCommand[command] = botScript->getScriptName();
+        } else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool
+ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo) {
+    QString command = binding[CommandBinding::COMMAND].toString();
+
+    if (!validateScriptCommandName(command, fileInfo.absoluteFilePath())) {
+        return false;
+    }
+
+    CommandBinding commandBinding;
+
+    commandBinding.setCommandName(command);
+
+    QString functionName = binding[IBinding::FUNCTION].toString();
+
+    commandBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
+
+    commandBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    commandBinding.setAdminOnly(binding[CommandBinding::ADMIN_ONLY].toBool());
+
+    commandBinding.setIgnoreAdmin(binding[CommandBinding::IGNORE_ADMIN].toBool());
+
+    if (commandBinding.isValid(*botScript->metaObject())) {
+        _scriptNamesByCommand[command] = botScript->getScriptName();
+
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+bool
+ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo) {
+
+    QString gatewayEventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
+
+    QString functionName = binding[IBinding::FUNCTION].toString();
+
+    if (_functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] == functionName) {
+        _logger->warning(QString("Gateway event \"%1\" has already been registered to function in script: %3... ")
+                         .arg(gatewayEventName)
+                         .arg(functionName)
+                         .arg(fileInfo.absoluteFilePath()));
+
+        return false;
+    }
+
+    GatewayBinding gatewayBinding;
+
+    gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
+
+    gatewayBinding.setEventName(gatewayEventName);
+
+    QString bindingName = binding[GatewayBinding::BINDING_NAME].toString();
+
+    if (!validateScriptCommandName(bindingName, fileInfo.absoluteFilePath())) {
+        return false;
+    }
+
+    gatewayBinding.setBindingName(bindingName);
+
+    gatewayBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    if (gatewayBinding.isValid(*botScript->metaObject())) {
+        _functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] = functionName;
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
+bool
+ScriptBuilder::validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &guildId) {
+    QString functionName = binding[IBinding::FUNCTION].toString();
+
+    if (binding[TimedBinding::SINGLETON].toBool() && guildId != GuildEntity::DEFAULT_GUILD_ID) {
+        return false; // Singleton only run on Default Guild ID 0
+    }
+
+    TimedBinding timedBinding;
+
+    timedBinding.setId(QUuid::createUuid().toString(QUuid::Id128));
+
+    timedBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
+
+    timedBinding.setScriptName(botScript->getScriptName());
+
+    timedBinding.setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
+
+    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
+        timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
+    }
+
+    timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
+
+    timedBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    return timedBinding.isValid(*botScript->metaObject());
+}
+
+void
+ScriptBuilder::loadCoreCommands(const QString &guildId) {
+    QMap<QSharedPointer<CoreCommand>, CommandBinding> coreCommandMappings = CoreCommands::buildCoreCommandBindings(*_eventHandler, guildId);
+
+    for (auto key : coreCommandMappings.keys()) {
+        CommandBinding binding = coreCommandMappings[key];
+
+        _coreCommandNames << binding.getCommandName();
+
+        _commandBindings << binding;
+
+        _registeredScripts << key;
+    }
+}
+
+void
+ScriptBuilder::buildValidBotScripts(const QString &guildId) {
+    for (QFileInfo fileInfo : _validScripts) {
+        _logger->info(QString("Loading bot script: %1 for guild_id: %2")
+                      .arg(fileInfo.fileName())
+                      .arg(guildId));
+
+        buildBotScript(fileInfo.absoluteFilePath(), guildId);
+    }
+}
+
+void
+ScriptBuilder::buildBotScript(const QFileInfo &fileInfo, const QString &guildId) {
+    DatabaseContext databaseContext(_defaultDatabaseContext);
+
+    databaseContext.scriptName = fileInfo.fileName();
+
+    databaseContext.guildId = guildId;
+
+    QSharedPointer<QQmlEngine> engine = QSharedPointer<QQmlEngine>(new QQmlEngine);
+
+    QmlFactory::buildQmlFactory(engine, databaseContext);
+
+    QQmlComponent comp(engine.data(), fileInfo.absoluteFilePath());
+
+    if (comp.errors().size() > 0) {
+        _logger->debug(comp.errorString());
+
+        return;
+    }
+
+    QSharedPointer<BotScript> botScript = QSharedPointer<BotScript>(qobject_cast<BotScript*>(comp.create()));
+
+    if (comp.errors().size() > 0) {
+        _logger->debug(comp.errorString());
+
+        return;
+    }
 
     resgisterScriptCommands(botScript);
 
-    registerEventBindings(botScript);
+    registerEventBindings(botScript, guildId);
 
-    botScript->setGuildId(_guildId);
+    botScript->setGuildId(guildId);
 
     botScript->setEngine(engine);
 
@@ -173,24 +386,24 @@ ScriptBuilder::buildBotScript(const QString &fileWithPath) {
                      _eventHandler, &EventHandler::removeTimedJobById);
 }
 
-void
-ScriptBuilder::validateScriptName(QSharedPointer<BotScript> botScript) {
-    if (_scriptNamesByCommand.values().contains(botScript->getScriptName())) {
-        QFileInfo info(_fileName);
+bool
+ScriptBuilder::validateScriptName(const QString &scriptName, const QString &fileName) {
+    bool isValid = true;
 
+    if (_scriptNamesByCommand.values().contains(scriptName)) {
         _logger->warning(QString("%1 already registered. Please update name property for %2 and reload.")
-                    .arg(botScript->getScriptName())
-                    .arg(info.fileName()));
+                    .arg(scriptName)
+                    .arg(fileName));
+
+        isValid = false;
     }
+
+    return isValid;
 }
 
 void
 ScriptBuilder::resgisterScriptCommands(QSharedPointer<BotScript> botScript) {
     for (QString command : botScript->getScriptCommands().keys()) {
-
-        if (!validateScriptCommandName(command)) {
-            return;
-        }
 
         QString functionName = botScript->findFunctionMapping(command);
 
@@ -198,32 +411,36 @@ ScriptBuilder::resgisterScriptCommands(QSharedPointer<BotScript> botScript) {
 
         CommandBinding commandBinding(command, functionMapping);
 
-        if (commandBinding.isValid(*botScript->metaObject())) {
-            _scriptNamesByCommand[command] = botScript->getScriptName();
+        _scriptNamesByCommand[command] = botScript->getScriptName();
 
-            _commandBindings << commandBinding;
-        }
+        _commandBindings << commandBinding;
     }
 }
 
 bool
-ScriptBuilder::validateScriptCommandName(const QString &command) {
+ScriptBuilder::validateScriptCommandName(const QString &command, const QString &fileName) {
+    if (command.isEmpty()) {
+        _logger->warning(QString("Script Commands or Gateway Binding Names cannot be empty in script %1").arg(fileName));
+
+        return false;
+    }
+
     if (_coreCommandNames.contains(command)) {
-        _logger->warning(QString("Commmand \"%1\" already registered as a core bot command.")
+        _logger->warning(QString("\"%1\" already registered as a core bot command.")
                     .arg(command));
 
-        namingConflict(command);
+        namingConflict(command, fileName);
 
         return false;
 
     } else if (_scriptNamesByCommand.contains(command)) {
         QString existingScript = _scriptNamesByCommand[command];
 
-        _logger->warning(QString("Commmand \"%1\" already registered to bot script named: %2")
+        _logger->warning(QString("\"%1\" already registered to bot script named: %2")
                     .arg(command)
                     .arg(existingScript));
 
-        namingConflict(command);
+        namingConflict(command, fileName);
 
         return false;
     }
@@ -232,15 +449,19 @@ ScriptBuilder::validateScriptCommandName(const QString &command) {
 }
 
 void
-ScriptBuilder::namingConflict(const QString &command) {
+ScriptBuilder::namingConflict(const QString &command, const QString &fileName) {
     _logger->warning(QString("You must rename \"%1\" in %2 before it will be enabled.")
                 .arg(command)
-                .arg(_fileName));
+                .arg(fileName));
 }
 
 void
-ScriptBuilder::registerEventBindings(QSharedPointer<BotScript> botScript) {
+ScriptBuilder::registerEventBindings(QSharedPointer<BotScript> botScript, const QString &guildId) {
     for (QJsonValue binding : botScript->getEventBindingsJson()) {
+        if (binding[GatewayBinding::SINGLETON].toBool() && guildId != GuildEntity::DEFAULT_GUILD_ID) {
+            return; // Singleton only run on Default Guild ID 0
+        }
+
         QString eventType = binding[IBinding::BINDING_TYPE].toString();
 
         if (QString::compare(eventType, IBinding::BINDING_TYPE_COMMAND, Qt::CaseInsensitive) == 0) {
@@ -262,10 +483,6 @@ void
 ScriptBuilder::registerCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding) {
     QString command = binding[CommandBinding::COMMAND].toString();
 
-    if (!validateScriptCommandName(command)) {
-        return;
-    }
-
     CommandBinding commandBinding;
 
     commandBinding.setCommandName(command);
@@ -278,53 +495,41 @@ ScriptBuilder::registerCommandBinding(QSharedPointer<BotScript> botScript, const
 
     commandBinding.setAdminOnly(binding[CommandBinding::ADMIN_ONLY].toBool());
 
-    if (commandBinding.isValid(*botScript->metaObject())) {
-        _scriptNamesByCommand[command] = botScript->getScriptName();
+    commandBinding.setIgnoreAdmin(binding[CommandBinding::IGNORE_ADMIN].toBool());
 
-        _commandBindings << commandBinding;
-    }
+    _scriptNamesByCommand[command] = botScript->getScriptName();
+
+    _commandBindings << commandBinding;
 }
 
 void
 ScriptBuilder::registerGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding) {
-    QString gatewayEventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
-
     QString functionName = binding[IBinding::FUNCTION].toString();
-
-    if (_functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] == functionName) {
-        _logger->warning(QString("Gateway event \"%1\" has already been registered to function \"\"... Discarding Binding.")
-                         .arg(gatewayEventName)
-                         .arg(functionName));
-
-        return;
-    }
-
-    if (binding[GatewayBinding::SINGLETON].toBool() && _guildId != GuildEntity::DEFAULT_GUILD_ID) {
-        return; // Singleton only run on Default Guild ID 0
-    }
 
     GatewayBinding gatewayBinding;
 
     gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
 
+    QString gatewayEventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
+
     gatewayBinding.setEventName(gatewayEventName);
 
-    gatewayBinding.setDescription(binding[IBinding::DESCRIPTION].toString());  
+    QString bindingName = binding[GatewayBinding::BINDING_NAME].toString();
 
-    if (gatewayBinding.isValid(*botScript->metaObject())) {
-        _functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] = functionName;
+    gatewayBinding.setBindingName(bindingName);
 
-        _gatewayBindings << gatewayBinding;
-    }
+    gatewayBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
+
+    gatewayBinding.setIgnoreAdmin(binding[IBinding::IGNORE_ADMIN].toBool());
+
+    _functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] = functionName;
+
+    _gatewayBindings << gatewayBinding;
 }
 
 void
 ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding) {
     QString functionName = binding[IBinding::FUNCTION].toString();
-
-    if (binding[TimedBinding::SINGLETON].toBool() && _guildId != GuildEntity::DEFAULT_GUILD_ID) {
-        return; // Singleton only run on Default Guild ID 0
-    }
 
     TimedBinding timedBinding;
 
@@ -344,9 +549,7 @@ ScriptBuilder::registerTimedBinding(QSharedPointer<BotScript> botScript, const Q
 
     timedBinding.setDescription(binding[IBinding::DESCRIPTION].toString());
 
-    if (timedBinding.isValid(*botScript->metaObject())) {
-        _timedBindings << timedBinding;
-    }
+    _timedBindings << timedBinding;
 }
 
 bool

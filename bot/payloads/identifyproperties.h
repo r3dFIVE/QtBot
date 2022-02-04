@@ -35,10 +35,11 @@ public:
     static const QString BROWSER;
     static const QString DEVICE;
 
-    IdentifyProperties();
-    IdentifyProperties(const QByteArray &json) : JsonSerializable(json) {}
-    IdentifyProperties(const QJsonObject &json) : JsonSerializable(json) {}
-    IdentifyProperties(const QString &json) : JsonSerializable(json) {}
+    IdentifyProperties(QObject *parent = nullptr);
+    IdentifyProperties(const IdentifyProperties &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    IdentifyProperties(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    IdentifyProperties(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    IdentifyProperties(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     QJsonValue getOS() const;
     QJsonValue getBrowser() const;

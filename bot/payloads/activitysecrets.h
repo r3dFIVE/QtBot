@@ -33,14 +33,15 @@ public:
     static const QString MATCH;
     static const QString SPECTATE;
 
-    ActivitySecrets() {}
-    ActivitySecrets(const QByteArray &json) : JsonSerializable(json) {}
-    ActivitySecrets(const QJsonObject &json) : JsonSerializable(json) {}
-    ActivitySecrets(const QString &json) : JsonSerializable(json) {}
+    ActivitySecrets(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    ActivitySecrets(const ActivitySecrets &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    ActivitySecrets(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivitySecrets(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    ActivitySecrets(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
-    QJsonValue getJoin();
-    QJsonValue getMatch();
-    QJsonValue getSpectate();
+    QJsonValue getJoin() const;
+    QJsonValue getMatch() const;
+    QJsonValue getSpectate() const;
     void setJoin(const QJsonValue &join);
     void setMatch(const QJsonValue &match);
     void setSpectate(const QJsonValue &spectate);

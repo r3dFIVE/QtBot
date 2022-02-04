@@ -137,18 +137,6 @@ SqlManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions)
     }
 }
 
-void
-SqlManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
-    if (!isDbOpen()) {
-        return;
-    }
-
-    if (restrictions->getTargetId().isEmpty()) {
-        clearCommand(restrictions);
-    } else {
-        clearCommandForId(restrictions);
-    }
-}
 
 void
 SqlManager::clearCommand(QSharedPointer<CommandRestrictions> restrictions) {

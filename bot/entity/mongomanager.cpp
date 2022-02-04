@@ -98,17 +98,16 @@ MongoManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
 }
 
 void
-MongoManager::restrictionsRemoval(QSharedPointer<CommandRestrictions> restrictions) {
-    setCollection(GuildEntity::GUILD_RESTRICTIONS);
-
-    updateRestrictions(restrictions, UNSET_OPERATION);
-}
-
-void
 MongoManager::restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) {
     setCollection(GuildEntity::GUILD_RESTRICTIONS);
 
-    updateRestrictions(restrictions, SET_OPERATION);
+    if (restrictions->getRestrictions().isEmpty() ||
+            restrictions->getRestrictions().first() == CommandRestrictions::REMOVED) {
+
+        updateRestrictions(restrictions, UNSET_OPERATION);
+    } else {
+        updateRestrictions(restrictions, SET_OPERATION);
+    }
 }
 
 void
@@ -131,12 +130,12 @@ MongoManager::updateRestrictions(QSharedPointer<CommandRestrictions> restriction
         while (m_it.hasNext()) {
             m_it.next();
 
-            update << QString("%1.%2%3")
-                        .arg(GuildEntity::RESTRICTIONS)
-                        .arg(m_it.key())
-                        .arg(targetId)
-                        .toStdString()
-                  << m_it.value();
+            QString updateStr = QString("%1.%2%3")
+                    .arg(GuildEntity::RESTRICTIONS)
+                    .arg(m_it.key())
+                    .arg(targetId);
+
+            update << updateStr.toStdString() << m_it.value();
         }
     } else {
         update << GuildEntity::RESTRICTIONS.toStdString() << "";

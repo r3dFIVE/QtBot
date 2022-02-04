@@ -34,11 +34,15 @@ public:
     const static QString PROXY_ICON_URL;
     const static QString URL;
 
-    EmbedAuthor() {}
-    EmbedAuthor(const QString &name, const QString &url, const QString &iconUrl);
-    EmbedAuthor(const QByteArray &json) : JsonSerializable(json) {}
-    EmbedAuthor(const QJsonObject &json) : JsonSerializable(json) {}
-    EmbedAuthor(const QString &json) : JsonSerializable(json) {}
+    EmbedAuthor(QObject *parent = nullptr) : JsonSerializable(parent) {}
+    EmbedAuthor(const EmbedAuthor &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    EmbedAuthor(const QString &name,
+                const QString &url,
+                const QString &iconUrl,
+                QObject *parent = nullptr);
+    EmbedAuthor(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    EmbedAuthor(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    EmbedAuthor(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
     Q_INVOKABLE QJsonValue getIconUrl() const;
     Q_INVOKABLE QJsonValue getName() const;

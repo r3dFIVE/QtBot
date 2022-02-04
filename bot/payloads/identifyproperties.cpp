@@ -25,9 +25,11 @@ const QString IdentifyProperties::OS = "$os";
 const QString IdentifyProperties::BROWSER = "$browser";
 const QString IdentifyProperties::DEVICE = "$device";
 
-IdentifyProperties::IdentifyProperties() {
+IdentifyProperties::IdentifyProperties(QObject *parent) : JsonSerializable(parent) {
     _jsonObject[OS] = $os;
+
     _jsonObject[BROWSER] = $browser;
+
     _jsonObject[DEVICE] = $device;
 }
 

@@ -25,7 +25,9 @@ const QString EmbedFooter::ICON_URL = "icon_url";
 const QString EmbedFooter::PROXY_ICON_URL = "proxy_icon_url";
 const QString EmbedFooter::TEXT = "text";
 
-EmbedFooter::EmbedFooter(const QString &text, const QString &iconUrl) {
+EmbedFooter::EmbedFooter(const QString &text,
+                         const QString &iconUrl,
+                         QObject *parent) : JsonSerializable(parent) {
      _jsonObject[TEXT] = text;
 
      _jsonObject[ICON_URL] = iconUrl;
