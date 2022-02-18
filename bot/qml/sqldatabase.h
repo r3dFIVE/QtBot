@@ -28,8 +28,6 @@
 #include <QSqlDatabase>
 #include <QMutexLocker>
 
-#include <util/enumutils.h>
-
 #include "entity/idbmanager.h"
 #include "botjob/databasecontext.h"
 #include "sqlerror.h"
@@ -68,6 +66,11 @@ public:
        _database = QSqlDatabase();
 
        QSqlDatabase::removeDatabase(_connectionName);
+
+       QString ptrStr = QString("0x%1").arg((quintptr)this,
+                           QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+       _logger->trace(QString("Destroyed SqlDatabase(%1)").arg(ptrStr));
     }
 
     Q_INVOKABLE SqlDatabase &operator=(const SqlDatabase &other);

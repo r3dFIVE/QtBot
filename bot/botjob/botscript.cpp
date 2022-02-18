@@ -104,7 +104,7 @@ BotScript::setScriptCommands(const QMap<QString, QVariant> &commands) {
 }
 
 void
-BotScript::execute(const QByteArray &command, const EventContext &context) {
+BotScript::execute(const QByteArray &command, const EventContext &context) {    
     QVariant returnValue;
 
     QMetaObject::invokeMethod(this, command,

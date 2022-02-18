@@ -27,6 +27,7 @@ struct SerializationUtils
 {
     static void readFromJson(JsonSerializable &target, const QJsonObject &source);
     static void writeToJson(const JsonSerializable &source, QJsonObject &target);
+    static QJsonObject toQJsonObject(const QString &source);
     static QJsonObject toQJsonObject(const JsonSerializable &source);
     static QString toQString(const JsonSerializable &source);
     static QByteArray toQByteArray(const JsonSerializable &source);

@@ -19,7 +19,12 @@ class HttpPart : public QObject
 public:
     Q_INVOKABLE HttpPart(QObject *parent = nullptr) : QObject(parent) {};
     Q_INVOKABLE HttpPart(const HttpPart &other, QObject *parent = nullptr);
-    Q_INVOKABLE ~HttpPart() {};
+    Q_INVOKABLE ~HttpPart() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed HttpPart(%1)").arg(ptrStr));
+    };
 
     Q_INVOKABLE HttpPart &operator=(const HttpPart &other);
 

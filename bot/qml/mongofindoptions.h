@@ -44,7 +44,12 @@ public:
 
     MongoFindOptions(QObject *parent = nullptr) : QObject(parent) {}
     MongoFindOptions(const MongoFindOptions &other, QObject *parent = nullptr);
-    ~MongoFindOptions() {}
+    ~MongoFindOptions() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed MongoFindOptions(%1)").arg(ptrStr));
+    }
 
     MongoFindOptions& operator=(const MongoFindOptions &other);
 
