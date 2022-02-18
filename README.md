@@ -8,6 +8,7 @@ Additional functionality can be added via custom Qml objects called **BotScripts
 
 1. [Building From Source](#building-from-source)
 	* [Database Support](#database-support)
+	* [Webkit Support](#webkit-support)
 	* [Building on Windows 10](#building-on-windows-10)
 	* [Building on Linux](#building-on-linux)
 	* [Building on MacOS](#building-on-macos)
@@ -65,6 +66,16 @@ The final step is building the MongoDB CXX driver. Instuctions can be found here
 Once the build is done, copy the build output directoy (eg. `/mongo_cxx_driver`) to the `<project_root>/lib/` directory.
 
 #### Linux
+
+## Webkit Support
+
+https://forum.qt.io/topic/76739/webkit-status-2017
+
+We will use Webkit for webpage scraping support. We can still use webkit by downloading/compiling [A Semi Maintained Wekbit](https://github.com/qtwebkit/qtwebkit/releases) and adding it to your exiting Qt binaries. You can then use it as normal in your projects.
+
+Eg.
+
+	C:\Qt\5.15.2\msvc2019_64\...
 
 ## Building on Windows 10
 
