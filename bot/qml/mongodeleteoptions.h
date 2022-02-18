@@ -10,10 +10,14 @@
 
 #endif
 
+#include "logging/logfactory.h"
+
+
 class MongoDeleteOptions : public QObject
 {
     Q_OBJECT
 
+    Logger *_logger = LogFactory::getLogger();
     mongocxx::options::delete_options _deleteOptions{};
 
     static const QString COLLATION;
@@ -25,6 +29,12 @@ public:
 
     MongoDeleteOptions(QObject *parent = nullptr) : QObject(parent) {}
     MongoDeleteOptions(const MongoDeleteOptions &other, QObject *parent = nullptr);
+    ~MongoDeleteOptions() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed MongoDeleteOptions(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE void collation(const QJsonObject &json);
     Q_INVOKABLE QJsonObject collation() const;

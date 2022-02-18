@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QSqlError>
 
+#include "logging/logfactory.h"
 #include "enums/sql.h"
 
 
@@ -31,13 +32,19 @@ class SqlError : public QObject
 {
     Q_OBJECT
 
+    Logger *_logger = LogFactory::getLogger();
     QSqlError _sqlError;
 
 public:
     SqlError(QObject *parent = nullptr) : QObject(parent) {}
     SqlError(const SqlError &other, QObject *parent = nullptr);
     SqlError(const QSqlError &other, QObject *parent = nullptr);
-    ~SqlError() {}
+    ~SqlError() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed SqlError(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE SqlError &operator=(const SqlError &other);
     Q_INVOKABLE SqlError &operator=(SqlError &&other) noexcept;

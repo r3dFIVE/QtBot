@@ -21,7 +21,12 @@ class HttpMultiPart : public QObject
 public:
     HttpMultiPart(QObject *parent = nullptr);
     HttpMultiPart(const HttpMultiPart &other, QObject *parent = nullptr);
-    ~HttpMultiPart() {}
+    ~HttpMultiPart() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed HttpMultiPart(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE HttpMultiPart &operator=(const HttpMultiPart &other);
 

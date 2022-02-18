@@ -11,12 +11,14 @@
 
 #endif
 
+#include "logging/logfactory.h"
 
 
 class MongoUpdateOptions : public QObject
 {
     Q_OBJECT
 
+    Logger *_logger = LogFactory::getLogger();
     mongocxx::options::update _updateOptions;
 
     static const QString BYPASS_DOCUMENT_VALIDATION;
@@ -27,7 +29,12 @@ class MongoUpdateOptions : public QObject
 public:
     MongoUpdateOptions(QObject *parent = nullptr) : QObject(parent) {}
     MongoUpdateOptions(const MongoUpdateOptions &other, QObject *parent = nullptr);
-    ~MongoUpdateOptions() {}
+    ~MongoUpdateOptions() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed MongoUpdateOptions(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE MongoUpdateOptions& operator=(const MongoUpdateOptions &other);
 

@@ -35,6 +35,7 @@ class SqlQuery : public QObject
 {
     Q_OBJECT
 
+    Logger *_logger = LogFactory::getLogger();
     QSqlQuery _query;
 
 public:
@@ -44,7 +45,12 @@ public:
      SqlQuery(SqlDatabase *database,
               const QString &query = QString(),
               QObject *parent = nullptr);
-     ~SqlQuery() {}
+     ~SqlQuery() {
+         QString ptrStr = QString("0x%1").arg((quintptr)this,
+                             QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+         _logger->trace(QString("Destroyed SqlQuery(%1)").arg(ptrStr));
+     }
 
     Q_INVOKABLE SqlQuery& operator=(const SqlQuery& other);
     Q_INVOKABLE bool isValid() const;

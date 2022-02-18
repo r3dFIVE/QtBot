@@ -9,10 +9,9 @@
 
 #include <mongocxx/options/insert.hpp>
 
-#include "logging/logfactory.h"
-
 #endif
 
+#include "logging/logfactory.h"
 
 class MongoInsertOptions : public QObject
 {
@@ -28,7 +27,12 @@ class MongoInsertOptions : public QObject
 public:
     MongoInsertOptions(QObject *parent = nullptr) : QObject(parent) {}
     MongoInsertOptions(const MongoInsertOptions &other, QObject *parent = nullptr);
-    ~MongoInsertOptions() {}
+    ~MongoInsertOptions() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed MongoInsertOptions(%1)").arg(ptrStr));
+    }
 
     MongoInsertOptions& operator=(const MongoInsertOptions &other);
 

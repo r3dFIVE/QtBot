@@ -18,6 +18,7 @@
  *
  */
 
+#include "xmlquery.h"
 #include "mongodeleteoptions.h"
 #include "mongoupdateoptions.h"
 #include "qmlfactory.h"
@@ -94,6 +95,9 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
 
     } else if (typeName == "SqlQuery") {
         return createSqlQuery(arguments);
+
+    } else if (typeName == "XMLQuery") {
+        return new XMLQuery();
     }
 
     return nullptr;
@@ -112,6 +116,8 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
     engine->evaluate("function File(path, mode = 1) { return _factory.createObject(\"File\", { filePath: path, openMode: mode }); }");
 
     engine->evaluate("function Http() { return _factory.createObject(\"Http\", {}); }");
+
+    engine->evaluate("function XMLQuery() { return _factory.createObject(\"XMLQuery\", {}); }");
 
     engine->evaluate("function Embed(title, description, url, color) { return _factory.createObject(\"Embed\", {title: title, description: description, url: url, color: color}); }");
 

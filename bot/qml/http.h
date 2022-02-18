@@ -39,7 +39,12 @@ class Http : public QObject
 public:
     Http(QObject *parent = nullptr);
     Http(const Http &other, QObject *parent = nullptr);
-    ~Http() {}
+    ~Http() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed Http(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE Http &operator=(const Http &other);
 

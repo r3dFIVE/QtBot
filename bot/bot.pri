@@ -1,8 +1,12 @@
-QT += gui websockets sql qml
+QT += gui websockets sql qml xml xmlpatterns
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
+LIB_DIR = $$PWD/../lib
+XML2JSON_HEADERS = $$LIB_DIR/xml2json/include
+
+INCLUDEPATH += $$XML2JSON_HEADERS
 
 win32 {
     LIB_DIR = $$PWD/../lib
@@ -107,6 +111,7 @@ HEADERS += \
     $$PWD/qml/sqlerror.h \
     $$PWD/qml/sqlquery.h \
     $$PWD/qml/tempfile.h \
+    $$PWD/qml/xmlquery.h \
     $$PWD/routes/bucket.h \
     $$PWD/routes/channeladdpinnedchannelmessage.h \
     $$PWD/routes/channelbulkmessagesdelete.h \
@@ -301,6 +306,7 @@ SOURCES += \
     $$PWD/qml/mongodb.cpp \
     $$PWD/qml/sqlerror.cpp \
     $$PWD/qml/sqlquery.cpp \
+    $$PWD/qml/xmlquery.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \

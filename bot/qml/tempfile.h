@@ -62,6 +62,11 @@ public:
         _file->close();
 
         dir.removeRecursively();
+
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed TempFile(%1)").arg(ptrStr));
     }
 };
 

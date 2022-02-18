@@ -50,7 +50,12 @@ public:
     MongoDB(QObject *parent = nullptr);
     MongoDB(const MongoDB &other, QObject *parent = nullptr);
     MongoDB(const DatabaseContext &context, QObject *parent = nullptr);
-    ~MongoDB() {}
+    ~MongoDB() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed MongoDB(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE QString collectionName();
 

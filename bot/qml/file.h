@@ -48,7 +48,12 @@ public:
     File(QObject *parent = nullptr);
     File(const File &other, QObject *parent = nullptr);
     File(const QString &filePath, const OpenMode::Mode openMode, QObject *parent = nullptr);
-    ~File() {}
+    ~File() {
+        QString ptrStr = QString("0x%1").arg((quintptr)this,
+                            QT_POINTER_SIZE * 2, 16, QChar('0'));
+
+        _logger->trace(QString("Destroyed File(%1)").arg(ptrStr));
+    }
 
     Q_INVOKABLE File &operator=(const File &other);
 

@@ -89,6 +89,11 @@ SerializationUtils::writeToJson(const JsonSerializable &source, QJsonObject &tar
 }
 
 QJsonObject
+SerializationUtils::toQJsonObject(const QString &source) {
+    return QJsonDocument::fromJson(source.toUtf8()).object();
+}
+
+QJsonObject
 SerializationUtils::toQJsonObject(const JsonSerializable &source) {
     QJsonObject jsonObject;
     writeToJson(source, jsonObject);
