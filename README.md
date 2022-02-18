@@ -7,8 +7,8 @@ Additional functionality can be added via custom Qml objects called **BotScripts
 *BotScripts* are custom Qml elements which provide access to the Discord API, as well as additional support for things like database access and file I/O.
 
 1. [Building From Source](#building-from-source)
-	* [Database Support](#database-support)
-	* [Webkit Support](#webkit-support)
+	* [Database Support](#database-support)	
+	* [xml2json Support](#xml2json-support)
 	* [Building on Windows 10](#building-on-windows-10)
 	* [Building on Linux](#building-on-linux)
 	* [Building on MacOS](#building-on-macos)
@@ -67,15 +67,16 @@ Once the build is done, copy the build output directoy (eg. `/mongo_cxx_driver`)
 
 #### Linux
 
-## Webkit Support
+## xml2json Support
 
-https://forum.qt.io/topic/76739/webkit-status-2017
+xml2json header libarary is required for converting XML to Json to be used inside BotScripts
 
-We will use Webkit for webpage scraping support. We can still use webkit by downloading/compiling [A Semi Maintained Wekbit](https://github.com/qtwebkit/qtwebkit/releases) and adding it to your exiting Qt binaries. You can then use it as normal in your projects.
+https://github.com/Cheedoong/xml2json
 
-Eg.
+You can clone that project directly inside `<project_root>/lib`.
 
-	C:\Qt\5.15.2\msvc2019_64\...
+eg. `<project_root>/lib/xml2json`
+
 
 ## Building on Windows 10
 
