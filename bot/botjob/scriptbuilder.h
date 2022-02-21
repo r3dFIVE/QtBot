@@ -69,7 +69,7 @@ class ScriptBuilder : public QObject
     bool validateScriptCommands(QSharedPointer<BotScript> botScript, const QFileInfo &fileInfo);
     bool validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
     bool validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
-    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &guildId, const QFileInfo &fileInfo);
+    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
 public:
     ScriptBuilder(EventHandler *eventHandler);
 

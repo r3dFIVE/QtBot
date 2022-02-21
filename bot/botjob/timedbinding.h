@@ -30,7 +30,7 @@ class TimedBinding : public IBinding
 
     bool _enabled = true;
     bool _running = true;
-    bool _singleShot = true;
+    bool _singleShot = false;
     EventContext _eventContext;    
     qint64 _remainder = 0;
     int _fireAfter = 0;

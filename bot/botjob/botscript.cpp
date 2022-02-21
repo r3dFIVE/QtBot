@@ -167,6 +167,15 @@ BotScript::bId() const {
     return _botId;
 }
 
+QVariant
+BotScript::bGetContext() {
+    EventContext context;
+
+    context.setGuildId(_guildId);
+
+    return SerializationUtils::toVariant(context);
+}
+
 QString
 BotScript::bName() const {
     return _botName;
