@@ -69,8 +69,6 @@ EventHandler::processJobQueue() {
         }
     }
 
-    qDebug() << "hello";
-
     if ((_jobQueue.hasJobs() || _guildsWithTimedEvents.size() > 0)) {
         if(!_jobQueueTimer->isActive()) {
             _jobQueueTimer->start();
