@@ -47,6 +47,8 @@ EventHandler::init() {
 
     _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
 
+    _jobQueueTimer->setInterval(JOB_POLL_MS);
+
     connect(_jobQueueTimer.data(), &QTimer::timeout, this, &EventHandler::processJobQueue);
 }
 
@@ -67,9 +69,11 @@ EventHandler::processJobQueue() {
         }
     }
 
+    qDebug() << "hello";
+
     if ((_jobQueue.hasJobs() || _guildsWithTimedEvents.size() > 0)) {
         if(!_jobQueueTimer->isActive()) {
-            _jobQueueTimer->start(JOB_POLL_MS);
+            _jobQueueTimer->start();
         }
     } else {
         _jobQueueTimer->stop();
