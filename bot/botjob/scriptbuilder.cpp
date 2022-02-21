@@ -305,6 +305,10 @@ ScriptBuilder::validateTimedBinding(QSharedPointer<BotScript> botScript,
         timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
     }
 
+    if (binding[TimedBinding::SINGLETON].isBool()) {
+        timedBinding.setSingleton(binding[TimedBinding::SINGLETON].toBool());
+    }
+
     timedBinding.setBindingName(bindingName);
 
     timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
@@ -445,7 +449,7 @@ void
 ScriptBuilder::addTimedBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName) {
     for (auto binding : _timedBindings[fileName]) {
 
-        if (binding.isSingleShot() && guildEntity.getId() != GuildEntity::DEFAULT_GUILD_ID) {
+        if (binding.isSingleton() && guildEntity.getId() != GuildEntity::DEFAULT_GUILD_ID) {
             continue;
         }
 

@@ -145,6 +145,10 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
         timedBinding->setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
     }
 
+    if (binding[TimedBinding::SINGLETON].isBool()) {
+        timedBinding->setSingleton(binding[TimedBinding::SINGLETON].toBool());
+    }
+
     timedBinding->setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
     timedBinding->setDescription(binding[TimedBinding::DESCRIPTION].toString());

@@ -523,6 +523,8 @@ GuildEntity::getReadyTimedJobs() {
             readyJobs << timedJob;
 
             if (timedBinding.isSingleShot()) {
+                _disabledTimedBindings[it.key()] = _timedBindings[it.key()];
+
                 _timedBindings.remove(it.key());
 
             } else {

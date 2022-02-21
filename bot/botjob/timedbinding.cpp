@@ -39,6 +39,8 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
 
     _singleShot = other._singleShot;
 
+    _singleton = other._singleton;
+
     _fireAfter = other._fireAfter;
 
     _scriptName = other._scriptName;
@@ -71,6 +73,8 @@ TimedBinding
     _description = other._description;
 
     _singleShot = other._singleShot;
+
+    _singleton = other._singleton;
 
     _fireAfter = other._fireAfter;
 
@@ -165,6 +169,16 @@ TimedBinding::isSingleShot() const {
 void
 TimedBinding::setSingleShot(bool singleShot) {
     _singleShot = singleShot;
+}
+
+void
+TimedBinding::setSingleton(bool singleton) {
+    _singleton = singleton;
+}
+
+bool
+TimedBinding::isSingleton() const {
+    return _singleton;
 }
 
 EventContext
