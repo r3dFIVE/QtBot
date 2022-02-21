@@ -428,9 +428,11 @@ GuildEntity::clearRegisteredScripts() {
 
     _commandBindings.clear();
 
-    _timedBindings.clear();
+    _gatewayBindings.clear();
 
     _disabledTimedBindings.clear();
+
+    _gatewayBindingsByEventName.clear();
 }
 
 void
