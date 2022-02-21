@@ -131,7 +131,9 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     QSharedPointer<TimedBinding> timedBinding = QSharedPointer<TimedBinding>(new TimedBinding);
 
-    timedBinding->setId(QUuid::createUuid().toString(QUuid::Id128));
+    QString uuid = QUuid::createUuid().toString(QUuid::Id128);
+
+    timedBinding->setId(uuid);
 
     timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), this));
 
@@ -145,7 +147,13 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     timedBinding->setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
-    timedBinding->setDescription(binding[IBinding::DESCRIPTION].toString());
+    timedBinding->setDescription(binding[TimedBinding::DESCRIPTION].toString());
+
+    timedBinding->setBindingName(QString("BotScript Event: %1").arg(uuid));
+
+    if (binding[TimedBinding::IGNORE_ADMIN].isBool()) {
+        timedBinding->setIgnoreAdmin(binding[TimedBinding::IGNORE_ADMIN].toBool());
+    }
 
     if (timedBinding->isValid(*this->metaObject())) {
        emit timedBindingReadySignal(_guildId, timedBinding);

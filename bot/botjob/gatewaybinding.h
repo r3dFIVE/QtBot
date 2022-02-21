@@ -27,13 +27,11 @@
 class GatewayBinding : public IBinding
 {
     QString _eventName;
-    QString _bindingName;
 
 public:
 
     static const QString GATEWAY_EVENT;
     static const QString SINGLETON;
-    static const QString BINDING_NAME;
 
     GatewayBinding() {}
     GatewayBinding(const QString &eventType);
@@ -44,8 +42,7 @@ public:
     bool isValid(const QMetaObject &metaObject) const override;
     QString getEventName() const;
     void setEventName(const QString &eventType);
-    QString getBindingName();
-    void setBindingName(const QString &bindingName);
+
 };
 
 #endif // GATEWAYBINDING_H

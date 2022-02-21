@@ -50,7 +50,6 @@ class BotScript : public IBotJob
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlQuery _query;
-    QString _botToken;
     QString _scriptName;
 
     static QString _botId;

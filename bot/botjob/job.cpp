@@ -21,6 +21,12 @@
 #include "botjob/job.h"
 
 
+Job::Job(const EventContext &context, const IBotJob::FunctionMapping &commandMapping) {
+    _context = context;
+
+    _commandMapping = commandMapping;
+}
+
 IBotJob::FunctionMapping
 Job::getFunctionMapping() const {
     return _commandMapping;

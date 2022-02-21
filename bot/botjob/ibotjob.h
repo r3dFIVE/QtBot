@@ -35,7 +35,7 @@ protected:
     QMutex _runLock;
 
 public:
-    typedef QPair<QString, IBotJob *> FunctionMapping;
+    typedef QPair<QString, IBotJob*> FunctionMapping;
 
     bool invokable() {
         return _runLock.tryLock();

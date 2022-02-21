@@ -65,8 +65,8 @@ GuildEntity::initRestrictionStates(const QJsonObject &json) {
 }
 
 bool
-GuildEntity::hasAdminRole(QSharedPointer<EventContext> context) {    
-    for (auto roleId : context->getRoleIds()) {
+GuildEntity::hasAdminRole(const EventContext& context) {
+    for (auto roleId : context.getRoleIds()) {
         QString id = roleId.toString();
 
         if (_adminRoleIds.contains(id)) {
@@ -74,37 +74,15 @@ GuildEntity::hasAdminRole(QSharedPointer<EventContext> context) {
         }
     }
 
-    if (context->getUserId() == BOT_OWNER_ID) {
+    if (context.getUserId() == BOT_OWNER_ID) {
         return true;
     }
 
     return false;
 }
 
-QString
-GuildEntity::parseCommandToken(const QString &message) const {
-    int start = -1;
-    int i;
-
-    for (i = 0; i < message.size(); i++) {
-        if (start < 0 && message[i].isSpace()) {
-            continue;
-        } else if (start < 0 && !message[i].isSpace()) {
-            start = i;
-        } else if (start >= 0 && message[i].isSpace()) {
-            break;
-        }
-    }
-
-    if (start >= 0) {
-        return message.mid(start, i - start);
-    } else {
-        return QString();
-    }
-}
-
 bool
-GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &command) {
+GuildEntity::canInvoke(const EventContext &context, const QString &command) {
 
     if (_commandBindings.contains(command)) {
         if (!_commandBindings[command].ignoreAdmin()) {
@@ -116,13 +94,13 @@ GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &comm
                 return false;
             }
         }
-    } else if (_gatewayBindingsByBindingName.contains(command)) {
-        if (!_gatewayBindingsByBindingName[command].ignoreAdmin()) {
+    } else if (_gatewayBindings.contains(command)) {
+        if (!_gatewayBindings[command].ignoreAdmin()) {
             if (hasAdminRole(context)) {
                 return true;
             }
 
-            if (_gatewayBindingsByBindingName[command].isAdminOnly()) {
+            if (_gatewayBindings[command].isAdminOnly()) {
                 return false;
             }
         }
@@ -133,13 +111,13 @@ GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &comm
     if (_mappedStateIdsByCommand.contains(command)) {
         QMap<QString, CommandRestrictions::RestrictionState> mappedStateById = _mappedStateIdsByCommand[command];
 
-        QString userId = context->getUserId().toString();
+        QString userId = context.getUserId().toString();
 
         if (mappedStateById.contains(userId)) {
             return mappedStateById[userId];
         }
 
-        for (auto jsonRoleId : context->getRoleIds()) {
+        for (auto jsonRoleId : context.getRoleIds()) {
             QString roleId = jsonRoleId.toString();
 
             if (mappedStateById.contains(roleId)) {
@@ -147,13 +125,13 @@ GuildEntity::canInvoke(QSharedPointer<EventContext> context, const QString &comm
             }
         }
 
-        QString channelId = context->getChannelId().toString();
+        QString channelId = context.getChannelId().toString();
 
         if (mappedStateById.contains(channelId)) {
             return mappedStateById[channelId];
         }
 
-        QString guildId = context->getGuildId().toString();
+        QString guildId = context.getGuildId().toString();
 
         if (mappedStateById.contains(GUILD_ID_ALIAS)) {
             return mappedStateById[GUILD_ID_ALIAS];
@@ -193,15 +171,6 @@ GuildEntity::processEvent(QSharedPointer<EventContext> context) {
     return jobs << getGatewayEventJobs(context);
 }
 
-QList<TimedBinding>
-GuildEntity::getTimedBindings() const {
-    return _timedBindings;
-}
-
-void
-GuildEntity::setTimedBindings(const QList<TimedBinding> &timedBindings) {
-    _timedBindings = timedBindings;
-}
 
 void
 GuildEntity::updateRole(const Role &role) {
@@ -239,7 +208,7 @@ GuildEntity::updateRestrictionStates(const QString &name,
 
     QMap<QString, CommandRestrictions::RestrictionState> entityRestrictionsUpdate;
 
-    if (_gatewayBindingsByBindingName.contains(name)) {
+    if (_gatewayBindings.contains(name)) {
 
         updateState(entityRestrictionsUpdate, name, targetId, state);
 
@@ -262,6 +231,8 @@ GuildEntity::updateRestrictionStates(const QString &name,
             }
         }
     }
+
+    updateTimedBindingState(entityRestrictionsUpdate, name, state);
 
     if (!entityRestrictionsUpdate.isEmpty()) {
         emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
@@ -305,12 +276,11 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
         c_it.next();
 
         for (auto cmd : c_it.value()) {
-
             updateState(entityRestrictionsUpdate, cmd, targetId, state);
         }
     }
 
-    QMapIterator<QString, GatewayBinding> g_it(_gatewayBindingsByBindingName);
+    QMapIterator<QString, GatewayBinding> g_it(_gatewayBindings);
 
     while(g_it.hasNext()) {
         g_it.next();
@@ -318,8 +288,51 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
         updateState(entityRestrictionsUpdate, g_it.key(), targetId, state);
     }
 
+    updateAllTimedBindings(entityRestrictionsUpdate, state);
+
     if (!entityRestrictionsUpdate.isEmpty()) {
         emit restrictionsUpdate(QSharedPointer<CommandRestrictions>(new CommandRestrictions(_id, targetId, entityRestrictionsUpdate)));
+    }
+}
+
+void
+GuildEntity::updateAllTimedBindings(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                                 CommandRestrictions::RestrictionState state) {
+    for (TimedBinding binding : _timedBindings) {
+        updateTimedBindingState(restrictionUpdates, binding.getBindingName(), state);
+    }
+
+    for (TimedBinding binding : _disabledTimedBindings) {
+        updateTimedBindingState(restrictionUpdates, binding.getBindingName(), state);
+    }
+}
+
+void
+GuildEntity::updateTimedBindingState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                                     const QString &bindingName,
+                                     const CommandRestrictions::RestrictionState state) {
+
+
+    if (_disabledTimedBindings.contains(bindingName)) {
+        if (state == CommandRestrictions::ENABLED) {
+            _timedBindings[bindingName] = _disabledTimedBindings[bindingName];
+
+            _disabledTimedBindings.remove(bindingName);
+
+            _timedBindings[bindingName].start();
+        }
+
+        updateState(restrictionUpdates, bindingName, _id, state);
+    } else if (_timedBindings.contains(bindingName)) {
+        if (state == CommandRestrictions::DISABLED)  {
+            _disabledTimedBindings[bindingName] = _timedBindings[bindingName];
+
+            _disabledTimedBindings[bindingName].stop();
+
+            _timedBindings.remove(bindingName);
+        }
+
+        updateState(restrictionUpdates, bindingName, _id, state);
     }
 }
 
@@ -332,18 +345,16 @@ GuildEntity::removeAllRestrictionStates() {
 
 Job*
 GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
-    QString command = parseCommandToken(context->getContent().toString());
-
     Job *commandJob = nullptr;
 
-    if (canInvoke(context, command)) {
-       commandJob = new Job;
+    if (context->getArgs().isEmpty()) {
+        return commandJob;
+    }
 
-       context->splitArgs();
+    QString command = context->getArgs()[0].toString();
 
-       commandJob->setContext(*context);
-
-       commandJob->setFunctionMapping(_commandBindings[command].getFunctionMapping());
+    if (canInvoke(*context, command)) {
+       commandJob = new Job(*context, _commandBindings[command].getFunctionMapping());
     }
 
     return commandJob;
@@ -354,17 +365,11 @@ GuildEntity::getGatewayEventJobs(QSharedPointer<EventContext> context) {
     QList<Job *> gatewayEventJobs;
 
     for (auto binding : _gatewayBindingsByEventName[context->getEventName().toString()]) {
-        if (!canInvoke(context, binding.getBindingName())) {
+        if (!canInvoke(*context, binding.getBindingName())) {
             continue;
         }
 
-        Job *gatewayEventJob = new Job;
-
-        gatewayEventJob->setContext(*context);
-
-        gatewayEventJob->setFunctionMapping(binding.getFunctionMapping());
-
-        gatewayEventJobs << gatewayEventJob;
+        gatewayEventJobs << new Job(*context, binding.getFunctionMapping());
     }
 
     return gatewayEventJobs;
@@ -373,6 +378,11 @@ GuildEntity::getGatewayEventJobs(QSharedPointer<EventContext> context) {
 QString
 GuildEntity::getId() const {
     return _id;
+}
+
+QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> >
+GuildEntity::getMappedStateIdsByCommand() {
+    return _mappedStateIdsByCommand;
 }
 
 void
@@ -406,8 +416,21 @@ GuildEntity::setId(const QString &id) {
 }
 
 void
-GuildEntity::setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts) {
-    _registeredScripts = registeredScripts;
+GuildEntity::addRegisteredScript(QSharedPointer<IBotJob> script) {
+    _registeredScripts << script;
+}
+
+void
+GuildEntity::clearRegisteredScripts() {
+    _registeredScripts.clear();
+
+    _timedBindings.clear();
+
+    _commandBindings.clear();
+
+    _timedBindings.clear();
+
+    _disabledTimedBindings.clear();
 }
 
 void
@@ -430,22 +453,14 @@ GuildEntity::setMappedStateIdsByCommand(QMap<QString, QMap<QString, CommandRestr
 }
 
 void
-GuildEntity::setCommandBindings(const QList<CommandBinding> &commandBindings) {
-    _commandBindings.clear();
+GuildEntity::addCommandBinding(const CommandBinding &binding) {
+    _commandBindings[binding.getCommandName()] = binding;
 
-    for (auto binding : commandBindings) {
-        _commandBindings[binding.getCommandName()] = binding;
-    }
 }
 
 void
-GuildEntity::setGatewayBindings(const QList<GatewayBinding> &gatewayBindings) {
-    _gatewayBindingsByEventName.clear();
-
-    _gatewayBindingsByBindingName.clear();
-
-    for (auto binding : gatewayBindings) {
-        _gatewayBindingsByBindingName[binding.getBindingName()] = binding;
+GuildEntity::addGatewayBinding(const GatewayBinding &binding) {
+        _gatewayBindings[binding.getBindingName()] = binding;
 
         if (_gatewayBindingsByEventName.contains(binding.getEventName())) {
             _gatewayBindingsByEventName[binding.getEventName()] << binding;
@@ -453,5 +468,169 @@ GuildEntity::setGatewayBindings(const QList<GatewayBinding> &gatewayBindings) {
         } else {
             _gatewayBindingsByEventName[binding.getEventName()] = QList<GatewayBinding>() << binding;
         }
+}
+
+void
+GuildEntity::addTimedBinding(TimedBinding &binding, const bool validate) {
+    if (validate) {
+        if (isTimedJobEnabled(binding.getBindingName())) {
+            _timedBindings[binding.getBindingName()] = binding;
+        } else {
+            _disabledTimedBindings[binding.getBindingName()] = binding;
+        }
+    } else {
+        _timedBindings[binding.getBindingName()] = binding;
     }
 }
+
+QList<TimedBinding>
+GuildEntity::getTimedBindings() const {
+    return _timedBindings.values();
+}
+
+bool
+GuildEntity::hasTimedJobs() const {
+    return !_timedBindings.isEmpty();
+}
+
+QList<Job *>
+GuildEntity::getReadyTimedJobs() {
+    QList<Job *> readyJobs;
+
+    QMapIterator<QString, TimedBinding> it(_timedBindings);
+
+    while (it.hasNext()) {
+        it.next();
+
+        TimedBinding timedBinding = it.value();
+
+        if (QDateTime::currentSecsSinceEpoch() == timedBinding.getStartedAt()) {
+            continue;
+
+        } else if (timedBinding.isRunning() && timedBinding.getRemaining() <= 0) {
+            EventContext context = timedBinding.getEventContext();
+
+            context.setGuildId(_id);
+
+            Job *timedJob = new Job;
+
+            timedJob->setContext(timedBinding.getEventContext());
+
+            timedJob->setFunctionMapping(timedBinding.getFunctionMapping());
+
+            readyJobs << timedJob;
+
+            if (timedBinding.isSingleShot()) {
+                _timedBindings.remove(it.key());
+
+            } else {
+                _timedBindings[it.key()].start();
+            }
+        }
+    }
+
+    return readyJobs;
+}
+
+
+void
+GuildEntity::clearTimedJobs() {
+    _timedBindings.clear();
+}
+
+bool
+GuildEntity::validateTimedJobIndex(const int index) {
+    if (_timedBindings.isEmpty()) {
+        return false;
+    }
+
+    if (index >= 0 && index <= _timedBindings.size()) {
+        return true;
+    }
+
+    _logger->debug(QString("Index (%1) is out of bounds for timed bindings for GuildId: %2")
+                   .arg(index)
+                   .arg(_id));
+
+    return false;
+}
+
+void
+GuildEntity::removeTimedJobById(const QString &jobId) {
+    QMapIterator<QString, TimedBinding> it(_timedBindings);
+
+    while (it.hasNext()) {
+        it.next();
+
+        if (_timedBindings[it.key()].id() == jobId) {
+            _timedBindings.remove(it.key());
+        }
+    }
+}
+
+void
+GuildEntity::removeTimedJob(const int index) {
+    if (!validateTimedJobIndex(index)) {
+        return;
+    }
+
+    QString bindingName = _timedBindings.keys()[index];
+
+    _timedBindings.remove(bindingName);
+}
+
+void
+GuildEntity::startTimedJob(const int index) {
+    if (!validateTimedJobIndex(index)) {
+        return;
+    }
+
+    QString bindingName = _timedBindings.keys()[index];
+
+    _timedBindings[bindingName].start();
+}
+
+void
+GuildEntity::restartTimedJob(const int index) {
+    if (!validateTimedJobIndex(index)) {
+        return;
+    }
+
+    QString bindingName = _timedBindings.keys()[index];
+
+    _timedBindings[bindingName].restart();
+}
+
+void
+GuildEntity::stopTimedJob(const int index) {
+    if (!validateTimedJobIndex(index)) {
+        return;
+    }
+
+    QString bindingName = _timedBindings.keys()[index];
+
+    _timedBindings[bindingName].stop();
+}
+
+void
+GuildEntity::initTimedJobs() {    
+    QMapIterator<QString, TimedBinding> it(_timedBindings);
+
+    while (it.hasNext()) {
+        it.next();
+
+        _timedBindings[it.key()].start();
+    }
+}
+
+bool
+GuildEntity::isTimedJobEnabled(const QString &bindingName) {
+    if (_mappedStateIdsByCommand.contains(bindingName)) {
+        if (_mappedStateIdsByCommand[bindingName].contains(GUILD_ID_ALIAS)) {
+            return _mappedStateIdsByCommand[bindingName][GUILD_ID_ALIAS];
+        }
+    }
+
+    return DEFAULT_STATE;
+}
+

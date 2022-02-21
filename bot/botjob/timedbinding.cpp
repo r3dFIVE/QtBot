@@ -54,6 +54,8 @@ TimedBinding::TimedBinding(const TimedBinding &other) {
     _stoppedAt = other._stoppedAt;
 
     _id = other._id;
+
+    _bindingName = other._bindingName;
 }
 
 TimedBinding
@@ -85,6 +87,8 @@ TimedBinding
     _stoppedAt = other._stoppedAt;
 
     _id = other._id;
+
+    _bindingName = other._bindingName;
 
     return *this;
 }
@@ -127,6 +131,16 @@ TimedBinding::restart() {
     _startedAt = QDateTime::currentSecsSinceEpoch();
 
     _stoppedAt = 0;
+}
+
+void
+TimedBinding::setEnabled(const bool enabled) {
+    _enabled = enabled;
+}
+
+bool
+TimedBinding::isEnabled() const {
+    return _enabled;
 }
 
 void
@@ -198,6 +212,10 @@ TimedBinding::setStartedAt(const qint64 startedAt) {
 
 bool
 TimedBinding::isValid(const QMetaObject &metaObject) const {
+    if (!isValidParam(TimedBinding::BINDING_NAME, _bindingName)) {
+        return false;
+    }
+
     if (!validateFunctionMapping(metaObject)) {
         return false;
     }

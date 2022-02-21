@@ -35,7 +35,6 @@ HEADERS += \
     $$PWD/botjob/jobqueue.h \
     $$PWD/botjob/scriptbuilder.h \
     $$PWD/botjob/timedbinding.h \
-    $$PWD/botjob/timedjobs.h \
     $$PWD/entity/commandrestrictions.h \
     $$PWD/entity/gridfsfile.h \
     $$PWD/entity/idbmanager.h \
@@ -239,7 +238,6 @@ SOURCES += \
     $$PWD/botjob/jobqueue.cpp \
     $$PWD/botjob/scriptbuilder.cpp \
     $$PWD/botjob/timedbinding.cpp \
-    $$PWD/botjob/timedjobs.cpp \
     $$PWD/entity/gridfsfile.cpp \
     $$PWD/entity/idbmanager.cpp \
     $$PWD/entity/mongomanager.cpp \

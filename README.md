@@ -27,6 +27,7 @@ Additional functionality can be added via custom Qml objects called **BotScripts
 	* [BotApi](#botapi)
 	* [BotScript](#botscript)
 	* [cCreateMessage](#ccreatemessage)
+9. [Event Bindings]($event-bindings) 
 
 # Building From Source
 
@@ -341,3 +342,103 @@ cCreateMessage(context)
 ```
 Full list of API functions is listed [here](#discord-api-calls)
 
+# Event Bindings
+
+Event Bindings are a more advanced ways to bind functionality than the simple `1:1 functionName to CommandName` command mapping.
+
+There are three kinds of event bindings to which you can bind BotScript functions. 
+
+1. Gateway Events
+2. Command Events
+3. Timed Events
+
+In the previous `Hello World!` example, we used the simple `commands` mapping of command name to function name. These will actually get converted into Command Events.
+
+## Gateway Events
+
+Gateway Events are any [Gateway Events](https://discord.com/developers/docs/topics/gateway#commands-and-events-gateway-events) sent from Discord. Gateway events are sent from discord as they happen in your joined guilds.
+
+
+| Property Name | Type | Default | Required | Description |
+|---|---|---|---|---|
+| binding_type | String |  | true | The type of binding: `gateway`, `command`, `timed`. |
+| binding_name | String |  | true | The unique name of binding, cannot be same as other script, command or binding names. |
+| gateway_event | String |  | true | The specific [Gateway Event](https://discord.com/developers/docs/topics/gateway#commands-and-events-gateway-events) you want to bind to. |
+| function | String |  | true | The name of the function you want to call. |
+| ignore_admin | bool | false | false | If set to `true`, event will ignore admin privileges in invocation checks. This allows events to be disabled that would otherwise automatically be invoked due to admin privileges.  |
+| singleton | bool | false | false | Do you only want this event to be run once independent of specific guilds `GuildId = 0` |
+| description | String |  | false | The description, if any, you wish the help dialog to display. |
+
+Eg.
+
+```javascript
+event_bindings: [
+	{ 
+	  "binding_type" : "gateway",
+	  "binding_name" : "someUniqueName",
+      "gateway_event" : "MESSAGE_DELETE",
+      "function" : "someFunctionName",
+	  "ignore_admin" : "true",	  
+	  "singleton" : false, 
+	  "description" : "This is a description that will get shown in the help dialog!" 
+	}
+]
+```
+
+## Command Events
+
+Command Events are a special kind of Gateway Events (MESSAGE_CREATE) which allows you to bind specific user commands to BotScript functions. QtBot will check the first word of MESSAGE_CREATE events for valid BotScript commands.
+
+
+| Property Name | Type | Default | Required | Description |
+|---|---|---|---|---|
+| binding_type | String |  | true | The type of binding: `gateway`, `command`, `timed`. |
+| command | String |  | true | The command you want to bind your BotScript function to. |
+| function | String |  | true | The name of the function you want to call. |
+| admin_only | bool | false | false | If set to `true`, this will only be invocable by Bot Admins  |
+| description | String |  | false | The description, if any, you wish the help dialog to display. |
+
+Eg.
+
+```javascript
+event_bindings: [
+	{ 
+	  "binding_type" : "command",
+      "command" : ".somecommand",
+      "function" : "someFunctionName",
+	  "admin_only" : true,	  
+	  "description" : "This is a description that will get shown in the help dialog!" 
+	}
+]
+```
+
+## Timed Events
+
+Timed events are QtBot's equivalent of task scheduling. Timed events can be used to call bot functions after a specified duration, either once (singleshot), or repeatedly.
+
+Timed Events are not standard Gateway Events, as such, they do not have a default populated EventContext. EventContext objects are typically populated from the incoming Gateway Events. In lie of such, you are able to create your own context and attach it to the Timed Binding. This will be used as the EventContext when making the bound BotScript function calls.
+
+
+| Property Name | Type | Default | Required | Description |
+|---|---|---|---|---|
+| binding_type | String |  | true | The type of binding: `gateway`, `command`, `timed`. |
+| function | String |  | true | The name of the function you want to call. |
+| fire_after | Number |  | true  | The number of seconds this timed event should execute after.  |
+| single_shot | bool | false | false | Set to `true` if this event should only fire once.  |
+| context | EventContext |  | false | The EventContext you wish to call your BotScript function with.  |
+| description | String |  | false | The description, if any, you wish the help dialog to display. |
+
+Eg.
+
+```javascript
+event_bindings: [
+	{ 
+	  "binding_type" : "timed",
+      "function" : "someFunctionName",
+	  "fire_after" : 42,
+	  "single_shot" : false,
+	  "context" : aValidContextObject,
+	  "description" : "This is a description that will get shown in the help dialog!" 
+	}
+]
+```

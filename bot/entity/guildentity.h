@@ -34,6 +34,7 @@
 #include "payloads/guild.h"
 #include "payloads/role.h"
 
+class ScriptBuilder;
 
 class GuildEntity : public QObject
 {
@@ -46,7 +47,8 @@ class GuildEntity : public QObject
     static QString BOT_OWNER_ID;
 
     QList<QSharedPointer<IBotJob> > _registeredScripts;
-    QList<TimedBinding> _timedBindings;
+    QMap<QString, TimedBinding> _timedBindings;
+    QMap<QString, TimedBinding> _disabledTimedBindings;
     QMap<QString, Role> _rolesByRoleId;
     QMap<QString, QList<GatewayBinding> > _gatewayBindingsByEventName;
     QMap<QString, CommandBinding> _commandBindings;
@@ -54,21 +56,52 @@ class GuildEntity : public QObject
     QMap<QString, QStringList> _commandNamesByScriptName;
     QString _id = DEFAULT_GUILD_ID;
     QStringList _adminRoleIds;
-    QMap<QString, GatewayBinding> _gatewayBindingsByBindingName;
+    QMap<QString, GatewayBinding> _gatewayBindings;
 
-    bool canInvoke(QSharedPointer<EventContext> context, const QString &command);
     Job* getCommandJob(QSharedPointer<EventContext> context);
     QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context);
-    QString parseCommandToken(const QString &content) const;
     void clearCommand(const QString &commandName, const QString &targetId);
-
     void updateState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
                      const QString &name,
                      const QString &targetId,
                      CommandRestrictions::RestrictionState state);
+    bool isTimedJobEnabled(const QString &bindingName);
+
+    void updateTimedBindingState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                                 const QString &bindingName,
+                                 const CommandRestrictions::RestrictionState state);
+    void updateTimedBinding(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                             const QString &bindingName,
+                             CommandRestrictions::RestrictionState state);
+    void updateAllTimedBindings(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
+                             CommandRestrictions::RestrictionState state);
 public:
     GuildEntity() {}
     GuildEntity(const Guild &guild);
+
+    friend GuildEntity& operator<<(GuildEntity &guildEntity, CommandBinding binding ) {
+        guildEntity.addCommandBinding(binding);
+
+        return guildEntity;
+    }
+
+    friend GuildEntity& operator<<(GuildEntity &guildEntity, GatewayBinding binding ) {
+        guildEntity.addGatewayBinding(binding);
+
+        return guildEntity;
+    }
+
+    friend GuildEntity& operator<<(GuildEntity &guildEntity, TimedBinding binding) {
+        guildEntity.addTimedBinding(binding, true);
+
+        return guildEntity;
+    }
+
+    friend GuildEntity& operator<<(GuildEntity &guildEntity, QSharedPointer<IBotJob> script) {
+        guildEntity.addRegisteredScript(script);
+
+        return guildEntity;
+    }
 
     static const QString DEFAULT_GUILD_ID;
     static const QString GUILD_RESTRICTIONS;
@@ -76,19 +109,22 @@ public:
     static const QString GUILD_ID_ALIAS;
 
     void initRestrictionStates(const QJsonObject &json);
-    bool hasAdminRole(QSharedPointer<EventContext> context);
+    bool hasAdminRole(const EventContext& context);
+    bool canInvoke(const EventContext& context, const QString &command);
     QList<Job *> processEvent(QSharedPointer<EventContext> context);
     QList<TimedBinding> getTimedBindings() const;
     QString getId() const;
+    QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > getMappedStateIdsByCommand();
     void addRole(const Role &role);
-    void setCommandBindings(const QList<CommandBinding> &commandBindings);
-    void setGatewayBindings(const QList<GatewayBinding> &gatewayBindings);
+    void addCommandBinding(const CommandBinding &binding);
+    void addGatewayBinding(const GatewayBinding &binding);
+    void addTimedBinding(TimedBinding &binding, const bool validate = false);
+    void addRegisteredScript(QSharedPointer<IBotJob> script);
+    void clearRegisteredScripts();
     void setId(const QString &id);
     void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
     void setMappedStateIdsByCommand(QMap<QString, QMap<QString,
                                     CommandRestrictions::RestrictionState> > mappedStateIdsByCommand);
-    void setRegisteredScripts(const QList<QSharedPointer<IBotJob> > registeredScripts);
-    void setTimedBindings(const QList<TimedBinding> &timedBindings);
     void updateRole(const Role &role);
     void removeRole(const QString &roleId);
     void removeAllRestrictionStates();
@@ -103,6 +139,16 @@ public:
     static void setDefaultRestrictionState(const QString &state);
     static QString getBotOwnerId();   
 
+    bool hasTimedJobs() const;
+    QList<Job *> getReadyTimedJobs();
+    void clearTimedJobs();
+    bool validateTimedJobIndex(const int index);
+    void removeTimedJobById(const QString &jobId);
+    void removeTimedJob(const int index);
+    void startTimedJob(const int index);
+    void restartTimedJob(const int index);
+    void stopTimedJob(const int index);
+    void initTimedJobs();
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
 };

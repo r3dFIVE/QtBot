@@ -28,7 +28,7 @@
 #include "botjob/job.h"
 
 
-const int EventHandler::JOB_POLL_MS = 500;
+const int EventHandler::JOB_POLL_MS = 1000;
 
 
 EventHandler::EventHandler() {
@@ -48,14 +48,12 @@ EventHandler::init() {
     _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
 
     connect(_jobQueueTimer.data(), &QTimer::timeout, this, &EventHandler::processJobQueue);
-
-    _timedJobTimer = QSharedPointer<QTimer>(new QTimer);
-
-    connect(_timedJobTimer.data(), &QTimer::timeout, this, &EventHandler::processTimedJobs);
 }
 
 void
 EventHandler::processJobQueue() {
+    checkTimedJobs();
+
     Job *readyJob = _jobQueue.get();
 
     while (readyJob) {
@@ -69,25 +67,12 @@ EventHandler::processJobQueue() {
         }
     }
 
-    if (_jobQueue.hasJobs() && !_jobQueueTimer->isActive()) {
-        _jobQueueTimer->start(JOB_POLL_MS);
+    if ((_jobQueue.hasJobs() || _guildsWithTimedEvents.size() > 0)) {
+        if(!_jobQueueTimer->isActive()) {
+            _jobQueueTimer->start(JOB_POLL_MS);
+        }
     } else {
         _jobQueueTimer->stop();
-    }
-}
-
-void
-EventHandler::processTimedJobs() {
-    QList<Job *> readyTimedJobs = _timedJobs.getReadyJobs();
-
-    if (!readyTimedJobs.isEmpty()) {
-        _jobQueue << readyTimedJobs;
-
-        processJobQueue();
-    }
-
-    if (!_timedJobs.hasJobs()) {
-        _timedJobTimer->stop();
     }
 }
 
@@ -118,22 +103,27 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
 void
 EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
-    _availableGuilds[guild->getId()] = guild;
+    _availableGuilds[guild->getId()] = guild;    
 
-    _timedJobs.registerTimedBindings(guild);
+    guild->initTimedJobs();
 
-    if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
-        _timedJobTimer->start(JOB_POLL_MS);
+    registerTimedJobs(guild->getId());
+}
+
+void
+EventHandler::registerTimedJobs(const QString &guildId) {
+    if (_availableGuilds[guildId]->hasTimedJobs()) {
+        if(!_jobQueueTimer->isActive()) {
+            _jobQueueTimer->start();
+        }
+
+        _guildsWithTimedEvents << guildId;
     }
 }
 
 void
 EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding) {
-    _timedJobs.registerTimedBinding(guildId, *timedBinding.data());
-
-    if (_timedJobs.hasJobs() && !_timedJobTimer->isActive()) {
-        _timedJobTimer->start(JOB_POLL_MS);
-    }
+    _availableGuilds[guildId]->addTimedBinding(*timedBinding, false);
 }
 
 void
@@ -144,14 +134,12 @@ EventHandler::reloadGuild(const EventContext &context) {
         QString userId = context.getUserId().toString();
 
         if (userId == GuildEntity::getBotOwnerId()) {
-            _timedJobTimer->stop();
 
             _jobQueueTimer->stop();
 
             bool validate = true;
 
             for (auto guild : _availableGuilds.values()) {
-                _timedJobs.clear(guild->getId());
 
                 _jobQueue.clear(guild->getId());
 
@@ -165,8 +153,6 @@ EventHandler::reloadGuild(const EventContext &context) {
             _logger->warning(QString("User %1 attempted to .reload all guilds but they are not Bot Owner...").arg(userId));
         }
     } else {
-        _timedJobs.clear(guildId);
-
         _jobQueue.clear(guildId);
 
         emit reloadScripts(_availableGuilds[guildId], true);
@@ -177,7 +163,7 @@ void
 EventHandler::displayTimedJobs(EventContext context) {
     QString guildId = context.getGuildId().toString();
 
-    QList<TimedBinding> timedBindings = _timedJobs.getAllJobs(guildId);
+    QList<TimedBinding> timedBindings = _availableGuilds[guildId]->getTimedBindings();
 
     if (timedBindings.size() == 0) {
         return;
@@ -234,21 +220,36 @@ EventHandler::isGuildReady(const QString &guildId) {
 
 int
 EventHandler::getTimedJobNumber(const EventContext &context) {
-    QStringList commandTokens = context.getContent().toString().split(" ");
-
-    if (commandTokens.size() <= 1) {
+    if (context.getArgs().size() <= 1) {
         return -1;
     }
 
-    return commandTokens[1].toInt();
+    return context.getArgs()[1].toString().toInt();;
+}
+
+void
+EventHandler::checkTimedJobs() {
+    QSetIterator<QString> it(_guildsWithTimedEvents);
+
+    while (it.hasNext()) {
+        QString guildId = it.next();
+
+        if (_availableGuilds[guildId]->hasTimedJobs()) {
+            _jobQueue << _availableGuilds[guildId]->getReadyTimedJobs();
+        } else {
+            _guildsWithTimedEvents.remove(guildId);
+        }
+    }
 }
 
 void
 EventHandler::removeTimedJobById(QSharedPointer<EventContext> context) {
     QString jobId = context->getJobId().toString();
 
+    QString guildId = context->getGuildId().toString();
+
     if (!jobId.isEmpty()) {
-        _timedJobs.removeJobById(context->getGuildId().toString(), jobId);
+        _availableGuilds[guildId]->removeTimedJobById(jobId);
     } else {
         _logger->debug(QString("You must specify a job id for command: %1").arg(context->getContent().toString()));
     }
@@ -258,10 +259,12 @@ void
 EventHandler::removeTimedJob(const EventContext &context) {
     int jobNumber = getTimedJobNumber(context);
 
+    QString guildId = context.getGuildId().toString();
+
     if (jobNumber > 0) {
-       _timedJobs.removeJob(context.getGuildId().toString(), jobNumber - 1);
+       _availableGuilds[guildId]->removeTimedJob(jobNumber - 1);
     } else {
-        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+        _logger->debug(QString("You must specify a valid job number for command: %1").arg(context.getContent().toString()));
     }
 }
 
@@ -269,10 +272,12 @@ void
 EventHandler::restartTimedJob(const EventContext &context) {
     int jobNumber = getTimedJobNumber(context);
 
+    QString guildId = context.getGuildId().toString();
+
     if (jobNumber > 0) {
-       _timedJobs.restartJob(context.getGuildId().toString(), jobNumber - 1);
+       _availableGuilds[guildId]->restartTimedJob(jobNumber - 1);
     } else {
-        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+        _logger->debug(QString("You must specify a valid job number for command: %1").arg(context.getContent().toString()));
     }
 }
 
@@ -280,10 +285,12 @@ void
 EventHandler::startTimedJob(const EventContext &context) {
     int jobNumber = getTimedJobNumber(context);
 
+    QString guildId = context.getGuildId().toString();
+
     if (jobNumber > 0) {
-       _timedJobs.startJob(context.getGuildId().toString(), jobNumber - 1);
+       _availableGuilds[guildId]->startTimedJob(jobNumber - 1);
     } else {
-        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+        _logger->debug(QString("You must specify a valid job number for command: %1").arg(context.getContent().toString()));
     }
 }
 
@@ -291,10 +298,12 @@ void
 EventHandler::stopTimedJob(const EventContext &context) {
     int jobNumber = getTimedJobNumber(context);
 
+    QString guildId = context.getGuildId().toString();
+
     if (jobNumber > 0) {
-       _timedJobs.stopJob(context.getGuildId().toString(), jobNumber - 1);
+       _availableGuilds[guildId]->stopTimedJob(jobNumber - 1);
     } else {
-        _logger->debug(QString("Invalid you must specify a valid job number for command: %1").arg(context.getContent().toString()));
+        _logger->debug(QString("You must specify a valid job number for command: %1").arg(context.getContent().toString()));
     }
 }
 
@@ -302,14 +311,22 @@ void
 EventHandler::updateRestrictionState(const EventContext &context, CommandRestrictions::RestrictionState state) {
     QString guildId = context.getGuildId().toString();
 
-    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
+    if (isGuildReady(guildId) && context.getArgs().size() > 1) {
         QString commandName = context.getArgs()[1].toString();
 
-        QString targetId = context.getArgs()[2].toString();
+        QString targetId;
+
+        if (context.getArgs().size() > 2) {
+            targetId = context.getArgs()[2].toString();
+        } else {
+            targetId = GuildEntity::GUILD_ID_ALIAS;
+        }
 
         _availableGuilds[guildId]->updateRestrictionStates(commandName, targetId, state);
+
+        registerTimedJobs(guildId);
     } else {
-        _logger->debug(QString("\"%1\" requires a scriptName/commandName and user/role/channel/guild id...").arg(context.getContent().toString()));
+        _logger->debug(QString("You must specify at least a command name and optional id: %1").arg(context.getContent().toString()));
     }
 }
 
@@ -320,28 +337,15 @@ EventHandler::updateAllRestrictionStates(const EventContext &context, CommandRes
     if (isGuildReady(guildId)) {
         QString targetId;
 
-        if (context.getArgs().size() > 1) {
-            targetId = context.getArgs()[1].toString();
+        if (context.getArgs().size() > 2) {
+            targetId = context.getArgs()[2].toString();
         } else {
             targetId = GuildEntity::GUILD_ID_ALIAS;
         }
 
-         _availableGuilds[guildId]->updateRestrictionStates(QString(), targetId, state);
-    }
-}
+        _availableGuilds[guildId]->updateRestrictionStates(QString(), targetId, state);
 
-void
-EventHandler::removeRestrictionState(const EventContext &context) {
-    QString guildId = context.getGuildId().toString();
-
-    if (isGuildReady(guildId) && context.getArgs().size() > 2) {
-        QString commandName = context.getArgs()[1].toString();
-
-        QString targetId = context.getArgs()[2].toString();
-
-        _availableGuilds[guildId]->updateRestrictionStates(commandName, targetId, CommandRestrictions::REMOVED);
-    } else {
-        _logger->debug(QString("\"%1\" requires a scriptName/commandName and target id...").arg(context.getContent().toString()));
+        registerTimedJobs(guildId);
     }
 }
 

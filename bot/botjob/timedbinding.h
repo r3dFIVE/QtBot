@@ -28,6 +28,7 @@ class TimedBinding : public IBinding
 {
     Q_OBJECT
 
+    bool _enabled = true;
     bool _running = true;
     bool _singleShot = true;
     EventContext _eventContext;    
@@ -58,6 +59,7 @@ public:
     bool isValid(const QMetaObject &metaObject) const override;
     bool isSingleShot() const;
     bool isRunning() const;
+    bool isEnabled() const;
     qint64 getFireAfter() const;
     EventContext getEventContext() const;
     qint64 getRemaining();
@@ -65,6 +67,7 @@ public:
     qint64 getStartedAt() const;
     QString id() const;
     void restart();
+    void setEnabled(const bool enabled);
     void setStartedAt(const qint64 startedAt);
     void setFireAfter(const int fireAfter);
     void setScriptName(const QString &scriptName);
