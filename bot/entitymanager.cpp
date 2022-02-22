@@ -50,8 +50,6 @@ EntityManager::initGuildFromPayload(QSharedPointer<GatewayPayload> payload) {
 
     guildEntity->setId(guild.getId().toString());
 
-    QObject::connect(guildEntity.data(), &GuildEntity::restrictionsUpdate, this, &EntityManager::restrictionsUpdate);
-
     initGuild(guildEntity);
 }
 
@@ -92,6 +90,8 @@ EntityManager::clearFileCache() {
 void
 EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
     _manager->initGuild(guildEntity);
+
+    QObject::connect(guildEntity.data(), &GuildEntity::restrictionsUpdate, this, &EntityManager::restrictionsUpdate);
 
     emit guildInitialized(guildEntity, false);
 }

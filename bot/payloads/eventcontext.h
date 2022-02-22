@@ -66,6 +66,7 @@ public:
     EventContext(const QByteArray &json, QObject *parent = nullptr);
     EventContext(const QJsonObject &json, QObject *parent = nullptr);
     EventContext(const EventContext &other, QObject *parent = nullptr);
+
     ~EventContext() {}
 
     EventContext &operator=(const EventContext &other) {

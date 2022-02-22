@@ -323,8 +323,8 @@ EventContext::getEmoji() const {
 }
 
 void
-EventContext::setJobId(const QJsonValue &emoji) {
-    _jsonObject[JOB_ID] = emoji;
+EventContext::setJobId(const QJsonValue &jobId) {
+    _jsonObject[JOB_ID] = jobId;
 }
 
 QJsonValue

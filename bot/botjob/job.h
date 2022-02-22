@@ -31,7 +31,10 @@ class Job : public QRunnable
     EventContext _context;
     IBotJob::FunctionMapping _commandMapping;
 
-public:    
+public:
+    Job() {}
+    Job(const EventContext &context, const IBotJob::FunctionMapping &commandMapping);
+
     bool invokable() const;
     EventContext context() const;
     IBotJob::FunctionMapping getFunctionMapping() const;

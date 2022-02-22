@@ -18,6 +18,7 @@
  *
  */
 
+#include "bindingfactory.h"
 #include "botscript.h"
 
 #include <QSqlError>
@@ -129,23 +130,14 @@ QVariant
 BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
     QJsonObject binding = QJsonObject::fromVariantMap(timedBindingVariant.toMap());
 
-    QSharedPointer<TimedBinding> timedBinding = QSharedPointer<TimedBinding>(new TimedBinding);
+    QSharedPointer<TimedBinding> timedBinding
+            = QSharedPointer<TimedBinding>(new TimedBinding(BindingFactory::createTimedBinding(this, binding)));
 
-    timedBinding->setId(QUuid::createUuid().toString(QUuid::Id128));
+    QString uuid = QUuid::createUuid().toString(QUuid::Id128);
 
-    timedBinding->setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), this));
+    timedBinding->setId(uuid);
 
-    timedBinding->setScriptName(_scriptName);
-
-    timedBinding->setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
-
-    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
-        timedBinding->setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
-    }
-
-    timedBinding->setEventContext(binding[TimedBinding::CONTEXT].toObject());
-
-    timedBinding->setDescription(binding[IBinding::DESCRIPTION].toString());
+    timedBinding->setBindingName(uuid);
 
     if (timedBinding->isValid(*this->metaObject())) {
        emit timedBindingReadySignal(_guildId, timedBinding);
@@ -157,6 +149,15 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 QString
 BotScript::bId() const {
     return _botId;
+}
+
+QVariant
+BotScript::bGetContext() {
+    EventContext context;
+
+    context.setGuildId(_guildId);
+
+    return SerializationUtils::toVariant(context);
 }
 
 QString

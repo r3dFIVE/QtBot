@@ -31,29 +31,7 @@ TimedBinding::TimedBinding() {
 }
 
 TimedBinding::TimedBinding(const TimedBinding &other) {
-    _functionMapping = other._functionMapping;
-
-    _logger = other._logger;
-
-    _description = other._description;
-
-    _singleShot = other._singleShot;
-
-    _fireAfter = other._fireAfter;
-
-    _scriptName = other._scriptName;
-
-    _eventContext = other._eventContext;
-
-    _startedAt = other._startedAt;
-
-    _remainder = other._remainder;
-
-    _running = other._running;
-
-    _stoppedAt = other._stoppedAt;
-
-    _id = other._id;
+    copy(other);
 }
 
 TimedBinding
@@ -62,6 +40,13 @@ TimedBinding
         return *this;
     }
 
+    copy(other);
+
+    return *this;
+}
+
+void
+TimedBinding::copy(const TimedBinding &other) {
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;
@@ -69,6 +54,8 @@ TimedBinding
     _description = other._description;
 
     _singleShot = other._singleShot;
+
+    _singleton = other._singleton;
 
     _fireAfter = other._fireAfter;
 
@@ -86,7 +73,7 @@ TimedBinding
 
     _id = other._id;
 
-    return *this;
+    _bindingName = other._bindingName;
 }
 
 QString
@@ -130,6 +117,16 @@ TimedBinding::restart() {
 }
 
 void
+TimedBinding::setEnabled(const bool enabled) {
+    _enabled = enabled;
+}
+
+bool
+TimedBinding::isEnabled() const {
+    return _enabled;
+}
+
+void
 TimedBinding::stop() {
     _stoppedAt = QDateTime::currentSecsSinceEpoch();
 
@@ -151,6 +148,16 @@ TimedBinding::isSingleShot() const {
 void
 TimedBinding::setSingleShot(bool singleShot) {
     _singleShot = singleShot;
+}
+
+void
+TimedBinding::setSingleton(bool singleton) {
+    _singleton = singleton;
+}
+
+bool
+TimedBinding::isSingleton() const {
+    return _singleton;
 }
 
 EventContext
@@ -198,6 +205,10 @@ TimedBinding::setStartedAt(const qint64 startedAt) {
 
 bool
 TimedBinding::isValid(const QMetaObject &metaObject) const {
+    if (!isValidParam(TimedBinding::BINDING_NAME, _bindingName)) {
+        return false;
+    }
+
     if (!validateFunctionMapping(metaObject)) {
         return false;
     }

@@ -27,6 +27,7 @@ win32 {
 
 
 HEADERS += \
+    $$PWD/botjob/bindingfactory.h \
     $$PWD/botjob/commandbinding.h \
     $$PWD/botjob/databasecontext.h \
     $$PWD/botjob/gatewaybinding.h \
@@ -35,7 +36,6 @@ HEADERS += \
     $$PWD/botjob/jobqueue.h \
     $$PWD/botjob/scriptbuilder.h \
     $$PWD/botjob/timedbinding.h \
-    $$PWD/botjob/timedjobs.h \
     $$PWD/entity/commandrestrictions.h \
     $$PWD/entity/gridfsfile.h \
     $$PWD/entity/idbmanager.h \
@@ -231,6 +231,7 @@ DISTFILES += \
 
 SOURCES += \
     $$PWD/bot.cpp \
+    $$PWD/botjob/bindingfactory.cpp \
     $$PWD/botjob/commandbinding.cpp \
     $$PWD/botjob/databasecontext.cpp \
     $$PWD/botjob/gatewaybinding.cpp \
@@ -239,7 +240,6 @@ SOURCES += \
     $$PWD/botjob/jobqueue.cpp \
     $$PWD/botjob/scriptbuilder.cpp \
     $$PWD/botjob/timedbinding.cpp \
-    $$PWD/botjob/timedjobs.cpp \
     $$PWD/entity/gridfsfile.cpp \
     $$PWD/entity/idbmanager.cpp \
     $$PWD/entity/mongomanager.cpp \

@@ -28,6 +28,8 @@ const QString IBinding::BINDING_TYPE_TIMED = "timed";
 const QString IBinding::FUNCTION = "function";
 const QString IBinding::DESCRIPTION = "description";
 const QString IBinding::IGNORE_ADMIN = "ignore_admin";
+const QString IBinding::BINDING_NAME = "binding_name";
+
 
 bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
 
@@ -40,7 +42,7 @@ bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
         return false;
     }
 
-    if (!isValidParam(_functionMapping.first)) {
+    if (!isValidParam(IBinding::FUNCTION, _functionMapping.first)) {
         return false;
     }
 
@@ -78,25 +80,25 @@ IBinding::setIgnoreAdmin(bool ignoreAdmin) {
 }
 
 bool
-IBinding::isValidParam(const QString &param) const {
-    if (param.isEmpty()) {
-        _logger->warning(QString("Script parameters can not be empty."));
+IBinding::isValidParam(const QString &name, const QString &value) const {
+    if (value.isEmpty()) {
+        _logger->warning(QString("%1 cannot be empty.").arg(name));
 
         return false;
     }
 
-    if (param.simplified().contains(" ")) {
-        _logger->warning(QString("Script parameters can not have any whitespace characters: %1").arg(param));
+    if (value.simplified().contains(" ")) {
+        _logger->warning(QString("%1 parameters can not have any whitespace characters: %2").arg(value));
 
         return false;
     }
 
     bool isNumber = false;
 
-    param.toDouble(&isNumber);
+    value.toDouble(&isNumber);
 
     if (isNumber) {
-        _logger->warning(QString("Script parameters must not be only numeric values: %1").arg(param));
+        _logger->warning(QString("%1 parameters must not be only numeric values: %2").arg(name).arg(value));
 
         return false;
     }
@@ -123,4 +125,14 @@ IBinding::setDescription(const QString &description) {
 void
 IBinding::setFunctionMapping(const IBotJob::FunctionMapping &functionMapping) {
     _functionMapping = functionMapping;
+}
+
+QString
+IBinding::getBindingName() const {
+    return _bindingName;
+}
+
+void
+IBinding::setBindingName(const QString &bindingName) {
+    _bindingName = bindingName;
 }

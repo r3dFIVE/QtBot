@@ -274,7 +274,8 @@ Settings::validateDatabaseSettings() {
 
 void
 Settings::validateLoggingSettings() {
-    QString consoleLogLevel = _settings[CONSOLE_LOG_LEVEL].toString();
+    QString consoleLogLevel = _settings[CONSOLE_LOG_LEVEL].toString().toUpper();
+
     if (consoleLogLevel.isEmpty()) {
         _settings[CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
 
@@ -285,7 +286,8 @@ Settings::validateLoggingSettings() {
     }
 
 
-    QString fileLogLevel = _settings[FILE_LOG_LEVEL].toString();
+    QString fileLogLevel = _settings[FILE_LOG_LEVEL].toString().toUpper();
+
     if (fileLogLevel.isEmpty()) {
         _settings[FILE_LOG_LEVEL] = LogContext::DEBUG;
 

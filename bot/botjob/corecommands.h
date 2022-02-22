@@ -126,9 +126,10 @@ public:
 
         addCommand(".clear", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                      "removeRestrictionState",
+                                      "updateRestrictionState",
                                       Qt::QueuedConnection,
-                                      Q_ARG(EventContext, context));
+                                      Q_ARG(EventContext, context),
+                                      Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::REMOVED));
         });
 
         addCommand(".clearall", true, [&](const EventContext &context) -> void {
@@ -137,6 +138,8 @@ public:
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
+
+
 
         return commands;
     }

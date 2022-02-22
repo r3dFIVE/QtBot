@@ -46,33 +46,30 @@ class ScriptBuilder : public QObject
     QString _scriptDir;
     QStringList _coreCommandNames;
     QList<QFileInfo> _validScripts;
-    QList<QSharedPointer<IBotJob> > _registeredScripts;
-    QList<CommandBinding> _commandBindings;
-    QList<GatewayBinding> _gatewayBindings;
-    QList<TimedBinding> _timedBindings;
+    QMap<QString, QList<CommandBinding> > _commandBindings;
+    QMap<QString, QList<GatewayBinding> > _gatewayBindings;
+    QMap<QString, QList<TimedBinding> > _timedBindings;
     QMap<QString, QString> _scriptNamesByCommand;
     QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 
     bool isBotScript(const QString &fileName);
     void validateScripts();
     bool validateScriptCommandName(const QString &command, const QString &fileName);
-    void loadCoreCommands(const QString &guildId);
+    void addCoreCommands(GuildEntity &guildEntity);
+    void addCommandBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName);
+    void addGatewayBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName);
+    void addTimedBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName);
     void addQmlFactory(QSharedPointer<QQmlEngine> engine);
-    void buildValidBotScripts(const QString &guildId);
-    void buildBotScript(const QFileInfo &fileInfo, const QString &guildId);
+    void buildValidBotScripts(GuildEntity &guildEntity);
+    void buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntity);
     void namingConflict(const QString &command, const QString &fileName);
     bool validateScriptName(const QString &scriptName, const QString &fileName);
-    void resgisterScriptCommands(QSharedPointer<BotScript> botScript);
-    void registerCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding);
-    void registerGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding);
-    void registerTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding);
-    void registerEventBindings(QSharedPointer<BotScript> botScript, const QString &guildId);
 
     void validate(const QFileInfo &fileInfo);
     bool validateScriptCommands(QSharedPointer<BotScript> botScript, const QFileInfo &fileInfo);
     bool validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
     bool validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
-    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &guildId);
+    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
 public:
     ScriptBuilder(EventHandler *eventHandler);
 

@@ -38,6 +38,7 @@ public:
     static const QString FUNCTION;
     static const QString DESCRIPTION;
     static const QString IGNORE_ADMIN;
+    static const QString BINDING_NAME;
 
     bool validateFunctionMapping(const QMetaObject &metaObject) const;
     IBotJob::FunctionMapping getFunctionMapping() const;
@@ -48,18 +49,21 @@ public:
     void setIgnoreAdmin(bool ignoreAdmin);
     void setAdminOnly(const bool adminOnly);
     bool isAdminOnly() const;
+    QString getBindingName() const;
+    void setBindingName(const QString &bindingName);
 
     virtual bool isValid(const QMetaObject &metaObject) const = 0;
 
     Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
 protected:
-    bool isValidParam(const QString &param) const;
+    bool isValidParam(const QString &name, const QString &value) const;
 
     bool _adminOnly = false;
     bool _ignoreAdmin = false;
     IBotJob::FunctionMapping _functionMapping;
     Logger *_logger = LogFactory::getLogger();
     QString _description;
+    QString _bindingName;
 };
 
 

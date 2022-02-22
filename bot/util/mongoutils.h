@@ -90,7 +90,7 @@ public:
         bool requiresAuth = false;
 
         if (!ctx.userName.isEmpty()) {
-            uri.append(QString("%1:%2@").arg(ctx.userName.arg(ctx.password)));
+            uri.append(QString("%1:%2@").arg(ctx.userName).arg(ctx.password));
 
             requiresAuth = true;
         }

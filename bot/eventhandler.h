@@ -26,7 +26,6 @@
 #include <QTimer>
 
 #include "botjob/jobqueue.h"
-#include "botjob/timedjobs.h"
 #include "entity/guildentity.h"
 #include "payloads/gatewaypayload.h"
 #include "payloads/message.h"
@@ -46,9 +45,8 @@ class EventHandler : public QObject
     QSharedPointer<DiscordAPI> _discordAPI;
     JobQueue _jobQueue;
     QMap<QString, QSharedPointer<GuildEntity> > _availableGuilds;
-    QSharedPointer<QTimer> _timedJobTimer;
+    QSet<QString> _guildsWithTimedEvents;
     QSharedPointer<QTimer> _jobQueueTimer;
-    TimedJobs _timedJobs;
 
     Logger *_logger;
 
@@ -57,6 +55,8 @@ class EventHandler : public QObject
     QString getJobId(const EventContext &context);
     void processMessageCreate(QSharedPointer<EventContext> context);
     void processMessageUpdate(QSharedPointer<EventContext> context);
+    void checkTimedJobs();    
+    void registerTimedJobs(const QString &guildId);
 
 signals:
     void reloadScripts(QSharedPointer<GuildEntity> guild, bool validate);
@@ -65,9 +65,7 @@ public:
     EventHandler();
 
 public slots:
-    void removeRestrictionState(const EventContext &context);
     void removeAllRestrictionStates(const EventContext &context);
-
     void updateRestrictionState(const EventContext &context, CommandRestrictions::RestrictionState state);
     void updateAllRestrictionStates(const EventContext &context, CommandRestrictions::RestrictionState state);
     void displayTimedJobs(EventContext context);
@@ -75,7 +73,6 @@ public slots:
     void init();
     void processEvent(QSharedPointer<GatewayPayload> payload);
     void processJobQueue();
-    void processTimedJobs();
     void reloadGuild(const EventContext &context);
     void registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
     void removeTimedJob(const EventContext &context);
