@@ -27,6 +27,7 @@ win32 {
 
 
 HEADERS += \
+    $$PWD/botjob/bindingfactory.h \
     $$PWD/botjob/commandbinding.h \
     $$PWD/botjob/databasecontext.h \
     $$PWD/botjob/gatewaybinding.h \
@@ -230,6 +231,7 @@ DISTFILES += \
 
 SOURCES += \
     $$PWD/bot.cpp \
+    $$PWD/botjob/bindingfactory.cpp \
     $$PWD/botjob/commandbinding.cpp \
     $$PWD/botjob/databasecontext.cpp \
     $$PWD/botjob/gatewaybinding.cpp \

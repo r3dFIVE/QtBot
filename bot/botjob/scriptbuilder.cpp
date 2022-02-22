@@ -18,6 +18,7 @@
  *
  */
 
+#include "bindingfactory.h"
 #include "scriptbuilder.h"
 
 
@@ -196,36 +197,21 @@ ScriptBuilder::validateScriptCommands(QSharedPointer<BotScript> botScript, const
 }
 
 bool
-ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo) {
-    QString command = binding[CommandBinding::COMMAND].toString();
+ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript,
+                                      const QJsonValue &binding,
+                                      const QFileInfo &fileInfo) {
 
-    if (!validateScriptCommandName(command, fileInfo.absoluteFilePath())) {
+    CommandBinding commandBinding = BindingFactory::createCommandBinding(botScript.data(), binding);
+
+    if (!validateScriptCommandName(commandBinding.getCommandName(), fileInfo.absoluteFilePath())) {
         return false;
-    }
-
-    CommandBinding commandBinding;
-
-    commandBinding.setCommandName(command);
-
-    QString functionName = binding[CommandBinding::FUNCTION].toString();
-
-    commandBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
-
-    commandBinding.setDescription(binding[CommandBinding::DESCRIPTION].toString());
-
-    if (binding[CommandBinding::ADMIN_ONLY].isBool()) {
-        commandBinding.setAdminOnly(binding[CommandBinding::ADMIN_ONLY].toBool());
-    }
-
-    if (binding[CommandBinding::IGNORE_ADMIN].isBool()) {
-        commandBinding.setIgnoreAdmin(binding[CommandBinding::IGNORE_ADMIN].toBool());
     }
 
     if (!commandBinding.isValid(*botScript->metaObject())) {
         return false;
     }       
 
-    _scriptNamesByCommand[command] = botScript->getScriptName();
+    _scriptNamesByCommand[commandBinding.getCommandName()] = botScript->getScriptName();
 
     _commandBindings[fileInfo.fileName()] << commandBinding;
 
@@ -233,46 +219,34 @@ ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript, const
 }
 
 bool
-ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo) {
+ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript,
+                                      const QJsonValue &binding,
+                                      const QFileInfo &fileInfo) {
 
-    QString bindingName = binding[GatewayBinding::BINDING_NAME].toString();
+    GatewayBinding gatewayBinding = BindingFactory::createGatewayBinding(botScript.data(), binding);
 
-    if (!validateScriptCommandName(bindingName, fileInfo.absoluteFilePath())) {
+    if (!validateScriptCommandName(gatewayBinding.getBindingName(), fileInfo.absoluteFilePath())) {
         return false;
     }
 
-    QString gatewayEventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
+    QString eventName = gatewayBinding.getEventName();
 
-    QString functionName = binding[GatewayBinding::FUNCTION].toString();
+    QString functionName = gatewayBinding.getFunctionMapping().first;
 
-    if (_functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] == functionName) {
+    if (_functionNameByEventNameByScriptName[botScript->getScriptName()][eventName] == functionName) {
         _logger->warning(QString("Gateway event \"%1\" has already been registered to function in script: %3... ")
-                         .arg(gatewayEventName)
+                         .arg(eventName)
                          .arg(functionName)
                          .arg(fileInfo.absoluteFilePath()));
 
         return false;
     }
 
-    GatewayBinding gatewayBinding;
-
-    gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
-
-    gatewayBinding.setEventName(gatewayEventName);
-
-    gatewayBinding.setBindingName(bindingName);
-
-    gatewayBinding.setDescription(binding[GatewayBinding::DESCRIPTION].toString());
-
-    if (binding[GatewayBinding::IGNORE_ADMIN].isBool()) {
-        gatewayBinding.setIgnoreAdmin(binding[GatewayBinding::IGNORE_ADMIN].toBool());
-    }
-
     if (!gatewayBinding.isValid(*botScript->metaObject())) {
         return false;
     }
 
-    _functionNameByEventNameByScriptName[botScript->getScriptName()][gatewayEventName] = functionName;
+    _functionNameByEventNameByScriptName[botScript->getScriptName()][eventName] = functionName;
 
     _gatewayBindings[fileInfo.fileName()] << gatewayBinding;
 
@@ -283,43 +257,19 @@ bool
 ScriptBuilder::validateTimedBinding(QSharedPointer<BotScript> botScript,
                                     const QJsonValue &binding,
                                     const QFileInfo &fileInfo) {
-    QString functionName = binding[IBinding::FUNCTION].toString();
 
-    QString bindingName = binding[TimedBinding::BINDING_NAME].toString();
+    TimedBinding timedBinding = BindingFactory::createTimedBinding(botScript.data(), binding);
 
-    if (!validateScriptCommandName(bindingName, fileInfo.absoluteFilePath())) {
+    if (!validateScriptCommandName(timedBinding.getBindingName(), fileInfo.absoluteFilePath())) {
         return false;
     }
 
-    TimedBinding timedBinding;
-
-    timedBinding.setId(QUuid::createUuid().toString(QUuid::Id128));
-
-    timedBinding.setFunctionMapping(qMakePair(functionName, botScript.data()));
-
-    timedBinding.setScriptName(botScript->getScriptName());
-
-    timedBinding.setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
-
-    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
-        timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
-    }
-
-    if (binding[TimedBinding::SINGLETON].isBool()) {
-        timedBinding.setSingleton(binding[TimedBinding::SINGLETON].toBool());
-    }
-
-    timedBinding.setBindingName(bindingName);
-
-    timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
-
-    timedBinding.setDescription(binding[TimedBinding::DESCRIPTION].toString());
 
     if (!timedBinding.isValid(*botScript->metaObject())) {
             return false;
     }
 
-    _scriptNamesByCommand[bindingName] = botScript->getScriptName();
+    _scriptNamesByCommand[timedBinding.getBindingName()] = botScript->getScriptName();
 
     _timedBindings[fileInfo.fileName()] << timedBinding;
 

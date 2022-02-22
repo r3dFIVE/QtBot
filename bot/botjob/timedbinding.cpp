@@ -31,33 +31,7 @@ TimedBinding::TimedBinding() {
 }
 
 TimedBinding::TimedBinding(const TimedBinding &other) {
-    _functionMapping = other._functionMapping;
-
-    _logger = other._logger;
-
-    _description = other._description;
-
-    _singleShot = other._singleShot;
-
-    _singleton = other._singleton;
-
-    _fireAfter = other._fireAfter;
-
-    _scriptName = other._scriptName;
-
-    _eventContext = other._eventContext;
-
-    _startedAt = other._startedAt;
-
-    _remainder = other._remainder;
-
-    _running = other._running;
-
-    _stoppedAt = other._stoppedAt;
-
-    _id = other._id;
-
-    _bindingName = other._bindingName;
+    copy(other);
 }
 
 TimedBinding
@@ -66,6 +40,13 @@ TimedBinding
         return *this;
     }
 
+    copy(other);
+
+    return *this;
+}
+
+void
+TimedBinding::copy(const TimedBinding &other) {
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;
@@ -93,8 +74,6 @@ TimedBinding
     _id = other._id;
 
     _bindingName = other._bindingName;
-
-    return *this;
 }
 
 QString

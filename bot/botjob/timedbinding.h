@@ -44,6 +44,7 @@ class TimedBinding : public IBinding
     Q_PROPERTY(EventContext context READ getEventContext WRITE setEventContext)
     Q_PROPERTY(qint64 fire_after READ getFireAfter WRITE setFireAfter)
 
+    void copy(const TimedBinding &other);
 public:
     static const QString CONTEXT;
     static const QString FIRE_AFTER;
