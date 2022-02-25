@@ -26,6 +26,7 @@
 #include "entitymanager.h"
 #include "eventhandler.h"
 #include "logging/logfactory.h"
+#include "qml/enums/htmltag.h"
 #include "payloads/embed.h"
 #include "payloads/embedfield.h"
 #include "qml/mongodb.h"
@@ -39,12 +40,16 @@
 #include "qml/httppart.h"
 #include "qml/httpresponse.h"
 #include "qml/tempfile.h"
+#include "qml/domattribute.h"
+#include "qml/domparser.h"
+#include "qml/domnode.h"
 
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int Bot::BOT_API_MAJOR_VERSION = 1;
 const int Bot::BOT_API_MINOR_VERSION = 0;
 const QString Bot::BOT_TYPE_IDENTIFIER = "BotScript";
 const QString Bot::FILE_OPEN_MODE_IDENTIFIER = "OpenMode";
+const QString Bot::HTML_TAG_TYPE_IDENTIFIER = "HtmlTag";
 const QString Bot::SQL_IDENTIFIER = "Sql";
 const QString Bot::NETWORK_REQUEST_IDENTIFIER = "NetworkRequest";
 const QString Bot::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
@@ -61,6 +66,9 @@ Bot::Bot() {
     qRegisterMetaType<MongoInsertOptions*>();
     qRegisterMetaType<SqlQuery>();
     qRegisterMetaType<SqlError*>();
+    qRegisterMetaType<DOMParser*>();
+    qRegisterMetaType<DOMNode*>();
+    qRegisterMetaType<DOMAttribute*>();
     qRegisterMetaType<File*>();
     qRegisterMetaType<HttpPart>();
     qRegisterMetaType<HttpMultiPart>();
@@ -88,6 +96,12 @@ Bot::Bot() {
                           BOT_API_MAJOR_VERSION,
                           BOT_API_MINOR_VERSION,
                           NETWORK_REQUEST_IDENTIFIER.toUtf8(),
+                          NO_CREATABLE_ENUM);
+
+    qmlRegisterUncreatableType<HtmlTag>(BOT_IMPORT_IDENTIFIER.toUtf8(),
+                          BOT_API_MAJOR_VERSION,
+                          BOT_API_MINOR_VERSION,
+                          HTML_TAG_TYPE_IDENTIFIER.toUtf8(),
                           NO_CREATABLE_ENUM);
 }
 

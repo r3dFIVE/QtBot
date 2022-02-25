@@ -56,20 +56,26 @@ class ScriptBuilder : public QObject
     void validateScripts();
     bool validateScriptCommandName(const QString &command, const QString &fileName);
     void addCoreCommands(GuildEntity &guildEntity);
-    void addCommandBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName);
-    void addGatewayBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName);
-    void addTimedBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName);
     void addQmlFactory(QSharedPointer<QQmlEngine> engine);
     void buildValidBotScripts(GuildEntity &guildEntity);
     void buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntity);
     void namingConflict(const QString &command, const QString &fileName);
     bool validateScriptName(const QString &scriptName, const QString &fileName);
 
+    template <class T>
+    T buildBinding(const T& t, BotScript* botScript) {
+            QString functionName = t.getFunctionMapping().first;
+            IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript);
+            T newBinding(t);
+            newBinding.setFunctionMapping(functionMapping);
+            return newBinding;
+    }
+
     void validate(const QFileInfo &fileInfo);
     bool validateScriptCommands(QSharedPointer<BotScript> botScript, const QFileInfo &fileInfo);
-    bool validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
-    bool validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
-    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QFileInfo &fileInfo);
+    bool validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &fileName);
+    bool validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &fileName);
+    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &fileName);
 public:
     ScriptBuilder(EventHandler *eventHandler);
 

@@ -3,22 +3,23 @@ QT += gui websockets sql qml xml xmlpatterns
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
 
-LIB_DIR = $$PWD/../lib
-XML2JSON_HEADERS = $$LIB_DIR/xml2json/include
-
-INCLUDEPATH += $$XML2JSON_HEADERS
+INCLUDEPATH += $$PWD/../lib/xml2json/include
 
 win32 {
     LIB_DIR = $$PWD/../lib
     BOOST_HEADERS=$$LIB_DIR/boost
     MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
     MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
+    GUMBO_LIB=$$LIB_DIR/gumbo-parser
 
     INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
     INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
     INCLUDEPATH += $$BOOST_HEADERS
+    INCLUDEPATH += $$GUMBO_LIB
 
     LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
+    LIBS += -L$$GUMBO_LIB -lgumbo
+
 } else {
     LIBS += -L/usr/local/lib -lmongocxx -lbsoncxx
     INCLUDEPATH += /usr/local/include/bsoncxx/v_noabi
@@ -94,6 +95,10 @@ HEADERS += \
     $$PWD/payloads/user.h \
     $$PWD/payloads/voicestate.h \
     $$PWD/botjob/botscript.h \
+    $$PWD/qml/domattribute.h \
+    $$PWD/qml/domnode.h \
+    $$PWD/qml/domparser.h \
+    $$PWD/qml/enums/htmltag.h \
     $$PWD/qml/enums/networkrequest.h \
     $$PWD/qml/enums/openmode.h \
     $$PWD/qml/enums/sql.h \
@@ -223,11 +228,13 @@ HEADERS += \
     $$PWD/util/mongoutils.h \
     $$PWD/util/serializationutils.h \
     $$PWD/util/settings.h \
-    $$PWD/entity/guildentity.h
+    $$PWD/entity/guildentity.h \
 
 DISTFILES += \
     $$PWD/readme.txt \
-    $$PWD/settings.ini
+    $$PWD/settings.ini \
+    $$PWD/util/xml2json/rapidxml/license.txt \
+    $$PWD/util/xml2json/rapidxml/manual.html
 
 SOURCES += \
     $$PWD/bot.cpp \
@@ -293,6 +300,9 @@ SOURCES += \
     $$PWD/payloads/voicestate.cpp \
     $$PWD/botjob/botscript.cpp \
     $$PWD/payloads/eventcontext.cpp \
+    $$PWD/qml/domattribute.cpp \
+    $$PWD/qml/domnode.cpp \
+    $$PWD/qml/domparser.cpp \
     $$PWD/qml/http.cpp \
     $$PWD/qml/httpmultipart.cpp \
     $$PWD/qml/httppart.cpp \

@@ -1,13 +1,11 @@
 #include "bindingfactory.h"
 
 
-TimedBinding
-BindingFactory::createTimedBinding(BotScript *botScript, const QJsonValue &binding) {
+void
+BindingFactory::build(TimedBinding &timedBinding, BotScript *botScript, const QJsonValue &binding) {
     QString functionName = binding[IBinding::FUNCTION].toString();
 
     QString bindingName = binding[TimedBinding::BINDING_NAME].toString();
-
-    TimedBinding timedBinding;
 
     timedBinding.setId(QUuid::createUuid().toString(QUuid::Id128));
 
@@ -25,24 +23,24 @@ BindingFactory::createTimedBinding(BotScript *botScript, const QJsonValue &bindi
         timedBinding.setSingleton(binding[TimedBinding::SINGLETON].toBool());
     }
 
+    if (binding[TimedBinding::FORCE_ENABLE].isBool()) {
+        timedBinding.setForceEnable(binding[TimedBinding::FORCE_ENABLE].toBool());
+    }
+
     timedBinding.setBindingName(bindingName);
 
     timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
     timedBinding.setDescription(binding[TimedBinding::DESCRIPTION].toString());
-
-    return timedBinding;
 }
 
-GatewayBinding
-BindingFactory::createGatewayBinding(BotScript *botScript, const QJsonValue &binding) {
+void
+BindingFactory::build(GatewayBinding &gatewayBinding, BotScript *botScript, const QJsonValue &binding) {
     QString bindingName = binding[GatewayBinding::BINDING_NAME].toString();
 
     QString gatewayEventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
 
     QString functionName = binding[GatewayBinding::FUNCTION].toString();
-
-    GatewayBinding gatewayBinding;
 
     gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript));
 
@@ -55,13 +53,10 @@ BindingFactory::createGatewayBinding(BotScript *botScript, const QJsonValue &bin
     if (binding[GatewayBinding::IGNORE_ADMIN].isBool()) {
         gatewayBinding.setIgnoreAdmin(binding[GatewayBinding::IGNORE_ADMIN].toBool());
     }
-
-    return gatewayBinding;
 }
 
-CommandBinding
-BindingFactory::createCommandBinding(BotScript *botScript, const QJsonValue &binding) {
-    CommandBinding commandBinding;
+void
+BindingFactory::build(CommandBinding &commandBinding, BotScript *botScript, const QJsonValue &binding) {
 
     QString command = binding[CommandBinding::COMMAND].toString();
 
@@ -80,7 +75,5 @@ BindingFactory::createCommandBinding(BotScript *botScript, const QJsonValue &bin
     if (binding[CommandBinding::IGNORE_ADMIN].isBool()) {
         commandBinding.setIgnoreAdmin(binding[CommandBinding::IGNORE_ADMIN].toBool());
     }
-
-    return commandBinding;
 }
 

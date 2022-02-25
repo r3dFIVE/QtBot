@@ -1,7 +1,7 @@
 #include "xmlquery.h"
 
 #include "util/serializationutils.h"
-#include "xml2json.hpp"
+
 
 bool
 XMLQuery::setFocusString(const QString &focus) {
@@ -60,10 +60,6 @@ XMLQuery::getJSON(const int spacing) {
 
     doc.setContent(result);
 
-    std::string xml_str = doc.toString(spacing).toStdString();
-
-    std::string json_str = xml2json(xml_str.c_str());
-
-    return SerializationUtils::toQJsonObject(QString::fromStdString(json_str));
+    return SerializationUtils::xmlToQJsonObject(doc.toString(spacing));
 }
 

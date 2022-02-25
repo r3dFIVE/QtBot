@@ -22,6 +22,7 @@
 #include "mongodeleteoptions.h"
 #include "mongoupdateoptions.h"
 #include "qmlfactory.h"
+#include "domparser.h"
 
 #include <QQmlEngine>
 #include <QVariantMap>
@@ -98,6 +99,9 @@ QmlFactory::createObject(const QString& typeName, const QVariantMap& arguments) 
 
     } else if (typeName == "XMLQuery") {
         return new XMLQuery();
+
+    } else if (typeName == "DOMParser") {
+        return new DOMParser();
     }
 
     return nullptr;
@@ -146,6 +150,8 @@ QmlFactory::buildQmlFactory(QSharedPointer<QQmlEngine> engine, const DatabaseCon
     engine->evaluate("function MongoUpdateOptions() { return _factory.createObject(\"MongoUpdateOptions\", {}); }");
 
     engine->evaluate("function MongoDeleteOptions() { return _factory.createObject(\"MongoDeleteOptions\", {}); }");
+
+    engine->evaluate("function DOMParser() { return _factory.createObject(\"DOMParser\", {}); }");
 }
 
 QObject*

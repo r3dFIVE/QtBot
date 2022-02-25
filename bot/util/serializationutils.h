@@ -39,6 +39,7 @@ struct SerializationUtils
     static void fromQByteArray(JsonSerializable &target, const QByteArray &source);
     static void fromJsonDocument(JsonSerializable &target, const QJsonDocument &source);
     static void fromVariant(JsonSerializable &target, const QVariant &source);
+    static QJsonObject xmlToQJsonObject(const QString &xml);
 };
 
 #endif // SERIALIZATIONUTILS_H

@@ -21,7 +21,7 @@
 #include "bindingfactory.h"
 #include "scriptbuilder.h"
 
-
+#include <functional>
 #include <QQmlComponent>
 #include <QMutableListIterator>
 #include <QSharedPointer>
@@ -83,7 +83,7 @@ ScriptBuilder::validateScripts() {
 
     _functionNameByEventNameByScriptName.clear();
 
-    for (auto binding : CoreCommands::buildCoreCommandBindings(*_eventHandler, GuildEntity::DEFAULT_GUILD_ID)) {
+    for (auto& binding : CoreCommands::buildCoreCommandBindings(*_eventHandler, GuildEntity::DEFAULT_GUILD_ID)) {
         _coreCommandNames << binding.getCommandName();
     }
 
@@ -91,7 +91,7 @@ ScriptBuilder::validateScripts() {
 
     directory.setFilter(QDir::NoDotAndDotDot | QDir::Files);
 
-    for (QFileInfo fileInfo : directory.entryInfoList()) {
+    for (QFileInfo& fileInfo : directory.entryInfoList()) {
 
         if (isBotScript(fileInfo.absoluteFilePath())) {
             _logger->debug(QString("Validating bot script: %1").arg(fileInfo.fileName()));
@@ -128,12 +128,14 @@ ScriptBuilder::validate(const QFileInfo &fileInfo) {
         return;
     }
 
-    if (!validateScriptName(botScript->getScriptName(), fileInfo.absoluteFilePath())) {
+    QString fileName = fileInfo.fileName();
+
+    if (!validateScriptName(botScript->getScriptName(), fileName)) {
         return;
     }
 
-    for (QString command : botScript->getScriptCommands().keys()) {
-        if (!validateScriptCommandName(command, fileInfo.absoluteFilePath())) {
+    for (QString& command : botScript->getScriptCommands().keys()) {
+        if (!validateScriptCommandName(command, fileName)) {
             return;
         }
     }
@@ -146,17 +148,17 @@ ScriptBuilder::validate(const QFileInfo &fileInfo) {
         QString eventType = binding[IBinding::BINDING_TYPE].toString();
 
         if (QString::compare(eventType, IBinding::BINDING_TYPE_COMMAND, Qt::CaseInsensitive) == 0) {
-            if (!validateCommandBinding(botScript, binding, fileInfo)) {
+            if (!validateCommandBinding(botScript, binding, fileName)) {
                 return;
             }
 
         } else if (QString::compare(eventType, IBinding::BINDING_TYPE_GATEWAY, Qt::CaseInsensitive) == 0) {
-            if (!validateGatewayBinding(botScript, binding, fileInfo)) {
+            if (!validateGatewayBinding(botScript, binding, fileName)) {
                 return;
             }
 
         } else if (QString::compare(eventType, IBinding::BINDING_TYPE_TIMED, Qt::CaseInsensitive) == 0) {
-            if (!validateTimedBinding(botScript, binding, fileInfo)) {
+            if (!validateTimedBinding(botScript, binding, fileName)) {
                 return;
             }
 
@@ -199,11 +201,27 @@ ScriptBuilder::validateScriptCommands(QSharedPointer<BotScript> botScript, const
 bool
 ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript,
                                       const QJsonValue &binding,
-                                      const QFileInfo &fileInfo) {
+                                      const QString &fileName) {
 
-    CommandBinding commandBinding = BindingFactory::createCommandBinding(botScript.data(), binding);
+    if (!binding[CommandBinding::ADMIN_ONLY].isUndefined()
+            && !binding[CommandBinding::ADMIN_ONLY].isBool()) {
+        _logger->debug(QString("admin_only is not a valid boolean value"));
 
-    if (!validateScriptCommandName(commandBinding.getCommandName(), fileInfo.absoluteFilePath())) {
+        return false;
+    }
+
+    if (!binding[CommandBinding::IGNORE_ADMIN].isUndefined()
+            && !binding[CommandBinding::IGNORE_ADMIN].isBool()) {
+        _logger->debug(QString("ignore_admin is not a valid boolean value"));
+
+        return false;
+    }
+
+    CommandBinding commandBinding;
+
+    BindingFactory::build(commandBinding, botScript.data(), binding);
+
+    if (!validateScriptCommandName(commandBinding.getCommandName(), fileName)) {
         return false;
     }
 
@@ -213,7 +231,7 @@ ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript,
 
     _scriptNamesByCommand[commandBinding.getCommandName()] = botScript->getScriptName();
 
-    _commandBindings[fileInfo.fileName()] << commandBinding;
+    _commandBindings[fileName] << commandBinding;
 
     return true;
 }
@@ -221,11 +239,20 @@ ScriptBuilder::validateCommandBinding(QSharedPointer<BotScript> botScript,
 bool
 ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript,
                                       const QJsonValue &binding,
-                                      const QFileInfo &fileInfo) {
+                                      const QString &fileName) {
 
-    GatewayBinding gatewayBinding = BindingFactory::createGatewayBinding(botScript.data(), binding);
+    if (!binding[GatewayBinding::IGNORE_ADMIN].isUndefined()
+            && !binding[GatewayBinding::IGNORE_ADMIN].isBool()) {
+        _logger->debug(QString("ignore_admin is not a valid boolean value"));
 
-    if (!validateScriptCommandName(gatewayBinding.getBindingName(), fileInfo.absoluteFilePath())) {
+        return false;
+    }
+
+    GatewayBinding gatewayBinding;
+
+    BindingFactory::build(gatewayBinding, botScript.data(), binding);
+
+    if (!validateScriptCommandName(gatewayBinding.getBindingName(), fileName)) {
         return false;
     }
 
@@ -237,7 +264,7 @@ ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript,
         _logger->warning(QString("Gateway event \"%1\" has already been registered to function in script: %3... ")
                          .arg(eventName)
                          .arg(functionName)
-                         .arg(fileInfo.absoluteFilePath()));
+                         .arg(fileName));
 
         return false;
     }
@@ -248,7 +275,7 @@ ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript,
 
     _functionNameByEventNameByScriptName[botScript->getScriptName()][eventName] = functionName;
 
-    _gatewayBindings[fileInfo.fileName()] << gatewayBinding;
+    _gatewayBindings[fileName] << gatewayBinding;
 
     return true;
 }
@@ -256,22 +283,41 @@ ScriptBuilder::validateGatewayBinding(QSharedPointer<BotScript> botScript,
 bool
 ScriptBuilder::validateTimedBinding(QSharedPointer<BotScript> botScript,
                                     const QJsonValue &binding,
-                                    const QFileInfo &fileInfo) {
+                                    const QString &fileName) {
 
-    TimedBinding timedBinding = BindingFactory::createTimedBinding(botScript.data(), binding);
+    if (!binding[TimedBinding::SINGLE_SHOT].isUndefined() && !binding[TimedBinding::SINGLE_SHOT].isBool()) {
+        _logger->debug(QString("single_shot is not a valid boolean value"));
 
-    if (!validateScriptCommandName(timedBinding.getBindingName(), fileInfo.absoluteFilePath())) {
         return false;
     }
 
+    if (!binding[TimedBinding::SINGLETON].isUndefined() && !binding[TimedBinding::SINGLETON].isBool()) {
+        _logger->debug(QString("singleton is not a valid boolean value"));
+
+        return false;
+    }
+
+    if (!binding[TimedBinding::FORCE_ENABLE].isUndefined() && !binding[TimedBinding::FORCE_ENABLE].isBool()) {
+        _logger->debug(QString("force_enable is not a valid boolean value"));
+
+        return false;
+    }
+
+    TimedBinding timedBinding;
+
+    BindingFactory::build(timedBinding, botScript.data(), binding);
+
+    if (!validateScriptCommandName(timedBinding.getBindingName(), fileName)) {
+        return false;
+    }
 
     if (!timedBinding.isValid(*botScript->metaObject())) {
-            return false;
-    }
+        return false;
+    }    
 
     _scriptNamesByCommand[timedBinding.getBindingName()] = botScript->getScriptName();
 
-    _timedBindings[fileInfo.fileName()] << timedBinding;
+    _timedBindings[fileName] << timedBinding;
 
     return true;
 }
@@ -281,7 +327,7 @@ ScriptBuilder::addCoreCommands(GuildEntity &guildEntity) {
     QMap<QSharedPointer<CoreCommand>, CommandBinding> coreCommandMappings
             = CoreCommands::buildCoreCommandBindings(*_eventHandler, guildEntity.getId());
 
-    for (auto key : coreCommandMappings.keys()) {
+    for (auto& key : coreCommandMappings.keys()) {
         guildEntity << coreCommandMappings[key];
 
         guildEntity << key;
@@ -290,7 +336,7 @@ ScriptBuilder::addCoreCommands(GuildEntity &guildEntity) {
 
 void
 ScriptBuilder::buildValidBotScripts(GuildEntity &guildEntity) {
-    for (QFileInfo fileInfo : _validScripts) {
+    for (QFileInfo& fileInfo : _validScripts) {
         _logger->info(QString("Loading bot script: %1 for guild_id: %2")
                       .arg(fileInfo.fileName())
                       .arg(guildEntity.getId()));
@@ -329,11 +375,21 @@ ScriptBuilder::buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntit
 
     addCoreCommands(guildEntity);
 
-    addCommandBindings(guildEntity, botScript, fileInfo.fileName());
+    for (auto& binding : _commandBindings[fileInfo.fileName()]) {
+        guildEntity << buildBinding(binding, botScript.data());
+    }
 
-    addGatewayBindings(guildEntity, botScript, fileInfo.fileName());
+    for (auto& binding : _gatewayBindings[fileInfo.fileName()]) {
+        guildEntity << buildBinding(binding, botScript.data());
+    }
 
-    addTimedBindings(guildEntity, botScript, fileInfo.fileName());
+    for (auto& binding : _timedBindings[fileInfo.fileName()]) {
+        if (binding.isSingleton() && guildEntity.getId() != GuildEntity::DEFAULT_GUILD_ID) {
+            continue;
+        }
+
+        guildEntity << buildBinding(binding, botScript.data());
+    }
 
     botScript->setGuildId(guildEntity.getId());
 
@@ -361,58 +417,6 @@ ScriptBuilder::validateScriptName(const QString &scriptName, const QString &file
     }
 
     return isValid;
-}
-
-void
-ScriptBuilder::addCommandBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName) {
-    for (auto binding : _commandBindings[fileName]) {
-
-        QString functionName = binding.getFunctionMapping().first;
-
-        IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript.data());
-
-        CommandBinding newBinding(binding);
-
-        newBinding.setFunctionMapping(functionMapping);
-
-        guildEntity << newBinding;
-    }    
-}
-
-void
-ScriptBuilder::addGatewayBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName) {
-    for (auto binding : _gatewayBindings[fileName]) {
-
-        QString functionName = binding.getFunctionMapping().first;
-
-        IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript.data());
-
-        GatewayBinding newBinding(binding);
-
-        newBinding.setFunctionMapping(functionMapping);
-
-        guildEntity << newBinding;
-    }
-}
-
-void
-ScriptBuilder::addTimedBindings(GuildEntity &guildEntity, QSharedPointer<BotScript> botScript, const QString &fileName) {
-    for (auto binding : _timedBindings[fileName]) {
-
-        if (binding.isSingleton() && guildEntity.getId() != GuildEntity::DEFAULT_GUILD_ID) {
-            continue;
-        }
-
-        QString functionName = binding.getFunctionMapping().first;
-
-        IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript.data());
-
-        TimedBinding newBinding(binding);
-
-        newBinding.setFunctionMapping(functionMapping);
-
-        guildEntity << newBinding;
-    }
 }
 
 bool

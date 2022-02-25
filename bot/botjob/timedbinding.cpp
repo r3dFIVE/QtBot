@@ -25,6 +25,7 @@ const QString TimedBinding::CONTEXT = "context";
 const QString TimedBinding::FIRE_AFTER = "fire_after";
 const QString TimedBinding::SINGLE_SHOT = "single_shot";
 const QString TimedBinding::SINGLETON = "singleton";
+const QString TimedBinding::FORCE_ENABLE = "force_enable";
 
 TimedBinding::TimedBinding() {
     _logger = LogFactory::getLogger();
@@ -74,6 +75,8 @@ TimedBinding::copy(const TimedBinding &other) {
     _id = other._id;
 
     _bindingName = other._bindingName;
+
+    _forceEnable = other._forceEnable;
 }
 
 QString
@@ -124,6 +127,16 @@ TimedBinding::setEnabled(const bool enabled) {
 bool
 TimedBinding::isEnabled() const {
     return _enabled;
+}
+
+bool
+TimedBinding::forceEnable() const {
+    return _forceEnable;
+}
+
+void
+TimedBinding::setForceEnable(bool forceEnable) {
+    _forceEnable = forceEnable;
 }
 
 void
