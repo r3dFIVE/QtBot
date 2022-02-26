@@ -21,9 +21,10 @@ win32 {
     LIBS += -L$$GUMBO_LIB -lgumbo
 
 } else {
-    LIBS += -L/usr/local/lib -lmongocxx -lbsoncxx
+    LIBS += -L/usr/local/lib -lmongocxx -lbsoncxx -lgumbo
     INCLUDEPATH += /usr/local/include/bsoncxx/v_noabi
     INCLUDEPATH += /usr/local/include/mongocxx/v_noabi
+
 }
 
 
