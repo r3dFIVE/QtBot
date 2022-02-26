@@ -29,8 +29,6 @@ SqlQuery::SqlQuery(const SqlQuery &other, QObject *parent) : QObject(parent) {
     }
 
     _query = other._query;
-
-   setParent(other.parent());
 }
 
 

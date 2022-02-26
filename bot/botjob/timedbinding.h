@@ -32,6 +32,7 @@ class TimedBinding : public IBinding
     bool _running = true;
     bool _singleShot = true;
     bool _singleton = false;
+    bool _forceEnable = false;
     EventContext _eventContext;    
     qint64 _remainder = 0;
     int _fireAfter = 0;
@@ -50,6 +51,7 @@ public:
     static const QString FIRE_AFTER;
     static const QString SINGLE_SHOT;
     static const QString SINGLETON;
+    static const QString FORCE_ENABLE;
 
     TimedBinding();
     TimedBinding(const TimedBinding &other);
@@ -63,6 +65,7 @@ public:
     bool isSingleton() const;
     bool isRunning() const;
     bool isEnabled() const;
+    bool forceEnable() const;
     qint64 getFireAfter() const;
     EventContext getEventContext() const;
     qint64 getRemaining();
@@ -76,6 +79,7 @@ public:
     void setScriptName(const QString &scriptName);
     void setSingleShot(bool singleShot);
     void setSingleton(bool singleton);
+    void setForceEnable(bool forceEnable);
     void setEventContext(const EventContext &sourcePayload);
     void setId(const QString &id);
     void start();

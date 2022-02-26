@@ -26,6 +26,9 @@
 #include <QCommandLineParser>
 #include <QDir>
 
+#include <qml/domnode.h>
+#include <qml/domparser.h>
+
 
 #include "bot.h"
 

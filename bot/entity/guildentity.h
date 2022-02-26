@@ -65,7 +65,7 @@ class GuildEntity : public QObject
                      const QString &name,
                      const QString &targetId,
                      CommandRestrictions::RestrictionState state);
-    bool isTimedJobEnabled(const QString &bindingName);
+    bool isTimedJobEnabled(const TimedBinding &binding);
 
     void updateTimedBindingState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
                                  const QString &bindingName,
@@ -118,7 +118,7 @@ public:
     void addRole(const Role &role);
     void addCommandBinding(const CommandBinding &binding);
     void addGatewayBinding(const GatewayBinding &binding);
-    void addTimedBinding(TimedBinding &binding, const bool validate = false);
+    void addTimedBinding(TimedBinding &binding, const bool checkState = false);
     void addRegisteredScript(QSharedPointer<IBotJob> script);
     void clearRegisteredScripts();
     void setId(const QString &id);

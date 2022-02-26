@@ -22,6 +22,9 @@
 
 #include <QMetaProperty>
 
+#include "xml2json.hpp"
+#include "logging/logfactory.h"
+
 void
 SerializationUtils::readFromJson(JsonSerializable &target, const QJsonObject &source) {
     QMetaObject metaObject = *target.metaObject();
@@ -151,4 +154,17 @@ void
 SerializationUtils::fromVariant(JsonSerializable &target, const QVariant &source) {
     QJsonObject object = QJsonObject::fromVariantMap(source.toMap());
     readFromJson(target, object);
+}
+
+QJsonObject
+SerializationUtils::xmlToQJsonObject(const QString &xml) {
+    std::string json_str;
+
+    try {
+        json_str = xml2json(xml.toStdString().c_str());
+    } catch (rapidxml::parse_error &e) {
+        LogFactory::getLogger()->debug(QString("There was an error converting xml2json: %1").arg(e.what()));
+    }
+
+    return toQJsonObject(QString::fromStdString(json_str));
 }

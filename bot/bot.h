@@ -44,12 +44,13 @@ class Bot : public QObject
     Logger* _logger;
     ScriptBuilder *_scriptBuilder;
 
-public:
+public:    
     static const QString BOT_IMPORT_IDENTIFIER;
     static const QString BOT_TYPE_IDENTIFIER;
     static const int BOT_API_MINOR_VERSION;
     static const int BOT_API_MAJOR_VERSION;    
     static const QString FILE_OPEN_MODE_IDENTIFIER;
+    static const QString HTML_TAG_TYPE_IDENTIFIER;
     static const QString NETWORK_REQUEST_IDENTIFIER;
     static const QString SQL_IDENTIFIER;
     static const QString NO_CREATABLE_ENUM;

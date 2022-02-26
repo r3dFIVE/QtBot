@@ -11,14 +11,17 @@ class BindingFactory : public QObject
 {
     Q_OBJECT
 
+    static Logger *LOGGER;
+
 public:
     BindingFactory(QObject *parent = nullptr) = delete;
     BindingFactory(const BindingFactory &other) = delete;
 
-    static TimedBinding createTimedBinding(BotScript *botScript, const QJsonValue &binding);
-    static GatewayBinding createGatewayBinding(BotScript *botScript, const QJsonValue &binding);
-    static CommandBinding createCommandBinding(BotScript *botScript, const QJsonValue &binding);
+    static void build(TimedBinding &timedBinding, BotScript *botScript, const QJsonValue &binding);
+    static void build(GatewayBinding &gatewayBinding, BotScript *botScript, const QJsonValue &binding);
+    static void build(CommandBinding &commandBinding, BotScript *botScript, const QJsonValue &binding);
 
+    static bool validateTimedBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
 signals:
 
 };
