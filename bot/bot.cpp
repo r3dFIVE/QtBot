@@ -22,7 +22,9 @@
 
 #include <QDir>
 #include <QMetaEnum>
+#include <QThreadPool>
 
+#include "botjob/scriptmanager.h"
 #include "entitymanager.h"
 #include "eventhandler.h"
 #include "logging/logfactory.h"
@@ -53,6 +55,7 @@ const QString Bot::HTML_TAG_TYPE_IDENTIFIER = "HtmlTag";
 const QString Bot::SQL_IDENTIFIER = "Sql";
 const QString Bot::NETWORK_REQUEST_IDENTIFIER = "NetworkRequest";
 const QString Bot::NO_CREATABLE_ENUM = "Cannot Instantiate Enums";
+const QString Bot::GOODBYE = "Shutting down, have nice day! Beep Boop.";
 
 Bot::Bot() {
     qRegisterMetaType<QSharedPointer<TimedBinding> >();
@@ -105,6 +108,31 @@ Bot::Bot() {
                           NO_CREATABLE_ENUM);
 }
 
+Bot::~Bot() {
+    //_logger->trace("Attemping graceful shutdown...");
+
+    //_logger->trace("Shutting down Gateway thread...");
+    _gatewayThread.quit();
+
+    //_logger->trace("Shutting down Entity Manager thread...");
+    _entityManagerThread.quit();
+
+    while (QThreadPool::globalInstance()->activeThreadCount()) {
+        //_logger->trace(QString("Waiting on %1 Bot Scripts to finish...")
+                       //.arg(QThreadPool::globalInstance()->activeThreadCount()));
+
+        QThreadPool::globalInstance()->waitForDone(250);
+
+        qApp->processEvents();
+    }
+
+    //_logger->trace("Shutting down Gateway thread...");
+    _eventHandlerThread.quit();
+
+    //_logger->trace("Freeing loaded BotScripts...");
+    delete _scriptManager;
+}
+
 void
 Bot::run() {
     Gateway *gateway = new Gateway();
@@ -117,7 +145,7 @@ Bot::run() {
 
     EventHandler *eventHandler = new EventHandler();
 
-    _scriptBuilder = new ScriptBuilder(eventHandler);
+    _scriptManager = new ScriptManager(eventHandler);
 
     eventHandler->moveToThread(&_eventHandlerThread);
 
@@ -129,7 +157,7 @@ Bot::run() {
 
     connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
 
-    connect(_scriptBuilder, &ScriptBuilder::guildReady, eventHandler, &EventHandler::guildReady);
+    connect(_scriptManager, &ScriptManager::guildReady, eventHandler, &EventHandler::guildReady);
 
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
 
@@ -141,11 +169,13 @@ Bot::run() {
 
     connect(gateway, &Gateway::defaultGuildOnline, entityManager, &EntityManager::initGuild);
 
-    connect(eventHandler, &EventHandler::reloadScripts, _scriptBuilder, &ScriptBuilder::buildScripts);
+    connect(eventHandler, &EventHandler::reloadScripts, _scriptManager, &ScriptManager::buildScripts);
 
-    connect(entityManager, &EntityManager::guildInitialized, _scriptBuilder, &ScriptBuilder::buildScripts);
+    connect(entityManager, &EntityManager::guildInitialized, _scriptManager, &ScriptManager::buildScripts);
 
     connect(&_entityManagerThread, &QThread::started, entityManager, &EntityManager::init);
+
+    connect(&_entityManagerThread, &QThread::finished, entityManager, &QObject::deleteLater);
 
     _eventHandlerThread.start();
 

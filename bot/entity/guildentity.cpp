@@ -416,26 +416,6 @@ GuildEntity::setId(const QString &id) {
 }
 
 void
-GuildEntity::addRegisteredScript(QSharedPointer<IBotJob> script) {
-    _registeredScripts << script;
-}
-
-void
-GuildEntity::clearRegisteredScripts() {
-    _registeredScripts.clear();
-
-    _timedBindings.clear();
-
-    _commandBindings.clear();
-
-    _gatewayBindings.clear();
-
-    _disabledTimedBindings.clear();
-
-    _gatewayBindingsByEventName.clear();
-}
-
-void
 GuildEntity::setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand) {
     _commandNamesByScriptName.clear();
 

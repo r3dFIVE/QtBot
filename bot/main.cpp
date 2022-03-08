@@ -25,16 +25,24 @@
 #include <QDebug>
 #include <QCommandLineParser>
 #include <QDir>
-
-#include <qml/domnode.h>
-#include <qml/domparser.h>
-
+#include <csignal>
 
 #include "bot.h"
+
+void
+sigHandler(int s) {
+    qDebug() << Bot::GOODBYE;
+
+    QCoreApplication::quit();
+}
 
 
 int main(int argc, char *argv[])
 {
+    std::signal(SIGINT, sigHandler);
+
+    std::signal(SIGTERM, sigHandler);
+
     QCoreApplication app(argc, argv);
 
     QCoreApplication::setApplicationName("QtBot");

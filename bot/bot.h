@@ -27,11 +27,11 @@
 
 #include "logging/logfactory.h"
 #include "gateway.h"
-#include "botjob/scriptbuilder.h"
+#include "botjob/scriptmanager.h"
 #include "util/settings.h"
 
 class GuildEntity;
-class ScriptBuilder;
+class ScriptManager;
 
 class Bot : public QObject
 {
@@ -42,7 +42,7 @@ class Bot : public QObject
     QThread _entityManagerThread;
 
     Logger* _logger;
-    ScriptBuilder *_scriptBuilder;
+    ScriptManager *_scriptManager;
 
 public:    
     static const QString BOT_IMPORT_IDENTIFIER;
@@ -54,9 +54,11 @@ public:
     static const QString NETWORK_REQUEST_IDENTIFIER;
     static const QString SQL_IDENTIFIER;
     static const QString NO_CREATABLE_ENUM;
+    static const QString GOODBYE;
 
     Bot();
     void run();
+    ~Bot();
 };
 
 #endif // BOT_H
