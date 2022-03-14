@@ -69,10 +69,6 @@ public:
         _databaseContext = context;
     }
 
-    ~MongoManager() {
-        _logger->info("DELETE MONGOMANAGER");
-    }
-
     void initGuild(QSharedPointer<GuildEntity> guildEntity) override;
     void init() override;
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions) override;
