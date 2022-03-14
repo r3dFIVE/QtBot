@@ -18,30 +18,64 @@
 
  */
 
-#include "logcontext.h"
 #include "logworker.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QRegularExpression>
+#include <iostream>
 
+#include "util/settings.h"
 
-LogWorker::LogWorker(const LogContext &ctx, QObject *parent)
-    : QObject(parent), _ctx(ctx) {
+LogWorker::LogWorker(QObject *parent) : QObject(parent) {
+    _maxFileSize = Settings::logFileSize();
 
-    if (_ctx.fileLoggingEnabled(LogContext::LogLevel::OFF)) {
+    _maxRolloverFiles = Settings::logRolloverCount();
+
+    _directoryPath = Settings::logFileDirectory();
+
+    _fileName = Settings::logFileName();
+
+    _consoleLogLevel = Logger::LogLevel(Settings::consoleLogLevel());
+
+    _fileLogLevel = Logger::LogLevel(Settings::fileLogLevel());
+
+    if (fileLoggingEnabled(Logger::OFF)) {
         initLogFile();
     }
 }
 
+QString
+LogWorker::getPathWithName() const {
+    return _directoryPath + "/" + _fileName;
+}
+
+bool
+LogWorker::fileLoggingEnabled(Logger::LogLevel level) {
+    return _fileLogLevel >= level;
+}
+
+bool
+LogWorker::consoleLoggingEnabled(Logger::LogLevel level) {
+    return _consoleLogLevel >= level;
+}
+
+bool
+LogWorker::loggingEnabled() {
+    return _consoleLogLevel != Logger::OFF || _fileLogLevel != Logger::OFF;
+}
+
 void
 LogWorker::initLogFile() {
-    QDir logDir(_ctx.directoryPath);
+    QDir logDir(_directoryPath);
+
     if (!logDir.exists()) {
         logDir.mkdir(".");
     }
 
-    _logFile.setFileName(_ctx.getPathWithName());
+    _logFile.setFileName(getPathWithName());
+
     if (!_logFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
         disableFileLogging();
 
@@ -53,20 +87,20 @@ LogWorker::initLogFile() {
 
 void
 LogWorker::disableFileLogging() {
-    qDebug() << "Error opening " + _ctx.fileName;
+    qDebug() << "Error opening " + _fileName;
 
     qDebug() << "Disabling file logging.";
 
-    _ctx.fileLogLevel = LogContext::LogLevel::OFF;
+    _fileLogLevel = Logger::LogLevel::OFF;
 }
 
 void
 LogWorker::checkLogFile() {
-    if (_ctx.maxFileSize == 0) {
+    if (_maxFileSize == 0) {
         return;
     }
 
-    if (_logFile.size() > _ctx.maxFileSize) {
+    if (_logFile.size() > _maxFileSize) {
         rolloverLog();
     }
 }
@@ -75,16 +109,16 @@ void
 LogWorker::rolloverLog() {
     _logFile.close();
 
-    QDir logDir(_ctx.directoryPath);
+    QDir logDir(_directoryPath);
 
     QMap<int, QStringList> logNameByNumber;
 
-    int maxFilesRegex = QString::number(_ctx.maxRolloverFiles).length();
+    int maxFilesRegex = QString::number(_maxRolloverFiles).length();
 
     for ( auto entry : logDir.entryList()) {
-        QRegularExpression logExpression(QString("^%1$").arg(_ctx.fileName));
+        QRegularExpression logExpression(QString("^%1$").arg(_fileName));
 
-        QRegularExpression logWithNumberExpression(QString("^%1.[0-9]{1,%2}$").arg(_ctx.fileName).arg(maxFilesRegex));
+        QRegularExpression logWithNumberExpression(QString("^%1.[0-9]{1,%2}$").arg(_fileName).arg(maxFilesRegex));
 
         if (logExpression.match(entry).hasMatch() || logWithNumberExpression.match(entry).hasMatch()) {
             QStringList logTokens = entry.split(".");
@@ -116,7 +150,7 @@ LogWorker::rolloverLog() {
 
         QString fullFileName = logTokens.size() > 1 ? partialFileName + "." + logTokens.back() : partialFileName;
 
-        QFile existingLogFile(_ctx.directoryPath + "/" + fullFileName);
+        QFile existingLogFile(_directoryPath + "/" + fullFileName);
 
         if (!existingLogFile.open(QIODevice::ReadWrite | QIODevice::ExistingOnly)) {
             qDebug() << "Cant open file for renaming.";
@@ -139,10 +173,10 @@ LogWorker::rolloverLog() {
             newFileName += "." + QString::number(++logNumber);
         }
 
-        if (logNumber > _ctx.maxRolloverFiles) {
+        if (logNumber > _maxRolloverFiles) {
             existingLogFile.remove();
         } else {
-            existingLogFile.rename(_ctx.directoryPath + "/" + newFileName);
+            existingLogFile.rename(_directoryPath + "/" + newFileName);
 
             existingLogFile.close();
         }
@@ -154,21 +188,25 @@ LogWorker::rolloverLog() {
 }
 
 void
-LogWorker::logEvent(LogContext::LogLevel level, QString message) {
-    if (_ctx.loggingEnabled()) {
+LogWorker::logEvent(Logger::LogLevel level, QString message, QString loggerName) {
+    if (loggingEnabled()) {
         message += "\n";
 
         QString logLevel = QVariant::fromValue(level).toString();
 
         QString dateTime = QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz");
 
-        QString logString = QString("[%1][%2]: %3").arg(dateTime).arg(logLevel).arg(message);
+        QString logString = QString("[%1]%2[%3]: %4")
+                .arg(dateTime)
+                .arg(loggerName)
+                .arg(logLevel)
+                .arg(message);
 
-        if (_ctx.consoleLoggingEnabled(level)) {
-            fprintf(stderr, "%s", logString.toUtf8().data());
+        if (consoleLoggingEnabled(level)) {
+            std::cerr << logString.toStdString();
         }
 
-        if (_ctx.fileLoggingEnabled(level)) {
+        if (fileLoggingEnabled(level)) {
             checkLogFile();
 
             _logFile.write(logString.toUtf8().data());

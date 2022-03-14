@@ -18,13 +18,16 @@ class MongoUpdateOptions : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
     mongocxx::options::update _updateOptions;
 
     static const QString BYPASS_DOCUMENT_VALIDATION;
     static const QString COLLATION;
     static const QString UPSERT;
     static const QString HINT;
+
+    static Logger* getLogger() {
+        return LogFactory::getLogger("MongoUpdateOptions");
+    }
 
 public:
     MongoUpdateOptions(QObject *parent = nullptr) : QObject(parent) {}
@@ -33,7 +36,7 @@ public:
         QString ptrStr = QString("0x%1").arg((quintptr)this,
                             QT_POINTER_SIZE * 2, 16, QChar('0'));
 
-        _logger->trace(QString("Destroyed MongoUpdateOptions(%1)").arg(ptrStr));
+        getLogger()->trace(QString("Destroyed MongoUpdateOptions(%1)").arg(ptrStr));
     }
 
     Q_INVOKABLE MongoUpdateOptions& operator=(const MongoUpdateOptions &other);

@@ -20,39 +20,39 @@
 
 #include "logfactory.h"
 
-#include <QVariant>
+#include <QThread>
 
-Logger* LogFactory::_logger = nullptr;
-
-LogFactory::LogFactory() { }
-
-LogFactory::~LogFactory() { delete _logger; }
+LogWorker *LogFactory::_worker = nullptr;
+QHash<QString, Logger*> LogFactory::_loggers = QHash<QString, Logger*>();
 
 Logger*
-LogFactory::getLogger() {
-    if (_logger == nullptr) {
-        init();
+LogFactory::getLogger(QObject *parent) {
+    return getLogger(parent->metaObject()->className());
+}
+
+Logger*
+LogFactory::getLogger(QString loggerName) {
+    if (!_loggers.contains(loggerName)) {
+        Logger *logger = new Logger(loggerName);
+
+        QObject::connect(logger, &Logger::logEvent, _worker, &LogWorker::logEvent);
+
+        _loggers[loggerName] = logger;
     }
 
-    return _logger;
+    return _loggers[loggerName];
 }
 
 void
-LogFactory::init() {
-
-    LogContext ctx;
-
-    ctx.maxFileSize = Settings::logFileSize();
-
-    ctx.maxRolloverFiles = Settings::logRolloverCount();
-
-    ctx.directoryPath = Settings::logFileDirectory();
-
-    ctx.fileName = Settings::logFileName();
-
-    ctx.consoleLogLevel = LogContext::LogLevel(Settings::consoleLogLevel());
-
-    ctx.fileLogLevel = LogContext::LogLevel(Settings::fileLogLevel());
-
-    _logger = new Logger(ctx);
+LogFactory::init(LogWorker *worker) {
+    _worker = worker;
 }
+
+void
+LogFactory::cleanup() {
+    for (Logger *logger : _loggers) {
+        delete logger;
+    }
+}
+
+

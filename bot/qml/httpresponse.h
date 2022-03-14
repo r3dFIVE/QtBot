@@ -13,7 +13,7 @@ class HttpResponse : public QObject
 
     Q_PROPERTY(QJsonArray object READ object CONSTANT)
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     QString _contentType;
     QString _responseText;
     int _statusCode = 0;

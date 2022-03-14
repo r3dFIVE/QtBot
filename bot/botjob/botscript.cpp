@@ -34,8 +34,6 @@ QString BotScript::_botId = QString();
 QString BotScript::_botName = QString();
 
 BotScript::BotScript() {
-    _logger = LogFactory::getLogger();
-
     _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
 }
 
@@ -96,6 +94,8 @@ BotScript::findFunctionMapping(const QString &command) const {
 
 void
 BotScript::setScriptName(const QString &scriptName) {
+    _logger = LogFactory::getLogger(scriptName);
+
     _scriptName = scriptName;
 }
 

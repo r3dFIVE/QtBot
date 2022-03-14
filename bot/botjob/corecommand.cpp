@@ -22,7 +22,7 @@
 
 void
 CoreCommand::execute(const QByteArray &command, const EventContext &context) {
-    LogFactory::getLogger()->trace(QString("Executing core command: %1").arg(QString(command)));
+    LogFactory::getLogger(this)->trace(QString("Executing core command: %1").arg(QString(command)));
 
     _command(context);
 

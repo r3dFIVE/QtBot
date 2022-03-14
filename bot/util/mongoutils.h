@@ -21,7 +21,14 @@
 #include "botjob/databasecontext.h"
 #include "logging/logfactory.h"
 
-class MongoUtils {   
+class MongoUtils : public QObject
+{
+    Q_OBJECT
+
+    static Logger* getLogger() {
+        return LogFactory::getLogger("MongoUtils");
+    }
+
 public:
 
     QString
@@ -63,7 +70,7 @@ public:
 
             return bsoncxx::from_json(doc.toStdString());
         } catch (const mongocxx::exception &e) {
-            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QVariant. REASON: %1").arg(e.what()));
+            getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QVariant. REASON: %1").arg(e.what()));
 
             return bsoncxx::builder::basic::document().extract();
         }
@@ -76,7 +83,7 @@ public:
 
             return bsoncxx::from_json(jsonData.toStdString());
         } catch (const mongocxx::exception &e) {
-            LogFactory::getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QJsonObject. REASON: %1").arg(e.what()));
+            getLogger()->warning(QString("Failed to convert to bsoncxx::document::view_or_value from QJsonObject. REASON: %1").arg(e.what()));
 
             return bsoncxx::builder::basic::document().extract();
         }

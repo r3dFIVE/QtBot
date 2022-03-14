@@ -40,7 +40,7 @@ class SqlManager : public IDBManager
     static const QString SQL_SELECT_COMMAND_RESTRICTIONS_FOR_GUILD;
 
     QSqlDatabase _database;
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     bool isDbOpen();
     void insertRestriction(const QString &guildId,

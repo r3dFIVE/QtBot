@@ -28,7 +28,7 @@ class MongoManager : public IDBManager
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     QSet<QString> _availableCollections;
     QSharedPointer<mongocxx::instance> _instance;

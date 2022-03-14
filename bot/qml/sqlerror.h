@@ -32,7 +32,7 @@ class SqlError : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     QSqlError _sqlError;
 
 public:

@@ -48,7 +48,7 @@ MongoInsertOptions::fromVariant(const QVariant &options) {
             insertOptions = insert->get();
         }
     } else {
-        LogFactory::getLogger()->warning(QString("Failed to set Mongo Insert Options: %1").arg(options.toString()));
+        getLogger()->warning(QString("Failed to set Mongo Insert Options: %1").arg(options.toString()));
 
         insertOptions = mongocxx::options::insert{};
     }

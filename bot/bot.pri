@@ -48,7 +48,6 @@ HEADERS += \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
     $$PWD/gateway.h \
-    $$PWD/logging/logcontext.h \
     $$PWD/logging/logfactory.h \
     $$PWD/logging/logger.h \
     $$PWD/logging/logworker.h \

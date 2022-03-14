@@ -63,6 +63,7 @@ signals:
 
 public:
     EventHandler();
+    ~EventHandler();
 
 public slots:
     void removeAllRestrictionStates(const EventContext &context);

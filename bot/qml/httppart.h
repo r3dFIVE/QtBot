@@ -12,7 +12,7 @@ class HttpPart : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     QHttpPart _httpPart;
 

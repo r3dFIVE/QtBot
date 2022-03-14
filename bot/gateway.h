@@ -43,6 +43,7 @@ class Gateway : public QObject
 
     Heartbeat _heartbeat;
     Logger* _logger;
+    bool _shutdown = false;
     bool _heartbeatAck = true;
     bool _attemptResume = false;
     int _gatewayIntents = 0;

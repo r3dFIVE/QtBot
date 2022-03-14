@@ -36,7 +36,7 @@ class File : public QObject
 
 protected:
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     int _openMode;
     QSharedPointer<QFile> _file;

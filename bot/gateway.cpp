@@ -47,7 +47,7 @@ Gateway::Gateway()
 
     _maxRetries = Settings::maxRetries();
 
-    _logger = LogFactory::getLogger();
+    _logger = LogFactory::getLogger(this);
 
     buildConnectionUrl();
 
@@ -55,6 +55,8 @@ Gateway::Gateway()
 }
 
 Gateway::~Gateway() {
+    _shutdown = true;
+
     closeConnection(QWebSocketProtocol::CloseCodeNormal);
 }
 
@@ -99,6 +101,10 @@ Gateway::onSocketError(QAbstractSocket::SocketError errorCode) {
 
 void
 Gateway::onDisconnected() {
+    if (_shutdown) {
+        return;
+    }
+
     int closeCode = _socket->closeCode();
 
     QString closeReason = EnumUtils::valueToKey(CloseCodes(closeCode));
@@ -228,7 +234,7 @@ void
 Gateway::processReconnect() {
     _logger->debug("RECONNECT event dispatched, attemping to reconnect...");
 
-    closeConnection(QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART));
+    (QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART));
 }
 
 

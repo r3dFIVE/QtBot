@@ -17,7 +17,7 @@ class MongoHint : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     QSharedPointer<mongocxx::hint> _hint;
 
 public:

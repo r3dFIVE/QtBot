@@ -241,7 +241,7 @@ MongoManager::storeAttachmentData(QByteArray &data, Attachment &attachment) {
         insertOne(attachment);
 
     }  catch (const mongocxx::exception &e) {
-        LogFactory::getLogger()->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
+        LogFactory::getLogger(this)->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
     }
 }
 
@@ -257,7 +257,7 @@ MongoManager::isPersisted(const std::string &fileName) {
         return result ? true : false;
 
     }  catch (const mongocxx::exception &e) {
-        LogFactory::getLogger()->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
+        LogFactory::getLogger(this)->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
 
         return false;
     }

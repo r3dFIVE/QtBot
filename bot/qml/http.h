@@ -17,7 +17,7 @@ class Http : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     const int BAD_REQUEST = 400;
 

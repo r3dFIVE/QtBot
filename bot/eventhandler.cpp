@@ -44,13 +44,17 @@ EventHandler::EventHandler() {
 
 void
 EventHandler::init() {
-    _logger = LogFactory::getLogger();
+    _logger = LogFactory::getLogger("EventHandler");
 
     _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
 
     _jobQueueTimer->setInterval(JOB_POLL_MS);
 
     connect(_jobQueueTimer.data(), &QTimer::timeout, this, &EventHandler::processJobQueue);
+}
+
+EventHandler::~EventHandler() {
+    _jobQueueTimer->stop();
 }
 
 void

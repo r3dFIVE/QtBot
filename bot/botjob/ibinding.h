@@ -61,7 +61,7 @@ protected:
     bool _adminOnly = false;
     bool _ignoreAdmin = false;
     IBotJob::FunctionMapping _functionMapping;
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     QString _description;
     QString _bindingName;
 };

@@ -19,7 +19,7 @@ class XMLQuery : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     QXmlQuery _query;
 
 public:

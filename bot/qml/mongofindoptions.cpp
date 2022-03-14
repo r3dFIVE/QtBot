@@ -142,7 +142,7 @@ MongoFindOptions::fromVariant(const QVariant &options) {
             findOptions = find->get();
         }
     } else {
-        LogFactory::getLogger()->warning(QString("Failed to set Mongo Find Options: %1").arg(options.toString()));
+        getLogger()->warning(QString("Failed to set Mongo Find Options: %1").arg(options.toString()));
 
         findOptions = mongocxx::options::find{};
     }

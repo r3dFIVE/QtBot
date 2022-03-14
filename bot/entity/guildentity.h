@@ -40,7 +40,7 @@ class GuildEntity : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     static CommandRestrictions::RestrictionState DEFAULT_STATE;
     static QString ADMIN_ROLE_NAME;

@@ -35,7 +35,10 @@ class MongoFindOptions : public QObject
     static const QString SKIP;
     static const QString SORT;
 
-    Logger *_logger = LogFactory::getLogger();
+    static Logger* getLogger() {
+        return LogFactory::getLogger("MongoFindOptions");
+    }
+
     mongocxx::options::find _findOptions{};
 
 public:
@@ -48,7 +51,7 @@ public:
         QString ptrStr = QString("0x%1").arg((quintptr)this,
                             QT_POINTER_SIZE * 2, 16, QChar('0'));
 
-        _logger->trace(QString("Destroyed MongoFindOptions(%1)").arg(ptrStr));
+        getLogger()->trace(QString("Destroyed MongoFindOptions(%1)").arg(ptrStr));
     }
 
     MongoFindOptions& operator=(const MongoFindOptions &other);

@@ -24,9 +24,9 @@
 #include <QMetaEnum>
 #include <QThreadPool>
 
-#include "botjob/scriptmanager.h"
 #include "entitymanager.h"
 #include "eventhandler.h"
+#include "botjob/scriptmanager.h"
 #include "logging/logfactory.h"
 #include "qml/enums/htmltag.h"
 #include "payloads/embed.h"
@@ -46,6 +46,9 @@
 #include "qml/domparser.h"
 #include "qml/domnode.h"
 
+#include <logging/logworker.h>
+
+
 const QString Bot::BOT_IMPORT_IDENTIFIER = "BotApi";
 const int Bot::BOT_API_MAJOR_VERSION = 1;
 const int Bot::BOT_API_MINOR_VERSION = 0;
@@ -59,7 +62,7 @@ const QString Bot::GOODBYE = "Shutting down, have nice day! Beep Boop.";
 
 Bot::Bot() {
     qRegisterMetaType<QSharedPointer<TimedBinding> >();
-    qRegisterMetaType<LogContext::LogLevel>();
+    qRegisterMetaType<Logger::LogLevel>();
     qRegisterMetaType<QSharedPointer<GatewayPayload> >();
     qRegisterMetaType<QSharedPointer<GuildEntity> >();
     qRegisterMetaType<QSharedPointer<Route> >();
@@ -109,32 +112,62 @@ Bot::Bot() {
 }
 
 Bot::~Bot() {
-    //_logger->trace("Attemping graceful shutdown...");
+    _logger->trace("Attemping graceful shutdown...");
 
-    //_logger->trace("Shutting down Gateway thread...");
+    _logger->trace("Shutting down Gateway thread...");
+
     _gatewayThread.quit();
 
-    //_logger->trace("Shutting down Entity Manager thread...");
+    _gatewayThread.wait();
+
+    _logger->trace("Shutting down Entity Manager thread...");
+
     _entityManagerThread.quit();
 
+    _entityManagerThread.wait();
+
     while (QThreadPool::globalInstance()->activeThreadCount()) {
-        //_logger->trace(QString("Waiting on %1 Bot Scripts to finish...")
-                       //.arg(QThreadPool::globalInstance()->activeThreadCount()));
+        _logger->trace(QString("Waiting on %1 Bot Scripts to finish...")
+                       .arg(QThreadPool::globalInstance()->activeThreadCount()));
 
         QThreadPool::globalInstance()->waitForDone(250);
 
         qApp->processEvents();
     }
 
-    //_logger->trace("Shutting down Gateway thread...");
+    _logger->trace("Shutting down Gateway thread...");
+
     _eventHandlerThread.quit();
 
-    //_logger->trace("Freeing loaded BotScripts...");
+    _eventHandlerThread.wait();
+
+    _logger->trace("Freeing loaded BotScripts...");
+
     delete _scriptManager;
+
+    _logger->trace("Shutting down logging thread...");
+
+    _loggingThread.quit();
+
+    _loggingThread.wait();
+
+    LogFactory::cleanup();
+
+    qDebug().noquote() << "Goodbye...";
 }
 
 void
 Bot::run() {
+    LogWorker *logWorker = new LogWorker();
+
+    LogFactory::init(logWorker);
+
+    logWorker->moveToThread(&_loggingThread);
+
+    _logger = LogFactory::getLogger(this);
+
+    connect(&_loggingThread, &QThread::finished, logWorker, &QObject::deleteLater);
+
     Gateway *gateway = new Gateway();
 
     gateway->moveToThread(&_gatewayThread);
@@ -149,10 +182,6 @@ Bot::run() {
 
     eventHandler->moveToThread(&_eventHandlerThread);
 
-    EntityManager *entityManager = new EntityManager();
-
-    entityManager->moveToThread(&_entityManagerThread);
-
     connect(&_eventHandlerThread, &QThread::finished, eventHandler, &QObject::deleteLater);
 
     connect(&_eventHandlerThread, &QThread::started, eventHandler, &EventHandler::init);
@@ -160,6 +189,12 @@ Bot::run() {
     connect(_scriptManager, &ScriptManager::guildReady, eventHandler, &EventHandler::guildReady);
 
     connect(gateway, &Gateway::dispatchEvent, eventHandler, &EventHandler::processEvent);
+
+    connect(eventHandler, &EventHandler::reloadScripts, _scriptManager, &ScriptManager::buildScripts);
+
+    EntityManager *entityManager = new EntityManager();
+
+    entityManager->moveToThread(&_entityManagerThread);
 
     connect(gateway, &Gateway::dispatchEvent, entityManager, &EntityManager::saveEvent);
 
@@ -169,13 +204,13 @@ Bot::run() {
 
     connect(gateway, &Gateway::defaultGuildOnline, entityManager, &EntityManager::initGuild);
 
-    connect(eventHandler, &EventHandler::reloadScripts, _scriptManager, &ScriptManager::buildScripts);
-
     connect(entityManager, &EntityManager::guildInitialized, _scriptManager, &ScriptManager::buildScripts);
 
     connect(&_entityManagerThread, &QThread::started, entityManager, &EntityManager::init);
 
     connect(&_entityManagerThread, &QThread::finished, entityManager, &QObject::deleteLater);
+
+    _loggingThread.start();
 
     _eventHandlerThread.start();
 

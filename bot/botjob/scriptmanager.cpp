@@ -47,7 +47,7 @@ ScriptManager::ScriptManager(EventHandler *eventHandler) {
 
     _eventHandler = eventHandler;
 
-    _logger = LogFactory::getLogger();
+    _logger = LogFactory::getLogger(this);
 
     _scriptDir = Settings::scriptDirectory();
 
@@ -56,6 +56,7 @@ ScriptManager::ScriptManager(EventHandler *eventHandler) {
 
 ScriptManager::~ScriptManager() {
     _logger->trace("freeing all scripts");
+
     for (QList<IBotJob*> scripts : _managedScripts) {
         for (IBotJob* existingScript : scripts) {
             delete existingScript;

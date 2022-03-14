@@ -43,7 +43,7 @@ class DiscordAPI : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     static const QByteArray X_RATELIMIT_GLOBAL;
     static const QByteArray X_RATELIMIT_RESET;
