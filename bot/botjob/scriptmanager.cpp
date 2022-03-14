@@ -97,6 +97,8 @@ ScriptManager::validateScripts() {
 
     for (auto& binding : CoreCommands::buildCoreCommandBindings(*_eventHandler, GuildEntity::DEFAULT_GUILD_ID)) {
         _coreCommandNames << binding.getCommandName();
+
+        delete binding.getFunctionMapping().second;
     }
 
     QDir directory(_scriptDir);

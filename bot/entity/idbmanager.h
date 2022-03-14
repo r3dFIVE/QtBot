@@ -12,9 +12,11 @@
 class IDBManager : public QObject {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger(this);
+    Logger *_logger;
 
 protected:
+
+    IDBManager(QObject *parent = nullptr);
 
     static const QString COMMAND_RESTRICTIONS;
 

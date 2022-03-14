@@ -32,7 +32,7 @@ class MongoManager : public IDBManager
 
     QSet<QString> _availableCollections;
     QSharedPointer<mongocxx::instance> _instance;
-    QSharedPointer<QNetworkAccessManager> _networkManager;
+    QNetworkAccessManager _networkManager;
     QMap<QString, Attachment> _pendingDownloads;
 
     mongocxx::client _client;
@@ -65,8 +65,12 @@ public:
     static const std::string ATTACHMENTS_FILES;
     static const std::string ATTACHMENTS_CHUNKS;
 
-    MongoManager(DatabaseContext context) {
+    MongoManager(DatabaseContext context, QObject *parent = nullptr) : IDBManager(parent) {
         _databaseContext = context;
+    }
+
+    ~MongoManager() {
+        _logger->info("DELETE MONGOMANAGER");
     }
 
     void initGuild(QSharedPointer<GuildEntity> guildEntity) override;

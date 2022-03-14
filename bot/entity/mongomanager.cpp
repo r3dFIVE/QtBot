@@ -32,9 +32,7 @@ MongoManager::init() {
 
         _database = mongocxx::database { _client[_databaseContext.databaseName.toStdString()] };
 
-        _networkManager = QSharedPointer<QNetworkAccessManager>(new QNetworkAccessManager);
-
-        connect(_networkManager.data(), SIGNAL(finished(QNetworkReply*)), SLOT(processDownload(QNetworkReply*)));
+        connect(&_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(processDownload(QNetworkReply*)));
 
     } catch (const mongocxx::exception& e) {
         _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %1").arg(e.what()));
@@ -267,7 +265,7 @@ void
 MongoManager::queueDownload(const Attachment &attachment)  {
     QString url = attachment.getUrl().toString();
 
-    _networkManager->get(QNetworkRequest(url));
+    _networkManager.get(QNetworkRequest(url));
 
     _pendingDownloads[url] = attachment;
 }

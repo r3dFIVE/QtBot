@@ -60,11 +60,11 @@ void
 EntityManager::init() {
     switch (_databaseContext.type) {
         case DatabaseType::QMONGODB:
-            _manager = QSharedPointer<MongoManager>(new MongoManager(_databaseContext));
+            _manager = QSharedPointer<MongoManager>(new MongoManager(_databaseContext, this));
             break;
         case DatabaseType::QSQLITE:
         case DatabaseType::QMYSQL:
-            _manager = QSharedPointer<SqlManager>(new SqlManager(_databaseContext));     
+            _manager = QSharedPointer<SqlManager>(new SqlManager(_databaseContext, this));
             break;            
     }    
 

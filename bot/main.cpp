@@ -31,6 +31,8 @@
 
 void
 sigHandler(int s) {
+    Q_UNUSED(s)
+
     LogFactory::getLogger("Bot")->info(Bot::GOODBYE);
 
     QCoreApplication::quit();

@@ -56,7 +56,7 @@ class SqlManager : public IDBManager
 
 public:
 
-    SqlManager(DatabaseContext context) {
+    SqlManager(DatabaseContext context, QObject *parent = nullptr) : IDBManager(parent) {
         _databaseContext = context;
     }
 
