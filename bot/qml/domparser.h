@@ -25,7 +25,7 @@ class DOMParser : public QObject
 
     DOMParser& operator=(const DOMParser&) = delete;
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     GumboOutput *_gumboOutput = nullptr;
     const GumboOptions *_options = nullptr;
     QByteArray _sourceData;

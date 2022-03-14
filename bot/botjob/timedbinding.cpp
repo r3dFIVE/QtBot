@@ -28,7 +28,7 @@ const QString TimedBinding::SINGLETON = "singleton";
 const QString TimedBinding::FORCE_ENABLE = "force_enable";
 
 TimedBinding::TimedBinding() {
-    _logger = LogFactory::getLogger();
+    _logger = LogFactory::getLogger(this);
 }
 
 TimedBinding::TimedBinding(const TimedBinding &other) {

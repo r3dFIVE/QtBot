@@ -36,7 +36,7 @@ HEADERS += \
     $$PWD/botjob/ibinding.h \
     $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
-    $$PWD/botjob/scriptbuilder.h \
+    $$PWD/botjob/scriptmanager.h \
     $$PWD/botjob/timedbinding.h \
     $$PWD/entity/commandrestrictions.h \
     $$PWD/entity/gridfsfile.h \
@@ -48,7 +48,6 @@ HEADERS += \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
     $$PWD/gateway.h \
-    $$PWD/logging/logcontext.h \
     $$PWD/logging/logfactory.h \
     $$PWD/logging/logger.h \
     $$PWD/logging/logworker.h \
@@ -246,7 +245,7 @@ SOURCES += \
     $$PWD/botjob/ibinding.cpp \
     $$PWD/botjob/job.cpp \
     $$PWD/botjob/jobqueue.cpp \
-    $$PWD/botjob/scriptbuilder.cpp \
+    $$PWD/botjob/scriptmanager.cpp \
     $$PWD/botjob/timedbinding.cpp \
     $$PWD/entity/gridfsfile.cpp \
     $$PWD/entity/idbmanager.cpp \

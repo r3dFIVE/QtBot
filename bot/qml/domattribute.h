@@ -17,7 +17,7 @@ class DOMAttribute : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     QString _name;
     QString _value;

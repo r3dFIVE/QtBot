@@ -20,7 +20,9 @@ class MongoInsertOptions : public QObject
     static const QString BYPASS_DOCUMENT_VALIDATION;
     static const QString ORDERED;
 
-    Logger *_logger = LogFactory::getLogger();
+    static Logger* getLogger() {
+        return LogFactory::getLogger("MongoInsertOptions");
+    }
 
     mongocxx::options::insert _insertOptions{};
 
@@ -31,7 +33,7 @@ public:
         QString ptrStr = QString("0x%1").arg((quintptr)this,
                             QT_POINTER_SIZE * 2, 16, QChar('0'));
 
-        _logger->trace(QString("Destroyed MongoInsertOptions(%1)").arg(ptrStr));
+        getLogger()->trace(QString("Destroyed MongoInsertOptions(%1)").arg(ptrStr));
     }
 
     MongoInsertOptions& operator=(const MongoInsertOptions &other);

@@ -35,7 +35,7 @@ class SqlQuery : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     QSqlQuery _query;
 
 public:

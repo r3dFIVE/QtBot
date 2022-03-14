@@ -66,7 +66,7 @@ MongoUpdateOptions::fromVariant(const QVariant &options) {
             updateOptions = find->get();
         }
     } else {
-        LogFactory::getLogger()->warning(QString("Failed to set Mongo Update Options: %1").arg(options.toString()));
+         getLogger()->warning(QString("Failed to set Mongo Update Options: %1").arg(options.toString()));
 
         updateOptions = mongocxx::options::update{};
     }

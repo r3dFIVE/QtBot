@@ -18,6 +18,7 @@
  *
  */
 
+#include "bot.h"
 #include "eventhandler.h"
 
 #include <QDebug>
@@ -43,13 +44,17 @@ EventHandler::EventHandler() {
 
 void
 EventHandler::init() {
-    _logger = LogFactory::getLogger();
+    _logger = LogFactory::getLogger("EventHandler");
 
     _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
 
     _jobQueueTimer->setInterval(JOB_POLL_MS);
 
     connect(_jobQueueTimer.data(), &QTimer::timeout, this, &EventHandler::processJobQueue);
+}
+
+EventHandler::~EventHandler() {
+    _jobQueueTimer->stop();
 }
 
 void
@@ -105,7 +110,7 @@ EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
 
 void
 EventHandler::guildReady(QSharedPointer<GuildEntity> guild) {
-    _availableGuilds[guild->getId()] = guild;    
+    _availableGuilds[guild->getId()] = guild;
 
     guild->initTimedJobs();
 
@@ -357,5 +362,14 @@ EventHandler::removeAllRestrictionStates(const EventContext &context) {
 
     if (isGuildReady(guildId)) {
          _availableGuilds[guildId]->removeAllRestrictionStates();
+    }
+}
+
+void
+EventHandler::shutDown(const EventContext &context) {
+    if (context.getUserId() == Settings::ownerId()) {
+        _logger->info(Bot::GOODBYE);
+
+        QCoreApplication::quit();
     }
 }

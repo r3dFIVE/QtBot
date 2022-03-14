@@ -22,52 +22,40 @@
 
 #include <QThread>
 
-Logger::Logger(LogContext ctx, QObject *parent) : QObject (parent) {
-    _thread = new QThread(this);
+Logger::Logger(QString loggerName, QObject *parent) : QObject (parent) {
+    if (!loggerName.isEmpty()) {
+        loggerName = QString("[%1]").arg(loggerName);
+    }
 
-    _worker = new LogWorker(ctx);
-
-    _worker->moveToThread(_thread);
-
-    connect(this, &Logger::logEvent, _worker, &LogWorker::logEvent);
-
-    connect(_thread, &QThread::finished, _worker, &QObject::deleteLater);
-
-    _thread->start();
-}
-
-Logger::~Logger() {
-    _thread->quit();
-
-    _thread->wait();
+    _loggerName = loggerName;
 }
 
 void
 Logger::trace(QString message) {
-    emit logEvent(LogContext::LogLevel::TRACE, message);
+    emit logEvent(TRACE, message, _loggerName);
 }
 
 void
 Logger::info(QString message) {
-    emit logEvent(LogContext::LogLevel::INFO, message);
+    emit logEvent(INFO, message, _loggerName);
 }
 
 void
 Logger::debug(QString message) {
-    emit logEvent(LogContext::LogLevel::DEBUG, message);
+    emit logEvent(DEBUG, message, _loggerName);
 }
 
 void
 Logger::warning(QString message) {
-    emit logEvent(LogContext::LogLevel::WARNING, message);
+    emit logEvent(WARNING, message, _loggerName);
 }
 
 void
 Logger::critical(QString message) {
-    emit logEvent(LogContext::LogLevel::CRITICAL, message);
+    emit logEvent(CRITICAL, message, _loggerName);
 }
 
 void
 Logger::fatal(QString message) {
-    emit logEvent(LogContext::LogLevel::FATAL, message);
+    emit logEvent(FATAL, message, _loggerName);
 }

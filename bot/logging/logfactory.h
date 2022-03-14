@@ -18,10 +18,11 @@
  *
  */
 
-#ifndef LOGSERVICE_H
-#define LOGSERVICE_H
+#ifndef LOGFACTORY_H
+#define LOGFACTORY_H
 
 #include "logger.h"
+#include "logworker.h"
 
 #include <QString>
 #include <QSharedPointer>
@@ -30,14 +31,15 @@
 
 class LogFactory
 {
-private:
-    static Logger* _logger;
-    LogFactory();
-    ~LogFactory();
+    static LogWorker *_worker;
+    static QHash<QString, Logger*> _loggers;
 
 public:
-    static Logger* getLogger();
-    static void init();
+    static Logger* getLogger(QString prefix = QString());
+    static Logger *getLogger(QObject *parent);
+    static void cleanup();
+    static void init(LogWorker *worker);
+
 };
 
-#endif // LOGSERVICE_H
+#endif // LOGFACTORY_H

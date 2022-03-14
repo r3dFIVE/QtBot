@@ -21,13 +21,17 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "logworker.h"
-
 #include <QObject>
 
 class Logger : public QObject
 {
     Q_OBJECT
+
+    Logger(QString loggerName, QObject *parent = nullptr);
+
+    friend class LogFactory;
+
+    QString _loggerName;
 
 public:
     void trace(QString message);
@@ -37,17 +41,20 @@ public:
     void critical(QString message);
     void fatal(QString message);
 
+    enum LogLevel {
+        OFF = 0,
+        FATAL,
+        CRITICAL,
+        WARNING,
+        INFO,
+        DEBUG,
+        TRACE
+    };
+    Q_ENUM(LogLevel)
+
 signals:
-    void logEvent(LogContext::LogLevel level, QString message);
+    void logEvent(Logger::LogLevel level, QString message, QString loggerName);
 
-private:
-    explicit Logger(LogContext ctx, QObject *parent = nullptr);
-    ~Logger();
-
-    QThread *_thread;
-    LogWorker *_worker;
-
-    friend class LogFactory;
 };
 
 #endif // LOGGER_H

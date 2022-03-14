@@ -43,7 +43,7 @@ class SqlDatabase : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     int _port = 0;
     int _type = 0;

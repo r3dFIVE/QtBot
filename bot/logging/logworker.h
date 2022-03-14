@@ -21,7 +21,8 @@
 #ifndef LOGWORKER_H
 #define LOGWORKER_H
 
-#include "logcontext.h"
+
+#include "logger.h"
 
 #include <QFile>
 #include <QObject>
@@ -31,22 +32,30 @@ class LogWorker : public QObject
 {
     Q_OBJECT
 
-private:
-    LogWorker(const LogContext &ctx, QObject *parent = nullptr);
+    LogWorker(QObject *parent = nullptr);
     ~LogWorker() {}
     void checkLogFile();
     void disableFileLogging();
     void initLogFile();
     void rolloverLog();
 
+    QString getPathWithName() const;
+    bool fileLoggingEnabled(Logger::LogLevel level);
+
+    int _maxFileSize;
+    int _maxRolloverFiles;
+    QString _directoryPath;
+    QString _fileName;
+    Logger::LogLevel _consoleLogLevel;
+    Logger::LogLevel _fileLogLevel;
     QFile _logFile;
-    LogContext _ctx;
 
+    bool consoleLoggingEnabled(Logger::LogLevel level);
+    bool loggingEnabled();
 public slots:
-    void logEvent(LogContext::LogLevel level, QString message);
+    void logEvent(Logger::LogLevel level, const QString message, const QString loggerName);
 
-    friend class Logger;
+    friend class Bot;
 };
-
 
 #endif // LOGWORKER_H

@@ -33,15 +33,15 @@
 class CoreCommands {
 
 public:
-    static QMap<QSharedPointer<CoreCommand>, CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
-        QMap<QSharedPointer<CoreCommand>, CommandBinding> commands;
+    static QHash<CoreCommand*, CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
+        QHash<CoreCommand*, CommandBinding> commands;
 
         const auto addCommand = [&](const QString& commandName, bool adminOnly, std::function<void(const EventContext &context)> cmd) {
-            QSharedPointer<CoreCommand> coreCommand = QSharedPointer<CoreCommand>(new CoreCommand(cmd));
+            CoreCommand *coreCommand = new CoreCommand(cmd);
 
             coreCommand->setGuildId(guildId);
 
-            IBotJob::FunctionMapping functionMapping = qMakePair(commandName, coreCommand.data());
+            IBotJob::FunctionMapping functionMapping = qMakePair(commandName, coreCommand);
 
             CommandBinding binding(commandName, functionMapping);
 
@@ -49,6 +49,13 @@ public:
 
             commands[coreCommand] = binding;
         };
+
+        addCommand(".shutdown", true, [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                      "shutDown",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(EventContext, context));
+        });
 
         addCommand(".reload", true, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,

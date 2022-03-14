@@ -35,7 +35,7 @@ class MongoDB : public QObject
     static const std::string ATTACHMENTS_FILES;
     static const std::string ATTACHMENTS_CHUNKS;
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
     DatabaseContext _databaseContext;
 
     std::string _databaseName;

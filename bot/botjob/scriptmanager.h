@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef SCRIPTBUILDER_H
-#define SCRIPTBUILDER_H
+#ifndef SCRIPTMANAGER_H
+#define SCRIPTMANAGER_H
 
 #include <QObject>
 #include <QVariantMap>
@@ -35,7 +35,7 @@
 #include "entity/guildentity.h"
 
 
-class ScriptBuilder : public QObject
+class ScriptManager : public QObject
 {
     Q_OBJECT
 
@@ -46,6 +46,7 @@ class ScriptBuilder : public QObject
     QString _scriptDir;
     QStringList _coreCommandNames;
     QList<QFileInfo> _validScripts;
+    QMap<QString, QList<IBotJob*>> _managedScripts;
     QMap<QString, QList<CommandBinding> > _commandBindings;
     QMap<QString, QList<GatewayBinding> > _gatewayBindings;
     QMap<QString, QList<TimedBinding> > _timedBindings;
@@ -72,12 +73,14 @@ class ScriptBuilder : public QObject
     }
 
     void validate(const QFileInfo &fileInfo);
-    bool validateScriptCommands(QSharedPointer<BotScript> botScript, const QFileInfo &fileInfo);
-    bool validateCommandBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &fileName);
-    bool validateGatewayBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &fileName);
-    bool validateTimedBinding(QSharedPointer<BotScript> botScript, const QJsonValue &binding, const QString &fileName);
+    bool validateScriptCommands(BotScript *botScript, const QFileInfo &fileInfo);
+    bool validateCommandBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
+    bool validateGatewayBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
+    bool validateTimedBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
+
 public:
-    ScriptBuilder(EventHandler *eventHandler);
+    ScriptManager(EventHandler *eventHandler);
+    ~ScriptManager();
 
     void init(const QString &botToken, const QString &scriptDir);
 
@@ -88,4 +91,4 @@ signals:
     void guildReady(QSharedPointer<GuildEntity> guild);
 };
 
-#endif // SCRIPTBUILDER_H
+#endif // SCRIPTMANAGER_H

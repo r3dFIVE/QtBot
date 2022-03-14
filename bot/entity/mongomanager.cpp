@@ -32,9 +32,7 @@ MongoManager::init() {
 
         _database = mongocxx::database { _client[_databaseContext.databaseName.toStdString()] };
 
-        _networkManager = QSharedPointer<QNetworkAccessManager>(new QNetworkAccessManager);
-
-        connect(_networkManager.data(), SIGNAL(finished(QNetworkReply*)), SLOT(processDownload(QNetworkReply*)));
+        connect(&_networkManager, SIGNAL(finished(QNetworkReply*)), SLOT(processDownload(QNetworkReply*)));
 
     } catch (const mongocxx::exception& e) {
         _logger->warning(QString("Failed to connect to MongoDB instance. REASON: %1").arg(e.what()));
@@ -241,7 +239,7 @@ MongoManager::storeAttachmentData(QByteArray &data, Attachment &attachment) {
         insertOne(attachment);
 
     }  catch (const mongocxx::exception &e) {
-        LogFactory::getLogger()->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
+        LogFactory::getLogger(this)->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
     }
 }
 
@@ -257,7 +255,7 @@ MongoManager::isPersisted(const std::string &fileName) {
         return result ? true : false;
 
     }  catch (const mongocxx::exception &e) {
-        LogFactory::getLogger()->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
+        LogFactory::getLogger(this)->warning(QString("Failed to store attachment data, REASON: %1").arg(e.what()));
 
         return false;
     }
@@ -267,7 +265,7 @@ void
 MongoManager::queueDownload(const Attachment &attachment)  {
     QString url = attachment.getUrl().toString();
 
-    _networkManager->get(QNetworkRequest(url));
+    _networkManager.get(QNetworkRequest(url));
 
     _pendingDownloads[url] = attachment;
 }

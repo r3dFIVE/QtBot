@@ -41,7 +41,7 @@ class Route : public QObject
 
     int _fileNumber = 0;
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     void appendFilePart(const QVariant &file);
 

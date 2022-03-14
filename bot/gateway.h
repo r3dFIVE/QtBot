@@ -43,6 +43,7 @@ class Gateway : public QObject
 
     Heartbeat _heartbeat;
     Logger* _logger;
+    bool _shutdown = false;
     bool _heartbeatAck = true;
     bool _attemptResume = false;
     int _gatewayIntents = 0;
@@ -143,7 +144,7 @@ public slots:
     void sendTextMessage(QSharedPointer<GatewayPayload> payload);
     void sendBinaryMessage(QSharedPointer<GatewayPayload> payload);
 
-Q_SIGNALS:
+signals:
     void dispatchEvent(QSharedPointer<GatewayPayload> payload);
     void guildOnline(QSharedPointer<GatewayPayload> payload);
     void defaultGuildOnline(QSharedPointer<GuildEntity> payload);

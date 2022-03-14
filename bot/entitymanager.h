@@ -38,7 +38,7 @@ class EntityManager : public QObject
     QSharedPointer<QTimer> _cacheTimer;
 
     DatabaseContext _databaseContext;
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     void clearFileCache();
 

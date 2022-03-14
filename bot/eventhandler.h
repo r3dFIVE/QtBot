@@ -63,6 +63,7 @@ signals:
 
 public:
     EventHandler();
+    ~EventHandler();
 
 public slots:
     void removeAllRestrictionStates(const EventContext &context);
@@ -80,6 +81,7 @@ public slots:
     void restartTimedJob(const EventContext &context);
     void startTimedJob(const EventContext &context);
     void stopTimedJob(const EventContext &context);
+    void shutDown(const EventContext &context);
 };
 
 #endif // MESSAGEHANDLER_H

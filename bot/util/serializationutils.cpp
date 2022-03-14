@@ -163,7 +163,7 @@ SerializationUtils::xmlToQJsonObject(const QString &xml) {
     try {
         json_str = xml2json(xml.toStdString().c_str());
     } catch (rapidxml::parse_error &e) {
-        LogFactory::getLogger()->debug(QString("There was an error converting xml2json: %1").arg(e.what()));
+        LogFactory::getLogger("SerializationUtils")->debug(QString("There was an error converting xml2json: %1").arg(e.what()));
     }
 
     return toQJsonObject(QString::fromStdString(json_str));

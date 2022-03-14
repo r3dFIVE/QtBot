@@ -24,7 +24,7 @@
 #include <QDir>
 #include <gateway.h>
 
-#include "logging/logcontext.h"
+#include "logging/logger.h"
 #include "entity/guildentity.h"
 #include "util/databasetype.h"
 #include "settings.h"
@@ -244,7 +244,6 @@ Settings::validateDatabaseSettings() {
     }
 
     if (_settings[MAX_POOL_SIZE].toString().isEmpty()) {
-
         _settings[MAX_POOL_SIZE] = 10;
     }
 
@@ -277,24 +276,24 @@ Settings::validateLoggingSettings() {
     QString consoleLogLevel = _settings[CONSOLE_LOG_LEVEL].toString().toUpper();
 
     if (consoleLogLevel.isEmpty()) {
-        _settings[CONSOLE_LOG_LEVEL] = LogContext::DEBUG;
+        _settings[CONSOLE_LOG_LEVEL] = Logger::DEBUG;
 
     } else {
         validateLogLevel(CONSOLE_LOG_LEVEL, consoleLogLevel);
 
-        _settings[CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
+        _settings[CONSOLE_LOG_LEVEL] = EnumUtils::keyToValue<Logger::LogLevel>(consoleLogLevel);
     }
 
 
     QString fileLogLevel = _settings[FILE_LOG_LEVEL].toString().toUpper();
 
     if (fileLogLevel.isEmpty()) {
-        _settings[FILE_LOG_LEVEL] = LogContext::DEBUG;
+        _settings[FILE_LOG_LEVEL] = Logger::DEBUG;
 
     } else {
         validateLogLevel(FILE_LOG_LEVEL, fileLogLevel);
 
-        _settings[FILE_LOG_LEVEL] = EnumUtils::keyToValue<LogContext::LogLevel>(consoleLogLevel);
+        _settings[FILE_LOG_LEVEL] = EnumUtils::keyToValue<Logger::LogLevel>(consoleLogLevel);
     }
 
     if (_settings[LOG_FILE_SIZE].toInt() == 0) {
@@ -314,9 +313,9 @@ Settings::validateLoggingSettings() {
 
 void
 Settings::validateLogLevel(QString property, QString logLevel) {
-    QMetaEnum metaEnum = QMetaEnum::fromType<LogContext::LogLevel>();
+    QMetaEnum metaEnum = QMetaEnum::fromType<Logger::LogLevel>();
 
-    if (EnumUtils::keyToValue<LogContext::LogLevel>(logLevel) < 0) {
+    if (EnumUtils::keyToValue<Logger::LogLevel>(logLevel) < 0) {
         invalidEnumValue(property, logLevel, metaEnum);
     }
 }

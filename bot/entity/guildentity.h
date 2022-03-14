@@ -34,19 +34,18 @@
 #include "payloads/guild.h"
 #include "payloads/role.h"
 
-class ScriptBuilder;
+class ScriptManager;
 
 class GuildEntity : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     static CommandRestrictions::RestrictionState DEFAULT_STATE;
     static QString ADMIN_ROLE_NAME;
     static QString BOT_OWNER_ID;
 
-    QList<QSharedPointer<IBotJob> > _registeredScripts;
     QMap<QString, TimedBinding> _timedBindings;
     QMap<QString, TimedBinding> _disabledTimedBindings;
     QMap<QString, Role> _rolesByRoleId;
@@ -97,11 +96,6 @@ public:
         return guildEntity;
     }
 
-    friend GuildEntity& operator<<(GuildEntity &guildEntity, QSharedPointer<IBotJob> script) {
-        guildEntity.addRegisteredScript(script);
-
-        return guildEntity;
-    }
 
     static const QString DEFAULT_GUILD_ID;
     static const QString GUILD_RESTRICTIONS;
@@ -120,7 +114,6 @@ public:
     void addGatewayBinding(const GatewayBinding &binding);
     void addTimedBinding(TimedBinding &binding, const bool checkState = false);
     void addRegisteredScript(QSharedPointer<IBotJob> script);
-    void clearRegisteredScripts();
     void setId(const QString &id);
     void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
     void setMappedStateIdsByCommand(QMap<QString, QMap<QString,
@@ -149,6 +142,7 @@ public:
     void restartTimedJob(const int index);
     void stopTimedJob(const int index);
     void initTimedJobs();
+
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
 };

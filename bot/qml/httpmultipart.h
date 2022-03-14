@@ -14,7 +14,7 @@ class HttpMultiPart : public QObject
 {
     Q_OBJECT
 
-    Logger *_logger = LogFactory::getLogger();
+    Logger *_logger = LogFactory::getLogger(this);
 
     QSharedPointer<QHttpMultiPart> _httpMultiPart;
 
