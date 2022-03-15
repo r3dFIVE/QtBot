@@ -344,8 +344,8 @@ EventHandler::updateAllRestrictionStates(const EventContext &context, CommandRes
     if (isGuildReady(guildId)) {
         QString targetId;
 
-        if (context.getArgs().size() > 2) {
-            targetId = context.getArgs()[2].toString();
+        if (context.getArgs().size() > 1) {
+            targetId = context.getArgs()[1].toString();
         } else {
             targetId = GuildEntity::GUILD_ID_ALIAS;
         }
