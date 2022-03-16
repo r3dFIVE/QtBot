@@ -1,6 +1,7 @@
 #ifndef BINDINGFACTORY_H
 #define BINDINGFACTORY_H
 
+#include "botscript.h"
 #include "commandbinding.h"
 #include "gatewaybinding.h"
 #include "timedbinding.h"

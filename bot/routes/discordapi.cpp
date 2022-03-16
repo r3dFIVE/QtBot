@@ -207,7 +207,7 @@ DiscordAPI::checkBucketAndExecute(QNetworkAccessManager &networkManager, Route &
 
     QSharedPointer<EventContext> context;
 
-    if (bucket->execute()) {
+    if (bucket->canExecute()) {
         QSharedPointer<QNetworkReply> reply =
                 QSharedPointer<QNetworkReply>(executeRoute(networkManager, route));
 

@@ -25,55 +25,47 @@ const QString CommandBinding::COMMAND = "command";
 const QString CommandBinding::ADMIN_ONLY = "admin_only";
 
 CommandBinding::CommandBinding(const QString &commandName, const IBotJob::FunctionMapping &functionMapping) {
-    _commandName = commandName;
+    _name = commandName;
 
     _functionMapping = functionMapping;
 }
 
 CommandBinding::CommandBinding(const CommandBinding &other) {
-    _functionMapping = other._functionMapping;
+    if (this == &other) {
+        return;
+    }
 
-    _logger = other._logger;
-
-    _description = other._description;
-
-    _commandName = other._commandName;
-
-    _adminOnly = other._adminOnly;
-
-    _ignoreAdmin = other._ignoreAdmin;
+    copy(other);
 }
 
-CommandBinding
-&CommandBinding::operator=(const CommandBinding &other) {
+CommandBinding&
+CommandBinding::operator=(const CommandBinding &other) {
     if (this == &other) {
         return *this;
     }
 
+    copy(other);
+
+    return *this;
+}
+
+void
+CommandBinding::copy(const CommandBinding &other) {
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;
 
     _description = other._description;
 
-    _commandName = other._commandName;
+    _descriptionShort = other._descriptionShort;
+
+    _name = other._name;
 
     _adminOnly = other._adminOnly;
 
     _ignoreAdmin = other._ignoreAdmin;
-
-    return *this;
 }
 
-QString
-CommandBinding::getCommandName() const {
-    return _commandName;
-}
-
-void
-CommandBinding::setCommandName(const QString &commandName) {
-    _commandName = commandName;
-}
 
 bool
 CommandBinding::isValid(const QMetaObject &metaObject) const {
@@ -81,7 +73,7 @@ CommandBinding::isValid(const QMetaObject &metaObject) const {
         return false;
     }
 
-    if (_commandName.isEmpty()) {
+    if (_name.isEmpty()) {
         _logger->warning(QString("\"%1\" property is not set for command binding for function \"%2\"... Discarding binding.")
                          .arg(COMMAND)
                          .arg(_functionMapping.first));

@@ -1,13 +1,14 @@
-#include "gridfsfile.h"
 #include "mongomanager.h"
-
-#include "util/enumutils.h"
-#include "util/mongoutils.h"
-#include "payloads/user.h"
 
 #include <QDir>
 #include <QNetworkReply>
 #include <QTemporaryFile>
+
+#include "util/enumutils.h"
+#include "util/mongoutils.h"
+#include "payloads/user.h"
+#include "gridfsfile.h"
+#include "payloads/message.h"
 
 using namespace bsoncxx::builder::stream;
 using namespace mongocxx;

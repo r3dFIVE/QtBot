@@ -25,13 +25,14 @@ const QString IBinding::BINDING_TYPE = "binding_type";
 const QString IBinding::BINDING_TYPE_COMMAND = "command";
 const QString IBinding::BINDING_TYPE_GATEWAY = "gateway";
 const QString IBinding::BINDING_TYPE_TIMED = "timed";
-const QString IBinding::FUNCTION = "function";
-const QString IBinding::DESCRIPTION = "description";
-const QString IBinding::IGNORE_ADMIN = "ignore_admin";
 const QString IBinding::BINDING_NAME = "binding_name";
+const QString IBinding::FUNCTION = "function";
+const QString IBinding::IGNORE_ADMIN = "ignore_admin";
 
 
-bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
+
+bool
+IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
 
 
     if (_functionMapping.first.isEmpty() || !_functionMapping.second) {
@@ -112,27 +113,7 @@ IBinding::getFunctionMapping() const {
     return _functionMapping;
 }
 
-QString
-IBinding::getDescription() const {
-    return _description;
-}
-
-void
-IBinding::setDescription(const QString &description) {
-    _description = description;
-}
-
 void
 IBinding::setFunctionMapping(const IBotJob::FunctionMapping &functionMapping) {
     _functionMapping = functionMapping;
-}
-
-QString
-IBinding::getBindingName() const {
-    return _bindingName;
-}
-
-void
-IBinding::setBindingName(const QString &bindingName) {
-    _bindingName = bindingName;
 }

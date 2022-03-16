@@ -47,6 +47,15 @@ public:
     static const QString AUTHOR;
     static const QString FIELDS;
 
+    static const int TITLE_MAX_LENGTH;
+    static const int DECRIPTION_MAX_LENGTH;
+    static const int DECRIPTION_SHORT_MAX_LENGTH;
+    static const int TOTAL_MAX_LENGTH;
+    static const int FIELDS_MAX;
+    static const int FIELDS_VALUE_MAX_LENGTH;
+    static const int FOOTER_TEXT_MAX_LENGTH;
+    static const int AUTHOR_NAME_MAX_LENGTH;
+
     Embed(QObject *parent = nullptr) : JsonSerializable(parent) {}
     Embed(const Embed &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
     Embed(const QString &title,

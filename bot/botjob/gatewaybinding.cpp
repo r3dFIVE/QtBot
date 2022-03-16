@@ -36,17 +36,7 @@ GatewayBinding::GatewayBinding(const GatewayBinding &other) {
         return;
     }
 
-    _functionMapping = other._functionMapping;
-
-    _logger = other._logger;
-
-    _ignoreAdmin = other._ignoreAdmin;
-
-    _description = other._description;
-
-    _eventName = other._eventName;
-
-    _bindingName = other._bindingName;
+    copy(other);
 }
 
 GatewayBinding
@@ -55,6 +45,13 @@ GatewayBinding
         return *this;
     }
 
+    copy(other);
+
+    return *this;
+}
+
+void
+GatewayBinding::copy(const GatewayBinding &other) {
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;
@@ -63,11 +60,11 @@ GatewayBinding
 
     _description = other._description;
 
+    _descriptionShort = other._descriptionShort;
+
     _eventName = other._eventName;
 
-    _bindingName = other._bindingName;
-
-    return *this;
+    _name = other._name;
 }
 
 QString
@@ -80,7 +77,7 @@ void GatewayBinding::setEventName(const QString &eventName) {
 }
 
 bool GatewayBinding::isValid(const QMetaObject &metaObject) const {
-    if (!isValidParam(GatewayBinding::BINDING_NAME, _bindingName)) {
+    if (!isValidParam(GatewayBinding::BINDING_NAME, _name)) {
         return false;
     }
 

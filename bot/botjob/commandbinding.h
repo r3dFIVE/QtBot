@@ -25,9 +25,9 @@
 
 class CommandBinding : public IBinding
 {
+    Q_OBJECT
 
     bool _ignoreAdmin = false;
-    QString _commandName;
 
 public:
     static const QString COMMAND;
@@ -40,9 +40,7 @@ public:
 
     CommandBinding &operator=(const CommandBinding &other);
 
-    QString getCommandName() const;
-
-    void setCommandName(const QString &commandName); 
+    void copy(const CommandBinding &other);
 
     bool isValid(const QMetaObject &metaObject) const override;
 };

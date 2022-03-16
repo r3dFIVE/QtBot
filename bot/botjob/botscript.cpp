@@ -50,7 +50,11 @@ BotScript::BotScript(const BotScript &other) {
 
     _commands = other._commands;
 
-    _scriptName = other._scriptName;
+    _name = other._name;
+
+    _description = other._description;
+
+    _descriptionShort = other._descriptionShort;
 }
 
 BotScript
@@ -65,7 +69,11 @@ BotScript
 
     _commands = other._commands;
 
-    _scriptName = other._scriptName;
+    _name = other._name;
+
+    _description = other._description;
+
+    _descriptionShort = other._descriptionShort;
 
     return *this;
 }
@@ -93,10 +101,10 @@ BotScript::findFunctionMapping(const QString &command) const {
 }
 
 void
-BotScript::setScriptName(const QString &scriptName) {
-    _logger = LogFactory::getLogger(scriptName);
+BotScript::setName(const QString &name) {
+    _logger = LogFactory::getLogger(name);
 
-    _scriptName = scriptName;
+    _name = name;
 }
 
 void
@@ -141,7 +149,7 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     timedBinding->setId(uuid);
 
-    timedBinding->setBindingName(uuid);
+    timedBinding->setName(uuid);
 
     if (timedBinding->isValid(*this->metaObject())) {
        emit timedBindingReadySignal(_guildId, timedBinding);
@@ -200,11 +208,6 @@ BotScript::bPause(int ms) {
 QMap<QString, QVariant>
 BotScript::getScriptCommands() const {
     return _commands;
-}
-
-QString
-BotScript::getScriptName() const {
-    return _scriptName;
 }
 
 void

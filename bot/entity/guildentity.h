@@ -110,7 +110,7 @@ public:
     QString getId() const;
     QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > getMappedStateIdsByCommand();
     void addRole(const Role &role);
-    void addCommandBinding(const CommandBinding &binding);
+    void addCommandBinding(CommandBinding &binding);
     void addGatewayBinding(const GatewayBinding &binding);
     void addTimedBinding(TimedBinding &binding, const bool checkState = false);
     void addRegisteredScript(QSharedPointer<IBotJob> script);

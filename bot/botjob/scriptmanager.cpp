@@ -19,6 +19,7 @@
  */
 
 #include "scriptmanager.h"
+#include "userhelp.h"
 
 #include <functional>
 #include <QQmlComponent>
@@ -96,7 +97,7 @@ ScriptManager::validateScripts() {
     _functionNameByEventNameByScriptName.clear();
 
     for (auto& binding : CoreCommands::buildCoreCommandBindings(*_eventHandler, GuildEntity::DEFAULT_GUILD_ID)) {
-        _coreCommandNames << binding.getCommandName();
+        _coreCommandNames << binding.getName();
 
         delete binding.getFunctionMapping().second;
     }
@@ -144,7 +145,7 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
 
     QString fileName = fileInfo.fileName();
 
-    if (!validateScriptName(botScript->getScriptName(), fileName)) {
+    if (!validateScriptName(botScript->getName(), fileName)) {
         return;
     }
 
@@ -158,13 +159,14 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
         return;
     }
 
+
     for (QJsonValue binding : botScript->getEventBindingsJson()) {
         QString eventType = binding[IBinding::BINDING_TYPE].toString();
 
         if (QString::compare(eventType, IBinding::BINDING_TYPE_COMMAND, Qt::CaseInsensitive) == 0) {
             if (!validateCommandBinding(botScript, binding, fileName)) {
                 return;
-            }
+            }            
 
         } else if (QString::compare(eventType, IBinding::BINDING_TYPE_GATEWAY, Qt::CaseInsensitive) == 0) {
             if (!validateGatewayBinding(botScript, binding, fileName)) {
@@ -206,7 +208,7 @@ ScriptManager::validateScriptCommands(BotScript *botScript, const QFileInfo &fil
             return false;
         }
 
-        _scriptNamesByCommand[command] = botScript->getScriptName();
+        _scriptNamesByCommand[command] = botScript->getName();
 
         _commandBindings[fileInfo.fileName()] << commandBinding;
     }
@@ -237,7 +239,11 @@ ScriptManager::validateCommandBinding(BotScript *botScript,
 
     BindingFactory::build(commandBinding, botScript, binding);
 
-    if (!validateScriptCommandName(commandBinding.getCommandName(), fileName)) {
+    UserHelp help;
+
+    help.addPages(botScript, commandBinding);
+
+    if (!validateScriptCommandName(commandBinding.getName(), fileName)) {
         return false;
     }
 
@@ -245,7 +251,7 @@ ScriptManager::validateCommandBinding(BotScript *botScript,
         return false;
     }       
 
-    _scriptNamesByCommand[commandBinding.getCommandName()] = botScript->getScriptName();
+    _scriptNamesByCommand[commandBinding.getName()] = botScript->getName();
 
     _commandBindings[fileName] << commandBinding;
 
@@ -268,7 +274,7 @@ ScriptManager::validateGatewayBinding(BotScript *botScript,
 
     BindingFactory::build(gatewayBinding, botScript, binding);
 
-    if (!validateScriptCommandName(gatewayBinding.getBindingName(), fileName)) {
+    if (!validateScriptCommandName(gatewayBinding.getName(), fileName)) {
         return false;
     }
 
@@ -276,7 +282,7 @@ ScriptManager::validateGatewayBinding(BotScript *botScript,
 
     QString functionName = gatewayBinding.getFunctionMapping().first;
 
-    if (_functionNameByEventNameByScriptName[botScript->getScriptName()][eventName] == functionName) {
+    if (_functionNameByEventNameByScriptName[botScript->getName()][eventName] == functionName) {
         _logger->warning(QString("Gateway event \"%1\" has already been registered to function in script: %3... ")
                          .arg(eventName)
                          .arg(functionName)
@@ -289,7 +295,7 @@ ScriptManager::validateGatewayBinding(BotScript *botScript,
         return false;
     }
 
-    _functionNameByEventNameByScriptName[botScript->getScriptName()][eventName] = functionName;
+    _functionNameByEventNameByScriptName[botScript->getName()][eventName] = functionName;
 
     _gatewayBindings[fileName] << gatewayBinding;
 
@@ -323,7 +329,7 @@ ScriptManager::validateTimedBinding(BotScript *botScript,
 
     BindingFactory::build(timedBinding, botScript, binding);
 
-    if (!validateScriptCommandName(timedBinding.getBindingName(), fileName)) {
+    if (!validateScriptCommandName(timedBinding.getName(), fileName)) {
         return false;
     }
 
@@ -331,7 +337,7 @@ ScriptManager::validateTimedBinding(BotScript *botScript,
         return false;
     }    
 
-    _scriptNamesByCommand[timedBinding.getBindingName()] = botScript->getScriptName();
+    _scriptNamesByCommand[timedBinding.getName()] = botScript->getName();
 
     _timedBindings[fileName] << timedBinding;
 

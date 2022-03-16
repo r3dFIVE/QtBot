@@ -21,12 +21,11 @@
 #ifndef IBINDING_H
 #define IBINDING_H
 
-#include "botscript.h"
 #include "ibotjob.h"
 #include "logging/logfactory.h"
 
 
-class IBinding : public QObject
+class IBinding : public HelpPage
 {
 
 public:    
@@ -35,22 +34,19 @@ public:
     static const QString BINDING_TYPE_COMMAND;
     static const QString BINDING_TYPE_GATEWAY;
     static const QString BINDING_TYPE_TIMED;
-    static const QString FUNCTION;
-    static const QString DESCRIPTION;
-    static const QString IGNORE_ADMIN;
     static const QString BINDING_NAME;
+    static const QString FUNCTION;
+
+    static const QString IGNORE_ADMIN;
 
     bool validateFunctionMapping(const QMetaObject &metaObject) const;
     IBotJob::FunctionMapping getFunctionMapping() const;
-    QString getDescription() const;
-    void setDescription(const QString &description);
+
     void setFunctionMapping(const IBotJob::FunctionMapping &functionMapping);
     bool ignoreAdmin();
     void setIgnoreAdmin(bool ignoreAdmin);
     void setAdminOnly(const bool adminOnly);
     bool isAdminOnly() const;
-    QString getBindingName() const;
-    void setBindingName(const QString &bindingName);
 
     virtual bool isValid(const QMetaObject &metaObject) const = 0;
 
@@ -62,8 +58,6 @@ protected:
     bool _ignoreAdmin = false;
     IBotJob::FunctionMapping _functionMapping;
     Logger *_logger = LogFactory::getLogger(this);
-    QString _description;
-    QString _bindingName;
 };
 
 

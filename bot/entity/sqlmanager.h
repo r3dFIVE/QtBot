@@ -22,6 +22,8 @@
 #define SQLMANAGER_H
 
 #include <QObject>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 
 #include "util/databasetype.h"
 #include "idbmanager.h"

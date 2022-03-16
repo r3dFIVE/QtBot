@@ -50,7 +50,6 @@ class BotScript : public IBotJob
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlQuery _query;
-    QString _scriptName;
 
     static QString _botId;
     static QString _botName;
@@ -58,7 +57,9 @@ class BotScript : public IBotJob
     void setScriptCommands(const QMap<QString, QVariant> &commands);
     void setEventBindingsJson(const QJsonArray &eventBindings);
 
-    Q_PROPERTY(QString name READ getScriptName WRITE setScriptName REQUIRED)
+    Q_PROPERTY(QString name READ getName WRITE setName REQUIRED)
+    Q_PROPERTY(QString short_description READ getDescriptionShort WRITE setDescriptionShort)
+    Q_PROPERTY(QString description READ getDescription WRITE setDescription)
     Q_PROPERTY(QMap commands READ getScriptCommands WRITE setScriptCommands)
     Q_PROPERTY(QJsonArray event_bindings READ getEventBindingsJson WRITE setEventBindingsJson)
 
@@ -71,12 +72,10 @@ public:
     DatabaseContext getDatabaseContext() const;
     QMap<QString, QVariant> getScriptCommands() const;
     QJsonArray getEventBindingsJson() const;
-    QString getScriptName() const;
     QString findFunctionMapping(const QString &command) const;
     void setDatabaseContext(const DatabaseContext &databaseContext);
     void setEngine(QSharedPointer<QQmlEngine> engine);
-    void setScriptName(const QString &scriptName);
-
+    void setName(const QString &name) override;
     void execute(const QByteArray &command, const EventContext &message) override;
 
     static void setBotId(const QString &botId);

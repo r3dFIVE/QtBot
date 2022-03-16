@@ -32,6 +32,10 @@ TimedBinding::TimedBinding() {
 }
 
 TimedBinding::TimedBinding(const TimedBinding &other) {
+    if (this == &other) {
+        return;
+    }
+
     copy(other);
 }
 
@@ -54,6 +58,8 @@ TimedBinding::copy(const TimedBinding &other) {
 
     _description = other._description;
 
+    _descriptionShort = other._descriptionShort;
+
     _singleShot = other._singleShot;
 
     _singleton = other._singleton;
@@ -74,7 +80,7 @@ TimedBinding::copy(const TimedBinding &other) {
 
     _id = other._id;
 
-    _bindingName = other._bindingName;
+    _name = other._name;
 
     _forceEnable = other._forceEnable;
 }
@@ -218,7 +224,7 @@ TimedBinding::setStartedAt(const qint64 startedAt) {
 
 bool
 TimedBinding::isValid(const QMetaObject &metaObject) const {
-    if (!isValidParam(TimedBinding::BINDING_NAME, _bindingName)) {
+    if (!isValidParam(TimedBinding::BINDING_NAME, _name)) {
         return false;
     }
 

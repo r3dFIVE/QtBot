@@ -299,11 +299,11 @@ void
 GuildEntity::updateAllTimedBindings(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
                                  CommandRestrictions::RestrictionState state) {
     for (TimedBinding binding : _timedBindings) {
-        updateTimedBindingState(restrictionUpdates, binding.getBindingName(), state);
+        updateTimedBindingState(restrictionUpdates, binding.getName(), state);
     }
 
     for (TimedBinding binding : _disabledTimedBindings) {
-        updateTimedBindingState(restrictionUpdates, binding.getBindingName(), state);
+        updateTimedBindingState(restrictionUpdates, binding.getName(), state);
     }
 }
 
@@ -365,7 +365,7 @@ GuildEntity::getGatewayEventJobs(QSharedPointer<EventContext> context) {
     QList<Job *> gatewayEventJobs;
 
     for (auto binding : _gatewayBindingsByEventName[context->getEventName().toString()]) {
-        if (!canInvoke(*context, binding.getBindingName())) {
+        if (!canInvoke(*context, binding.getName())) {
             continue;
         }
 
@@ -422,7 +422,6 @@ GuildEntity::setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCo
     QMapIterator<QString, QString> it(scriptNamesByCommand);
 
     while (it.hasNext()) {
-
         it.next();
 
         _commandNamesByScriptName[it.value()] << it.key();
@@ -435,14 +434,13 @@ GuildEntity::setMappedStateIdsByCommand(QMap<QString, QMap<QString, CommandRestr
 }
 
 void
-GuildEntity::addCommandBinding(const CommandBinding &binding) {
-    _commandBindings[binding.getCommandName()] = binding;
-
+GuildEntity::addCommandBinding(CommandBinding &binding) {
+    _commandBindings[binding.getName()] = binding;
 }
 
 void
 GuildEntity::addGatewayBinding(const GatewayBinding &binding) {
-        _gatewayBindings[binding.getBindingName()] = binding;
+        _gatewayBindings[binding.getName()] = binding;
 
         if (_gatewayBindingsByEventName.contains(binding.getEventName())) {
             _gatewayBindingsByEventName[binding.getEventName()] << binding;
@@ -456,12 +454,12 @@ void
 GuildEntity::addTimedBinding(TimedBinding &binding, const bool checkState) {
     if (checkState) {
         if (isTimedJobEnabled(binding)) {
-            _timedBindings[binding.getBindingName()] = binding;
+            _timedBindings[binding.getName()] = binding;
         } else {
-            _disabledTimedBindings[binding.getBindingName()] = binding;
+            _disabledTimedBindings[binding.getName()] = binding;
         }
     } else {
-        _timedBindings[binding.getBindingName()] = binding;
+        _timedBindings[binding.getName()] = binding;
     }
 }
 
@@ -613,7 +611,7 @@ GuildEntity::isTimedJobEnabled(const TimedBinding &binding) {
         return true;
     }
 
-    QString bindingName = binding.getBindingName();
+    QString bindingName = binding.getName();
 
     if (_mappedStateIdsByCommand.contains(bindingName)) {
         if (_mappedStateIdsByCommand[bindingName].contains(GUILD_ID_ALIAS)) {

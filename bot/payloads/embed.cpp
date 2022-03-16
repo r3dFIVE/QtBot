@@ -34,6 +34,15 @@ const QString Embed::VIDEO = "video";
 const QString Embed::AUTHOR = "author";
 const QString Embed::FIELDS = "fields";
 
+const int Embed::DECRIPTION_MAX_LENGTH = 4000;
+const int Embed::DECRIPTION_SHORT_MAX_LENGTH = 256;
+const int Embed::TITLE_MAX_LENGTH = 200;
+const int Embed::TOTAL_MAX_LENGTH = 6000;
+const int Embed::FIELDS_MAX = 25;
+const int Embed::FIELDS_VALUE_MAX_LENGTH = 1024;
+const int Embed::FOOTER_TEXT_MAX_LENGTH = 2000;
+const int Embed::AUTHOR_NAME_MAX_LENGTH = 200;
+
 Embed::Embed(const QString &title,
              const QString &description,
              const QString &url,

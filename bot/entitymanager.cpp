@@ -21,6 +21,7 @@
 #include "entitymanager.h"
 
 #include <QSqlError>
+#include <QTimer>
 
 #include "entity/mongomanager.h"
 #include "util/enumutils.h"

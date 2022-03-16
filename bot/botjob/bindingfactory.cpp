@@ -1,6 +1,5 @@
 #include "bindingfactory.h"
 
-
 void
 BindingFactory::build(TimedBinding &timedBinding, BotScript *botScript, const QJsonValue &binding) {
     QString functionName = binding[IBinding::FUNCTION].toString();
@@ -11,7 +10,7 @@ BindingFactory::build(TimedBinding &timedBinding, BotScript *botScript, const QJ
 
     timedBinding.setFunctionMapping(qMakePair(functionName, botScript));
 
-    timedBinding.setScriptName(botScript->getScriptName());
+    timedBinding.setScriptName(botScript->getName());
 
     timedBinding.setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
 
@@ -27,7 +26,7 @@ BindingFactory::build(TimedBinding &timedBinding, BotScript *botScript, const QJ
         timedBinding.setForceEnable(binding[TimedBinding::FORCE_ENABLE].toBool());
     }
 
-    timedBinding.setBindingName(bindingName);
+    timedBinding.setName(bindingName);
 
     timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
@@ -46,7 +45,7 @@ BindingFactory::build(GatewayBinding &gatewayBinding, BotScript *botScript, cons
 
     gatewayBinding.setEventName(gatewayEventName);
 
-    gatewayBinding.setBindingName(bindingName);
+    gatewayBinding.setName(bindingName);
 
     gatewayBinding.setDescription(binding[GatewayBinding::DESCRIPTION].toString());
 
@@ -60,7 +59,7 @@ BindingFactory::build(CommandBinding &commandBinding, BotScript *botScript, cons
 
     QString command = binding[CommandBinding::COMMAND].toString();
 
-    commandBinding.setCommandName(command);
+    commandBinding.setName(command);
 
     QString functionName = binding[CommandBinding::FUNCTION].toString();
 

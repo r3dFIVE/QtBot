@@ -26,6 +26,8 @@
 
 class GatewayBinding : public IBinding
 {
+    Q_OBJECT
+
     QString _eventName;
 
 public:
@@ -38,6 +40,8 @@ public:
     GatewayBinding(const GatewayBinding &other);
 
     GatewayBinding &operator=(const GatewayBinding &other);
+
+    void copy(const GatewayBinding &other);
 
     bool isValid(const QMetaObject &metaObject) const override;
     QString getEventName() const;
