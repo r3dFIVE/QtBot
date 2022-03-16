@@ -12,22 +12,20 @@ class UserHelp : public QObject
 {
     Q_OBJECT
 
-    QList<Embed> mainPages;
-    QMap<QString, QMap<QString, QList<Embed>>> childPages;
+    QMap<QString, QMap<QString, QList<Embed>>> _pages;
 
+    Embed buildPage(const QString &name, const QString &description, int pageNum, int total);
     QStringList splitDescription(const QString &description);
 
     void addBindingPages(const IBinding &binding);
     void addScriptPages(BotScript *botScript);
 
-
-    Embed buildPage(const IBinding &binding);
 public:
     explicit UserHelp(QObject *parent = nullptr) : QObject(parent) {}
 
     void addPages(BotScript *botScript, const IBinding &binding);
 
-
+    void clear();
 };
 
 #endif // USERHELP_H
