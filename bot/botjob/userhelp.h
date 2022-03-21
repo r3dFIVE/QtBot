@@ -29,7 +29,7 @@ class UserHelp : public QObject
 public:
 
     UserHelp(QObject *parent = nullptr) : QObject{parent} {}
-    UserHelp(const UserHelp &other) : _pages{other._pages} {}
+    UserHelp(const UserHelp &other) : QObject{other.parent()}, _pages{other._pages} {}
     UserHelp(const QHash<BotScript*, QList<QSharedPointer<IBinding>>> &bindingsByScript, QObject *parent = nullptr);
 
     const Embed getHelpPage(const QString &pageName, int pageNum);

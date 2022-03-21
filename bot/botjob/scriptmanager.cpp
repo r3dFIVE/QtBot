@@ -386,8 +386,6 @@ ScriptManager::buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntit
     }
 
     addCoreCommands(guildEntity);
-
-    QList<IBinding> _scriptBindings;
     
     for (auto& binding : _commandBindings[botScript->getName()]) {
         guildEntity.addCommandBinding(botScript, buildBinding(binding, botScript));

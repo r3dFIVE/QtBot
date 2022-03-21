@@ -38,7 +38,7 @@ CommandBinding::CommandBinding(const QString &commandName,
     _functionMapping = functionMapping;
 }
 
-CommandBinding::CommandBinding(const CommandBinding &other) {
+CommandBinding::CommandBinding(const CommandBinding &other) : IBinding{other._baseProperties} {
     if (this == &other) {
         return;
     }

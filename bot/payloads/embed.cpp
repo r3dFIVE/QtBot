@@ -57,6 +57,17 @@ Embed::Embed(const QString &title,
     _jsonObject[COLOR] = color;
 }
 
+Embed&
+Embed::operator=(const Embed &other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    _jsonObject = other._jsonObject;
+
+    return *this;
+}
+
 QJsonValue
 Embed::getTitle() const {
     return _jsonObject[TITLE];

@@ -30,7 +30,7 @@ GatewayBinding::GatewayBinding(const QString &eventName) {
     _gatewayProperties->eventName = eventName;
 }
 
-GatewayBinding::GatewayBinding(const GatewayBinding &other) {
+GatewayBinding::GatewayBinding(const GatewayBinding &other) : IBinding{other._baseProperties} {
     if (this == &other) {
         return;
     }

@@ -31,7 +31,7 @@ TimedBinding::TimedBinding() {
     _logger = LogFactory::getLogger(this);
 }
 
-TimedBinding::TimedBinding(const TimedBinding &other) {
+TimedBinding::TimedBinding(const TimedBinding &other) : IBinding{other._baseProperties} {
     if (this == &other) {
         return;
     }

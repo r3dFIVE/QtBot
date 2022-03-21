@@ -67,6 +67,8 @@ public:
     Embed(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
     Embed(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
 
+    Embed& operator=(const Embed &other);
+
     Q_INVOKABLE QJsonArray getFields() const;
     Q_INVOKABLE QJsonObject getAuthor() const;
     Q_INVOKABLE QJsonObject getFooter() const;
