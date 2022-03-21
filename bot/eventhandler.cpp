@@ -384,8 +384,6 @@ EventHandler::getHelpPage(EventContext context) {
 
     Message message;
 
-    //message.setContent(content);
-
     QJsonArray embeds;
 
     embeds << helpPage.object();
@@ -393,8 +391,6 @@ EventHandler::getHelpPage(EventContext context) {
     message.setEmbeds(embeds);
 
     context.setTargetPayload(message.toQJsonObject());
-
-    _logger->critical(SerializationUtils::toQString(context));
 
     _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
 

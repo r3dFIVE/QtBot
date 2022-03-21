@@ -46,7 +46,7 @@ class ScriptManager : public QObject
     QString _scriptDir;
     QStringList _coreCommandNames;
     QList<QFileInfo> _validScripts;
-    QMap<QString, QList<IBotJob*>> _managedScripts;
+    QMap<QString, QList<QSharedPointer<IBotJob>>> _managedScripts;
     QMap<QString, QList<QSharedPointer<CommandBinding>>> _commandBindings;
     QMap<QString, QList<QSharedPointer<GatewayBinding>>> _gatewayBindings;
     QMap<QString, QList<QSharedPointer<TimedBinding>>> _timedBindings;

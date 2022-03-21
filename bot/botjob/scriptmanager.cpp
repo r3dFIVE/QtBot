@@ -58,11 +58,7 @@ ScriptManager::ScriptManager(EventHandler *eventHandler) {
 ScriptManager::~ScriptManager() {
     _logger->trace("freeing all scripts");
 
-    for (QList<IBotJob*> scripts : _managedScripts) {
-        for (IBotJob* existingScript : scripts) {
-            delete existingScript;
-        }
-    }
+    _managedScripts.clear();
 }
 
 void
@@ -73,9 +69,7 @@ ScriptManager::buildScripts(QSharedPointer<GuildEntity> guildEntity, bool valida
     
     guildEntity->clearBindings();
 
-    for (IBotJob *existingScript : _managedScripts[guildEntity->getId()]) {
-        delete existingScript;
-    }
+    _managedScripts[guildEntity->getId()].clear();
 
     buildValidBotScripts(*guildEntity);    
 
@@ -346,7 +340,7 @@ ScriptManager::addCoreCommands(GuildEntity &guildEntity) {
     for (auto& key : coreCommandMappings.keys()) {
         guildEntity.addCommandBinding(nullptr, coreCommandMappings[key]);
 
-        _managedScripts[guildEntity.getId()] << key;
+        _managedScripts[guildEntity.getId()] << QSharedPointer<IBotJob>(key);
     }
 }
 
@@ -415,7 +409,7 @@ ScriptManager::buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntit
 
     botScript->setEngine(engine);
 
-    _managedScripts[guildEntity.getId()] << botScript;
+    _managedScripts[guildEntity.getId()] << QSharedPointer<IBotJob>(botScript);
 
     QObject::connect(botScript, &BotScript::timedBindingReadySignal,
                      _eventHandler, &EventHandler::registerTimedBinding);
