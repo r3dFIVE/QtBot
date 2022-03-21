@@ -50,6 +50,9 @@ class BotScript : public IBotJob
     QSharedPointer<DiscordAPI> _discordAPI;
     QSharedPointer<QQmlEngine> _engine;
     QSqlQuery _query;
+    QString _name;
+    QString _description;
+    QString _descriptionShort;
 
     static QString _botId;
     static QString _botName;
@@ -75,8 +78,13 @@ public:
     QString findFunctionMapping(const QString &command) const;
     void setDatabaseContext(const DatabaseContext &databaseContext);
     void setEngine(QSharedPointer<QQmlEngine> engine);
-    void setName(const QString &name) override;
     void execute(const QByteArray &command, const EventContext &message) override;
+    void setName(const QString &name);
+    void setDescription(const QString &description);
+    void setDescriptionShort(const QString &description);
+    QString getDescription() const;
+    QString getDescriptionShort() const;
+    QString getName() const;
 
     static void setBotId(const QString &botId);
     static void setBotName(const QString &botName);

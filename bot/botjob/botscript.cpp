@@ -28,6 +28,7 @@
 #include "util/serializationutils.h"
 #include "util/enumutils.h"
 #include "timedbinding.h"
+#include "payloads/embed.h"
 
 
 QString BotScript::_botId = QString();
@@ -125,6 +126,33 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
 }
 
 void
+BotScript::setDescription(const QString &description) {
+    _description = description;
+}
+
+void
+BotScript::setDescriptionShort(const QString &description) {
+    _descriptionShort = description;
+}
+
+QString
+BotScript::getDescription() const {
+    return _description.isEmpty() ? _descriptionShort : _description;
+}
+
+QString
+BotScript::getDescriptionShort() const {
+    QString descriptionShort = _descriptionShort.isEmpty() ? _description : _descriptionShort;
+
+    return descriptionShort.left(Embed::DECRIPTION_SHORT_MAX_LENGTH);
+}
+
+QString
+BotScript::getName() const {
+    return _name;
+}
+
+void
 BotScript::setBotId(const QString &botId) {
     _botId = botId;
 }
@@ -149,7 +177,7 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     timedBinding->setId(uuid);
 
-    timedBinding->setName(uuid);
+    //timedBinding->setName(uuid);
 
     if (timedBinding->isValid(*this->metaObject())) {
        emit timedBindingReadySignal(_guildId, timedBinding);

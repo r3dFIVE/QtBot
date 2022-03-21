@@ -35,7 +35,7 @@ QString GuildEntity::ADMIN_ROLE_NAME = QString();
 QString GuildEntity::BOT_OWNER_ID = QString();
 CommandRestrictions::RestrictionState GuildEntity::DEFAULT_STATE;
 
-GuildEntity::GuildEntity(const Guild &guild) {
+GuildEntity::GuildEntity(const Guild &guild, QObject *parent) : QObject{parent}, _activeHelp{10}  {
     for (auto jsonRole : guild.getRoles()) {
         Role role(jsonRole.toObject());
 
@@ -85,22 +85,22 @@ bool
 GuildEntity::canInvoke(const EventContext &context, const QString &command) {
 
     if (_commandBindings.contains(command)) {
-        if (!_commandBindings[command].ignoreAdmin()) {
+        if (!_commandBindings[command]->ignoreAdmin()) {
             if (hasAdminRole(context)) {
                 return true;
             }
 
-            if (_commandBindings[command].isAdminOnly()) {
+            if (_commandBindings[command]->isAdminOnly()) {
                 return false;
             }
         }
     } else if (_gatewayBindings.contains(command)) {
-        if (!_gatewayBindings[command].ignoreAdmin()) {
+        if (!_gatewayBindings[command]->ignoreAdmin()) {
             if (hasAdminRole(context)) {
                 return true;
             }
 
-            if (_gatewayBindings[command].isAdminOnly()) {
+            if (_gatewayBindings[command]->isAdminOnly()) {
                 return false;
             }
         }
@@ -280,7 +280,7 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
         }
     }
 
-    QMapIterator<QString, GatewayBinding> g_it(_gatewayBindings);
+    QMapIterator<QString, QSharedPointer<GatewayBinding>> g_it(_gatewayBindings);
 
     while(g_it.hasNext()) {
         g_it.next();
@@ -298,12 +298,12 @@ GuildEntity::updateAllRestrictionStates(const QString &targetId,
 void
 GuildEntity::updateAllTimedBindings(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
                                  CommandRestrictions::RestrictionState state) {
-    for (TimedBinding binding : _timedBindings) {
-        updateTimedBindingState(restrictionUpdates, binding.getName(), state);
+    for (QSharedPointer<TimedBinding> binding : _timedBindings) {
+        updateTimedBindingState(restrictionUpdates, binding->getName(), state);
     }
 
-    for (TimedBinding binding : _disabledTimedBindings) {
-        updateTimedBindingState(restrictionUpdates, binding.getName(), state);
+    for (QSharedPointer<TimedBinding> binding : _disabledTimedBindings) {
+        updateTimedBindingState(restrictionUpdates, binding->getName(), state);
     }
 }
 
@@ -319,7 +319,7 @@ GuildEntity::updateTimedBindingState(QMap<QString, CommandRestrictions::Restrict
 
             _disabledTimedBindings.remove(bindingName);
 
-            _timedBindings[bindingName].start();
+            _timedBindings[bindingName]->start();
         }
 
         updateState(restrictionUpdates, bindingName, _id, state);
@@ -327,7 +327,7 @@ GuildEntity::updateTimedBindingState(QMap<QString, CommandRestrictions::Restrict
         if (state == CommandRestrictions::DISABLED)  {
             _disabledTimedBindings[bindingName] = _timedBindings[bindingName];
 
-            _disabledTimedBindings[bindingName].stop();
+            _disabledTimedBindings[bindingName]->stop();
 
             _timedBindings.remove(bindingName);
         }
@@ -354,7 +354,7 @@ GuildEntity::getCommandJob(QSharedPointer<EventContext> context) {
     QString command = context->getArgs()[0].toString();
 
     if (canInvoke(*context, command)) {
-       commandJob = new Job(*context, _commandBindings[command].getFunctionMapping());
+       commandJob = new Job(*context, _commandBindings[command]->getFunctionMapping());
     }
 
     return commandJob;
@@ -365,11 +365,11 @@ GuildEntity::getGatewayEventJobs(QSharedPointer<EventContext> context) {
     QList<Job *> gatewayEventJobs;
 
     for (auto binding : _gatewayBindingsByEventName[context->getEventName().toString()]) {
-        if (!canInvoke(*context, binding.getName())) {
+        if (!canInvoke(*context, binding->getName())) {
             continue;
         }
 
-        gatewayEventJobs << new Job(*context, binding.getFunctionMapping());
+        gatewayEventJobs << new Job(*context, binding->getFunctionMapping());
     }
 
     return gatewayEventJobs;
@@ -434,36 +434,42 @@ GuildEntity::setMappedStateIdsByCommand(QMap<QString, QMap<QString, CommandRestr
 }
 
 void
-GuildEntity::addCommandBinding(CommandBinding &binding) {
-    _commandBindings[binding.getName()] = binding;
+GuildEntity::addCommandBinding(BotScript *botScript, QSharedPointer<CommandBinding> binding) {
+    _bindingsByScript[botScript] << binding;
+
+    _commandBindings[binding->getName()] = binding;
 }
 
 void
-GuildEntity::addGatewayBinding(const GatewayBinding &binding) {
-        _gatewayBindings[binding.getName()] = binding;
+GuildEntity::addGatewayBinding(BotScript *botScript, QSharedPointer<GatewayBinding> binding) {
+    _bindingsByScript[botScript] << binding;
 
-        if (_gatewayBindingsByEventName.contains(binding.getEventName())) {
-            _gatewayBindingsByEventName[binding.getEventName()] << binding;
+    _gatewayBindings[binding->getName()] = binding;
 
-        } else {
-            _gatewayBindingsByEventName[binding.getEventName()] = QList<GatewayBinding>() << binding;
-        }
-}
+    if (_gatewayBindingsByEventName.contains(binding->getEventName())) {
+        _gatewayBindingsByEventName[binding->getEventName()] << binding;
 
-void
-GuildEntity::addTimedBinding(TimedBinding &binding, const bool checkState) {
-    if (checkState) {
-        if (isTimedJobEnabled(binding)) {
-            _timedBindings[binding.getName()] = binding;
-        } else {
-            _disabledTimedBindings[binding.getName()] = binding;
-        }
     } else {
-        _timedBindings[binding.getName()] = binding;
+        _gatewayBindingsByEventName[binding->getEventName()] = QList<QSharedPointer<GatewayBinding>>() << binding;
     }
 }
 
-QList<TimedBinding>
+void
+GuildEntity::addTimedBinding(BotScript *botScript, QSharedPointer<TimedBinding> binding, const bool checkState) {
+    _bindingsByScript[botScript] << binding;
+
+    if (checkState) {
+        if (isTimedJobEnabled(*binding)) {
+            _timedBindings[binding->getName()] = binding;
+        } else {
+            _disabledTimedBindings[binding->getName()] = binding;
+        }
+    } else {
+        _timedBindings[binding->getName()] = binding;
+    }
+}
+
+QList<QSharedPointer<TimedBinding>>
 GuildEntity::getTimedBindings() const {
     return _timedBindings.values();
 }
@@ -477,36 +483,36 @@ QList<Job *>
 GuildEntity::getReadyTimedJobs() {
     QList<Job *> readyJobs;
 
-    QMapIterator<QString, TimedBinding> it(_timedBindings);
+    QMapIterator<QString, QSharedPointer<TimedBinding>> it(_timedBindings);
 
     while (it.hasNext()) {
         it.next();
 
-        TimedBinding timedBinding = it.value();
+        QSharedPointer<TimedBinding> timedBinding = it.value();
 
-        if (QDateTime::currentSecsSinceEpoch() == timedBinding.getStartedAt()) {
+        if (QDateTime::currentSecsSinceEpoch() == timedBinding->getStartedAt()) {
             continue;
 
-        } else if (timedBinding.isRunning() && timedBinding.getRemaining() <= 0) {
-            EventContext context = timedBinding.getEventContext();
+        } else if (timedBinding->isRunning() && timedBinding->getRemaining() <= 0) {
+            EventContext context = timedBinding->getEventContext();
 
             context.setGuildId(_id);
 
             Job *timedJob = new Job;
 
-            timedJob->setContext(timedBinding.getEventContext());
+            timedJob->setContext(timedBinding->getEventContext());
 
-            timedJob->setFunctionMapping(timedBinding.getFunctionMapping());
+            timedJob->setFunctionMapping(timedBinding->getFunctionMapping());
 
             readyJobs << timedJob;
 
-            if (timedBinding.isSingleShot()) {
+            if (timedBinding->isSingleShot()) {
                 _disabledTimedBindings[it.key()] = _timedBindings[it.key()];
 
                 _timedBindings.remove(it.key());
 
             } else {
-                _timedBindings[it.key()].start();
+                _timedBindings[it.key()]->start();
             }
         }
     }
@@ -539,12 +545,12 @@ GuildEntity::validateTimedJobIndex(const int index) {
 
 void
 GuildEntity::removeTimedJobById(const QString &jobId) {
-    QMapIterator<QString, TimedBinding> it(_timedBindings);
+    QMapIterator<QString, QSharedPointer<TimedBinding>> it(_timedBindings);
 
     while (it.hasNext()) {
         it.next();
 
-        if (_timedBindings[it.key()].id() == jobId) {
+        if (_timedBindings[it.key()]->id() == jobId) {
             _timedBindings.remove(it.key());
         }
     }
@@ -569,7 +575,7 @@ GuildEntity::startTimedJob(const int index) {
 
     QString bindingName = _timedBindings.keys()[index];
 
-    _timedBindings[bindingName].start();
+    _timedBindings[bindingName]->start();
 }
 
 void
@@ -580,7 +586,7 @@ GuildEntity::restartTimedJob(const int index) {
 
     QString bindingName = _timedBindings.keys()[index];
 
-    _timedBindings[bindingName].restart();
+    _timedBindings[bindingName]->restart();
 }
 
 void
@@ -591,18 +597,95 @@ GuildEntity::stopTimedJob(const int index) {
 
     QString bindingName = _timedBindings.keys()[index];
 
-    _timedBindings[bindingName].stop();
+    _timedBindings[bindingName]->stop();
 }
 
 void
 GuildEntity::initTimedJobs() {    
-    QMapIterator<QString, TimedBinding> it(_timedBindings);
+    QMapIterator<QString, QSharedPointer<TimedBinding>> it(_timedBindings);
 
     while (it.hasNext()) {
         it.next();
 
-        _timedBindings[it.key()].start();
+        _timedBindings[it.key()]->start();
     }
+}
+
+void
+GuildEntity::clearBindings() {
+    _activeHelp.clear();
+
+    _helpChannelByUserId.clear();
+
+    _bindingsByScript.clear();
+
+    _timedBindings.clear();
+
+    _disabledTimedBindings.clear();
+
+    _gatewayBindingsByEventName.clear();
+
+    _commandBindings.clear();
+
+    _commandNamesByScriptName.clear();
+
+    _gatewayBindings.clear();
+
+}
+
+const Embed
+GuildEntity::getHelpPage(const EventContext &context)  {
+    QString userId = context.getUserId().toString();
+
+    QString channelId = context.getChannelId().toString();
+
+    QString pageName;
+
+    int pageNum = 0;
+
+    bool ok;
+
+    if (context.getArgs().size() == 1) {
+        QString arg = context.getArgs()[0].toString();
+
+        pageNum = arg.toInt(&ok);
+
+        if (!ok) {
+            pageNum = 0;
+        }
+    } else {
+        pageName = context.getArgs()[0].toString();
+
+        QString pageNumArg = context.getArgs()[1].toString();
+
+        pageNum = pageNumArg.toInt(&ok);
+
+        if (!ok) {
+            _logger->warning(QString("TODO Add help page usage"));
+        }
+    }
+
+    if (!_activeHelp.contains(userId) && channelId != userId) {
+        // .help was called without an active help for userId
+        if (channelId != userId) {
+            _activeHelp.insert(userId, buildUserHelp(context));
+
+        } else {
+            _logger->warning(QString("TODO return failed embed, must use .help from a channel first"));
+
+            return Embed();
+        }
+
+    }  else if (channelId != userId && _helpChannelByUserId[userId] != channelId) {
+        // .help was called from a new channel, cache new UserHelp for channel.
+        _activeHelp.remove(userId);
+
+        _activeHelp.insert(userId, buildUserHelp(context));
+
+        _helpChannelByUserId[userId] = channelId;
+    }
+
+    return _activeHelp[userId]->getHelpPage(pageName, pageNum);
 }
 
 bool
@@ -622,3 +705,27 @@ GuildEntity::isTimedJobEnabled(const TimedBinding &binding) {
     return DEFAULT_STATE;
 }
 
+UserHelp*
+GuildEntity::buildUserHelp(const EventContext &context) {
+    UserHelp userHelp;
+
+    if (hasAdminRole(context)) {
+        return new UserHelp(_bindingsByScript);
+    }
+
+    QHashIterator<BotScript*, QList<QSharedPointer<IBinding>>> it(_bindingsByScript);
+
+    QHash<BotScript*, QList<QSharedPointer<IBinding>>> enabledBindings;
+
+    while (it.hasNext()) {
+        it.next();
+
+        for (auto& binding : it.value()) {
+            if (canInvoke(context, binding->getName())) {
+                enabledBindings[it.key()] << binding;
+            }
+        }
+    }
+
+    return new UserHelp(enabledBindings);
+}

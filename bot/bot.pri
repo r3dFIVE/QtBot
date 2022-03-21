@@ -33,12 +33,15 @@ HEADERS += \
     $$PWD/botjob/commandbinding.h \
     $$PWD/botjob/databasecontext.h \
     $$PWD/botjob/gatewaybinding.h \
+    $$PWD/botjob/gatewaybindingproperties.h \
     $$PWD/botjob/helppage.h \
     $$PWD/botjob/ibinding.h \
+    $$PWD/botjob/ibindingproperties.h \
     $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
     $$PWD/botjob/scriptmanager.h \
     $$PWD/botjob/timedbinding.h \
+    $$PWD/botjob/timedbindingproperties.h \
     $$PWD/botjob/userhelp.h \
     $$PWD/entity/commandrestrictions.h \
     $$PWD/entity/gridfsfile.h \

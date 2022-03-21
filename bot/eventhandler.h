@@ -82,6 +82,7 @@ public slots:
     void startTimedJob(const EventContext &context);
     void stopTimedJob(const EventContext &context);
     void shutDown(const EventContext &context);
+    void getHelpPage(EventContext context);
 };
 
 #endif // MESSAGEHANDLER_H

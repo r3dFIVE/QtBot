@@ -27,7 +27,7 @@
 #include "payloads/eventcontext.h"
 #include "helppage.h"
 
-class IBotJob : public HelpPage
+class IBotJob : public QObject
 {
     Q_OBJECT
 

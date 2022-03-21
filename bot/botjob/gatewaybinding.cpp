@@ -24,11 +24,10 @@
 
 
 const QString GatewayBinding::GATEWAY_EVENT = "gateway_event";
-const QString GatewayBinding::SINGLETON = "singleton";
 
 
 GatewayBinding::GatewayBinding(const QString &eventName) {
-    _eventName = eventName;
+    _gatewayProperties->eventName = eventName;
 }
 
 GatewayBinding::GatewayBinding(const GatewayBinding &other) {
@@ -51,33 +50,29 @@ GatewayBinding
 }
 
 void
+GatewayBinding::setGatewayProperties(QSharedPointer<GatewayBindingProperties> properties) {
+    _gatewayProperties = properties;
+}
+
+void
 GatewayBinding::copy(const GatewayBinding &other) {
     _functionMapping = other._functionMapping;
 
     _logger = other._logger;
 
-    _ignoreAdmin = other._ignoreAdmin;
+    _baseProperties = other._baseProperties;
 
-    _description = other._description;
-
-    _descriptionShort = other._descriptionShort;
-
-    _eventName = other._eventName;
-
-    _name = other._name;
+    _gatewayProperties = other._gatewayProperties;
 }
 
 QString
 GatewayBinding::getEventName() const {
-    return _eventName;
+    return _gatewayProperties->eventName;
 }
 
-void GatewayBinding::setEventName(const QString &eventName) {
-    _eventName = eventName;
-}
 
 bool GatewayBinding::isValid(const QMetaObject &metaObject) const {
-    if (!isValidParam(GatewayBinding::BINDING_NAME, _name)) {
+    if (!isValidParam(GatewayBinding::BINDING_NAME, _baseProperties->name)) {
         return false;
     }
 
@@ -85,7 +80,7 @@ bool GatewayBinding::isValid(const QMetaObject &metaObject) const {
         return false;
     }
 
-    int _gatewayEventCode = EnumUtils::keyToValue<GatewayEvent::Event>(_eventName);
+    int _gatewayEventCode = EnumUtils::keyToValue<GatewayEvent::Event>(_gatewayProperties->eventName);
 
     if (_gatewayEventCode < 0) {
         _logger->warning("Invalid Gateway event type specified... Discarding binding.");

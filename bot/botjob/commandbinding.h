@@ -27,14 +27,15 @@ class CommandBinding : public IBinding
 {
     Q_OBJECT
 
-    bool _ignoreAdmin = false;
-
 public:
     static const QString COMMAND;
-    static const QString ADMIN_ONLY;
 
     CommandBinding() { }
-    CommandBinding(const QString &commandName, const IBotJob::FunctionMapping &functionMapping);
+    CommandBinding(const QString &commandName,
+                   const IBotJob::FunctionMapping &functionMapping,
+                   QSharedPointer<IBindingProperties> properties);
+    CommandBinding(const QString &commandName,
+                   const IBotJob::FunctionMapping &functionMapping);
     CommandBinding(const CommandBinding &other);
     ~CommandBinding() {}
 

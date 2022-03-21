@@ -47,9 +47,9 @@ class ScriptManager : public QObject
     QStringList _coreCommandNames;
     QList<QFileInfo> _validScripts;
     QMap<QString, QList<IBotJob*>> _managedScripts;
-    QMap<QString, QList<CommandBinding> > _commandBindings;
-    QMap<QString, QList<GatewayBinding> > _gatewayBindings;
-    QMap<QString, QList<TimedBinding> > _timedBindings;
+    QMap<QString, QList<QSharedPointer<CommandBinding>>> _commandBindings;
+    QMap<QString, QList<QSharedPointer<GatewayBinding>>> _gatewayBindings;
+    QMap<QString, QList<QSharedPointer<TimedBinding>>> _timedBindings;
     QMap<QString, QString> _scriptNamesByCommand;
     QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 
@@ -64,19 +64,19 @@ class ScriptManager : public QObject
     bool validateScriptName(const QString &scriptName, const QString &fileName);
 
     template <class T>
-    T buildBinding(const T& t, BotScript* botScript) {
-            QString functionName = t.getFunctionMapping().first;
+    QSharedPointer<T> buildBinding(QSharedPointer<T> t, BotScript* botScript) {
+            QString functionName = t->getFunctionMapping().first;
             IBotJob::FunctionMapping functionMapping = qMakePair(functionName, botScript);
-            T newBinding(t);
-            newBinding.setFunctionMapping(functionMapping);
+            QSharedPointer<T> newBinding = QSharedPointer<T>(new T(*t));
+            newBinding->setFunctionMapping(functionMapping);
             return newBinding;
     }
 
     void validate(const QFileInfo &fileInfo);
     bool validateScriptCommands(BotScript *botScript, const QFileInfo &fileInfo);
-    bool validateCommandBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
-    bool validateGatewayBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
-    bool validateTimedBinding(BotScript *botScript, const QJsonValue &binding, const QString &fileName);
+    bool validateCommandBinding(BotScript *botScript, const QJsonValue &binding);
+    bool validateGatewayBinding(BotScript *botScript, const QJsonValue &binding);
+    bool validateTimedBinding(BotScript *botScript, const QJsonValue &binding);
 
 public:
     ScriptManager(EventHandler *eventHandler);

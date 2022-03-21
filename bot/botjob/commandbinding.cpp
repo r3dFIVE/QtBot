@@ -22,10 +22,18 @@
 
 
 const QString CommandBinding::COMMAND = "command";
-const QString CommandBinding::ADMIN_ONLY = "admin_only";
 
-CommandBinding::CommandBinding(const QString &commandName, const IBotJob::FunctionMapping &functionMapping) {
-    _name = commandName;
+CommandBinding::CommandBinding(const QString &commandName,
+                               const IBotJob::FunctionMapping &functionMapping,
+                               QSharedPointer<IBindingProperties> properties) : IBinding{properties} {
+    _baseProperties->name = commandName;
+
+    _functionMapping = functionMapping;
+}
+
+CommandBinding::CommandBinding(const QString &commandName,
+                               const IBotJob::FunctionMapping &functionMapping) {
+    _baseProperties->name = commandName;
 
     _functionMapping = functionMapping;
 }
@@ -55,15 +63,7 @@ CommandBinding::copy(const CommandBinding &other) {
 
     _logger = other._logger;
 
-    _description = other._description;
-
-    _descriptionShort = other._descriptionShort;
-
-    _name = other._name;
-
-    _adminOnly = other._adminOnly;
-
-    _ignoreAdmin = other._ignoreAdmin;
+    _baseProperties = other._baseProperties;
 }
 
 
@@ -73,7 +73,7 @@ CommandBinding::isValid(const QMetaObject &metaObject) const {
         return false;
     }
 
-    if (_name.isEmpty()) {
+    if (_baseProperties->name.isEmpty()) {
         _logger->warning(QString("\"%1\" property is not set for command binding for function \"%2\"... Discarding binding.")
                          .arg(COMMAND)
                          .arg(_functionMapping.first));

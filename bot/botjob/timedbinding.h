@@ -22,28 +22,23 @@
 #define TIMEDBINDING_H
 
 #include "ibinding.h"
+#include "timedbindingproperties.h"
 
 
 class TimedBinding : public IBinding
 {
     Q_OBJECT
 
+    QSharedPointer<TimedBindingProperties> _timedProperties;
+
     bool _enabled = true;
     bool _running = true;
-    bool _singleShot = true;
-    bool _singleton = false;
-    bool _forceEnable = false;
+
     EventContext _eventContext;    
-    qint64 _remainder = 0;
-    int _fireAfter = 0;
+    qint64 _remainder = 0;    
     qint64 _startedAt = 0;    
     qint64 _stoppedAt = 0;    
-    QString _scriptName;
     QString _id;
-
-    Q_PROPERTY(bool single_shot READ isSingleShot WRITE setSingleShot)
-    Q_PROPERTY(EventContext context READ getEventContext WRITE setEventContext)
-    Q_PROPERTY(qint64 fire_after READ getFireAfter WRITE setFireAfter)
 
     void copy(const TimedBinding &other);
 public:
@@ -58,7 +53,6 @@ public:
     ~TimedBinding() {}
 
     TimedBinding &operator=(const TimedBinding &other);
-
 
     bool isValid(const QMetaObject &metaObject) const override;
     bool isSingleShot() const;
@@ -75,12 +69,8 @@ public:
     void restart();
     void setEnabled(const bool enabled);
     void setStartedAt(const qint64 startedAt);
-    void setFireAfter(const int fireAfter);
-    void setScriptName(const QString &scriptName);
-    void setSingleShot(bool singleShot);
-    void setSingleton(bool singleton);
-    void setForceEnable(bool forceEnable);
     void setEventContext(const EventContext &sourcePayload);
+    void setTimedProperties(QSharedPointer<TimedBindingProperties> properties);
     void setId(const QString &id);
     void start();
     void stop();

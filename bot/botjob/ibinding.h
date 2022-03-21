@@ -21,12 +21,14 @@
 #ifndef IBINDING_H
 #define IBINDING_H
 
+#include "ibindingproperties.h"
 #include "ibotjob.h"
 #include "logging/logfactory.h"
 
 
-class IBinding : public HelpPage
+class IBinding : public QObject
 {
+    Q_OBJECT
 
 public:    
 
@@ -36,28 +38,34 @@ public:
     static const QString BINDING_TYPE_TIMED;
     static const QString BINDING_NAME;
     static const QString FUNCTION;
-
+    static const QString DESCRIPTION;
+    static const QString DESCRIPTION_SHORT;
     static const QString IGNORE_ADMIN;
+    static const QString ADMIN_ONLY;
+
+    IBinding() {};
+    IBinding(QSharedPointer<IBindingProperties> properties) : _baseProperties{properties} {}
 
     bool validateFunctionMapping(const QMetaObject &metaObject) const;
     IBotJob::FunctionMapping getFunctionMapping() const;
 
     void setFunctionMapping(const IBotJob::FunctionMapping &functionMapping);
     bool ignoreAdmin();
-    void setIgnoreAdmin(bool ignoreAdmin);
-    void setAdminOnly(const bool adminOnly);
     bool isAdminOnly() const;
+    const QString& getName() const;
+    const QString getDescriptionShort() const;
+    const QString& getDescription() const;
+
+    void setBaseProperties(QSharedPointer<IBindingProperties> properties);
 
     virtual bool isValid(const QMetaObject &metaObject) const = 0;
 
-    Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
 protected:
     bool isValidParam(const QString &name, const QString &value) const;
 
-    bool _adminOnly = false;
-    bool _ignoreAdmin = false;
     IBotJob::FunctionMapping _functionMapping;
     Logger *_logger = LogFactory::getLogger(this);
+    QSharedPointer<IBindingProperties> _baseProperties;
 };
 
 

@@ -35,7 +35,7 @@ const QString Embed::AUTHOR = "author";
 const QString Embed::FIELDS = "fields";
 
 const int Embed::DECRIPTION_MAX_LENGTH = 4000;
-const int Embed::DECRIPTION_SHORT_MAX_LENGTH = 256;
+const int Embed::DECRIPTION_SHORT_MAX_LENGTH = 200;
 const int Embed::TITLE_MAX_LENGTH = 200;
 const int Embed::TOTAL_MAX_LENGTH = 6000;
 const int Embed::FIELDS_MAX = 25;

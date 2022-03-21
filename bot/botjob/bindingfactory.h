@@ -14,6 +14,7 @@ class BindingFactory : public QObject
 
     static Logger *LOGGER;
 
+    static QSharedPointer<IBindingProperties> buildBaseProperties(const QJsonValue &binding);
 public:
     BindingFactory(QObject *parent = nullptr) = delete;
     BindingFactory(const BindingFactory &other) = delete;

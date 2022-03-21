@@ -33,73 +33,114 @@
 class CoreCommands {
 
 public:
-    static QHash<CoreCommand*, CommandBinding> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
-        QHash<CoreCommand*, CommandBinding> commands;
+    static QHash<CoreCommand*, QSharedPointer<CommandBinding>> buildCoreCommandBindings(EventHandler &eventHandler, const QString &guildId) {
+        QHash<CoreCommand*, QSharedPointer<CommandBinding>> commands;
 
-        const auto addCommand = [&](const QString& commandName, bool adminOnly, std::function<void(const EventContext &context)> cmd) {
+        const auto addCommand = [&](const QString& commandName,
+                QSharedPointer<IBindingProperties> properties,
+                std::function<void(const EventContext &context)> cmd) {
             CoreCommand *coreCommand = new CoreCommand(cmd);
 
             coreCommand->setGuildId(guildId);
 
             IBotJob::FunctionMapping functionMapping = qMakePair(commandName, coreCommand);
 
-            CommandBinding binding(commandName, functionMapping);
-
-            binding.setAdminOnly(adminOnly);
+            QSharedPointer<CommandBinding> binding =
+                    QSharedPointer<CommandBinding>(new CommandBinding(commandName, functionMapping, properties));
 
             commands[coreCommand] = binding;
         };
 
-        addCommand(".shutdown", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> shutdownProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        shutdownProperties->adminOnly = true;
+
+        addCommand(".shutdown", shutdownProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "shutDown",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".reload", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> reloadProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        reloadProperties->adminOnly = true;
+
+        addCommand(".reload", reloadProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "reloadGuild",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".timed", false, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> timedProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        timedProperties->adminOnly = false;
+
+        addCommand(".timed", timedProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "displayTimedJobs",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".timedremove", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> timedRemoveProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        timedRemoveProperties->adminOnly = true;
+
+        addCommand(".timedremove", timedRemoveProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "removeTimedJob",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".timedstart", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> timedStartProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        timedStartProperties->adminOnly = true;
+
+        addCommand(".timedstart", timedStartProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "startTimedJob",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".timedrestart", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> timedRestartProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        timedRestartProperties->adminOnly = true;
+
+        addCommand(".timedrestart", timedRestartProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "restartTimedJob",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".timedstop", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> timedStopProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        timedStopProperties->adminOnly = true;
+
+        addCommand(".timedstop", timedStopProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "stopTimedJob",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
-        addCommand(".enable", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> enableProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        enableProperties->adminOnly = true;
+
+        addCommand(".enable", enableProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "updateRestrictionState",
                                       Qt::QueuedConnection,
@@ -107,7 +148,12 @@ public:
                                       Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::ENABLED));
         });
 
-        addCommand(".enableall", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> enableAllProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        enableAllProperties->adminOnly = true;
+
+        addCommand(".enableall", enableAllProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "updateAllRestrictionStates",
                                       Qt::QueuedConnection,
@@ -115,7 +161,12 @@ public:
                                       Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::ENABLED));
         });
 
-        addCommand(".disable", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> disableProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        disableProperties->adminOnly = true;
+
+        addCommand(".disable", disableProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "updateRestrictionState",
                                       Qt::QueuedConnection,
@@ -123,7 +174,12 @@ public:
                                       Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::DISABLED));
         });
 
-        addCommand(".disableall", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> disableAllProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        disableAllProperties->adminOnly = true;
+
+        addCommand(".disableall", disableAllProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "updateAllRestrictionStates",
                                       Qt::QueuedConnection,
@@ -131,7 +187,12 @@ public:
                                       Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::DISABLED));
         });
 
-        addCommand(".clear", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> clearProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        clearProperties->adminOnly = true;
+
+        addCommand(".clear", clearProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "updateRestrictionState",
                                       Qt::QueuedConnection,
@@ -139,14 +200,29 @@ public:
                                       Q_ARG(CommandRestrictions::RestrictionState, CommandRestrictions::REMOVED));
         });
 
-        addCommand(".clearall", true, [&](const EventContext &context) -> void {
+        QSharedPointer<IBindingProperties> clearAllProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        clearAllProperties->adminOnly = true;
+
+        addCommand(".clearall", clearAllProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "removeAllRestrictionStates",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });
 
+        QSharedPointer<IBindingProperties> helpProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
 
+        clearAllProperties->adminOnly = false;
+
+        addCommand(".help", helpProperties, [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                      "getHelpPage",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(EventContext, context));
+        });
 
         return commands;
     }

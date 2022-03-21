@@ -130,7 +130,9 @@ EventHandler::registerTimedJobs(const QString &guildId) {
 
 void
 EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding) {
-    _availableGuilds[guildId]->addTimedBinding(*timedBinding, false);
+    BotScript *botScript = qobject_cast<BotScript*>(timedBinding->getFunctionMapping().second);
+
+    _availableGuilds[guildId]->addTimedBinding(botScript, timedBinding, false);
 }
 
 void
@@ -170,7 +172,7 @@ void
 EventHandler::displayTimedJobs(EventContext context) {
     QString guildId = context.getGuildId().toString();
 
-    QList<TimedBinding> timedBindings = _availableGuilds[guildId]->getTimedBindings();
+    QList<QSharedPointer<TimedBinding>> timedBindings = _availableGuilds[guildId]->getTimedBindings();
 
     if (timedBindings.size() == 0) {
         return;
@@ -181,7 +183,7 @@ EventHandler::displayTimedJobs(EventContext context) {
             .arg(guildId);
 
     for (int i = 0; i < timedBindings.size(); ++i) {
-        TimedBinding timedBinding = timedBindings[i];
+        TimedBinding timedBinding = *timedBindings[i];
 
         QString jobInfo = QString("Timed Job#: `%1` => `ScriptName: %2 | FunctionName: %3 | SingleShot: %4 | Running: %5 | Remaining: %6s")
                 .arg(i + 1)
@@ -372,4 +374,28 @@ EventHandler::shutDown(const EventContext &context) {
 
         QCoreApplication::quit();
     }
+}
+
+void
+EventHandler::getHelpPage(EventContext context) {
+    QString guildId = context.getGuildId().toString();
+
+    Embed helpPage = _availableGuilds[guildId]->getHelpPage(context);
+
+    Message message;
+
+    //message.setContent(content);
+
+    QJsonArray embeds;
+
+    embeds << helpPage.object();
+
+    message.setEmbeds(embeds);
+
+    context.setTargetPayload(message.toQJsonObject());
+
+    _logger->critical(SerializationUtils::toQString(context));
+
+    _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
+
 }

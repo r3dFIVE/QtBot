@@ -56,17 +56,11 @@ TimedBinding::copy(const TimedBinding &other) {
 
     _logger = other._logger;
 
-    _description = other._description;
+    _baseProperties = other._baseProperties;
 
-    _descriptionShort = other._descriptionShort;
+    _timedProperties = other._timedProperties;
 
-    _singleShot = other._singleShot;
-
-    _singleton = other._singleton;
-
-    _fireAfter = other._fireAfter;
-
-    _scriptName = other._scriptName;
+    _id = other._id;
 
     _eventContext = other._eventContext;
 
@@ -77,33 +71,19 @@ TimedBinding::copy(const TimedBinding &other) {
     _running = other._running;
 
     _stoppedAt = other._stoppedAt;
-
-    _id = other._id;
-
-    _name = other._name;
-
-    _forceEnable = other._forceEnable;
 }
 
 QString
 TimedBinding::getScriptName() const {
-    return _scriptName;
+    return _timedProperties->scriptName;
 }
 
-void
-TimedBinding::setScriptName(const QString &scriptName) {
-    _scriptName = scriptName;
-}
 
 qint64
 TimedBinding::getFireAfter() const {
-    return _fireAfter;
+    return _timedProperties->fireAfter;
 }
 
-void
-TimedBinding::setFireAfter(int fireAfter) {
-    _fireAfter = fireAfter;
-}
 
 void
 TimedBinding::start() {
@@ -137,19 +117,15 @@ TimedBinding::isEnabled() const {
 
 bool
 TimedBinding::forceEnable() const {
-    return _forceEnable;
+    return _timedProperties->forceEnable;
 }
 
-void
-TimedBinding::setForceEnable(bool forceEnable) {
-    _forceEnable = forceEnable;
-}
 
 void
 TimedBinding::stop() {
     _stoppedAt = QDateTime::currentSecsSinceEpoch();
 
-    _remainder = _fireAfter - (_stoppedAt - _startedAt);
+    _remainder = _timedProperties->fireAfter - (_stoppedAt - _startedAt);
 
     _running = false;
 }
@@ -161,22 +137,12 @@ TimedBinding::isRunning() const {
 
 bool
 TimedBinding::isSingleShot() const {
-    return _singleShot;
-}
-
-void
-TimedBinding::setSingleShot(bool singleShot) {
-    _singleShot = singleShot;
-}
-
-void
-TimedBinding::setSingleton(bool singleton) {
-    _singleton = singleton;
+    return _timedProperties->singleShot;
 }
 
 bool
 TimedBinding::isSingleton() const {
-    return _singleton;
+    return _timedProperties->singleton;
 }
 
 EventContext
@@ -193,13 +159,18 @@ TimedBinding::getRemaining() {
             return (_remainder - (QDateTime::currentSecsSinceEpoch() - _startedAt));
         }
     } else {
-        return (_fireAfter - (QDateTime::currentSecsSinceEpoch() - _startedAt));
+        return (_timedProperties->fireAfter - (QDateTime::currentSecsSinceEpoch() - _startedAt));
     }
 }
 
 void
 TimedBinding::setEventContext(const EventContext &eventContext) {
     _eventContext = eventContext;
+}
+
+void
+TimedBinding::setTimedProperties(QSharedPointer<TimedBindingProperties> properties) {
+    _timedProperties = properties;
 }
 
 qint64
@@ -224,7 +195,7 @@ TimedBinding::setStartedAt(const qint64 startedAt) {
 
 bool
 TimedBinding::isValid(const QMetaObject &metaObject) const {
-    if (!isValidParam(TimedBinding::BINDING_NAME, _name)) {
+    if (!isValidParam(TimedBinding::BINDING_NAME, _baseProperties->name)) {
         return false;
     }
 
@@ -232,13 +203,13 @@ TimedBinding::isValid(const QMetaObject &metaObject) const {
         return false;
     }
 
-    if (_scriptName.isEmpty()) {
+    if (_timedProperties->scriptName.isEmpty()) {
         _logger->warning("Script name not set for timed event... Discarding binding.");
 
         return false;
     }
 
-    if (_fireAfter <= 0) {
+    if (_timedProperties->fireAfter <= 0) {
         _logger->warning("fire_after value must be set and greater than 0... Discarding binding.");
 
         return false;

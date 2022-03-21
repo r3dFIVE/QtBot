@@ -23,8 +23,11 @@
 
 #include <QObject>
 #include <QMap>
+#include <QCache>
 #include <QQmlEngine>
 
+#include "botjob/userhelp.h"
+#include "botjob/botscript.h"
 #include "commandrestrictions.h"
 #include "botjob/commandbinding.h"
 #include "botjob/gatewaybinding.h"
@@ -46,16 +49,22 @@ class GuildEntity : public QObject
     static QString ADMIN_ROLE_NAME;
     static QString BOT_OWNER_ID;
 
-    QMap<QString, TimedBinding> _timedBindings;
-    QMap<QString, TimedBinding> _disabledTimedBindings;
-    QMap<QString, Role> _rolesByRoleId;
-    QMap<QString, QList<GatewayBinding> > _gatewayBindingsByEventName;
-    QMap<QString, CommandBinding> _commandBindings;
-    QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > _mappedStateIdsByCommand;
+    QCache<QString, UserHelp> _activeHelp;
+    QMap<QString, QString> _helpChannelByUserId;
+    QHash<BotScript*, QList<QSharedPointer<IBinding>>> _bindingsByScript;
+    QMap<QString, QSharedPointer<TimedBinding>> _timedBindings;
+    QMap<QString, QSharedPointer<TimedBinding>> _disabledTimedBindings;    
+    QMap<QString, QList<QSharedPointer<GatewayBinding>>> _gatewayBindingsByEventName;
+    QMap<QString, QSharedPointer<CommandBinding>> _commandBindings;    
     QMap<QString, QStringList> _commandNamesByScriptName;
+    QMap<QString, QSharedPointer<GatewayBinding>> _gatewayBindings;
+
+
+    QMap<QString, Role> _rolesByRoleId;
+    QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > _mappedStateIdsByCommand;
+
     QString _id = DEFAULT_GUILD_ID;
-    QStringList _adminRoleIds;
-    QMap<QString, GatewayBinding> _gatewayBindings;
+    QStringList _adminRoleIds;    
 
     Job* getCommandJob(QSharedPointer<EventContext> context);
     QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context);
@@ -66,6 +75,14 @@ class GuildEntity : public QObject
                      CommandRestrictions::RestrictionState state);
     bool isTimedJobEnabled(const TimedBinding &binding);
 
+    UserHelp* buildUserHelp(const EventContext &context);
+
+
+
+public:
+    GuildEntity(QObject *parent = nullptr) : QObject{parent}, _activeHelp{10} {}
+    GuildEntity(const Guild &guild, QObject *parent = nullptr);
+
     void updateTimedBindingState(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
                                  const QString &bindingName,
                                  const CommandRestrictions::RestrictionState state);
@@ -74,28 +91,6 @@ class GuildEntity : public QObject
                              CommandRestrictions::RestrictionState state);
     void updateAllTimedBindings(QMap<QString, CommandRestrictions::RestrictionState> &restrictionUpdates,
                              CommandRestrictions::RestrictionState state);
-public:
-    GuildEntity() {}
-    GuildEntity(const Guild &guild);
-
-    friend GuildEntity& operator<<(GuildEntity &guildEntity, CommandBinding binding ) {
-        guildEntity.addCommandBinding(binding);
-
-        return guildEntity;
-    }
-
-    friend GuildEntity& operator<<(GuildEntity &guildEntity, GatewayBinding binding ) {
-        guildEntity.addGatewayBinding(binding);
-
-        return guildEntity;
-    }
-
-    friend GuildEntity& operator<<(GuildEntity &guildEntity, TimedBinding binding) {
-        guildEntity.addTimedBinding(binding, true);
-
-        return guildEntity;
-    }
-
 
     static const QString DEFAULT_GUILD_ID;
     static const QString GUILD_RESTRICTIONS;
@@ -106,13 +101,13 @@ public:
     bool hasAdminRole(const EventContext& context);
     bool canInvoke(const EventContext& context, const QString &command);
     QList<Job *> processEvent(QSharedPointer<EventContext> context);
-    QList<TimedBinding> getTimedBindings() const;
+    QList<QSharedPointer<TimedBinding>> getTimedBindings() const;
     QString getId() const;
     QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > getMappedStateIdsByCommand();
     void addRole(const Role &role);
-    void addCommandBinding(CommandBinding &binding);
-    void addGatewayBinding(const GatewayBinding &binding);
-    void addTimedBinding(TimedBinding &binding, const bool checkState = false);
+    void addCommandBinding(BotScript *botScript, QSharedPointer<CommandBinding> binding);
+    void addGatewayBinding(BotScript *botScript, QSharedPointer<GatewayBinding> binding);
+    void addTimedBinding(BotScript *botScript, QSharedPointer<TimedBinding> binding, const bool checkState = false);
     void addRegisteredScript(QSharedPointer<IBotJob> script);
     void setId(const QString &id);
     void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
@@ -132,6 +127,8 @@ public:
     static void setDefaultRestrictionState(const QString &state);
     static QString getBotOwnerId();   
 
+    const Embed getHelpPage(const EventContext &context);
+
     bool hasTimedJobs() const;
     QList<Job *> getReadyTimedJobs();
     void clearTimedJobs();
@@ -142,6 +139,7 @@ public:
     void restartTimedJob(const int index);
     void stopTimedJob(const int index);
     void initTimedJobs();
+    void clearBindings();
 
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
