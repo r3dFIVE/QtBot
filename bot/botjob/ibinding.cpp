@@ -60,11 +60,10 @@ IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
     return true;
 }
 
-
-
 const QString&
 IBinding::getDescription() const {
-    return _baseProperties->description;
+    return _baseProperties->description.isEmpty()
+            ? _baseProperties->descriptionShort : _baseProperties->description;
 }
 
 void
@@ -74,15 +73,15 @@ IBinding::setBaseProperties(QSharedPointer<IBindingProperties> properties) {
 
 const QString
 IBinding::getDescriptionShort() const {
-    QString descriptionShort =  _baseProperties->descriptionShort.isEmpty()
-            ?  _baseProperties->description :  _baseProperties->descriptionShort;\
+    QString descriptionShort = _baseProperties->descriptionShort.isEmpty()
+            ? _baseProperties->description : _baseProperties->descriptionShort;
 
     return descriptionShort.left(Embed::DECRIPTION_SHORT_MAX_LENGTH);
 }
 
 const QString&
 IBinding::getName() const {
-    return  _baseProperties->name;
+    return _baseProperties->name;
 }
 
 bool
@@ -92,7 +91,7 @@ IBinding::isAdminOnly() const {
 
 bool
 IBinding::ignoreAdmin() {
-    return  _baseProperties->ignoreAdmin;
+    return _baseProperties->ignoreAdmin;
 }
 
 bool

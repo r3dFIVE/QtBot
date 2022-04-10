@@ -1,32 +1,78 @@
 #include "userhelp.h"
 
-UserHelp::UserHelp(const QHash<BotScript*, QList<QSharedPointer<IBinding>>> &bindingsByScript, QObject *parent) : QObject{parent} {
-    QHashIterator<BotScript*, QList<QSharedPointer<IBinding>>> it(bindingsByScript);
+const QString UserHelp::COMMA_SPACE = QString(", ");
+const QString UserHelp::INVALID_HELP = QString("Invalid Help Page");
+
+UserHelp::UserHelp(const QMap<BotScript*, QList<QSharedPointer<IBinding>>> &bindingsByScript,
+                   const QString &userId,
+                   const QString &channelId,
+                   const QString &guildId,
+                   bool isAdmin,
+                   QObject *parent) : QObject{parent} {
+    QMapIterator<BotScript*, QList<QSharedPointer<IBinding>>> it(bindingsByScript);
+
+    _userId = userId;
+
+    _channelId = channelId;
+
+    _guildId = guildId;
 
     while(it.hasNext()) {
         it.next();
 
-        addScriptPages(it.key(), it.value());
+        addScriptPages(it.key(), it.value(), isAdmin);
     }
 
-    addMainPages(bindingsByScript.keys());
+    addMainPages(bindingsByScript);
 }
 
 const Embed
 UserHelp::getHelpPage(const QString &pageName, int pageNum) {
-    if (!_pages.contains(pageName)) {
-        _logger->warning(QString("TODO add failed embed, pageName does not exist"));
+    if (_pages.isEmpty()) {
+        QString errorString = QString("You do not have access to any scripts/bindings in this channel.");
 
-        return Embed();
+        _logger->debug(QString("%1 userId: %2, channelId: %3")
+                       .arg(errorString)
+                       .arg(_userId)
+                       .arg(_channelId));
+
+        return Embed(INVALID_HELP, errorString);
     }
 
-    if (pageNum > 0 && _pages[pageName].size() > pageNum - 1) {
-        _logger->warning(QString("TODO add failed embed, pageNum out of bound for pageName"));
 
-        return Embed();
+    if (!_pages.contains(pageName)) {
+        QString errorString = QString("Script/Binding Name: %1, does not exist or you do not have access.")
+                .arg(pageName);
+
+        _logger->debug(QString("%1 userId: %2, channelId: %3")
+                       .arg(errorString)
+                       .arg(_userId)
+                       .arg(_channelId));
+
+        return Embed(INVALID_HELP, errorString);
+    }
+
+    if (pageNum > 0 && _pages[pageName].size() <= pageNum) {
+        QString errorString = QString("Invalid page number: %1, for Script/Binding Name: %2")
+                .arg(pageNum + 1)
+                .arg(pageName.isEmpty() ? ".help" : pageName);
+
+        _logger->debug(errorString);
+
+        return Embed(INVALID_HELP, errorString);
     }
 
     return _pages[pageName].at(pageNum);
+}
+
+const QString&
+UserHelp::getChannelId() {
+    return _channelId;
+}
+
+const QString&
+UserHelp::getGuildId() {
+    return _guildId;
 }
 
 void
@@ -51,12 +97,10 @@ UserHelp::addBindingPages(const IBinding &binding) {
     }
 }
 
-void addScriptPage() {
-
-}
-
 void
-UserHelp::addScriptPages(BotScript *botScript, const QList<QSharedPointer<IBinding>> &bindings) {
+UserHelp::addScriptPages(BotScript *botScript,
+                         const QList<QSharedPointer<IBinding>> &bindings,
+                         bool isAdmin) {
     if (!botScript) {
         _logger->info("TODO - Implement CoreCommand Bot Help!!!");
 
@@ -90,11 +134,16 @@ UserHelp::addScriptPages(BotScript *botScript, const QList<QSharedPointer<IBindi
     for (auto &binding : bindings) {
         addBindingPages(*binding);
 
-        QString descriptionShort = binding->getDescriptionShort();
+        QString descriptionShort = QString("*%1*")
+                .arg(binding->getDescriptionShort());
 
-        QString name = QString("%1 (%2)")
-                .arg(binding->getName())
+        QString name = QString("%1").arg(binding->getName());
+
+        if (isAdmin) {
+            name = QString("%1 (%2)")
+                .arg(name)
                 .arg(binding->metaObject()->className());
+        }
 
         buildScriptPage(scriptPages, page, name, descriptionShort, fieldCount, characterCount);
     }
@@ -102,16 +151,13 @@ UserHelp::addScriptPages(BotScript *botScript, const QList<QSharedPointer<IBindi
     scriptPages << page;
 
     for (int i = 0; i < scriptPages.size(); ++i) {
-        EmbedAuthor author;
-
-        QString authorStr = QString("%1 <%2/%3>")
+        QString descriptionString = QString("```%1 <%2/%3>```\n%4")
                 .arg(botScript->getName())
                 .arg(i + 1)
-                .arg(scriptPages.size());
+                .arg(scriptPages.size())
+                .arg(scriptPages[i].getDescription().toString());
 
-        author.setName(authorStr);
-
-        scriptPages[i].setAuthor(author.object());
+        scriptPages[i].setDescription(descriptionString);
     }
 
     _pages[botScript->getName()] = scriptPages;
@@ -132,7 +178,7 @@ UserHelp::buildScriptPage(QList<Embed> &scriptPages,
     }
 
     if (name.length() + descriptionShort.length() + characterCount > Embed::TOTAL_MAX_LENGTH
-        || fieldCount == Embed::FIELDS_MAX - 1) {
+        || fieldCount == Embed::FIELDS_MAX) {
 
         characterCount = 0;
 
@@ -162,20 +208,15 @@ UserHelp::buildScriptPage(QList<Embed> &scriptPages,
 
 Embed
 UserHelp::buildBindingPage(const QString &name, const QString &description, int pageNum, int total) {
-    EmbedAuthor author;
-
-    QString authorStr = QString("%1 <%2/%3>");
-
-    author.setName(authorStr
-                   .arg(name)
-                   .arg(pageNum)
-                   .arg(total));
+    QString descriptionString = QString("```%1 <%2/%3>```\n%4")
+            .arg(name)
+            .arg(pageNum)
+            .arg(total)
+            .arg(description);
 
     Embed page;
 
-    page.setAuthor(author.object());
-
-    page.setDescription(description);
+    page.setDescription(descriptionString);
 
     return page;
 }
@@ -196,7 +237,11 @@ UserHelp::splitDescription(const QString &description) {
 }
 
 void
-UserHelp::addMainPages(QList<BotScript*> botScripts) {
+UserHelp::addMainPages(const QMap<BotScript*, QList<QSharedPointer<IBinding>>> &bindingsByScript) {
+    if (bindingsByScript.size() == 0) {
+        return;
+    }
+
     int characterCount = 0;
 
     int fieldCount = 0;
@@ -205,9 +250,19 @@ UserHelp::addMainPages(QList<BotScript*> botScripts) {
 
     QList<Embed> mainPages;
 
-    for (auto &botScript : botScripts) {
+    QMapIterator<BotScript*, QList<QSharedPointer<IBinding>>> it(bindingsByScript);
+
+    QList<BotScript*> scripts = bindingsByScript.keys();
+
+    scripts.removeAll(nullptr);
+
+    std::sort(scripts.begin(), scripts.end(), [&](BotScript* a, BotScript *b) {
+        return a->getName() < b->getName();
+    });
+
+    for(auto& botScript : scripts) {
         if (!botScript) {
-            _logger->warning(QString("TODO handle null botscript mainPages"));
+            _logger->debug(QString("TODO handle CoreCommand (null) BotScript mainPages"));
 
             continue;
         }
@@ -216,24 +271,50 @@ UserHelp::addMainPages(QList<BotScript*> botScripts) {
 
         QString descriptionShort = botScript->getDescriptionShort();
 
+        appendBindingNames(descriptionShort, bindingsByScript[botScript]);
+
         buildScriptPage(mainPages, page, name, descriptionShort, fieldCount, characterCount);
     }
 
     mainPages << page;
 
     for (int i = 0; i < mainPages.size(); ++i) {
-        EmbedAuthor author;
-
-        QString authorString = QString(".help <%1/%2>")
+        QString descriptionString = QString("```.help <%1/%2>```")
                 .arg(i + 1)
                 .arg(mainPages.size());
 
-        author.setName(authorString);
-
-        mainPages[i].setAuthor(author.object());
+        mainPages[i].setDescription(descriptionString);
     }
 
     QString pageName;
 
     _pages[pageName] = mainPages;
+}
+
+void
+UserHelp::appendBindingNames(QString &descriptionShort, const QList<QSharedPointer<IBinding>> bindings) {
+    descriptionShort.append("\n\n*");
+
+    int characterCount = descriptionShort.length();
+
+    for (auto& binding : bindings) {
+        int newCount = characterCount + binding->getName().length() + COMMA_SPACE.length();
+
+        if (newCount <= Embed::FIELDS_VALUE_MAX_LENGTH) {
+            characterCount = newCount;
+
+            descriptionShort.append(binding->getName());
+
+            descriptionShort.append(COMMA_SPACE);
+
+        } else {
+            descriptionShort.append("...");
+
+            break;
+        }
+    }
+
+    descriptionShort = descriptionShort.length() > 0 ? descriptionShort.trimmed().chopped(1) : descriptionShort;
+
+    descriptionShort.append("*");
 }

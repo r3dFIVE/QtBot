@@ -59,6 +59,7 @@ public:
     static const QString QUERY_PARAMS;
     static const QString SOURCE_PAYLOAD;
     static const QString TARGET_PAYLOAD;
+    static const QString RECIPIENT_ID;
 
     EventContext(QObject *parent = nullptr) : JsonSerializable(parent) {
         _jsonObject[TARGET_PAYLOAD] = QJsonObject();

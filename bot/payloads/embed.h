@@ -56,16 +56,20 @@ public:
     static const int FOOTER_TEXT_MAX_LENGTH;
     static const int AUTHOR_NAME_MAX_LENGTH;
 
-    Embed(QObject *parent = nullptr) : JsonSerializable(parent) {}
-    Embed(const Embed &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
+    void init() {
+        _jsonObject[COLOR] = 13305259;
+    }
+
+    Embed(QObject *parent = nullptr) : JsonSerializable(parent) { init(); }
+    Embed(const Embed &other, QObject *parent = nullptr) : JsonSerializable(other, parent) { init(); }
     Embed(const QString &title,
           const QString &description,
-          const QString &url,
-          const int color,
+          const QString &url = "",
+          const int color = 13305259,
           QObject *parent = nullptr);
-    Embed(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
-    Embed(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
-    Embed(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) {}
+    Embed(const QByteArray &json, QObject *parent = nullptr) : JsonSerializable(json, parent) { init(); }
+    Embed(const QJsonObject &json, QObject *parent = nullptr) : JsonSerializable(json, parent) { init(); }
+    Embed(const QString &json, QObject *parent = nullptr) : JsonSerializable(json, parent) { init(); }
 
     Embed& operator=(const Embed &other);
 

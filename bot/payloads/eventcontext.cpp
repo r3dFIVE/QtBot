@@ -48,6 +48,7 @@ const QString EventContext::USERNAME = "username";
 const QString EventContext::QUERY_PARAMS = "query_params";
 const QString EventContext::SOURCE_PAYLOAD = "source_payload";
 const QString EventContext::TARGET_PAYLOAD = "target_payload";
+const QString EventContext::RECIPIENT_ID = "recipient_id";
 
 EventContext::EventContext(const QByteArray &json, QObject *parent) : JsonSerializable(parent) {
     buildContext(QJsonDocument::fromJson(json).object());

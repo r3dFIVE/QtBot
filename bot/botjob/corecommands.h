@@ -219,7 +219,7 @@ public:
 
         addCommand(".help", helpProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
-                                      "getHelpPage",
+                                      "getHelp",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });

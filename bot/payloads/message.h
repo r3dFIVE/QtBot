@@ -92,6 +92,7 @@ public:
     void setChannelId(const QJsonValue &channel_id);
     void setContent(const QJsonValue &content);
     void setEditedTimestamp(const QJsonValue &value);
+    void setEmbed(const QJsonObject &embed);
     void setEmbeds(const QJsonArray &embeds);
     void setFlags(const QJsonValue &value);
     void setGuildId(const QJsonValue &guildId);

@@ -51,11 +51,10 @@ class ScriptManager : public QObject
     QMap<QString, QList<QSharedPointer<GatewayBinding>>> _gatewayBindings;
     QMap<QString, QList<QSharedPointer<TimedBinding>>> _timedBindings;
     QMap<QString, QString> _scriptNamesByCommand;
-    QMap<QString, QMap<QString, QString> > _functionNameByEventNameByScriptName;
 
     bool isBotScript(const QString &fileName);
     void validateScripts();
-    bool validateScriptCommandName(const QString &command, const QString &fileName);
+    bool validateScriptCommandName(const QString &command, const QString &scriptName);
     void addCoreCommands(GuildEntity &guildEntity);
     void addQmlFactory(QSharedPointer<QQmlEngine> engine);
     void buildValidBotScripts(GuildEntity &guildEntity);
@@ -73,7 +72,7 @@ class ScriptManager : public QObject
     }
 
     void validate(const QFileInfo &fileInfo);
-    bool validateScriptCommands(BotScript *botScript, const QFileInfo &fileInfo);
+    bool validateScriptCommands(BotScript *botScript);
     bool validateCommandBinding(BotScript *botScript, const QJsonValue &binding);
     bool validateGatewayBinding(BotScript *botScript, const QJsonValue &binding);
     bool validateTimedBinding(BotScript *botScript, const QJsonValue &binding);

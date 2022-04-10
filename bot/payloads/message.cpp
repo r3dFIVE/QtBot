@@ -186,6 +186,7 @@ Message::setAttachments(const QJsonArray &attachments) {
     _jsonObject[ATTACHMENTS] = attachments;
 }
 
+
 QJsonArray
 Message::getEmbeds() const {
     return _jsonObject[EMBEDS].toArray();
@@ -194,6 +195,11 @@ Message::getEmbeds() const {
 void
 Message::setEmbeds(const QJsonArray &embeds) {
     _jsonObject[EMBEDS] = embeds;
+}
+
+void
+Message::setEmbed(const QJsonObject &embed) {
+    _jsonObject[EMBEDS] = QJsonArray() << embed;
 }
 
 QJsonArray

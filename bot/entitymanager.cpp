@@ -98,6 +98,8 @@ EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
 }
 
 void
-EntityManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
+EntityManager::saveEvent(GatewayEvent::Event event, QSharedPointer<GatewayPayload> payload) {
+    Q_UNUSED(event);
+
     _manager->saveEvent(payload);
 }

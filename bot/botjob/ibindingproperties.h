@@ -8,7 +8,7 @@ struct IBindingProperties
     bool adminOnly = false;
     bool ignoreAdmin = false;
     QString description;
-    QString descriptionShort;
+    QString descriptionShort = "< No Description >";
     QString name;
 };
 
