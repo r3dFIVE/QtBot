@@ -19,7 +19,6 @@
  */
 
 #include "scriptmanager.h"
-#include "userhelp.h"
 
 #include <functional>
 #include <QQmlComponent>
@@ -88,10 +87,10 @@ ScriptManager::validateScripts() {
 
     _timedBindings.clear();
 
-    _functionNameByEventNameByScriptName.clear();
-
     for (auto& binding : CoreCommands::buildCoreCommandBindings(*_eventHandler, GuildEntity::DEFAULT_GUILD_ID)) {
         _coreCommandNames << binding->getName();
+
+        _scriptNamesByCommand[binding->getName()] = QString();
 
         delete binding->getFunctionMapping().second;
     }
@@ -117,7 +116,7 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
     QQmlComponent comp(&validator, fileInfo.absoluteFilePath());
 
     if (comp.errors().size() > 0) {
-        _logger->debug(comp.errorString());
+        _logger->warning(comp.errorString());
 
         return;
     }
@@ -125,13 +124,13 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
     BotScript *botScript = qobject_cast<BotScript*>(comp.create());
 
     if (comp.errors().size() > 0) {
-        _logger->debug(comp.errorString());
+        _logger->warning(comp.errorString());
 
         return;
     }
 
     if (botScript->getEventBindingsJson().isEmpty() && botScript->getScriptCommands().isEmpty()) {
-        _logger->debug(QString("No Script Commands or Event Bindings set for \"%1\", skipping.")
+        _logger->warning(QString("No Script Commands or Event Bindings set for \"%1\", skipping.")
                        .arg(fileInfo.absoluteFilePath()));
 
         return;
@@ -149,10 +148,9 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
         }
     }
 
-    if (!validateScriptCommands(botScript, fileInfo)) {
+    if (!validateScriptCommands(botScript)) {
         return;
     }
-
 
     for (QJsonValue binding : botScript->getEventBindingsJson()) {
         QString eventType = binding[IBinding::BINDING_TYPE].toString();
@@ -173,7 +171,9 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
             }
 
         } else {
-            _logger->warning(QString("Invalid binding_type: %1").arg(eventType));
+            _logger->warning(QString("Invalid binding_type: %1, for script: %2")
+                             .arg(eventType)
+                             .arg(botScript->getName()));
 
             return;
         }
@@ -185,10 +185,10 @@ ScriptManager::validate(const QFileInfo &fileInfo) {
 }
 
 bool
-ScriptManager::validateScriptCommands(BotScript *botScript, const QFileInfo &fileInfo) {
+ScriptManager::validateScriptCommands(BotScript *botScript) {
     for (QString command : botScript->getScriptCommands().keys()) {
 
-        if (!validateScriptCommandName(command, fileInfo.absoluteFilePath())) {
+        if (!validateScriptCommandName(command, botScript->getName())) {
             return false;
         }
 
@@ -263,28 +263,17 @@ ScriptManager::validateGatewayBinding(BotScript *botScript, const QJsonValue &js
 
     BindingFactory::build(*gatewayBinding, botScript, jsonBinding);
 
-    if (!validateScriptCommandName(gatewayBinding->getName(), botScript->getName())) {
-        return false;
-    }
-
     QString eventName = gatewayBinding->getEventName();
 
     QString functionName = gatewayBinding->getFunctionMapping().first;
 
-    if (_functionNameByEventNameByScriptName[botScript->getName()][eventName] == functionName) {
-        _logger->warning(QString("Gateway event \"%1\" has already been registered to function in script: %3... ")
-                         .arg(eventName)
-                         .arg(functionName)
-                         .arg(botScript->getName()));
-
+    if (!validateScriptCommandName(gatewayBinding->getName(), botScript->getName())) {
         return false;
     }
 
     if (!gatewayBinding->isValid(*botScript->metaObject())) {
         return false;
     }
-
-    _functionNameByEventNameByScriptName[botScript->getName()][eventName] = functionName;
 
     _gatewayBindings[botScript->getName()] << gatewayBinding;
 
@@ -346,6 +335,8 @@ ScriptManager::addCoreCommands(GuildEntity &guildEntity) {
 
 void
 ScriptManager::buildValidBotScripts(GuildEntity &guildEntity) {
+    addCoreCommands(guildEntity);
+
     for (QFileInfo& fileInfo : _validScripts) {
         _logger->info(QString("Loading bot script: %1 for guild_id: %2")
                       .arg(fileInfo.fileName())
@@ -383,9 +374,7 @@ ScriptManager::buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntit
         _logger->debug(comp.errorString());
 
         return;
-    }
-
-    addCoreCommands(guildEntity);
+    }    
     
     for (auto& binding : _commandBindings[botScript->getName()]) {
         guildEntity.addCommandBinding(botScript, buildBinding(binding, botScript));
@@ -432,9 +421,20 @@ ScriptManager::validateScriptName(const QString &scriptName, const QString &file
 }
 
 bool
-ScriptManager::validateScriptCommandName(const QString &command, const QString &fileName) {
+ScriptManager::validateScriptCommandName(const QString &command, const QString &scriptName) {
+    if (command == scriptName) {
+        _logger->warning(QString("Script binding name: %1, must be named different than the script name: %2")
+                         .arg(command)
+                         .arg(scriptName));
+
+        namingConflict(command, scriptName);
+
+        return false;
+    }
+
     if (command.isEmpty()) {
-        _logger->warning(QString("Script Commands or Gateway Binding Names cannot be empty in script %1").arg(fileName));
+        _logger->warning(QString("Script Commands or Gateway Binding Names cannot be empty in script %1")
+                         .arg(scriptName));
 
         return false;
     }
@@ -443,28 +443,30 @@ ScriptManager::validateScriptCommandName(const QString &command, const QString &
         _logger->warning(QString("\"%1\" already registered as a core bot command.")
                     .arg(command));
 
-        namingConflict(command, fileName);
+        namingConflict(command, scriptName);
 
         return false;
 
-    } else if (_scriptNamesByCommand.contains(command)) {
+    }
+
+    if (_scriptNamesByCommand.contains(command)) {
         QString existingScript = _scriptNamesByCommand[command];
 
         _logger->warning(QString("\"%1\" already registered to bot script named: %2")
                     .arg(command)
                     .arg(existingScript));
 
-        namingConflict(command, fileName);
+        namingConflict(command, scriptName);
 
         return false;
     }
-
+    
     return true;
 }
 
 void
 ScriptManager::namingConflict(const QString &command, const QString &fileName) {
-    _logger->warning(QString("You must rename \"%1\" in %2 before it will be enabled.")
+    _logger->warning(QString("You must rename binding: \"%1\", in script: \"%2\" before it will be enabled.")
                 .arg(command)
                 .arg(fileName));
 }

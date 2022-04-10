@@ -313,18 +313,18 @@ DOMNode::outerHtml() const {
         const auto& tag = elem.original_tag;
 
         if (tag.data && tag.length) {
-            int lenght = elem.end_pos.offset - elem.start_pos.offset + elem.original_end_tag.length;
+            size_t lenght = elem.end_pos.offset - elem.start_pos.offset + elem.original_end_tag.length;
 
             Q_ASSERT(lenght > 0);
 
-            text = QString::fromUtf8(tag.data, lenght);
+            text = QString::fromUtf8(tag.data, static_cast<int>(lenght));
         }
         break;
     }
     default: {
         const auto& str = _ptr->v.text.original_text;
 
-        text = QString::fromUtf8(str.data, str.length);
+        text = QString::fromUtf8(str.data, static_cast<int>(str.length));
     }}
     return text;
 }

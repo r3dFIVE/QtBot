@@ -35,11 +35,23 @@ QSharedPointer<IBindingProperties>
 BindingFactory::buildBaseProperties(const QJsonValue &binding) {
     QSharedPointer<IBindingProperties> properties = QSharedPointer<IBindingProperties>(new IBindingProperties);
 
-    properties->name = binding[IBinding::BINDING_NAME].toString();
+    QString name = binding[IBinding::BINDING_NAME].toString();
 
-    properties->description = binding[IBinding::DESCRIPTION].toString();
+    if (!name.isEmpty()) {
+        properties->name = name;
+    }
 
-    properties->descriptionShort = binding[IBinding::DESCRIPTION_SHORT].toString();
+    QString description = binding[IBinding::DESCRIPTION].toString();
+
+    if (!description.isEmpty()) {
+        properties->description = description;
+    }
+
+    QString descriptionShort = binding[IBinding::DESCRIPTION_SHORT].toString();
+
+    if (!descriptionShort.isEmpty()) {
+        properties->descriptionShort = descriptionShort;
+    }
 
     if (binding[IBinding::IGNORE_ADMIN].isBool()) {
         properties->ignoreAdmin = binding[IBinding::IGNORE_ADMIN].toBool();

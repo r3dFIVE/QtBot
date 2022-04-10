@@ -145,7 +145,7 @@ public slots:
     void sendBinaryMessage(QSharedPointer<GatewayPayload> payload);
 
 signals:
-    void dispatchEvent(QSharedPointer<GatewayPayload> payload);
+    void dispatchEvent(GatewayEvent::Event event, QSharedPointer<GatewayPayload> payload);
     void guildOnline(QSharedPointer<GatewayPayload> payload);
     void defaultGuildOnline(QSharedPointer<GuildEntity> payload);
 };

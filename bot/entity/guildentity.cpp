@@ -35,7 +35,7 @@ QString GuildEntity::ADMIN_ROLE_NAME = QString();
 QString GuildEntity::BOT_OWNER_ID = QString();
 CommandRestrictions::RestrictionState GuildEntity::DEFAULT_STATE;
 
-GuildEntity::GuildEntity(const Guild &guild, QObject *parent) : QObject{parent}, _activeHelp{10}  {
+GuildEntity::GuildEntity(const Guild &guild, QObject *parent) : QObject{parent}  {
     for (auto jsonRole : guild.getRoles()) {
         Role role(jsonRole.toObject());
 
@@ -613,10 +613,6 @@ GuildEntity::initTimedJobs() {
 
 void
 GuildEntity::clearBindings() {
-    _activeHelp.clear();
-
-    _helpChannelByUserId.clear();
-
     _bindingsByScript.clear();
 
     _timedBindings.clear();
@@ -630,62 +626,6 @@ GuildEntity::clearBindings() {
     _commandNamesByScriptName.clear();
 
     _gatewayBindings.clear();
-
-}
-
-const Embed
-GuildEntity::getHelpPage(const EventContext &context)  {
-    QString userId = context.getUserId().toString();
-
-    QString channelId = context.getChannelId().toString();
-
-    QString pageName;
-
-    int pageNum = 0;
-
-    bool ok;
-
-    if (context.getArgs().size() == 1) {
-        QString arg = context.getArgs()[0].toString();
-
-        pageNum = arg.toInt(&ok);
-
-        if (!ok) {
-            pageNum = 0;
-        }
-    } else {
-        pageName = context.getArgs()[0].toString();
-
-        QString pageNumArg = context.getArgs()[1].toString();
-
-        pageNum = pageNumArg.toInt(&ok);
-
-        if (!ok) {
-            _logger->warning(QString("TODO Add help page usage"));
-        }
-    }
-
-    if (!_activeHelp.contains(userId) && channelId != userId) {
-        // .help was called without an active help for userId
-        if (channelId != userId) {
-            _activeHelp.insert(userId, buildUserHelp(context));
-
-        } else {
-            _logger->warning(QString("TODO return failed embed, must use .help from a channel first"));
-
-            return Embed();
-        }
-
-    }  else if (channelId != userId && _helpChannelByUserId[userId] != channelId) {
-        // .help was called from a new channel, cache new UserHelp for channel.
-        _activeHelp.remove(userId);
-
-        _activeHelp.insert(userId, buildUserHelp(context));
-
-        _helpChannelByUserId[userId] = channelId;
-    }
-
-    return _activeHelp[userId]->getHelpPage(pageName, pageNum);
 }
 
 bool
@@ -706,26 +646,31 @@ GuildEntity::isTimedJobEnabled(const TimedBinding &binding) {
 }
 
 UserHelp*
-GuildEntity::buildUserHelp(const EventContext &context) {
-    UserHelp userHelp;
+GuildEntity::getUserHelp(const EventContext &context) {
+    QString userId = context.getUserId().toString();
+
+    QString channelId = context.getChannelId().toString();
 
     if (hasAdminRole(context)) {
-        return new UserHelp(_bindingsByScript);
+        return new UserHelp(_bindingsByScript, userId, channelId, _id, true);
     }
 
-    QHashIterator<BotScript*, QList<QSharedPointer<IBinding>>> it(_bindingsByScript);
+    QMapIterator<QString, QSharedPointer<CommandBinding>> it(_commandBindings);
 
-    QHash<BotScript*, QList<QSharedPointer<IBinding>>> enabledBindings;
+    QMap<BotScript*, QList<QSharedPointer<IBinding>>> enabledBindings;
 
     while (it.hasNext()) {
         it.next();
 
-        for (auto& binding : it.value()) {
-            if (canInvoke(context, binding->getName())) {
-                enabledBindings[it.key()] << binding;
-            }
+        if (canInvoke(context, it.key())) {
+            BotScript *botScript = qobject_cast<BotScript*>(it.value()->getFunctionMapping().second);
+
+            enabledBindings[botScript] << it.value();
         }
+
     }
 
-    return new UserHelp(enabledBindings);
+    enabledBindings.remove(nullptr);
+
+    return new UserHelp(enabledBindings, userId, channelId, _id, false);
 }

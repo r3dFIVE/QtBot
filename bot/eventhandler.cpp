@@ -27,10 +27,14 @@
 #include "util/enumutils.h"
 #include "botjob/botscript.h"
 #include "botjob/job.h"
+#include "routes/usercreatedm.h"
+#include "payloads/channel.h"
+#include "payloads/guildmember.h"
+
+#include <payloads/user.h>
 
 
 const int EventHandler::JOB_POLL_MS = 1000;
-
 
 EventHandler::EventHandler() {
     GuildEntity::setBotOwnerId(Settings::ownerId());
@@ -44,7 +48,7 @@ EventHandler::EventHandler() {
 
 void
 EventHandler::init() {
-    _logger = LogFactory::getLogger("EventHandler");
+    _logger = LogFactory::getLogger(this);
 
     _jobQueueTimer = QSharedPointer<QTimer>(new QTimer);
 
@@ -84,26 +88,39 @@ EventHandler::processJobQueue() {
 }
 
 void
-EventHandler::processEvent(QSharedPointer<GatewayPayload> payload) {
+EventHandler::processEvent(GatewayEvent::Event event, QSharedPointer<GatewayPayload> payload) {
     QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext(payload->getD()));
 
     QString guildId = context->getGuildId().toString();
 
     if (!isGuildReady(guildId)) {
         return;
+    }   
+
+    switch (event) {
+    case GatewayEvent::MESSAGE_CREATE:
+    case GatewayEvent::MESSAGE_DELETE:
+    case GatewayEvent::MESSAGE_DELETE_BULK:
+    case GatewayEvent::MESSAGE_REACTION_ADD:
+    case GatewayEvent::MESSAGE_REACTION_REMOVE:
+    case GatewayEvent::MESSAGE_REACTION_REMOVE_ALL:
+    case GatewayEvent::MESSAGE_UPDATE:
+        if (context->getMessageId().toString().isEmpty()) {
+            context->setMessageId(context->getSourcePayload()[EventContext::ID].toString());
+        }
+        break;
+    case GatewayEvent::GUILD_MEMBER_UPDATE: {
+        User user(context->getSourcePayload()[GuildMember::USER].toObject());
+        _activeHelpByUserId.remove(user.getId().toString());
+        break;
+    }
+    default:
+        break;
     }
 
-    QString eventName = payload->getT().toString();
+    context->setEventName(payload->getT().toString());
 
-    context->setEventName(eventName);
-
-    if (eventName.contains("MESSAGE") && context->getMessageId().toString().isEmpty()) {
-        context->setMessageId(context->getSourcePayload()[EventContext::ID].toString());
-    }
-
-    QSharedPointer<GuildEntity> guild = _availableGuilds[guildId];
-
-    _jobQueue << guild->processEvent(context);
+    _jobQueue << _availableGuilds[guildId]->processEvent(context);
 
     processJobQueue();
 }
@@ -150,6 +167,8 @@ EventHandler::reloadGuild(const EventContext &context) {
 
             for (auto guild : _availableGuilds.values()) {
 
+                _activeHelpByUserId.clear();
+
                 _jobQueue.clear(guild->getId());
 
                 emit reloadScripts(guild, validate);
@@ -163,6 +182,13 @@ EventHandler::reloadGuild(const EventContext &context) {
         }
     } else {
         _jobQueue.clear(guildId);
+
+        // Clear any active help for that guild, might be stale.
+        for (auto& userId : _activeHelpByUserId.keys()) {
+            if (_activeHelpByUserId[userId]->getGuildId() == guildId) {
+                _activeHelpByUserId.remove(userId);
+            }
+        }
 
         emit reloadScripts(_availableGuilds[guildId], true);
     }
@@ -346,8 +372,8 @@ EventHandler::updateAllRestrictionStates(const EventContext &context, CommandRes
     if (isGuildReady(guildId)) {
         QString targetId;
 
-        if (context.getArgs().size() > 2) {
-            targetId = context.getArgs()[2].toString();
+        if (context.getArgs().size() > 1) {
+            targetId = context.getArgs()[1].toString();
         } else {
             targetId = GuildEntity::GUILD_ID_ALIAS;
         }
@@ -363,7 +389,7 @@ EventHandler::removeAllRestrictionStates(const EventContext &context) {
     QString guildId = context.getGuildId().toString();
 
     if (isGuildReady(guildId)) {
-         _availableGuilds[guildId]->removeAllRestrictionStates();
+        _availableGuilds[guildId]->removeAllRestrictionStates();
     }
 }
 
@@ -376,22 +402,98 @@ EventHandler::shutDown(const EventContext &context) {
     }
 }
 
-void
-EventHandler::getHelpPage(EventContext context) {
+Embed
+EventHandler::getHelpPage(const EventContext &context)  {
+    QString userId = context.getUserId().toString();
+
     QString guildId = context.getGuildId().toString();
 
-    Embed helpPage = _availableGuilds[guildId]->getHelpPage(context);
+    QString channelId = context.getChannelId().toString();
 
+    if (!_activeHelpByUserId.contains(userId) ) {
+        // .help was called without an active help for userId
+        if (guildId != GuildEntity::DEFAULT_GUILD_ID) {
+            _activeHelpByUserId.insert(userId, _availableGuilds[guildId]->getUserHelp(context));
+
+        } else {
+            QString errorString = QString("Must use .help from a regular channel first");
+
+            _logger->warning(QString("%1, userId: %2")
+                             .arg(errorString)
+                             .arg(userId));
+
+            return Embed(UserHelp::INVALID_HELP, errorString);
+        }
+
+    }  else if (guildId != GuildEntity::DEFAULT_GUILD_ID && _activeHelpByUserId[userId]->getChannelId() != channelId) {
+        // .help was called from a new channel, cache new UserHelp for channel.
+        _activeHelpByUserId.insert(userId, _availableGuilds[guildId]->getUserHelp(context));
+    }
+
+    QString pageName;
+
+    int pageNum = 0;
+
+    bool ok;
+
+    if (context.getArgs().size() == 2) {
+        QString arg = context.getArgs()[1].toString();
+
+        pageNum = arg.toInt(&ok);
+
+        if (!ok) {
+            pageNum = 0;
+
+            pageName = arg;
+        }
+
+    } else if (context.getArgs().size() > 2) {
+        pageName = context.getArgs()[1].toString();
+
+        QString pageNumArg = context.getArgs()[2].toString();
+
+        pageNum = pageNumArg.toInt(&ok);
+
+        if (!ok) {
+            _logger->warning(QString("TODO Add help page correct usage"));
+        }
+    }
+
+    pageNum = pageNum > 0 ? pageNum - 1 : pageNum;
+
+    return _activeHelpByUserId[userId]->getHelpPage(pageName, pageNum);
+}
+
+const QString
+EventHandler::getDmChannel(EventContext context) {
+    QString userId = context.getUserId().toString();
+
+    if (!_dmChannelByUserId.contains(userId)) {
+        QJsonObject payload;
+
+        payload[EventContext::RECIPIENT_ID] = userId;
+
+        context.setTargetPayload(payload);
+
+        SerializationUtils::fromVariant(context, _discordAPI->userCreateDm(SerializationUtils::toVariant(context)));
+
+        Channel dmChannel(context.getSourcePayload());
+
+        _dmChannelByUserId.insert(userId, new QString(dmChannel.getId().toString()));
+    }
+
+    return *_dmChannelByUserId[userId];
+}
+
+void
+EventHandler::getHelp(EventContext context) {
     Message message;
 
-    QJsonArray embeds;
+    message.setEmbed(getHelpPage(context).object());
 
-    embeds << helpPage.object();
+    context.setTargetPayload(message.object());
 
-    message.setEmbeds(embeds);
-
-    context.setTargetPayload(message.toQJsonObject());
+    context.setChannelId(getDmChannel(context)); // Reply to the user DM channel instead of spamming regular channels
 
     _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
-
 }
