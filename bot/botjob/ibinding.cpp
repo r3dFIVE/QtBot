@@ -30,6 +30,7 @@ const QString IBinding::FUNCTION = "function";
 const QString IBinding::IGNORE_ADMIN = "ignore_admin";
 const QString IBinding::DESCRIPTION = "description";
 const QString IBinding::DESCRIPTION_SHORT = "short_description";
+const QString IBinding::NO_DESCRIPTION = "< No Description >";
 const QString IBinding::ADMIN_ONLY = "admin_only";
 
 
@@ -60,10 +61,10 @@ IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
     return true;
 }
 
-const QString&
+const QString
 IBinding::getDescription() const {
     return _baseProperties->description.isEmpty()
-            ? _baseProperties->descriptionShort : _baseProperties->description;
+            ? getDescriptionShort() : _baseProperties->description;
 }
 
 void
@@ -73,8 +74,15 @@ IBinding::setBaseProperties(QSharedPointer<IBindingProperties> properties) {
 
 const QString
 IBinding::getDescriptionShort() const {
-    QString descriptionShort = _baseProperties->descriptionShort.isEmpty()
-            ? _baseProperties->description : _baseProperties->descriptionShort;
+    QString descriptionShort;
+
+    if (!_baseProperties->descriptionShort.isEmpty()) {
+        descriptionShort = _baseProperties->descriptionShort;
+    } else if (!_baseProperties->description.isEmpty()) {
+        descriptionShort = _baseProperties->description;
+    } else {
+        descriptionShort = IBinding::NO_DESCRIPTION;
+    }
 
     return descriptionShort.left(Embed::DECRIPTION_SHORT_MAX_LENGTH);
 }

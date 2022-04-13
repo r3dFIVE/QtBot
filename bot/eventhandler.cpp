@@ -411,18 +411,23 @@ EventHandler::getHelpPage(const EventContext &context)  {
     QString channelId = context.getChannelId().toString();
 
     if (!_activeHelpByUserId.contains(userId) ) {
-        // .help was called without an active help for userId
+
+        // UserHelp::HELP_COMMAND was called without an active help for userId
         if (guildId != GuildEntity::DEFAULT_GUILD_ID) {
             _activeHelpByUserId.insert(userId, _availableGuilds[guildId]->getUserHelp(context));
 
         } else {
-            QString errorString = QString("Must use .help from a regular channel first");
+
+            QString errorString = QString("Must use `%1` from a regular channel first")
+                    .arg(UserHelp::HELP_COMMAND);
 
             _logger->warning(QString("%1, userId: %2")
                              .arg(errorString)
                              .arg(userId));
 
-            return Embed(UserHelp::INVALID_HELP, errorString);
+            return Embed(UserHelp::INVALID_HELP, QString("%1%2")
+                         .arg(errorString)
+                         .arg(UserHelp::HELP_USAGE));
         }
 
     }  else if (guildId != GuildEntity::DEFAULT_GUILD_ID && _activeHelpByUserId[userId]->getChannelId() != channelId) {
