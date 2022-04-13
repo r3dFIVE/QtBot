@@ -53,7 +53,7 @@ public slots:
     void initGuildFromPayload(QSharedPointer<GatewayPayload> payload);
     void init();
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
-    void saveEvent(QSharedPointer<GatewayPayload> payload);
+    void saveEvent(GatewayEvent::Event event, QSharedPointer<GatewayPayload> payload);
 };
 
 #endif // ENTITYMANAGER_H

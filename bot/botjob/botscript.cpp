@@ -28,6 +28,7 @@
 #include "util/serializationutils.h"
 #include "util/enumutils.h"
 #include "timedbinding.h"
+#include "payloads/embed.h"
 
 
 QString BotScript::_botId = QString();
@@ -50,7 +51,11 @@ BotScript::BotScript(const BotScript &other) {
 
     _commands = other._commands;
 
-    _scriptName = other._scriptName;
+    _name = other._name;
+
+    _description = other._description;
+
+    _descriptionShort = other._descriptionShort;
 }
 
 BotScript
@@ -65,7 +70,11 @@ BotScript
 
     _commands = other._commands;
 
-    _scriptName = other._scriptName;
+    _name = other._name;
+
+    _description = other._description;
+
+    _descriptionShort = other._descriptionShort;
 
     return *this;
 }
@@ -93,10 +102,10 @@ BotScript::findFunctionMapping(const QString &command) const {
 }
 
 void
-BotScript::setScriptName(const QString &scriptName) {
-    _logger = LogFactory::getLogger(scriptName);
+BotScript::setName(const QString &name) {
+    _logger = LogFactory::getLogger(name);
 
-    _scriptName = scriptName;
+    _name = name;
 }
 
 void
@@ -114,6 +123,33 @@ BotScript::execute(const QByteArray &command, const EventContext &context) {
                               Q_ARG(QVariant, SerializationUtils::toVariant(context)));
 
     _runLock.unlock();
+}
+
+void
+BotScript::setDescription(const QString &description) {
+    _description = description;
+}
+
+void
+BotScript::setDescriptionShort(const QString &description) {
+    _descriptionShort = description;
+}
+
+QString
+BotScript::getDescription() const {
+    return _description.isEmpty() ? _descriptionShort : _description;
+}
+
+QString
+BotScript::getDescriptionShort() const {
+    QString descriptionShort = _descriptionShort.isEmpty() ? _description : _descriptionShort;
+
+    return descriptionShort.left(Embed::DECRIPTION_SHORT_MAX_LENGTH);
+}
+
+QString
+BotScript::getName() const {
+    return _name;
 }
 
 void
@@ -141,7 +177,7 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     timedBinding->setId(uuid);
 
-    timedBinding->setBindingName(uuid);
+    //timedBinding->setName(uuid);
 
     if (timedBinding->isValid(*this->metaObject())) {
        emit timedBindingReadySignal(_guildId, timedBinding);
@@ -200,11 +236,6 @@ BotScript::bPause(int ms) {
 QMap<QString, QVariant>
 BotScript::getScriptCommands() const {
     return _commands;
-}
-
-QString
-BotScript::getScriptName() const {
-    return _scriptName;
 }
 
 void

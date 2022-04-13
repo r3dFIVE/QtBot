@@ -33,11 +33,16 @@ HEADERS += \
     $$PWD/botjob/commandbinding.h \
     $$PWD/botjob/databasecontext.h \
     $$PWD/botjob/gatewaybinding.h \
+    $$PWD/botjob/gatewaybindingproperties.h \
+    $$PWD/botjob/helppage.h \
     $$PWD/botjob/ibinding.h \
+    $$PWD/botjob/ibindingproperties.h \
     $$PWD/botjob/job.h \
     $$PWD/botjob/jobqueue.h \
     $$PWD/botjob/scriptmanager.h \
     $$PWD/botjob/timedbinding.h \
+    $$PWD/botjob/timedbindingproperties.h \
+    $$PWD/botjob/userhelp.h \
     $$PWD/entity/commandrestrictions.h \
     $$PWD/entity/gridfsfile.h \
     $$PWD/entity/idbmanager.h \
@@ -242,11 +247,13 @@ SOURCES += \
     $$PWD/botjob/commandbinding.cpp \
     $$PWD/botjob/databasecontext.cpp \
     $$PWD/botjob/gatewaybinding.cpp \
+    $$PWD/botjob/helppage.cpp \
     $$PWD/botjob/ibinding.cpp \
     $$PWD/botjob/job.cpp \
     $$PWD/botjob/jobqueue.cpp \
     $$PWD/botjob/scriptmanager.cpp \
     $$PWD/botjob/timedbinding.cpp \
+    $$PWD/botjob/userhelp.cpp \
     $$PWD/entity/gridfsfile.cpp \
     $$PWD/entity/idbmanager.cpp \
     $$PWD/entity/mongomanager.cpp \

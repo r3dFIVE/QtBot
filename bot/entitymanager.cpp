@@ -21,6 +21,7 @@
 #include "entitymanager.h"
 
 #include <QSqlError>
+#include <QTimer>
 
 #include "entity/mongomanager.h"
 #include "util/enumutils.h"
@@ -97,6 +98,8 @@ EntityManager::initGuild(QSharedPointer<GuildEntity> guildEntity) {
 }
 
 void
-EntityManager::saveEvent(QSharedPointer<GatewayPayload> payload) {
+EntityManager::saveEvent(GatewayEvent::Event event, QSharedPointer<GatewayPayload> payload) {
+    Q_UNUSED(event);
+
     _manager->saveEvent(payload);
 }

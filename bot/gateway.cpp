@@ -232,15 +232,15 @@ Gateway::closeConnection(QWebSocketProtocol::CloseCode closeCode) {
 
 void
 Gateway::processReconnect() {
-    _logger->debug("RECONNECT event dispatched, attemping to reconnect...");
+    _logger->info("RECONNECT event dispatched, attemping to reconnect...");
 
-    (QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART));
+    closeConnection(QWebSocketProtocol::CloseCode(CloseCodes::SERVER_RESTART));
 }
 
 
 void
 Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
-     _lastSequenceNumber = payload->getS().toInt();
+    _lastSequenceNumber = payload->getS().toInt();
 
     GatewayEvent::Event gatewayEvent = EnumUtils::keyToValue<GatewayEvent::Event>(payload->getT());
 
@@ -258,7 +258,7 @@ Gateway::processDispatch(QSharedPointer<GatewayPayload> payload) {
         break;
     }
 
-    emit dispatchEvent(payload);
+    emit dispatchEvent(gatewayEvent, payload);
 }
 
 void

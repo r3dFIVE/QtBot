@@ -25,6 +25,7 @@
 #include <QMutex>
 
 #include "payloads/eventcontext.h"
+#include "helppage.h"
 
 class IBotJob : public QObject
 {

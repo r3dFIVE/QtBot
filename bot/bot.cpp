@@ -81,6 +81,7 @@ Bot::Bot() {
     qRegisterMetaType<HttpResponse*>();
     qRegisterMetaType<TempFile*>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
+    qRegisterMetaType<GatewayEvent::Event>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),
                                BOT_API_MAJOR_VERSION,
                                BOT_API_MINOR_VERSION,
@@ -197,8 +198,6 @@ Bot::run() {
     entityManager->moveToThread(&_entityManagerThread);
 
     connect(gateway, &Gateway::dispatchEvent, entityManager, &EntityManager::saveEvent);
-
-    connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::saveEvent);
 
     connect(gateway, &Gateway::guildOnline, entityManager, &EntityManager::initGuildFromPayload);
 

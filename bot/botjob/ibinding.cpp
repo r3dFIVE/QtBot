@@ -19,20 +19,22 @@
  */
 
 #include "ibinding.h"
-
+#include "payloads/embed.h"
 
 const QString IBinding::BINDING_TYPE = "binding_type";
 const QString IBinding::BINDING_TYPE_COMMAND = "command";
 const QString IBinding::BINDING_TYPE_GATEWAY = "gateway";
 const QString IBinding::BINDING_TYPE_TIMED = "timed";
-const QString IBinding::FUNCTION = "function";
-const QString IBinding::DESCRIPTION = "description";
-const QString IBinding::IGNORE_ADMIN = "ignore_admin";
 const QString IBinding::BINDING_NAME = "binding_name";
+const QString IBinding::FUNCTION = "function";
+const QString IBinding::IGNORE_ADMIN = "ignore_admin";
+const QString IBinding::DESCRIPTION = "description";
+const QString IBinding::DESCRIPTION_SHORT = "short_description";
+const QString IBinding::ADMIN_ONLY = "admin_only";
 
 
-bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
-
+bool
+IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
 
     if (_functionMapping.first.isEmpty() || !_functionMapping.second) {
         _logger->warning(QString("Invalid command mapping. First: %1, Second: %2... Discarding binding.")
@@ -58,25 +60,38 @@ bool IBinding::validateFunctionMapping(const QMetaObject &metaObject) const {
     return true;
 }
 
-
-bool
-IBinding::isAdminOnly() const {
-    return _adminOnly;
+const QString&
+IBinding::getDescription() const {
+    return _baseProperties->description.isEmpty()
+            ? _baseProperties->descriptionShort : _baseProperties->description;
 }
 
 void
-IBinding::setAdminOnly(const bool adminOnly) {
-    _adminOnly = adminOnly;
+IBinding::setBaseProperties(QSharedPointer<IBindingProperties> properties) {
+    _baseProperties = properties;
+}
+
+const QString
+IBinding::getDescriptionShort() const {
+    QString descriptionShort = _baseProperties->descriptionShort.isEmpty()
+            ? _baseProperties->description : _baseProperties->descriptionShort;
+
+    return descriptionShort.left(Embed::DECRIPTION_SHORT_MAX_LENGTH);
+}
+
+const QString&
+IBinding::getName() const {
+    return _baseProperties->name;
+}
+
+bool
+IBinding::isAdminOnly() const {
+    return _baseProperties->adminOnly;
 }
 
 bool
 IBinding::ignoreAdmin() {
-    return _ignoreAdmin;
-}
-
-void
-IBinding::setIgnoreAdmin(bool ignoreAdmin) {
-    _ignoreAdmin = ignoreAdmin;
+    return _baseProperties->ignoreAdmin;
 }
 
 bool
@@ -112,27 +127,7 @@ IBinding::getFunctionMapping() const {
     return _functionMapping;
 }
 
-QString
-IBinding::getDescription() const {
-    return _description;
-}
-
-void
-IBinding::setDescription(const QString &description) {
-    _description = description;
-}
-
 void
 IBinding::setFunctionMapping(const IBotJob::FunctionMapping &functionMapping) {
     _functionMapping = functionMapping;
-}
-
-QString
-IBinding::getBindingName() const {
-    return _bindingName;
-}
-
-void
-IBinding::setBindingName(const QString &bindingName) {
-    _bindingName = bindingName;
 }

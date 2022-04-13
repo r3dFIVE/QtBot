@@ -1,79 +1,90 @@
 #include "bindingfactory.h"
 
-
 void
 BindingFactory::build(TimedBinding &timedBinding, BotScript *botScript, const QJsonValue &binding) {
-    QString functionName = binding[IBinding::FUNCTION].toString();
-
-    QString bindingName = binding[TimedBinding::BINDING_NAME].toString();
-
     timedBinding.setId(QUuid::createUuid().toString(QUuid::Id128));
 
-    timedBinding.setFunctionMapping(qMakePair(functionName, botScript));
-
-    timedBinding.setScriptName(botScript->getScriptName());
-
-    timedBinding.setFireAfter(binding[TimedBinding::FIRE_AFTER].toInt());
-
-    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
-        timedBinding.setSingleShot(binding[TimedBinding::SINGLE_SHOT].toBool());
-    }
-
-    if (binding[TimedBinding::SINGLETON].isBool()) {
-        timedBinding.setSingleton(binding[TimedBinding::SINGLETON].toBool());
-    }
-
-    if (binding[TimedBinding::FORCE_ENABLE].isBool()) {
-        timedBinding.setForceEnable(binding[TimedBinding::FORCE_ENABLE].toBool());
-    }
-
-    timedBinding.setBindingName(bindingName);
+    timedBinding.setFunctionMapping(qMakePair(binding[TimedBinding::FUNCTION].toString(), botScript));
 
     timedBinding.setEventContext(binding[TimedBinding::CONTEXT].toObject());
 
-    timedBinding.setDescription(binding[TimedBinding::DESCRIPTION].toString());
+    QSharedPointer<TimedBindingProperties> properties = QSharedPointer<TimedBindingProperties>(new TimedBindingProperties);
+
+    properties->scriptName = botScript->getName();
+
+    properties->fireAfter = binding[TimedBinding::FIRE_AFTER].toInt();
+
+    if (binding[TimedBinding::SINGLE_SHOT].isBool()) {
+        properties->singleShot = binding[TimedBinding::SINGLE_SHOT].toBool();
+    }
+
+    if (binding[TimedBinding::SINGLETON].isBool()) {
+        properties->singleton =binding[TimedBinding::SINGLETON].toBool();
+    }
+
+    if (binding[TimedBinding::FORCE_ENABLE].isBool()) {
+        properties->forceEnable = binding[TimedBinding::FORCE_ENABLE].toBool();
+    }
+
+    timedBinding.setBaseProperties(buildBaseProperties(binding));
+
+    timedBinding.setTimedProperties(properties);
+}
+
+QSharedPointer<IBindingProperties>
+BindingFactory::buildBaseProperties(const QJsonValue &binding) {
+    QSharedPointer<IBindingProperties> properties = QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+    QString name = binding[IBinding::BINDING_NAME].toString();
+
+    if (!name.isEmpty()) {
+        properties->name = name;
+    }
+
+    QString description = binding[IBinding::DESCRIPTION].toString();
+
+    if (!description.isEmpty()) {
+        properties->description = description;
+    }
+
+    QString descriptionShort = binding[IBinding::DESCRIPTION_SHORT].toString();
+
+    if (!descriptionShort.isEmpty()) {
+        properties->descriptionShort = descriptionShort;
+    }
+
+    if (binding[IBinding::IGNORE_ADMIN].isBool()) {
+        properties->ignoreAdmin = binding[IBinding::IGNORE_ADMIN].toBool();
+    }
+
+    if (binding[IBinding::ADMIN_ONLY].isBool()) {
+        properties->adminOnly =binding[IBinding::ADMIN_ONLY].toBool();
+    }
+
+    return properties;
 }
 
 void
 BindingFactory::build(GatewayBinding &gatewayBinding, BotScript *botScript, const QJsonValue &binding) {
-    QString bindingName = binding[GatewayBinding::BINDING_NAME].toString();
+    gatewayBinding.setFunctionMapping(qMakePair(binding[GatewayBinding::FUNCTION].toString(), botScript));
 
-    QString gatewayEventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
+    QSharedPointer<GatewayBindingProperties> properties = QSharedPointer<GatewayBindingProperties>(new GatewayBindingProperties);
 
-    QString functionName = binding[GatewayBinding::FUNCTION].toString();
+    properties->eventName = binding[GatewayBinding::GATEWAY_EVENT].toString();
 
-    gatewayBinding.setFunctionMapping(qMakePair(functionName, botScript));
+    gatewayBinding.setBaseProperties(buildBaseProperties(binding));
 
-    gatewayBinding.setEventName(gatewayEventName);
-
-    gatewayBinding.setBindingName(bindingName);
-
-    gatewayBinding.setDescription(binding[GatewayBinding::DESCRIPTION].toString());
-
-    if (binding[GatewayBinding::IGNORE_ADMIN].isBool()) {
-        gatewayBinding.setIgnoreAdmin(binding[GatewayBinding::IGNORE_ADMIN].toBool());
-    }
+    gatewayBinding.setGatewayProperties(properties);
 }
 
 void
 BindingFactory::build(CommandBinding &commandBinding, BotScript *botScript, const QJsonValue &binding) {
+    commandBinding.setFunctionMapping(qMakePair(binding[CommandBinding::FUNCTION].toString(), botScript));
 
-    QString command = binding[CommandBinding::COMMAND].toString();
+    QSharedPointer<IBindingProperties> base = buildBaseProperties(binding);
 
-    commandBinding.setCommandName(command);
+    base->name = binding[CommandBinding::COMMAND].toString();
 
-    QString functionName = binding[CommandBinding::FUNCTION].toString();
-
-    commandBinding.setFunctionMapping(qMakePair(functionName, botScript));
-
-    commandBinding.setDescription(binding[CommandBinding::DESCRIPTION].toString());
-
-    if (binding[CommandBinding::ADMIN_ONLY].isBool()) {
-        commandBinding.setAdminOnly(binding[CommandBinding::ADMIN_ONLY].toBool());
-    }
-
-    if (binding[CommandBinding::IGNORE_ADMIN].isBool()) {
-        commandBinding.setIgnoreAdmin(binding[CommandBinding::IGNORE_ADMIN].toBool());
-    }
+    commandBinding.setBaseProperties(base);
 }
 

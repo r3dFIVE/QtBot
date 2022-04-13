@@ -30,7 +30,6 @@ static const QString GLOBAL_BUCKET = "GLOBAL_BUCKET";
 
 class Bucket
 {
-    bool _global = false;
     QString _majorId;
     QString _rateLimitBucket;
     int _xRateLimitLimit = 0;
@@ -38,64 +37,56 @@ class Bucket
     qint64 _xRateLimitReset = 0;
     QReadWriteLock *_lock = new QReadWriteLock;
 
-public:    
+public:
     Bucket(const QString &majorId, const QString &rateLimitBucket) {
         _majorId = majorId;
 
         _rateLimitBucket = rateLimitBucket;
-
-        if (_rateLimitBucket.compare(GLOBAL_BUCKET)) {
-            _global = true;
-        }
     }
 
-    inline void setRateLimitLimit(const int rateLimitLimit) {
+    void setRateLimitLimit(const int rateLimitLimit) {
         _xRateLimitLimit = rateLimitLimit;
     }
 
-    inline void setRateLimitReset(const qint64 rateLimitReset) {
+    void setRateLimitReset(const qint64 rateLimitReset) {
         _xRateLimitReset = rateLimitReset;
     }
 
-    inline void setRateLimitRemaining(const int rateLimitRemaining) {
+    void setRateLimitRemaining(const int rateLimitRemaining) {
         _xRateLimitRemaining = rateLimitRemaining;
     }
 
-    inline QString getRateLimitBucket() const {
+    QString getRateLimitBucket() const {
         return _rateLimitBucket;
     }
 
-    inline QString getMajorId() const {
+    QString getMajorId() const {
         return _majorId;
     }
 
-    inline int getRateLimitLimit() const {
+    int getRateLimitLimit() const {
         return _xRateLimitLimit;
     }
 
-    inline qint64 getRateLimitReset() const {
+    qint64 getRateLimitReset() const {
         return _xRateLimitReset;
     }
 
-    inline int getRateLimitRemaining() const {
+    int getRateLimitRemaining() const {
         return _xRateLimitRemaining;
     }
 
-    inline bool isGlobal() {
-        return _global;
-    }
-
-    inline QReadWriteLock *getLock() {
+    QReadWriteLock *getLock() {
         return _lock;
     }
 
-    inline bool execute() {
+    bool canExecute() {
         // Possible write happening here, but want bucket update to take priority
         QReadLocker locker(_lock);
 
         bool canExecute = true;
 
-        if (--_xRateLimitRemaining < 0) {
+        if ((_xRateLimitRemaining)-- < 1) {
             qint64 currentTime = QDateTime::currentSecsSinceEpoch();
 
             if (currentTime >= _xRateLimitReset) {
@@ -108,7 +99,7 @@ public:
             }
         }
 
-        return canExecute || _global;
+        return canExecute;
     }
 };
 

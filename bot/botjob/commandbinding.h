@@ -25,24 +25,23 @@
 
 class CommandBinding : public IBinding
 {
-
-    bool _ignoreAdmin = false;
-    QString _commandName;
+    Q_OBJECT
 
 public:
     static const QString COMMAND;
-    static const QString ADMIN_ONLY;
 
     CommandBinding() { }
-    CommandBinding(const QString &commandName, const IBotJob::FunctionMapping &functionMapping);
+    CommandBinding(const QString &commandName,
+                   const IBotJob::FunctionMapping &functionMapping,
+                   QSharedPointer<IBindingProperties> properties);
+    CommandBinding(const QString &commandName,
+                   const IBotJob::FunctionMapping &functionMapping);
     CommandBinding(const CommandBinding &other);
     ~CommandBinding() {}
 
     CommandBinding &operator=(const CommandBinding &other);
 
-    QString getCommandName() const;
-
-    void setCommandName(const QString &commandName); 
+    void copy(const CommandBinding &other);
 
     bool isValid(const QMetaObject &metaObject) const override;
 };

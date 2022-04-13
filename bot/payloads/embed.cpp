@@ -34,11 +34,20 @@ const QString Embed::VIDEO = "video";
 const QString Embed::AUTHOR = "author";
 const QString Embed::FIELDS = "fields";
 
+const int Embed::DECRIPTION_MAX_LENGTH = 4000;
+const int Embed::DECRIPTION_SHORT_MAX_LENGTH = 200;
+const int Embed::TITLE_MAX_LENGTH = 200;
+const int Embed::TOTAL_MAX_LENGTH = 6000;
+const int Embed::FIELDS_MAX = 5;
+const int Embed::FIELDS_VALUE_MAX_LENGTH = 1000;
+const int Embed::FOOTER_TEXT_MAX_LENGTH = 2000;
+const int Embed::AUTHOR_NAME_MAX_LENGTH = 200;
+
 Embed::Embed(const QString &title,
              const QString &description,
              const QString &url,
              const int color,
-             QObject *parent) :JsonSerializable(parent) {
+             QObject *parent) : JsonSerializable{parent} {
     _jsonObject[TITLE] = title;
 
     _jsonObject[DESCRIPTION] = description;
@@ -46,6 +55,17 @@ Embed::Embed(const QString &title,
     _jsonObject[URL] = url;
 
     _jsonObject[COLOR] = color;
+}
+
+Embed&
+Embed::operator=(const Embed &other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    _jsonObject = other._jsonObject;
+
+    return *this;
 }
 
 QJsonValue

@@ -1,6 +1,7 @@
 #ifndef BINDINGFACTORY_H
 #define BINDINGFACTORY_H
 
+#include "botscript.h"
 #include "commandbinding.h"
 #include "gatewaybinding.h"
 #include "timedbinding.h"
@@ -13,6 +14,7 @@ class BindingFactory : public QObject
 
     static Logger *LOGGER;
 
+    static QSharedPointer<IBindingProperties> buildBaseProperties(const QJsonValue &binding);
 public:
     BindingFactory(QObject *parent = nullptr) = delete;
     BindingFactory(const BindingFactory &other) = delete;

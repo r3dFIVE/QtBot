@@ -42,6 +42,8 @@ class EventHandler : public QObject
 
     static const int JOB_POLL_MS;
 
+    QCache<QString, QString> _dmChannelByUserId;
+    QCache<QString, UserHelp> _activeHelpByUserId;
     QSharedPointer<DiscordAPI> _discordAPI;
     JobQueue _jobQueue;
     QMap<QString, QSharedPointer<GuildEntity> > _availableGuilds;
@@ -58,6 +60,8 @@ class EventHandler : public QObject
     void checkTimedJobs();    
     void registerTimedJobs(const QString &guildId);
 
+    Embed getHelpPage(const EventContext &context);
+    const QString getDmChannel(EventContext context);
 signals:
     void reloadScripts(QSharedPointer<GuildEntity> guild, bool validate);
 
@@ -72,7 +76,7 @@ public slots:
     void displayTimedJobs(EventContext context);
     void guildReady(QSharedPointer<GuildEntity> guild);
     void init();
-    void processEvent(QSharedPointer<GatewayPayload> payload);
+    void processEvent(GatewayEvent::Event event, QSharedPointer<GatewayPayload> payload);
     void processJobQueue();
     void reloadGuild(const EventContext &context);
     void registerTimedBinding(const QString &guildId, QSharedPointer<TimedBinding> timedBinding);
@@ -82,6 +86,7 @@ public slots:
     void startTimedJob(const EventContext &context);
     void stopTimedJob(const EventContext &context);
     void shutDown(const EventContext &context);
+    void getHelp(EventContext context);
 };
 
 #endif // MESSAGEHANDLER_H

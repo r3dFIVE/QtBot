@@ -21,13 +21,14 @@
 #ifndef IBINDING_H
 #define IBINDING_H
 
-#include "botscript.h"
+#include "ibindingproperties.h"
 #include "ibotjob.h"
 #include "logging/logfactory.h"
 
 
 class IBinding : public QObject
 {
+    Q_OBJECT
 
 public:    
 
@@ -35,35 +36,36 @@ public:
     static const QString BINDING_TYPE_COMMAND;
     static const QString BINDING_TYPE_GATEWAY;
     static const QString BINDING_TYPE_TIMED;
+    static const QString BINDING_NAME;
     static const QString FUNCTION;
     static const QString DESCRIPTION;
+    static const QString DESCRIPTION_SHORT;
     static const QString IGNORE_ADMIN;
-    static const QString BINDING_NAME;
+    static const QString ADMIN_ONLY;
+
+    IBinding() {};
+    IBinding(QSharedPointer<IBindingProperties> properties) : _baseProperties{properties} {}
 
     bool validateFunctionMapping(const QMetaObject &metaObject) const;
     IBotJob::FunctionMapping getFunctionMapping() const;
-    QString getDescription() const;
-    void setDescription(const QString &description);
+
     void setFunctionMapping(const IBotJob::FunctionMapping &functionMapping);
     bool ignoreAdmin();
-    void setIgnoreAdmin(bool ignoreAdmin);
-    void setAdminOnly(const bool adminOnly);
     bool isAdminOnly() const;
-    QString getBindingName() const;
-    void setBindingName(const QString &bindingName);
+    const QString& getName() const;
+    const QString getDescriptionShort() const;
+    const QString& getDescription() const;
+
+    void setBaseProperties(QSharedPointer<IBindingProperties> properties);
 
     virtual bool isValid(const QMetaObject &metaObject) const = 0;
 
-    Q_PROPERTY(QJsonValue description READ getDescription WRITE setDescription)
 protected:
     bool isValidParam(const QString &name, const QString &value) const;
 
-    bool _adminOnly = false;
-    bool _ignoreAdmin = false;
     IBotJob::FunctionMapping _functionMapping;
     Logger *_logger = LogFactory::getLogger(this);
-    QString _description;
-    QString _bindingName;
+    QSharedPointer<IBindingProperties> _baseProperties;
 };
 
 

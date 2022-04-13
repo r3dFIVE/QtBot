@@ -3,3 +3,4 @@
 # Except this file
 !.gitignore
 !gumbo-parser/*
+!xml2json/*
