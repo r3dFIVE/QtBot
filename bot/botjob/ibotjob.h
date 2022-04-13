@@ -25,11 +25,15 @@
 #include <QMutex>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "payloads/eventcontext.h"
 #include "helppage.h"
 =======
 #include "qml/eventcontext.h"
 >>>>>>> staging
+=======
+#include "qml/eventcontext.h"
+>>>>>>> 9e782cdb65f3087de944d9b2a3dbf045c3d512c1
 
 class IBotJob : public QObject
 {
