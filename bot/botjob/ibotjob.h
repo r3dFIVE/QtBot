@@ -24,7 +24,7 @@
 #include <QByteArray>
 #include <QMutex>
 
-#include "payloads/eventcontext.h"
+#include "qml/eventcontext.h"
 
 class IBotJob : public QObject
 {

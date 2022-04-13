@@ -25,7 +25,7 @@
 #include <QHttpMultiPart>
 #include <QObject>
 
-#include "payloads/eventcontext.h"
+#include "qml/eventcontext.h"
 #include "payloads/jsonserializable.h"
 #include "payloads/message.h"
 #include "logging/logfactory.h"

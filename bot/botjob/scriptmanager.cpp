@@ -30,7 +30,7 @@
 #include "bindingfactory.h"
 #include "botjob/botscript.h"
 #include "botjob/ibinding.h"
-#include "payloads/eventcontext.h"
+#include "qml/eventcontext.h"
 #include "botjob/corecommands.h"
 #include "payloads/message.h"
 #include "qml/qmlfactory.h"
