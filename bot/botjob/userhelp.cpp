@@ -2,6 +2,8 @@
 
 const QString UserHelp::COMMA_SPACE = QString(", ");
 const QString UserHelp::INVALID_HELP = QString("Invalid Help Page");
+const QString UserHelp::HELP_COMMAND = QString(".help");
+const QString UserHelp::HELP_USAGE = QString("\n\n**Usage:**\n\n*%1 <pageNum>*\n*%1 <script/bindingName> <pageNum>*").arg(UserHelp::HELP_COMMAND);
 
 UserHelp::UserHelp(const QMap<BotScript*, QList<QSharedPointer<IBinding>>> &bindingsByScript,
                    const QString &userId,
@@ -36,12 +38,14 @@ UserHelp::getHelpPage(const QString &pageName, int pageNum) {
                        .arg(_userId)
                        .arg(_channelId));
 
-        return Embed(INVALID_HELP, errorString);
+        return Embed(UserHelp::INVALID_HELP, QString("%1%2")
+                     .arg(errorString)
+                     .arg(UserHelp::HELP_USAGE));
     }
 
 
     if (!_pages.contains(pageName)) {
-        QString errorString = QString("Script/Binding Name: %1, does not exist or you do not have access.")
+        QString errorString = QString("Script/Binding Name: `%1`, does not exist or you do not have access.")
                 .arg(pageName);
 
         _logger->debug(QString("%1 userId: %2, channelId: %3")
@@ -49,17 +53,21 @@ UserHelp::getHelpPage(const QString &pageName, int pageNum) {
                        .arg(_userId)
                        .arg(_channelId));
 
-        return Embed(INVALID_HELP, errorString);
+        return Embed(UserHelp::INVALID_HELP, QString("%1%2")
+                     .arg(errorString)
+                     .arg(UserHelp::HELP_USAGE));
     }
 
     if (pageNum > 0 && _pages[pageName].size() <= pageNum) {
-        QString errorString = QString("Invalid page number: %1, for Script/Binding Name: %2")
+        QString errorString = QString("Invalid page number: `%1`, for Script/Binding Name: `%2`")
                 .arg(pageNum + 1)
                 .arg(pageName.isEmpty() ? ".help" : pageName);
 
         _logger->debug(errorString);
 
-        return Embed(INVALID_HELP, errorString);
+        return Embed(UserHelp::INVALID_HELP, QString("%1%2")
+                     .arg(errorString)
+                     .arg(UserHelp::HELP_USAGE));
     }
 
     return _pages[pageName].at(pageNum);
@@ -278,10 +286,16 @@ UserHelp::addMainPages(const QMap<BotScript*, QList<QSharedPointer<IBinding>>> &
 
     mainPages << page;
 
+    QString firstPageDescription = QString(HELP_USAGE).replace("*", "");
+
     for (int i = 0; i < mainPages.size(); ++i) {
-        QString descriptionString = QString("```.help <%1/%2>```")
+        QString descriptionString = QString("```%1 <%2/%3>%4```")
+                .arg(HELP_COMMAND)
                 .arg(i + 1)
-                .arg(mainPages.size());
+                .arg(mainPages.size())
+                .arg(firstPageDescription);
+
+        firstPageDescription.clear();
 
         mainPages[i].setDescription(descriptionString);
     }

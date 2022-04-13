@@ -32,9 +32,12 @@ class UserHelp : public QObject
     bool canAddToPage(const QString &name, const QString &description, int fieldCount, int characterCount);
     void buildScriptPage(QList<Embed> &scriptPages, Embed &page, const QString &name, const QString &descriptionShort, int &fieldCount, int &characterCount);
     void appendBindingNames(QString &descriptionShort, const QList<QSharedPointer<IBinding> > bindings);
+
 public:
 
     static const QString INVALID_HELP;
+    static const QString HELP_USAGE;
+    static const QString HELP_COMMAND;
 
     UserHelp(QObject *parent = nullptr) : QObject{parent} {}
     UserHelp(const UserHelp &other) : QObject{other.parent()}, _pages{other._pages} {}

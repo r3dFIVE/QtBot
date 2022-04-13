@@ -217,7 +217,7 @@ public:
 
         clearAllProperties->adminOnly = false;
 
-        addCommand(".help", helpProperties, [&](const EventContext &context) -> void {
+        addCommand(UserHelp::HELP_COMMAND, helpProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "getHelp",
                                       Qt::QueuedConnection,

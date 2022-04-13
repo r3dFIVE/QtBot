@@ -26,6 +26,8 @@
 #include "botjob/ibotjob.h"
 #include "util/enumutils.h"
 
+#include <botjob/userhelp.h>
+
 const QString GuildEntity::DEFAULT_GUILD_ID = "0";
 const QString GuildEntity::GUILD_RESTRICTIONS = "GUILD_RESTRICTIONS";
 const QString GuildEntity::RESTRICTIONS = "restrictions";
@@ -136,6 +138,10 @@ GuildEntity::canInvoke(const EventContext &context, const QString &command) {
         if (mappedStateById.contains(GUILD_ID_ALIAS)) {
             return mappedStateById[GUILD_ID_ALIAS];
         }
+    }
+
+    if (command == UserHelp::HELP_COMMAND) {
+        return true;
     }
 
     return DEFAULT_STATE;

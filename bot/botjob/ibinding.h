@@ -42,6 +42,7 @@ public:
     static const QString DESCRIPTION_SHORT;
     static const QString IGNORE_ADMIN;
     static const QString ADMIN_ONLY;
+    static const QString NO_DESCRIPTION;
 
     IBinding() {};
     IBinding(QSharedPointer<IBindingProperties> properties) : _baseProperties{properties} {}
@@ -54,7 +55,7 @@ public:
     bool isAdminOnly() const;
     const QString& getName() const;
     const QString getDescriptionShort() const;
-    const QString& getDescription() const;
+    const QString getDescription() const;
 
     void setBaseProperties(QSharedPointer<IBindingProperties> properties);
 
