@@ -32,7 +32,7 @@
 
 #include "bucket.h"
 #include "logging/logfactory.h"
-#include "payloads/eventcontext.h"
+#include "qml/eventcontext.h"
 #include "qml/file.h"
 #include "routes/route.h"
 #include "util/settings.h"

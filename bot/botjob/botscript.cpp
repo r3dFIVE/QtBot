@@ -114,13 +114,13 @@ BotScript::setScriptCommands(const QMap<QString, QVariant> &commands) {
 }
 
 void
-BotScript::execute(const QByteArray &command, const EventContext &context) {    
+BotScript::execute(const QByteArray &command, const EventContext &eventContext) {
     QVariant returnValue;
 
     QMetaObject::invokeMethod(this, command,
                               Qt::DirectConnection,
                               Q_RETURN_ARG(QVariant, returnValue),
-                              Q_ARG(QVariant, SerializationUtils::toVariant(context)));
+                              Q_ARG(QVariant, SerializationUtils::toVariant(eventContext)));
 
     _runLock.unlock();
 }
@@ -192,12 +192,12 @@ BotScript::bId() const {
 }
 
 QVariant
-BotScript::bGetContext() {
-    EventContext context;
+BotScript::bGetEventContext() {
+    EventContext eventContext;
 
-    context.setGuildId(_guildId);
+    eventContext.setGuildId(_guildId);
 
-    return SerializationUtils::toVariant(context);
+    return SerializationUtils::toVariant(eventContext);
 }
 
 QString
@@ -206,12 +206,12 @@ BotScript::bName() const {
 }
 
 void
-BotScript::bRemoveTimedEventByJobId(const QVariant &contextVariant) {
-    QSharedPointer<EventContext> context = QSharedPointer<EventContext>(new EventContext);
+BotScript::bRemoveTimedEventByJobId(const QVariant &eventContextVariant) {
+    QSharedPointer<EventeventContext> eventContext = QSharedPointer<EventeventContext>(new EventeventContext);
 
-    SerializationUtils::fromVariant(*context.data(), contextVariant);
+    SerializationUtils::fromVariant(*eventContext.data(), eventContextVariant);
 
-    emit removeTimedEventByJobIdSignal(context);
+    emit removeTimedEventByJobIdSignal(eventContext);
 }
 
 QString
@@ -269,490 +269,490 @@ BotScript::bLogFatal(QString event) {
 }
 
 QVariant
-BotScript::cGetChannel(const QVariant &context) {
-    return _discordAPI->channelGetChannel(context);
+BotScript::cGetChannel(const QVariant &eventContext) {
+    return _discordAPI->channelGetChannel(eventContext);
 }
 
 QVariant
-BotScript::cModifyChannel(const QVariant &context) {
-    return _discordAPI->channelModifyChannel(context);
+BotScript::cModifyChannel(const QVariant &eventContext) {
+    return _discordAPI->channelModifyChannel(eventContext);
 }
 
 QVariant
-BotScript::cDeleteChannel(const QVariant &context) {
-    return _discordAPI->channelDeleteChannel(context);
+BotScript::cDeleteChannel(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteChannel(eventContext);
 }
 
 QVariant
-BotScript::cGetChannelMessages(const QVariant &context) {
-    return _discordAPI->channelGetChannelMessages(context);
+BotScript::cGetChannelMessages(const QVariant &eventContext) {
+    return _discordAPI->channelGetChannelMessages(eventContext);
 }
 
 QVariant
-BotScript::cGetChannelMessage(const QVariant &context) {
-    return _discordAPI->channelGetChannelMessage(context);
+BotScript::cGetChannelMessage(const QVariant &eventContext) {
+    return _discordAPI->channelGetChannelMessage(eventContext);
 }
 
 QVariant
-BotScript::cCreateMessage(const QVariant &context, File *file) {
+BotScript::cCreateMessage(const QVariant &eventContext, File *file) {
     QVariantList files;
 
     if (file) {
         files << QVariant::fromValue(file);
     }
 
-    return _discordAPI->channelCreateMessage(context, files);
+    return _discordAPI->channelCreateMessage(eventContext, files);
 }
 
 
 QVariant
-BotScript::cCreateMessage(const QVariant &context, const QVariantList &files) {
-    return _discordAPI->channelCreateMessage(context, files);
+BotScript::cCreateMessage(const QVariant &eventContext, const QVariantList &files) {
+    return _discordAPI->channelCreateMessage(eventContext, files);
 }
 
 QVariant
-BotScript::cCrosspostMessage(const QVariant &context) {
-    return _discordAPI->channelCrosspostMessage(context);
+BotScript::cCrosspostMessage(const QVariant &eventContext) {
+    return _discordAPI->channelCrosspostMessage(eventContext);
 }
 
 QVariant
-BotScript::cCreateReaction(const QVariant &context) {
-    return _discordAPI->channelCreateReaction(context);
+BotScript::cCreateReaction(const QVariant &eventContext) {
+    return _discordAPI->channelCreateReaction(eventContext);
 }
 
 QVariant
-BotScript::cDeleteOwnReaction(const QVariant &context) {
-    return _discordAPI->channelDeleteOwnReaction(context);
+BotScript::cDeleteOwnReaction(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteOwnReaction(eventContext);
 }
 
 QVariant
-BotScript::cDeleteUserReaction(const QVariant &context) {
-    return _discordAPI->channelDeleteUserReaction(context);
+BotScript::cDeleteUserReaction(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteUserReaction(eventContext);
 }
 
 QVariant
-BotScript::cGetReactions(const QVariant &context) {
-    return _discordAPI->channelGetReactions(context);
+BotScript::cGetReactions(const QVariant &eventContext) {
+    return _discordAPI->channelGetReactions(eventContext);
 }
 
 QVariant
-BotScript::cDeleteAllReactions(const QVariant &context) {
-    return _discordAPI->channelDeleteAllReactions(context);
+BotScript::cDeleteAllReactions(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteAllReactions(eventContext);
 }
 
 QVariant
-BotScript::cDeleteAllReactionsForEmoji(const QVariant &context) {
-    return _discordAPI->channelDeleteAllReactionsForEmoji(context);
+BotScript::cDeleteAllReactionsForEmoji(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteAllReactionsForEmoji(eventContext);
 }
 
 QVariant
-BotScript::cEditMessage(const QVariant &context) {
-    return _discordAPI->channelEditMessage(context);
+BotScript::cEditMessage(const QVariant &eventContext) {
+    return _discordAPI->channelEditMessage(eventContext);
 }
 
 QVariant
-BotScript::cDeleteMessage(const QVariant &context) {
-    return _discordAPI->channelDeleteMessage(context);
+BotScript::cDeleteMessage(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteMessage(eventContext);
 }
 
 QVariant
-BotScript::cBulkDeleteMessages(const QVariant &context) {
-    return _discordAPI->channelDeleteMessage(context);
+BotScript::cBulkDeleteMessages(const QVariant &eventContext) {
+    return _discordAPI->channelDeleteMessage(eventContext);
 }
 
 QVariant
-BotScript::cEditChannelPermissions(const QVariant &context) {
-    return _discordAPI->channelEditChannelPermissions(context);
+BotScript::cEditChannelPermissions(const QVariant &eventContext) {
+    return _discordAPI->channelEditChannelPermissions(eventContext);
 }
 
 QVariant
-BotScript::cGetChannelInvites(const QVariant &context) {
-    return _discordAPI->channelGetChannelInvites(context);
+BotScript::cGetChannelInvites(const QVariant &eventContext) {
+    return _discordAPI->channelGetChannelInvites(eventContext);
 }
 
 QVariant
-BotScript::cCreateChannelInvite(const QVariant &context) {
-    return _discordAPI->channelCreateChannelInvite(context);
+BotScript::cCreateChannelInvite(const QVariant &eventContext) {
+    return _discordAPI->channelCreateChannelInvite(eventContext);
 }
 
 QVariant
-BotScript::cFollowNewsChannel(const QVariant &context) {
-    return _discordAPI->channelFollowNewsChannel(context);
+BotScript::cFollowNewsChannel(const QVariant &eventContext) {
+    return _discordAPI->channelFollowNewsChannel(eventContext);
 }
 
 QVariant
-BotScript::cTriggerTypingIndicator(const QVariant &context) {
-    return _discordAPI->channelTriggerTypingIndicator(context);
+BotScript::cTriggerTypingIndicator(const QVariant &eventContext) {
+    return _discordAPI->channelTriggerTypingIndicator(eventContext);
 }
 
 QVariant
-BotScript::cGetPinnedMessages(const QVariant &context) {
-    return _discordAPI->channelGetPinnedMessages(context);
+BotScript::cGetPinnedMessages(const QVariant &eventContext) {
+    return _discordAPI->channelGetPinnedMessages(eventContext);
 }
 
 QVariant
-BotScript::cAddPinnedChannelMessage(const QVariant &context) {
-    return _discordAPI->channelAddPinnedChannelMessage(context);
+BotScript::cAddPinnedChannelMessage(const QVariant &eventContext) {
+    return _discordAPI->channelAddPinnedChannelMessage(eventContext);
 }
 
 QVariant
-BotScript::cDeletePinnedChannelMessage(const QVariant &context) {
-    return _discordAPI->channelDeletePinnedChannelMessage(context);
+BotScript::cDeletePinnedChannelMessage(const QVariant &eventContext) {
+    return _discordAPI->channelDeletePinnedChannelMessage(eventContext);
 }
 
 QVariant
-BotScript::cGroupDmAddRecipient(const QVariant &context) {
-    return _discordAPI->channelGroupDmAddRecipient(context);
+BotScript::cGroupDmAddRecipient(const QVariant &eventContext) {
+    return _discordAPI->channelGroupDmAddRecipient(eventContext);
 }
 
 QVariant
-BotScript::cGroupDmRemoveRecipient(const QVariant &context) {
-    return _discordAPI->channelGroupDmRemoveRecipient(context);
+BotScript::cGroupDmRemoveRecipient(const QVariant &eventContext) {
+    return _discordAPI->channelGroupDmRemoveRecipient(eventContext);
 }
 
 QVariant
-BotScript::gCreateGuild(const QVariant &context) {
-    return _discordAPI->guildCreateGuild(context);
+BotScript::gCreateGuild(const QVariant &eventContext) {
+    return _discordAPI->guildCreateGuild(eventContext);
 }
 
 QVariant
-BotScript::gGetGuild(const QVariant &context) {
-    return _discordAPI->guildGetGuild(context);
+BotScript::gGetGuild(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuild(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildPreview(const QVariant &context) {
-    return _discordAPI->guildGetGuild(context);
+BotScript::gGetGuildPreview(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuild(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuild(const QVariant &context) {
-    return _discordAPI->guildModifyGuild(context);
+BotScript::gModifyGuild(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuild(eventContext);
 }
 
 QVariant
-BotScript::gDeleteGuild(const QVariant &context) {
-    return _discordAPI->guildDeleteGuild(context);
+BotScript::gDeleteGuild(const QVariant &eventContext) {
+    return _discordAPI->guildDeleteGuild(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildChannels(const QVariant &context) {
-    return _discordAPI->guildGetGuildChannels(context);
+BotScript::gGetGuildChannels(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildChannels(eventContext);
 }
 
 QVariant
-BotScript::gCreateGuildChannel(const QVariant &context) {
-    return _discordAPI->guildCreateGuildChannel(context);
+BotScript::gCreateGuildChannel(const QVariant &eventContext) {
+    return _discordAPI->guildCreateGuildChannel(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildChannelPosition(const QVariant &context) {
-    return _discordAPI->guildModifyGuildChannelPosition(context);
+BotScript::gModifyGuildChannelPosition(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildChannelPosition(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildMember(const QVariant &context) {
-    return _discordAPI->guildGetGuildMember(context);
+BotScript::gGetGuildMember(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildMember(eventContext);
 }
 
 QVariant
-BotScript::gListGuildMembers(const QVariant &context) {
-    return _discordAPI->guildListGuildMembers(context);
+BotScript::gListGuildMembers(const QVariant &eventContext) {
+    return _discordAPI->guildListGuildMembers(eventContext);
 }
 
 QVariant
-BotScript::gAddGuildMember(const QVariant &context) {
-    return _discordAPI->guildAddGuildMember(context);
+BotScript::gAddGuildMember(const QVariant &eventContext) {
+    return _discordAPI->guildAddGuildMember(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildMember(const QVariant &context) {
-    return _discordAPI->guildModifyGuildMember(context);
+BotScript::gModifyGuildMember(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildMember(eventContext);
 }
 
 QVariant
-BotScript::gModifyCurrentUserNick(const QVariant &context) {
-    return _discordAPI->guildModifyCurrentUserNick(context);
+BotScript::gModifyCurrentUserNick(const QVariant &eventContext) {
+    return _discordAPI->guildModifyCurrentUserNick(eventContext);
 }
 
 QVariant
-BotScript::gAddGuildMemberRole(const QVariant &context) {
-    return _discordAPI->guildAddGuildMemberRole(context);
+BotScript::gAddGuildMemberRole(const QVariant &eventContext) {
+    return _discordAPI->guildAddGuildMemberRole(eventContext);
 }
 
 QVariant
-BotScript::gRemoveGuildMemberRole(const QVariant &context) {
-    return _discordAPI->guildRemoveGuildMemberRole(context);
+BotScript::gRemoveGuildMemberRole(const QVariant &eventContext) {
+    return _discordAPI->guildRemoveGuildMemberRole(eventContext);
 }
 
 QVariant
-BotScript::gRemoveGuildMember(const QVariant &context) {
-    return _discordAPI->guildRemoveGuildMember(context);
+BotScript::gRemoveGuildMember(const QVariant &eventContext) {
+    return _discordAPI->guildRemoveGuildMember(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildBans(const QVariant &context) {
-    return _discordAPI->guildGetGuildBans(context);
+BotScript::gGetGuildBans(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildBans(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildBan(const QVariant &context) {
-    return _discordAPI->guildGetGuildBan(context);
+BotScript::gGetGuildBan(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildBan(eventContext);
 }
 
 QVariant
-BotScript::gCreateGuildBan(const QVariant &context) {
-    return _discordAPI->guildCreateGuildBan(context);
+BotScript::gCreateGuildBan(const QVariant &eventContext) {
+    return _discordAPI->guildCreateGuildBan(eventContext);
 }
 
 QVariant
-BotScript::gRemoveGuildBan(const QVariant &context) {
-    return _discordAPI->guildRemoveGuildBan(context);
+BotScript::gRemoveGuildBan(const QVariant &eventContext) {
+    return _discordAPI->guildRemoveGuildBan(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildRoles(const QVariant &context) {
-    return _discordAPI->guildGetGuildRoles(context);
+BotScript::gGetGuildRoles(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildRoles(eventContext);
 }
 
 QVariant
-BotScript::gCreateGuildRole(const QVariant &context) {
-    return _discordAPI->guildCreateGuildRole(context);
+BotScript::gCreateGuildRole(const QVariant &eventContext) {
+    return _discordAPI->guildCreateGuildRole(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildRolePosition(const QVariant &context) {
-    return _discordAPI->guildModifyGuildRolePosition(context);
+BotScript::gModifyGuildRolePosition(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildRolePosition(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildRole(const QVariant &context) {
-    return _discordAPI->guildModifyGuildRole(context);
+BotScript::gModifyGuildRole(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildRole(eventContext);
 }
 
 QVariant
-BotScript::gDeleteGuildRole(const QVariant &context) {
-    return _discordAPI->guildDeleteGuildRole(context);
+BotScript::gDeleteGuildRole(const QVariant &eventContext) {
+    return _discordAPI->guildDeleteGuildRole(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildPruneCount(const QVariant &context) {
-    return _discordAPI->guildGetGuildPruneCount(context);
+BotScript::gGetGuildPruneCount(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildPruneCount(eventContext);
 }
 
 QVariant
-BotScript::gBeginGuildPrune(const QVariant &context) {
-    return _discordAPI->guildBeginGuildPrune(context);
+BotScript::gBeginGuildPrune(const QVariant &eventContext) {
+    return _discordAPI->guildBeginGuildPrune(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildVoiceRegions(const QVariant &context) {
-    return _discordAPI->guildGetGuildVoiceRegions(context);
+BotScript::gGetGuildVoiceRegions(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildVoiceRegions(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildInvites(const QVariant &context) {
-    return _discordAPI->guildGetGuildInvites(context);
+BotScript::gGetGuildInvites(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildInvites(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildIntegrations(const QVariant &context) {
-    return _discordAPI->guildGetGuildIntegrations(context);
+BotScript::gGetGuildIntegrations(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildIntegrations(eventContext);
 }
 
 QVariant
-BotScript::gCreateGuildIntegration(const QVariant &context) {
-    return _discordAPI->guildCreateGuildIntegration(context);
+BotScript::gCreateGuildIntegration(const QVariant &eventContext) {
+    return _discordAPI->guildCreateGuildIntegration(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildIntegration(const QVariant &context) {
-    return _discordAPI->guildModifyGuildIntegration(context);
+BotScript::gModifyGuildIntegration(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildIntegration(eventContext);
 }
 
 QVariant
-BotScript::gDeleteGuildIntegration(const QVariant &context) {
-    return _discordAPI->guildDeleteGuildIntegration(context);
+BotScript::gDeleteGuildIntegration(const QVariant &eventContext) {
+    return _discordAPI->guildDeleteGuildIntegration(eventContext);
 }
 
 QVariant
-BotScript::gSyncGuildIntegration(const QVariant &context) {
-    return _discordAPI->guildSyncGuildIntegration(context);
+BotScript::gSyncGuildIntegration(const QVariant &eventContext) {
+    return _discordAPI->guildSyncGuildIntegration(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildWidget(const QVariant &context) {
-    return _discordAPI->guildGetGuildWidget(context);
+BotScript::gGetGuildWidget(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildWidget(eventContext);
 }
 
 
 QVariant
-BotScript::gGetGuildWidgetSettings(const QVariant &context) {
-    return _discordAPI->guildGetGuildWidget(context);
+BotScript::gGetGuildWidgetSettings(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildWidget(eventContext);
 }
 
 QVariant
-BotScript::gGetGuildEmbed(const QVariant &context) {
-    return _discordAPI->guildGetGuildEmbed(context);
+BotScript::gGetGuildEmbed(const QVariant &eventContext) {
+    return _discordAPI->guildGetGuildEmbed(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildWidget(const QVariant &context) {
-    return _discordAPI->guildModifyGuildWidget(context);
+BotScript::gModifyGuildWidget(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildWidget(eventContext);
 }
 
 QVariant
-BotScript::gModifyGuildEmbed(const QVariant &context) {
-    return _discordAPI->guildModifyGuildEmbed(context);
+BotScript::gModifyGuildEmbed(const QVariant &eventContext) {
+    return _discordAPI->guildModifyGuildEmbed(eventContext);
 }
 
 QVariant
-BotScript::gGetVanityUrl(const QVariant &context) {
-    return _discordAPI->guildGetVanityUrl(context);
+BotScript::gGetVanityUrl(const QVariant &eventContext) {
+    return _discordAPI->guildGetVanityUrl(eventContext);
 }
 
 QVariant
-BotScript::gGetWidgetImage(const QVariant &context) {
-    return _discordAPI->guildGetWidgetImage(context);
+BotScript::gGetWidgetImage(const QVariant &eventContext) {
+    return _discordAPI->guildGetWidgetImage(eventContext);
 }
 
 QVariant
-BotScript::eListGuildEmojis(const QVariant &context) {
-    return _discordAPI->emojiListGuildEmojis(context);
+BotScript::eListGuildEmojis(const QVariant &eventContext) {
+    return _discordAPI->emojiListGuildEmojis(eventContext);
 }
 
 QVariant
-BotScript::eCreateGuildEmoji(const QVariant &context) {
-    return _discordAPI->emojiCreateGuildEmoji(context);
+BotScript::eCreateGuildEmoji(const QVariant &eventContext) {
+    return _discordAPI->emojiCreateGuildEmoji(eventContext);
 }
 
 QVariant
-BotScript::eDeleteGuildEmoji(const QVariant &context) {
-    return _discordAPI->emojiDeleteGuildEmoji(context);
+BotScript::eDeleteGuildEmoji(const QVariant &eventContext) {
+    return _discordAPI->emojiDeleteGuildEmoji(eventContext);
 }
 
 QVariant
-BotScript::eGetGuildEmoji(const QVariant &context) {
-    return _discordAPI->emojiGetGuildEmoji(context);
+BotScript::eGetGuildEmoji(const QVariant &eventContext) {
+    return _discordAPI->emojiGetGuildEmoji(eventContext);
 }
 
 QVariant
-BotScript::eModifyGuildEmoji(const QVariant &context) {
-    return _discordAPI->emojiModifyGuildEmoji(context);
+BotScript::eModifyGuildEmoji(const QVariant &eventContext) {
+    return _discordAPI->emojiModifyGuildEmoji(eventContext);
 }
 
 QVariant
-BotScript::uGetCurrentUser(const QVariant &context) {
-    return _discordAPI->userGetCurrentUser(context);
+BotScript::uGetCurrentUser(const QVariant &eventContext) {
+    return _discordAPI->userGetCurrentUser(eventContext);
 }
 
 QVariant
-BotScript::uGetUser(const QVariant &context) {
-    return _discordAPI->userGetUser(context);
+BotScript::uGetUser(const QVariant &eventContext) {
+    return _discordAPI->userGetUser(eventContext);
 }
 
 QVariant
-BotScript::uModifyCurrentUser(const QVariant &context) {
-    return _discordAPI->userModifyCurrentUser(context);
+BotScript::uModifyCurrentUser(const QVariant &eventContext) {
+    return _discordAPI->userModifyCurrentUser(eventContext);
 }
 
 QVariant
-BotScript::uGetCurrentUserGuilds(const QVariant &context) {
-    return _discordAPI->userGetCurrentUserGuilds(context);
+BotScript::uGetCurrentUserGuilds(const QVariant &eventContext) {
+    return _discordAPI->userGetCurrentUserGuilds(eventContext);
 }
 
 QVariant
-BotScript::uGetUserDms(const QVariant &context) {
-    return _discordAPI->userGetUserDms(context);
+BotScript::uGetUserDms(const QVariant &eventContext) {
+    return _discordAPI->userGetUserDms(eventContext);
 }
 
 QVariant
-BotScript::uCreateDm(const QVariant &context) {
-    return _discordAPI->userCreateDm(context);
+BotScript::uCreateDm(const QVariant &eventContext) {
+    return _discordAPI->userCreateDm(eventContext);
 }
 
 QVariant
-BotScript::uLeaveGuild(const QVariant &context) {
-    return _discordAPI->userLeaveGuild(context);
+BotScript::uLeaveGuild(const QVariant &eventContext) {
+    return _discordAPI->userLeaveGuild(eventContext);
 }
 
 QVariant
-BotScript::uGetUserConnections(const QVariant &context) {
-    return _discordAPI->userGetUserConnections(context);
+BotScript::uGetUserConnections(const QVariant &eventContext) {
+    return _discordAPI->userGetUserConnections(eventContext);
 }
 
 QVariant
-BotScript::wCreateWebhook(const QVariant &context) {
-    return _discordAPI->webhookCreateWebhook(context);
+BotScript::wCreateWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookCreateWebhook(eventContext);
 }
 
 QVariant
-BotScript::wGetChannelWebhooks(const QVariant &context) {
-    return _discordAPI->webhookGetChannelWebhooks(context);
+BotScript::wGetChannelWebhooks(const QVariant &eventContext) {
+    return _discordAPI->webhookGetChannelWebhooks(eventContext);
 }
 
 QVariant
-BotScript::wGetGuildWebhooks(const QVariant &context) {
-    return _discordAPI->webhookGetGuildWebhooks(context);
+BotScript::wGetGuildWebhooks(const QVariant &eventContext) {
+    return _discordAPI->webhookGetGuildWebhooks(eventContext);
 }
 
 QVariant
-BotScript::wGetWebhook(const QVariant &context) {
-    return _discordAPI->webhookGetWebhook(context);
+BotScript::wGetWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookGetWebhook(eventContext);
 }
 
 QVariant
-BotScript::wGetWebhookWithToken(const QVariant &context) {
-    return _discordAPI->webhookGetWebhookWithToken(context);
+BotScript::wGetWebhookWithToken(const QVariant &eventContext) {
+    return _discordAPI->webhookGetWebhookWithToken(eventContext);
 }
 
 QVariant
-BotScript::wModifyWebhook(const QVariant &context) {
-    return _discordAPI->webhookModifyWebhook(context);
+BotScript::wModifyWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookModifyWebhook(eventContext);
 }
 
 QVariant
-BotScript::wModifyWebhookWithToken(const QVariant &context) {
-    return _discordAPI->webhookModifyWebhookWithToken(context);
+BotScript::wModifyWebhookWithToken(const QVariant &eventContext) {
+    return _discordAPI->webhookModifyWebhookWithToken(eventContext);
 }
 
 QVariant
-BotScript::wDeleteWebhook(const QVariant &context) {
-    return _discordAPI->webhookDeleteWebhook(context);
+BotScript::wDeleteWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookDeleteWebhook(eventContext);
 }
 
 QVariant
-BotScript::wDeleteWebhookWithToken(const QVariant &context) {
-    return _discordAPI->webhookDeleteWebhookWithToken(context);
+BotScript::wDeleteWebhookWithToken(const QVariant &eventContext) {
+    return _discordAPI->webhookDeleteWebhookWithToken(eventContext);
 }
 
 QVariant
-BotScript::wExecuteWebhook(const QVariant &context) {
-    return _discordAPI->webhookExecuteWebhook(context);
+BotScript::wExecuteWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookExecuteWebhook(eventContext);
 }
 
 QVariant
-BotScript::wExecuteSlackCompatibleWebhook(const QVariant &context) {
-    return _discordAPI->webhookExecuteSlackCompatibleWebhook(context);
+BotScript::wExecuteSlackCompatibleWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookExecuteSlackCompatibleWebhook(eventContext);
 }
 
 QVariant
-BotScript::wExecuteGithubCompatibleWebhook(const QVariant &context) {
-    return _discordAPI->webhookExecuteGithubCompatibleWebhook(context);
+BotScript::wExecuteGithubCompatibleWebhook(const QVariant &eventContext) {
+    return _discordAPI->webhookExecuteGithubCompatibleWebhook(eventContext);
 }
 
 QVariant
-BotScript::iGetInvite(const QVariant &context) {
-    return _discordAPI->inviteGetInvite(context);
+BotScript::iGetInvite(const QVariant &eventContext) {
+    return _discordAPI->inviteGetInvite(eventContext);
 }
 
 QVariant
-BotScript::iDeleteInvite(const QVariant &context) {
-    return _discordAPI->inviteDeleteInvite(context);
+BotScript::iDeleteInvite(const QVariant &eventContext) {
+    return _discordAPI->inviteDeleteInvite(eventContext);
 }
 
 QVariant
-BotScript::vListVoiceRegions(const QVariant &context) {
-    return _discordAPI->voiceListVoiceRegions(context);
+BotScript::vListVoiceRegions(const QVariant &eventContext) {
+    return _discordAPI->voiceListVoiceRegions(eventContext);
 }
 

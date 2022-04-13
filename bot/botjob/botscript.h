@@ -32,7 +32,7 @@
 #include "routes/discordapi.h"
 #include "databasecontext.h"
 #include "ibotjob.h"
-#include "payloads/eventcontext.h"
+#include "qml/eventcontext.h"
 #include "qml/file.h"
 
 
@@ -95,7 +95,7 @@ public:
 
     Q_INVOKABLE QVariant bQueueTimedEvent(const QVariant &timedBindingVariant);
     Q_INVOKABLE QString bId() const;
-    Q_INVOKABLE QVariant bGetContext();
+    Q_INVOKABLE QVariant bGetEventContext();
     Q_INVOKABLE void bLogTrace(QString logEvent);
     Q_INVOKABLE void bLogInfo(QString logEvent);
     Q_INVOKABLE void bLogDebug(QString logEvent);

@@ -27,7 +27,7 @@
 #include <QSharedPointer>
 
 #include "entity/guildentity.h"
-#include "payloads/eventcontext.h"
+#include "qml/eventcontext.h"
 #include "payloads/heartbeat.h"
 #include "payloads/gatewaypayload.h"
 #include "logging/logfactory.h"

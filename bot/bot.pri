@@ -65,7 +65,6 @@ HEADERS += \
     $$PWD/payloads/embedfield.h \
     $$PWD/payloads/embedfooter.h \
     $$PWD/payloads/embedmedia.h \
-    $$PWD/payloads/eventcontext.h \
     $$PWD/payloads/guildroledelete.h \
     $$PWD/payloads/guildroleupdate.h \
     $$PWD/payloads/invalidsession.h \
@@ -103,6 +102,7 @@ HEADERS += \
     $$PWD/qml/domattribute.h \
     $$PWD/qml/domnode.h \
     $$PWD/qml/domparser.h \
+    $$PWD/qml/eventcontext.h \
     $$PWD/qml/enums/htmltag.h \
     $$PWD/qml/enums/networkrequest.h \
     $$PWD/qml/enums/openmode.h \
@@ -305,11 +305,11 @@ SOURCES += \
     $$PWD/payloads/updatestatus.cpp \
     $$PWD/payloads/user.cpp \
     $$PWD/payloads/voicestate.cpp \
-    $$PWD/botjob/botscript.cpp \
-    $$PWD/payloads/eventcontext.cpp \
+    $$PWD/botjob/botscript.cpp \    
     $$PWD/qml/domattribute.cpp \
     $$PWD/qml/domnode.cpp \
     $$PWD/qml/domparser.cpp \
+    $$PWD/qml/eventcontext.cpp \
     $$PWD/qml/http.cpp \
     $$PWD/qml/httpmultipart.cpp \
     $$PWD/qml/httppart.cpp \

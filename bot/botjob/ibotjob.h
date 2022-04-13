@@ -24,8 +24,12 @@
 #include <QByteArray>
 #include <QMutex>
 
+<<<<<<< HEAD
 #include "payloads/eventcontext.h"
 #include "helppage.h"
+=======
+#include "qml/eventcontext.h"
+>>>>>>> staging
 
 class IBotJob : public QObject
 {
