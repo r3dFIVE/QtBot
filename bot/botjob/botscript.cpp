@@ -207,9 +207,9 @@ BotScript::bName() const {
 
 void
 BotScript::bRemoveTimedEventByJobId(const QVariant &eventContextVariant) {
-    QSharedPointer<EventeventContext> eventContext = QSharedPointer<EventeventContext>(new EventeventContext);
+    QSharedPointer<EventContext> eventContext = QSharedPointer<EventContext>(new EventContext);
 
-    SerializationUtils::fromVariant(*eventContext.data(), eventContextVariant);
+    SerializationUtils::fromVariant(*eventContext, eventContextVariant);
 
     emit removeTimedEventByJobIdSignal(eventContext);
 }
