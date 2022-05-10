@@ -177,10 +177,10 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     timedBinding->setId(uuid);
 
-    //timedBinding->setName(uuid);
-
     if (timedBinding->isValid(*this->metaObject())) {
-       emit timedBindingReadySignal(_guildId, timedBinding);
+        timedBinding->start();
+
+        emit timedBindingReadySignal(_guildId, timedBinding);
     }
 
     return timedBinding->id();

@@ -87,7 +87,7 @@ IBinding::getDescriptionShort() const {
     return descriptionShort.left(Embed::DECRIPTION_SHORT_MAX_LENGTH);
 }
 
-const QString&
+const QString
 IBinding::getName() const {
     return _baseProperties->name;
 }

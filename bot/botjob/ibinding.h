@@ -53,7 +53,7 @@ public:
     void setFunctionMapping(const IBotJob::FunctionMapping &functionMapping);
     bool ignoreAdmin();
     bool isAdminOnly() const;
-    const QString& getName() const;
+    const QString getName() const;
     const QString getDescriptionShort() const;
     const QString getDescription() const;
 
