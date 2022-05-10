@@ -150,6 +150,8 @@ EventHandler::registerTimedBinding(const QString &guildId, QSharedPointer<TimedB
     BotScript *botScript = qobject_cast<BotScript*>(timedBinding->getFunctionMapping().second);
 
     _availableGuilds[guildId]->addTimedBinding(botScript, timedBinding, false);
+
+    registerTimedJobs(guildId);
 }
 
 void
