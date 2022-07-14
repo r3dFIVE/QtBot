@@ -168,12 +168,14 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 
     TimedBinding binding;
 
+    QString uuid = QUuid::createUuid().toString(QUuid::Id128);
+
+    jsonBinding[IBinding::BINDING_NAME] = uuid;
+
     BindingFactory::build(binding, this, jsonBinding);
 
     QSharedPointer<TimedBinding> timedBinding
             = QSharedPointer<TimedBinding>(new TimedBinding(binding));
-
-    QString uuid = QUuid::createUuid().toString(QUuid::Id128);
 
     timedBinding->setId(uuid);
 
