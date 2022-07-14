@@ -506,7 +506,7 @@ GuildEntity::getReadyTimedJobs() {
 
             Job *timedJob = new Job;
 
-            timedJob->setContext(timedBinding->getEventContext());
+            timedJob->setContext(context);
 
             timedJob->setFunctionMapping(timedBinding->getFunctionMapping());
 

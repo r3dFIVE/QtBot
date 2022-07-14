@@ -31,13 +31,11 @@
 #include "entity/idbmanager.h"
 #include "botjob/databasecontext.h"
 #include "sqlerror.h"
-#include "sqlquery.h"
 #include "enums/sql.h"
 #include "util/enumutils.h"
 #include "util/databasetype.h"
 #include "logging/logfactory.h"
 
-class SqlQuery;
 
 class SqlDatabase : public QObject
 {

@@ -30,13 +30,13 @@
 EntityManager::EntityManager() {
     clearFileCache();
 
-    _cacheTimer = QSharedPointer<QTimer>(new QTimer(this));
+//    _cacheTimer = QSharedPointer<QTimer>(new QTimer(this));
 
-    _cacheTimer->setInterval(Settings::cacheTimer() * 1000);
+//    _cacheTimer->setInterval(Settings::cacheTimer() * 1000);
 
-    connect(_cacheTimer.data(), &QTimer::timeout, this, &EntityManager::clearFileCache);
+//    connect(_cacheTimer.data(), &QTimer::timeout, this, &EntityManager::clearFileCache);
 
-    _cacheTimer->start();
+//    _cacheTimer->start();
 
     _databaseContext.init();
 }

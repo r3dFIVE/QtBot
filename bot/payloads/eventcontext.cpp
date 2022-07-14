@@ -73,89 +73,9 @@ EventContext::processEventParams(const GatewayEvent::Event event, const QString 
 
 void
 EventContext::buildContext(const QJsonObject &json) {
-    if (json.contains(EVENT_NAME)) {
-        _jsonObject[EVENT_NAME] = json[EVENT_NAME];
-    }
+    _jsonObject = json;
 
-    if (json.contains(ROLE_ID)) {
-        _jsonObject[ROLE_ID] = json[ROLE_ID];
-    }
-
-    if (json.contains(OVERWRITE_ID)) {
-        _jsonObject[OVERWRITE_ID] = json[OVERWRITE_ID];
-    }
-
-    if (json.contains(MESSAGE_ID)) {
-        _jsonObject[MESSAGE_ID] = json[MESSAGE_ID];
-    }
-
-    if (json.contains(CHANNEL_ID)) {
-        _jsonObject[CHANNEL_ID] = json[CHANNEL_ID];
-    }
-
-    if (json.contains(GUILD_ID)) {
-        _jsonObject[GUILD_ID] = json[GUILD_ID];
-    } else {
-        _jsonObject[GUILD_ID] = GuildEntity::DEFAULT_GUILD_ID;
-    }
-
-    if (json.contains(INTEGRATION_ID)) {
-        _jsonObject[INTEGRATION_ID] = json[INTEGRATION_ID];
-    }
-
-    if (json.contains(INVITE_CODE)) {
-        _jsonObject[INVITE_CODE] = json[INVITE_CODE];
-    }
-
-    if (json.contains(USER_ID)) {
-        _jsonObject[USER_ID] = json[USER_ID];
-    }
-
-    if (json.contains(WEBHOOK_ID)) {
-        _jsonObject[WEBHOOK_ID] = json[WEBHOOK_ID];
-    }
-
-    if (json.contains(WEBHOOK_TOKEN)) {
-        _jsonObject[WEBHOOK_TOKEN] = json[WEBHOOK_TOKEN];
-    }
-
-    if (json.contains(CONTENT)) {
-        _jsonObject[CONTENT] = json[CONTENT];
-
-        splitArgs();
-    }
-
-    if (json.contains(AUTHOR)) {
-        _jsonObject[AUTHOR] = json[AUTHOR];
-
-        if (!json[AUTHOR][ID].isUndefined()) {
-            _jsonObject[USER_ID] = json[AUTHOR][ID];
-        }
-    }
-
-    if (json.contains(MEMBER)) {
-        _jsonObject[ROLE_IDS] = json[MEMBER][ROLES];
-    } else if (json.contains(ROLE_IDS)) {
-        _jsonObject[ROLE_IDS] = json[ROLE_IDS];
-    }
-
-    if (json.contains(EMOJI)) {
-        _jsonObject[EMOJI] = json[EMOJI];
-    }
-
-    if (json.contains(JOB_ID)) {
-        _jsonObject[JOB_ID] = json[JOB_ID];
-    }
-
-    if (json.contains(QUERY_PARAMS)) {
-        _jsonObject[QUERY_PARAMS] = json[QUERY_PARAMS];
-    } else {
-        _jsonObject[QUERY_PARAMS] = QJsonObject();
-    }
-
-    if (json.contains(TARGET_PAYLOAD)) {
-        _jsonObject[TARGET_PAYLOAD] = json[TARGET_PAYLOAD];
-    } else {
+    if (json[TARGET_PAYLOAD].isUndefined()) {
         _jsonObject[TARGET_PAYLOAD] = QJsonObject();
     }
 
@@ -163,6 +83,30 @@ EventContext::buildContext(const QJsonObject &json) {
         _jsonObject[SOURCE_PAYLOAD] = json[SOURCE_PAYLOAD];
     } else {
         _jsonObject[SOURCE_PAYLOAD] = json;
+
+        if (json.contains(MEMBER)) {
+            _jsonObject[ROLE_IDS] = json[MEMBER][ROLES];
+        }
+
+        if (json.contains(QUERY_PARAMS)) {
+            _jsonObject[QUERY_PARAMS] = json[QUERY_PARAMS];
+        } else {
+            _jsonObject[QUERY_PARAMS] = QJsonObject();
+        }
+
+        if (json.contains(AUTHOR) && !json[AUTHOR][ID].isUndefined()) {
+            _jsonObject[USER_ID] = json[AUTHOR][ID];
+        }
+
+        if (json.contains(CONTENT)) {
+            _jsonObject[CONTENT] = _jsonObject[CONTENT];
+
+            splitArgs();
+        }
+
+        if (!json.contains(GUILD_ID)){
+            _jsonObject[GUILD_ID] = GuildEntity::DEFAULT_GUILD_ID;
+        }
     }
 }
 
