@@ -196,10 +196,10 @@ LogWorker::logEvent(Logger::LogLevel level, QString message, QString loggerName)
 
         QString dateTime = QDateTime::currentDateTime().toString("yyyy/MM/dd hh:mm:ss.zzz");
 
-        QString logString = QString("[%1]%2[%3]: %4")
+        QString logString = QString("[%1][%2][%3]: %4")
                 .arg(dateTime)
-                .arg(loggerName)
                 .arg(logLevel)
+                .arg(loggerName)                
                 .arg(message);
 
         if (consoleLoggingEnabled(level)) {

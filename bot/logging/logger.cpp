@@ -23,10 +23,6 @@
 #include <QThread>
 
 Logger::Logger(QString loggerName, QObject *parent) : QObject (parent) {
-    if (!loggerName.isEmpty()) {
-        loggerName = QString("[%1]").arg(loggerName);
-    }
-
     _loggerName = loggerName;
 }
 
