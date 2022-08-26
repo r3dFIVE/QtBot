@@ -20,9 +20,16 @@
 
 #include "corecommand.h"
 
+#include "payloads/user.h"
+
 void
 CoreCommand::execute(const QByteArray &command, const EventContext &context) {
-    LogFactory::getLogger(this)->trace(QString("Executing core command: %1").arg(QString(command)));
+    User user(context.getAuthor());
+
+    LogFactory::getLogger(this)->trace(QString("Executing core command: %1, from userId: %2 (%3)")
+                                       .arg(QString(command))
+                                       .arg(user.getId().toString())
+                                       .arg(user.getUsername().toString()));
 
     _command(context);
 

@@ -396,6 +396,8 @@ ScriptManager::buildBotScript(const QFileInfo &fileInfo, GuildEntity &guildEntit
 
     botScript->setEngine(engine);
 
+    botScript->setGuildOwnerId(guildEntity.getGuildOwnerId());
+
     _managedScripts[guildEntity.getId()] << QSharedPointer<IBotJob>(botScript);
 
     QObject::connect(botScript, &BotScript::timedBindingReadySignal,

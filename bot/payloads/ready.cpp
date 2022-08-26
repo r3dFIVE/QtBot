@@ -26,6 +26,7 @@ const QString Ready::PRIVATE_CHANNELS = "private_channels";
 const QString Ready::GUILDS = "guilds";
 const QString Ready::SESSION_ID = "session_id";
 const QString Ready::SHARD = "shard";
+const QString Ready::RESUME_GATEWAY_URL = "resume_gateway_url";
 
 QJsonValue
 Ready::getV() const {
@@ -86,3 +87,9 @@ void
 Ready::setShard(const QJsonArray &shard) {
     _jsonObject[SHARD] = shard;
 }
+
+QJsonValue
+Ready::getResumeGatewayUrl() const {
+    return _jsonObject[RESUME_GATEWAY_URL].toString();
+}
+

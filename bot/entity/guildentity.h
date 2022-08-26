@@ -23,8 +23,6 @@
 
 #include <QObject>
 #include <QMap>
-#include <QCache>
-#include <QQmlEngine>
 
 #include "botjob/userhelp.h"
 #include "botjob/botscript.h"
@@ -58,11 +56,11 @@ class GuildEntity : public QObject
     QMap<QString, QSharedPointer<GatewayBinding>> _gatewayBindings;
 
 
-    QMap<QString, Role> _rolesByRoleId;
     QMap<QString, QMap<QString, CommandRestrictions::RestrictionState> > _mappedStateIdsByCommand;
 
     QString _id = DEFAULT_GUILD_ID;
-    QStringList _adminRoleIds;    
+    QString _guildOwnerId;
+    QSet<QString> _adminIds;
 
     Job* getCommandJob(QSharedPointer<EventContext> context);
     QList<Job*> getGatewayEventJobs(QSharedPointer<EventContext> context);
@@ -72,6 +70,8 @@ class GuildEntity : public QObject
                      const QString &targetId,
                      CommandRestrictions::RestrictionState state);
     bool isTimedJobEnabled(const TimedBinding &binding);
+    void setGuildOwnerId(const QString &guildOwnerId);
+
 
 public:
     GuildEntity(QObject *parent = nullptr) : QObject{parent} {}
@@ -92,7 +92,7 @@ public:
     static const QString GUILD_ID_ALIAS;
 
     void initRestrictionStates(const QJsonObject &json);
-    bool hasAdminRole(const EventContext& context);
+    bool isAdmin(const EventContext& context);
     bool canInvoke(const EventContext& context, const QString &command);
     QList<Job *> processEvent(QSharedPointer<EventContext> context);
     QList<QSharedPointer<TimedBinding>> getTimedBindings() const;
@@ -107,7 +107,7 @@ public:
     void setCommandNamesByScriptName(QMap<QString, QString> &scriptNamesByCommand);
     void setMappedStateIdsByCommand(QMap<QString, QMap<QString,
                                     CommandRestrictions::RestrictionState> > mappedStateIdsByCommand);
-    void updateRole(const Role &role);
+    void checkForAdminRole(const Role &role);
     void removeRole(const QString &roleId);
     void removeAllRestrictionStates();
     void updateAllRestrictionStates(const QString &targetId,
@@ -134,6 +134,8 @@ public:
     void clearBindings();
 
     UserHelp *getUserHelp(const EventContext &context);
+    QString getGuildOwnerId() const;
+
 signals:
     void restrictionsUpdate(QSharedPointer<CommandRestrictions> restrictions);
 };

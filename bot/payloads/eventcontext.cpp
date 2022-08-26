@@ -180,7 +180,7 @@ EventContext::setRoleId(const QJsonValue &roleId) {
     _jsonObject[ROLE_ID] = roleId;
 }
 
-QJsonArray
+const QJsonArray
 EventContext::getRoleIds() const {
     return _jsonObject[ROLE_IDS].toArray();
 }
