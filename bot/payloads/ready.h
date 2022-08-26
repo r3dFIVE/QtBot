@@ -35,6 +35,7 @@ public:
     static const QString GUILDS;
     static const QString SESSION_ID;
     static const QString SHARD;
+    static const QString RESUME_GATEWAY_URL;
 
     Ready(QObject *parent = nullptr) : JsonSerializable(parent) {}
     Ready(const Ready &other, QObject *parent = nullptr) : JsonSerializable(other, parent) {}
@@ -48,6 +49,7 @@ public:
     QJsonObject getUser() const;
     QJsonValue getSessionId() const;
     QJsonValue getV() const;
+    QJsonValue getResumeGatewayUrl() const;
     void setGuilds(const QJsonArray &guilds);
     void setPrivateChannels(const QJsonArray &privateChannels);
     void setSessionId(const QJsonValue &sessionId);

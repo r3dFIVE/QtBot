@@ -32,7 +32,6 @@
 #include "util/settings.h"
 
 
-
 class Bot : public QObject
 {
     Q_OBJECT    

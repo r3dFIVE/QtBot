@@ -21,6 +21,7 @@
 #ifndef MESSAGEHANDLER_H
 #define MESSAGEHANDLER_H
 
+#include <QCache>
 #include <QObject>
 #include <QSqlQuery>
 #include <QTimer>
@@ -49,7 +50,7 @@ class EventHandler : public QObject
     QMap<QString, QSharedPointer<GuildEntity> > _availableGuilds;
     QSet<QString> _guildsWithTimedEvents;
     QSharedPointer<QTimer> _jobQueueTimer;
-
+    qint64 _botOnlineEpochSeconds;
     Logger *_logger;
 
     bool isGuildReady(const QString &guildId);
@@ -87,6 +88,7 @@ public slots:
     void stopTimedJob(const EventContext &context);
     void shutDown(const EventContext &context);
     void getHelp(EventContext context);
+    void getUptime(EventContext context);
 };
 
 #endif // MESSAGEHANDLER_H

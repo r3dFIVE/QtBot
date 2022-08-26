@@ -35,7 +35,6 @@
 #include "payloads/eventcontext.h"
 #include "qml/file.h"
 
-
 class TimedBinding;
 
 class BotScript : public IBotJob
@@ -53,9 +52,11 @@ class BotScript : public IBotJob
     QString _name;
     QString _description;
     QString _descriptionShort;
+    QString _guildOwnerId;
 
     static QString _botId;
     static QString _botName;
+    static QString _botOwnerId;
 
     void setScriptCommands(const QMap<QString, QVariant> &commands);
     void setEventBindingsJson(const QJsonArray &eventBindings);
@@ -82,10 +83,12 @@ public:
     void setName(const QString &name);
     void setDescription(const QString &description);
     void setDescriptionShort(const QString &description);
+    void setGuildOwnerId(const QString &guildOwnerId);
     QString getDescription() const;
     QString getDescriptionShort() const;
     QString getName() const;
 
+    static void setBotOwnerId(const QString &botOwnerId);
     static void setBotId(const QString &botId);
     static void setBotName(const QString &botName);
 
@@ -95,6 +98,8 @@ public:
 
     Q_INVOKABLE QVariant bQueueTimedEvent(const QVariant &timedBindingVariant);
     Q_INVOKABLE QString bId() const;
+    Q_INVOKABLE QString bGetBotOwnerId() const;
+    Q_INVOKABLE QString bGetGuildOwnerId() const;
     Q_INVOKABLE QVariant bGetContext();
     Q_INVOKABLE void bLogTrace(QString logEvent);
     Q_INVOKABLE void bLogInfo(QString logEvent);

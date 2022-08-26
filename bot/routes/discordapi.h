@@ -78,7 +78,7 @@ public:
     DiscordAPI() {
         _botAuthHeaderName = QString("Authorization").toUtf8();
 
-        _botAuthHeaderValue = QString("Bot %1").arg(HttpUtils::botToken()).toUtf8();
+        _botAuthHeaderValue = QString("Bot %1").arg(Settings::botToken()).toUtf8();
     }
     ~DiscordAPI() {}
 
