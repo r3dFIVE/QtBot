@@ -122,6 +122,7 @@ HEADERS += \
     $$PWD/qml/sqlquery.h \
     $$PWD/qml/tempfile.h \
     $$PWD/qml/xmlquery.h \
+    $$PWD/routes/auditgetguildauditlog.h \
     $$PWD/routes/bucket.h \
     $$PWD/routes/channeladdpinnedchannelmessage.h \
     $$PWD/routes/channelbulkmessagesdelete.h \

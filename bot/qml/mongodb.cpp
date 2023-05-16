@@ -240,7 +240,7 @@ MongoDB::findFilesByMessageId(const QString &messageId) {
 
         QString targetFilename = attachmentMetadata[Attachment::FILENAME].toString();
 
-        TempFile *file = findFileByChecksum(checksum, client, targetFilename);
+        QSharedPointer<TempFile> *file = findFileByChecksum(checksum, client, targetFilename);
 
         if (!file) {
             continue;

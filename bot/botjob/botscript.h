@@ -122,6 +122,13 @@ public:
      *  https://discord.com/developers/docs/resources/channel
      */
 
+    Q_INVOKABLE QVariant aGetGuildAuditLog(const QVariant &context);
+
+    /*
+     *  CHANNEL API FUNCTIONS
+     *  https://discord.com/developers/docs/resources/channel
+     */
+
     Q_INVOKABLE QVariant cGetChannel(const QVariant &context);
     Q_INVOKABLE QVariant cModifyChannel(const QVariant &context);
     Q_INVOKABLE QVariant cDeleteChannel(const QVariant &context);

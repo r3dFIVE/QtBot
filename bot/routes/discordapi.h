@@ -221,6 +221,12 @@ public:
 
     QVariant voiceListVoiceRegions(const QVariant &context);
 
+
+    /*
+     *      AUDIT LOG FUNCTIONS
+     *      https://discord.com/developers/docs/resources/audit-log
+     */
+    QVariant auditGetGuildAuditLog(const QVariant &context);
 };
 
 #endif // DISCORDAPI_H

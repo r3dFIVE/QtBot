@@ -292,6 +292,11 @@ BotScript::bLogFatal(QString event) {
 }
 
 QVariant
+BotScript::aGetGuildAuditLog(const QVariant &context) {
+    return _discordAPI->auditGetGuildAuditLog(context);
+}
+
+QVariant
 BotScript::cGetChannel(const QVariant &context) {
     return _discordAPI->channelGetChannel(context);
 }
