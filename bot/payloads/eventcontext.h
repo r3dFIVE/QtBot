@@ -102,7 +102,7 @@ public:
 
 
     Q_INVOKABLE QJsonArray getArgs() const;
-    Q_INVOKABLE QJsonArray getRoleIds() const;
+    Q_INVOKABLE const QJsonArray getRoleIds() const;
     Q_INVOKABLE QJsonObject getAuthor() const;
     Q_INVOKABLE QJsonObject getQueryParams() const;
     Q_INVOKABLE QJsonObject getSourcePayload() const;

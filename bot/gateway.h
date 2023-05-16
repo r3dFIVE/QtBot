@@ -52,12 +52,13 @@ class Gateway : public QObject
     int _retryCount;
 
     QUrl _gatewayUrl;
+    QUrl _resumeGatewayUrl;
     QString _botToken;
     QString _sessionId;
 
+    QUrl buildConnectionUrl(const QString &baseUrl) const;
     void calculateGatewayIntents();
     void closeConnection(QWebSocketProtocol::CloseCode closeCode);
-    void buildConnectionUrl();
     void processAck();
     void processDispatch(QSharedPointer<GatewayPayload> payload);
     void processGuildCreate(QSharedPointer<GatewayPayload> payload);

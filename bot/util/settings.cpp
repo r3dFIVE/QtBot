@@ -176,7 +176,7 @@ Settings::validateGatewaySettings() {
     }
 
     if (_settings[GATEWAY_INTENTS].toString().isEmpty()) {
-        _settings[GATEWAY_INTENTS] = "GUILD_MESSAGES";
+        _settings[GATEWAY_INTENTS] = "ALL_INTENTS";
     }
 
     if (_settings[API_VERSION].toString().isEmpty()) {

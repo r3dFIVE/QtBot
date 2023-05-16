@@ -33,6 +33,7 @@
 
 QString BotScript::_botId = QString();
 QString BotScript::_botName = QString();
+QString BotScript::_botOwnerId = QString();
 
 BotScript::BotScript() {
     _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
@@ -135,6 +136,16 @@ BotScript::setDescriptionShort(const QString &description) {
     _descriptionShort = description;
 }
 
+void
+BotScript::setBotOwnerId(const QString &botOwnerId) {
+    _botOwnerId = botOwnerId;
+}
+
+void
+BotScript::setGuildOwnerId(const QString &guildOwnerId) {
+    _guildOwnerId = guildOwnerId;
+}
+
 QString
 BotScript::getDescription() const {
     return _description.isEmpty() ? _descriptionShort : _description;
@@ -191,6 +202,16 @@ BotScript::bQueueTimedEvent(const QVariant &timedBindingVariant) {
 QString
 BotScript::bId() const {
     return _botId;
+}
+
+QString
+BotScript::bGetBotOwnerId() const {
+    return _botOwnerId;
+}
+
+QString
+BotScript::bGetGuildOwnerId() const {
+    return _guildOwnerId;
 }
 
 QVariant
@@ -268,6 +289,11 @@ BotScript::bLogCritical(QString event) {
 void
 BotScript::bLogFatal(QString event) {
     _logger->fatal(event);
+}
+
+QVariant
+BotScript::aGetGuildAuditLog(const QVariant &context) {
+    return _discordAPI->auditGetGuildAuditLog(context);
 }
 
 QVariant

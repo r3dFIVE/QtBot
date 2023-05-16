@@ -41,13 +41,17 @@ Route::buildRequest(const RequestType requestType,
     }
 
     if (requestType == GET || requestType == POST) {
-        if (!context.getQueryParams().isEmpty()) {
-            QJsonObject queryParams = context.getQueryParams();
+        QJsonObject queryParams = context.getQueryParams();
 
+        if (!queryParams.isEmpty()) {
             QString queryString = "?";
 
             for (const QString &key : queryParams.keys()) {
-                queryString += QString("%1=%2&").arg(key, queryParams[key].toString());
+                if (queryParams[key].isDouble())  {
+                    queryString += QString("%1=%2&").arg(key).arg(queryParams[key].toDouble());
+                } else {
+                    queryString += QString("%1=%2&").arg(key, queryParams[key].toString());
+                }
             }
 
             queryString.truncate(queryString.size() - 1);

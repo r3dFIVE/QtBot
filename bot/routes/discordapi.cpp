@@ -113,6 +113,7 @@
 #include "invitedeleteinvite.h"
 #include "voicelistvoiceregions.h"
 #include "guildgetguildwidget.h"
+#include "auditgetguildauditlog.h"
 
 #include <QEventLoop>
 #include <QMutexLocker>
@@ -525,7 +526,7 @@ DiscordAPI::channelEditMessage(const QVariant &context) {
 
 QVariant
 DiscordAPI::channelDeleteMessage(const QVariant &context) {
-    ChannelEditMessage deleteMessage(buildRequestContext(context));
+    ChannelDeleteMessage deleteMessage(buildRequestContext(context));
 
     QSharedPointer<EventContext> apiResponse = processRoute(deleteMessage);
 
@@ -536,7 +537,7 @@ DiscordAPI::channelDeleteMessage(const QVariant &context) {
 
 QVariant
 DiscordAPI::channelBulkDeleteMessages(const QVariant &context) {
-    ChannelEditMessage bulkDeleteMessage(buildRequestContext(context));
+    ChannelBulkDeleteMessages bulkDeleteMessage(buildRequestContext(context));
 
     QSharedPointer<EventContext> apiResponse = processRoute(bulkDeleteMessage);
 
@@ -1103,5 +1104,12 @@ DiscordAPI::voiceListVoiceRegions(const QVariant &context) {
     VoiceListVoiceRegions listVoiceRegions(buildRequestContext(context));
 
     return buildResponseVariant(processRoute(listVoiceRegions));
+}
+
+QVariant
+DiscordAPI::auditGetGuildAuditLog(const QVariant &context) {
+    AuditGetGuildAuditLog getGuildAuditLog(buildRequestContext(context));
+
+    return buildResponseVariant(processRoute(getGuildAuditLog));
 }
 

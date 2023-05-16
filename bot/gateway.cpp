@@ -43,13 +43,11 @@ Gateway::Gateway()
 {    
     _botToken = Settings::botToken();
 
-    HttpUtils::setBotToken(_botToken);
-
     _maxRetries = Settings::maxRetries();
 
     _logger = LogFactory::getLogger(this);
 
-    buildConnectionUrl();
+    _gatewayUrl = buildConnectionUrl(Settings::connectionUrl());
 
     calculateGatewayIntents();
 }
@@ -80,7 +78,9 @@ Gateway::init() {
 
     connect(_heartbeatTimer.data(), &QTimer::timeout, this, &Gateway::sendHeartbeat);
 
-    _socket->open(_gatewayUrl);    
+    _socket->open(_gatewayUrl);
+
+
 
     emit defaultGuildOnline(QSharedPointer<GuildEntity>(new GuildEntity));
 }
@@ -151,7 +151,7 @@ Gateway::reconnect(int mSleep) {
 
     _logger->debug(QString("Reconnect attempt %1/%2.").arg(_retryCount).arg(_maxRetries));
 
-    _socket->open(_gatewayUrl);
+    _socket->open(_resumeGatewayUrl);
 }
 
 void
@@ -289,6 +289,10 @@ Gateway::processReady(QSharedPointer<GatewayPayload> payload) {
     BotScript::setBotId(botUser.getId().toString());
 
     BotScript::setBotName(botUser.getUsername().toString());
+
+    BotScript::setBotOwnerId(Settings::ownerId());
+
+    _resumeGatewayUrl = buildConnectionUrl(ready.getResumeGatewayUrl().toString());
 }
 
 void
@@ -402,10 +406,10 @@ Gateway::sendTextPayload(const QString &payload) {
     _logger->trace(QString("Payload sent: %1").arg(payload));
 }
 
-void
-Gateway::buildConnectionUrl() {
-    _gatewayUrl = QUrl(QString("%1/?v=%2&encoding=json")
-                .arg(Settings::connectionUrl())
+QUrl
+Gateway::buildConnectionUrl(const QString &baseUrl) const {
+    return QUrl(QString("%1/?v=%2&encoding=json")
+                .arg(baseUrl)
                 .arg(Settings::apiVersion()));
 }
 

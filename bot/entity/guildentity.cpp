@@ -25,8 +25,7 @@
 #include "botjob/corecommand.h"
 #include "botjob/ibotjob.h"
 #include "util/enumutils.h"
-
-#include <botjob/userhelp.h>
+#include "botjob/userhelp.h"
 
 const QString GuildEntity::DEFAULT_GUILD_ID = "0";
 const QString GuildEntity::GUILD_RESTRICTIONS = "GUILD_RESTRICTIONS";
@@ -41,8 +40,12 @@ GuildEntity::GuildEntity(const Guild &guild, QObject *parent) : QObject{parent} 
     for (auto jsonRole : guild.getRoles()) {
         Role role(jsonRole.toObject());
 
-        updateRole(role);
+        checkForAdminRole(role);
     }
+
+    _adminIds << BOT_OWNER_ID;
+
+    setGuildOwnerId(guild.getOwnerId().toString());
 }
 
 void
@@ -67,17 +70,15 @@ GuildEntity::initRestrictionStates(const QJsonObject &json) {
 }
 
 bool
-GuildEntity::hasAdminRole(const EventContext& context) {
-    for (auto roleId : context.getRoleIds()) {
-        QString id = roleId.toString();
-
-        if (_adminRoleIds.contains(id)) {
-            return true;
-        }
+GuildEntity::isAdmin(const EventContext& context) {
+    if (_adminIds.contains(context.getUserId().toString())) {
+        return true;
     }
 
-    if (context.getUserId() == BOT_OWNER_ID) {
-        return true;
+    for (auto roleId : context.getRoleIds()) {
+        if (_adminIds.contains(roleId.toString())) {
+            return true;
+        }
     }
 
     return false;
@@ -88,7 +89,7 @@ GuildEntity::canInvoke(const EventContext &context, const QString &command) {
 
     if (_commandBindings.contains(command)) {
         if (!_commandBindings[command]->ignoreAdmin()) {
-            if (hasAdminRole(context)) {
+            if (isAdmin(context)) {
                 return true;
             }
 
@@ -98,7 +99,7 @@ GuildEntity::canInvoke(const EventContext &context, const QString &command) {
         }
     } else if (_gatewayBindings.contains(command)) {
         if (!_gatewayBindings[command]->ignoreAdmin()) {
-            if (hasAdminRole(context)) {
+            if (isAdmin(context)) {
                 return true;
             }
 
@@ -159,7 +160,7 @@ GuildEntity::processEvent(QSharedPointer<EventContext> context) {
             commandJob = getCommandJob(context);
             break;
         case GatewayEvent::GUILD_ROLE_UPDATE:
-            updateRole(Role(context->getSourcePayload()[GuildRoleUpdate::ROLE].toObject()));
+            checkForAdminRole(Role(context->getSourcePayload()[GuildRoleUpdate::ROLE].toObject()));
             break;
         case GatewayEvent::GUILD_ROLE_DELETE:
             removeRole(context->getRoleId().toString());
@@ -179,26 +180,24 @@ GuildEntity::processEvent(QSharedPointer<EventContext> context) {
 
 
 void
-GuildEntity::updateRole(const Role &role) {
+GuildEntity::checkForAdminRole(const Role &role) {
     QString roleId = role.getId().toString();
-
-    _rolesByRoleId[roleId] = role;
 
     QString roleName = role.getName().toString();
 
-    if (roleName.compare(ADMIN_ROLE_NAME, Qt::CaseInsensitive) != 0) {
-        _adminRoleIds.removeAll(roleId);
+    if (roleName.compare(ADMIN_ROLE_NAME, Qt::CaseInsensitive) == 0) {
+        _adminIds << roleId;
 
-    } else if (!_adminRoleIds.contains(roleId)) {
-        _adminRoleIds << roleId;
+
+    } else {
+        _adminIds.remove(roleId);
+
     }
 }
 
 void
 GuildEntity::removeRole(const QString &roleId) {
-    _adminRoleIds.removeAll(roleId);
-
-    _rolesByRoleId.remove(roleId);
+    _adminIds.remove(roleId);
 }
 
 void
@@ -220,9 +219,8 @@ GuildEntity::updateRestrictionStates(const QString &name,
 
     } else if (_commandNamesByScriptName.contains(name)) {
         // Script name provided, update all commands
-        for (auto cmd : _commandNamesByScriptName[name]) {
-            updateState(entityRestrictionsUpdate, name, targetId, state);
-
+        for (auto &commandName : _commandNamesByScriptName[name]) {
+            updateState(entityRestrictionsUpdate, commandName, targetId, state);
         }
     } else {
         // Check each script's commands.
@@ -254,20 +252,15 @@ GuildEntity::updateState(QMap<QString, CommandRestrictions::RestrictionState> &r
     if (state == CommandRestrictions::REMOVED) {
         if (targetId.isEmpty()) {
             _mappedStateIdsByCommand[name].clear();
-
-            restrictionUpdates[name] = CommandRestrictions::REMOVED;
-
         } else {
             _mappedStateIdsByCommand[name].remove(targetId);
-
-            restrictionUpdates[name] = CommandRestrictions::REMOVED;
         }
 
     } else {
         _mappedStateIdsByCommand[name][targetId] = state;
-
-        restrictionUpdates[name] = state;
     }
+
+    restrictionUpdates[name] = state;
 }
 
 void
@@ -393,7 +386,7 @@ GuildEntity::getMappedStateIdsByCommand() {
 
 void
 GuildEntity::addRole(const Role &role) {
-    updateRole(role);
+    checkForAdminRole(role);
 }
 
 void
@@ -651,13 +644,25 @@ GuildEntity::isTimedJobEnabled(const TimedBinding &binding) {
     return DEFAULT_STATE;
 }
 
+void
+GuildEntity::setGuildOwnerId(const QString &guildOwnerId) {
+    _guildOwnerId = guildOwnerId;
+
+    _adminIds << guildOwnerId;
+}
+
+QString
+GuildEntity::getGuildOwnerId() const {
+    return _guildOwnerId;
+}
+
 UserHelp*
 GuildEntity::getUserHelp(const EventContext &context) {
     QString userId = context.getUserId().toString();
 
     QString channelId = context.getChannelId().toString();
 
-    if (hasAdminRole(context)) {
+    if (isAdmin(context)) {
         return new UserHelp(_bindingsByScript, userId, channelId, _id, true);
     }
 

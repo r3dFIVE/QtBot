@@ -215,11 +215,23 @@ public:
         QSharedPointer<IBindingProperties> helpProperties =
                 QSharedPointer<IBindingProperties>(new IBindingProperties);
 
-        clearAllProperties->adminOnly = false;
+        helpProperties->adminOnly = false;
 
         addCommand(UserHelp::HELP_COMMAND, helpProperties, [&](const EventContext &context) -> void {
             QMetaObject::invokeMethod(&eventHandler,
                                       "getHelp",
+                                      Qt::QueuedConnection,
+                                      Q_ARG(EventContext, context));
+        });
+
+        QSharedPointer<IBindingProperties> uptimeProperties =
+                QSharedPointer<IBindingProperties>(new IBindingProperties);
+
+        uptimeProperties->adminOnly = false;
+
+        addCommand(".uptime", uptimeProperties, [&](const EventContext &context) -> void {
+            QMetaObject::invokeMethod(&eventHandler,
+                                      "getUptime",
                                       Qt::QueuedConnection,
                                       Q_ARG(EventContext, context));
         });

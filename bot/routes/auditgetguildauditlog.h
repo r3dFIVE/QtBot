@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2023  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,20 +18,22 @@
  *
  */
 
-#include "corecommand.h"
+#ifndef AUDITGETGUILDAUDITLOG_H
+#define AUDITGETGUILDAUDITLOG_H
 
-#include "payloads/user.h"
+#include "route.h"
 
-void
-CoreCommand::execute(const QByteArray &command, const EventContext &context) {
-    User user(context.getAuthor());
 
-    LogFactory::getLogger(this)->trace(QString("Executing core command: %1, from userId: %2 (%3)")
-                                       .arg(QString(command))
-                                       .arg(user.getId().toString())
-                                       .arg(user.getUsername().toString()));
+class AuditGetGuildAuditLog : public Route
+{
+public:
+    const QString PATH = "/guilds/{guild.id}/audit-logs";
 
-    _command(context);
+    AuditGetGuildAuditLog(const EventContext &context) {
+        _pathParams[Route::GUILD_ID_TOKEN] = context.getGuildId().toString();
 
-    _runLock.unlock();
-}
+        buildRequest(GET, PATH, _pathParams[Route::GUILD_ID_TOKEN], context);
+    }
+};
+
+#endif // AUDITGETGUILDAUDITLOG_H

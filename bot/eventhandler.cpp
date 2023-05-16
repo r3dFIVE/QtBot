@@ -23,6 +23,7 @@
 
 #include <QDebug>
 #include <QThreadPool>
+#include <QTimeZone>
 
 #include "util/enumutils.h"
 #include "botjob/botscript.h"
@@ -30,8 +31,8 @@
 #include "routes/usercreatedm.h"
 #include "payloads/channel.h"
 #include "payloads/guildmember.h"
+#include "payloads/user.h"
 
-#include <payloads/user.h>
 
 
 const int EventHandler::JOB_POLL_MS = 1000;
@@ -44,6 +45,8 @@ EventHandler::EventHandler() {
     GuildEntity::setDefaultRestrictionState(Settings::restrictionState());
 
     _discordAPI = QSharedPointer<DiscordAPI>(new DiscordAPI);
+
+    _botOnlineEpochSeconds = QDateTime::currentSecsSinceEpoch();
 }
 
 void
@@ -501,6 +504,39 @@ EventHandler::getHelp(EventContext context) {
     context.setTargetPayload(message.object());
 
     context.setChannelId(getDmChannel(context)); // Reply to the user DM channel instead of spamming regular channels
+
+    _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
+}
+
+void
+EventHandler::getUptime(EventContext context) {
+    qint64 seconds = QDateTime::currentSecsSinceEpoch() - _botOnlineEpochSeconds;
+    qint64 minutes =  seconds / 60;
+    qint64 hours = minutes / 60;
+    qint64 days = hours / 24;
+    minutes = minutes % 60;
+    seconds = seconds % 60;
+    hours = hours % 24;
+
+    QString daysHoursMinutesSeconds = QString("```yaml\n%1d %2h %3m %4s```")
+            .arg(days)
+            .arg(hours)
+            .arg(minutes)
+            .arg(seconds);
+
+    QDateTime botOnlineDateTime = QDateTime::fromTime_t(_botOnlineEpochSeconds).toUTC();
+
+    EmbedFooter footer(botOnlineDateTime.toString(), "");
+
+    Embed embed("", daysHoursMinutesSeconds);
+
+    embed.setFooter(footer.object());
+
+    Message message;
+
+    message.setEmbed(embed.object());
+
+    context.setTargetPayload(message.object());
 
     _discordAPI->channelCreateMessage(SerializationUtils::toVariant(context));
 }
