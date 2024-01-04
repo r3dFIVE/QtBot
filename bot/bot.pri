@@ -24,7 +24,6 @@ win32 {
     LIBS += -L/usr/local/lib -lmongocxx -lbsoncxx -lgumbo
     INCLUDEPATH += /usr/local/include/bsoncxx/v_noabi
     INCLUDEPATH += /usr/local/include/mongocxx/v_noabi
-
 }
 
 
@@ -49,6 +48,7 @@ HEADERS += \
     $$PWD/entity/mongomanager.h \
     $$PWD/entity/sqlmanager.h \
     $$PWD/entitymanager.h \
+    $$PWD/logging/logutils.h \
     $$PWD/payloads/activityemoji.h \
     $$PWD/bot.h \
     $$PWD/eventhandler.h \
@@ -264,6 +264,7 @@ SOURCES += \
     $$PWD/gateway.cpp \
     $$PWD/logging/logfactory.cpp \
     $$PWD/logging/logger.cpp \
+    $$PWD/logging/logutils.cpp \
     $$PWD/logging/logworker.cpp \
     $$PWD/payloads/activity.cpp \
     $$PWD/payloads/activityassets.cpp \

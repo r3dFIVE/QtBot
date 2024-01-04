@@ -6,67 +6,75 @@
 #include <QObject>
 #include <QDir>
 #include <QUuid>
-#include <QQmlEngine>
 
 
 class TempFile : public File
 {
     Q_OBJECT
 
-    QString makeTempPath() const {
+
+    Logger *_logger = LogFactory::getLogger(this);
+
+    bool createTempPath(const QString &fileName = QString()) {
         QString tempPath = QString("%1/%2")
                 .arg(Settings::tempDirectory())
                 .arg(QUuid::createUuid().toString(QUuid::Id128));
 
+        if (!fileName.isEmpty()) {
+            _fileName = QString("%1/%2")
+                    .arg(tempPath)
+                    .arg(fileName);
+        } else {
+            _fileName = QString("%1/%2")
+                    .arg(tempPath)
+                    .arg(QUuid::createUuid().toString(QUuid::Id128));
+        }
+
         QDir().mkpath(tempPath);
 
-        return tempPath;
+        bool isSuccess = true;
+
+        if (_fileName.isEmpty() || !QDir(tempPath).isReadable()) {
+            isSuccess = false;
+        }
+
+        return isSuccess;
     };
+
 
 public:
     TempFile(QObject *parent = nullptr) : File{parent} {
-        _fileName = QString("%1/%2")
-                .arg(makeTempPath())
-                .arg(QUuid::createUuid().toString(QUuid::Id128));
+        LogUtils::logConstructor(this);
+
+        createTempPath();
     }
 
     TempFile(const QString &fileName, QObject *parent = nullptr) : File{parent} {
-        if (!fileName.isEmpty()) {
-            _fileName = QString("%1/%2")
-                    .arg(makeTempPath())
-                    .arg(fileName);
-        } else {
-            _fileName = QString("%1/%2")
-                    .arg(makeTempPath())
-                    .arg(QUuid::createUuid().toString(QUuid::Id128));
-        }
+        LogUtils::logConstructor(this);
+
+        createTempPath(fileName);
     }
 
     TempFile(const QString &fileName, const OpenMode::Mode openMode, QObject *parent = nullptr) : File{parent} {
-        if (!fileName.isEmpty()) {
-            _fileName = QString("%1/%2")
-                    .arg(makeTempPath())
-                    .arg(fileName);
-        } else {
-            _fileName = QString("%1/%2")
-                    .arg(makeTempPath())
-                    .arg(QUuid::createUuid().toString(QUuid::Id128));
-        }
+        LogUtils::logConstructor(this);
 
-        _openMode = openMode;
+        createTempPath(fileName);
+
+        _openMode = openMode;        
     }
 
-    ~TempFile() {        
-        QDir dir(QFileInfo(*_file.get()).absolutePath());
+    ~TempFile() {                
+        LogUtils::logDestructor(this);
 
-        _file->close();
+        if (_file) {
+            _file->close();
+        }
+
+        QFileInfo fileInfo(_fileName);
+
+        QDir dir(fileInfo.absolutePath());
 
         dir.removeRecursively();
-
-        QString ptrStr = QString("0x%1").arg((quintptr)this,
-                            QT_POINTER_SIZE * 2, 16, QChar('0'));
-
-        _logger->trace(QString("Destroyed TempFile(%1)").arg(ptrStr));
     }
 };
 

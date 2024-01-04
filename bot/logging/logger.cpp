@@ -22,36 +22,38 @@
 
 #include <QThread>
 
-Logger::Logger(QString loggerName, QObject *parent) : QObject (parent) {
+#include "logutils.h"
+
+Logger::Logger(const QString &loggerName, QObject *parent) : QObject {parent} {
     _loggerName = loggerName;
 }
 
 void
-Logger::trace(QString message) {
+Logger::trace(const QString &message) {
     emit logEvent(TRACE, message, _loggerName);
 }
 
 void
-Logger::info(QString message) {
+Logger::info(const QString &message) {
     emit logEvent(INFO, message, _loggerName);
 }
 
 void
-Logger::debug(QString message) {
+Logger::debug(const QString &message) {
     emit logEvent(DEBUG, message, _loggerName);
 }
 
 void
-Logger::warning(QString message) {
+Logger::warning(const QString &message) {
     emit logEvent(WARNING, message, _loggerName);
 }
 
 void
-Logger::critical(QString message) {
+Logger::critical(const QString &message) {
     emit logEvent(CRITICAL, message, _loggerName);
 }
 
 void
-Logger::fatal(QString message) {
+Logger::fatal(const QString &message) {
     emit logEvent(FATAL, message, _loggerName);
 }

@@ -25,10 +25,8 @@
 #include <QThreadPool>
 #include <QTimeZone>
 
-#include "util/enumutils.h"
 #include "botjob/botscript.h"
 #include "botjob/job.h"
-#include "routes/usercreatedm.h"
 #include "payloads/channel.h"
 #include "payloads/guildmember.h"
 #include "payloads/user.h"

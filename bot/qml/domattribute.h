@@ -13,6 +13,7 @@
 
 #include "logging/logfactory.h"
 
+
 class DOMAttribute : public QObject
 {
     Q_OBJECT
@@ -23,7 +24,9 @@ class DOMAttribute : public QObject
     QString _value;
 
 public:
-    DOMAttribute(QObject* parent = nullptr) : QObject(parent) {}
+    DOMAttribute(QObject* parent = nullptr) : QObject(parent) {
+        LogUtils::logConstructor(this);
+    }
     DOMAttribute(const char* utf8name, const char* utf8value, QObject* parent = nullptr);
     DOMAttribute(const DOMAttribute &other, QObject* parent = nullptr);
     ~DOMAttribute() {

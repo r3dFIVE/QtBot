@@ -79,7 +79,7 @@ Bot::Bot() {
     qRegisterMetaType<HttpPart>();
     qRegisterMetaType<HttpMultiPart>();
     qRegisterMetaType<HttpResponse*>();
-    qRegisterMetaType<TempFile*>();
+    qRegisterMetaType<QSharedPointer<TempFile>>();
     qRegisterMetaType<CommandRestrictions::RestrictionState>();
     qRegisterMetaType<GatewayEvent::Event>();
     qmlRegisterType<BotScript>(BOT_IMPORT_IDENTIFIER.toUtf8(),

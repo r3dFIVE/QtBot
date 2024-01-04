@@ -26,12 +26,12 @@ LogWorker *LogFactory::_worker = nullptr;
 QHash<QString, Logger*> LogFactory::_loggers = QHash<QString, Logger*>();
 
 Logger*
-LogFactory::getLogger(QObject *parent) {
-    return getLogger(parent->metaObject()->className());
+LogFactory::getLogger(QObject *obj) {
+    return getLogger(obj->metaObject()->className());
 }
 
 Logger*
-LogFactory::getLogger(QString loggerName) {
+LogFactory::getLogger(const QString &loggerName) {
     if (!_loggers.contains(loggerName)) {
         Logger *logger = new Logger(loggerName);
 

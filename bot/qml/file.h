@@ -23,7 +23,6 @@
 
 #include <QDataStream>
 #include <QFile>
-#include <QQmlContext>
 #include <QTextStream>
 
 #include "logging/logfactory.h"
@@ -52,7 +51,7 @@ public:
         QString ptrStr = QString("0x%1").arg((quintptr)this,
                             QT_POINTER_SIZE * 2, 16, QChar('0'));
 
-        _logger->trace(QString("Destroyed File(%1)").arg(ptrStr));
+        _logger->trace(QString("Destroyed File(%1): %2").arg(ptrStr).arg(_fileName));
     }
 
     Q_INVOKABLE File &operator=(const File &other);
@@ -78,7 +77,6 @@ public:
     void setParent(QObject *parent);
     QFile* get();
     int writeRawData(const char *data, int len);
-    QString getPath();
 };
 
 Q_DECLARE_METATYPE(File)

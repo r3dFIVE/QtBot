@@ -21,7 +21,6 @@
 
 #include "idbmanager.h"
 #include "payloads/attachment.h"
-#include "qml/mongodb.h"
 
 
 class MongoManager : public IDBManager

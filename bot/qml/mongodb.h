@@ -44,7 +44,8 @@ class MongoDB : public QObject
     mongocxx::options::find parseFindOpts(const QVariant &opts);
     mongocxx::options::insert parseInsertOpts(const QVariant &opts);
 
-    Q_INVOKABLE TempFile* findFileByChecksum(const QString &checksum, mongocxx::client &client, const QString &filename = QString());
+    TempFile* findFileByChecksum(const QString &checksum, mongocxx::client &client, const QString &filename = QString());
+    TempFile* findFileByChecksum(const QString &checksum, const QString &filename = QString());
 
 public:
     MongoDB(QObject *parent = nullptr);
@@ -95,8 +96,7 @@ public:
     Q_INVOKABLE int port();
     Q_INVOKABLE void port(int port);
     Q_INVOKABLE QString userName();
-    Q_INVOKABLE void userName(const QString &userName);
-    Q_INVOKABLE TempFile* findFileByChecksum(const QString &checksum, const QString &filename = QString());
+    Q_INVOKABLE void userName(const QString &userName);    
     Q_INVOKABLE QVariantList findFilesByMessageId(const QString &messageId);
 };
 

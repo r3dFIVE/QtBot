@@ -166,11 +166,6 @@ File::fileName() const {
 }
 
 QString
-File::getPath() {
-    return QFileInfo(*_file.data()).absolutePath();
-}
-
-QString
 File::errorString() const {
     return _file->errorString();
 }
