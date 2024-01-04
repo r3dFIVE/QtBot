@@ -22,9 +22,9 @@
 
 #include <QSqlError>
 #include <QTimer>
+#include <QDir>
 
 #include "entity/mongomanager.h"
-#include "util/enumutils.h"
 
 
 EntityManager::EntityManager() {

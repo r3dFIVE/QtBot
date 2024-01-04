@@ -145,9 +145,9 @@ Gateway::tooManyReconnects() {
 
 void
 Gateway::reconnect(int mSleep) {
-    QThread::msleep(mSleep);
-
     _heartbeatTimer->stop();
+
+    QThread::msleep(mSleep);    
 
     _logger->debug(QString("Reconnect attempt %1/%2.").arg(_retryCount).arg(_maxRetries));
 

@@ -23,23 +23,24 @@
 
 #include <QObject>
 
+
 class Logger : public QObject
 {
     Q_OBJECT
 
-    Logger(QString loggerName, QObject *parent = nullptr);
+    Logger(const QString &loggerName, QObject *parent = nullptr);
 
     friend class LogFactory;
 
     QString _loggerName;
 
 public:
-    void trace(QString message);
-    void info(QString message);
-    void debug(QString message);
-    void warning(QString message);
-    void critical(QString message);
-    void fatal(QString message);
+    void trace(const QString &message);
+    void info(const QString &message);
+    void debug(const QString &message);
+    void warning(const QString &message);
+    void critical(const QString &message);
+    void fatal(const QString &message);
 
     enum LogLevel {
         OFF = 0,

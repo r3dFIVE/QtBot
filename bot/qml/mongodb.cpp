@@ -23,6 +23,8 @@ const std::string MongoDB::ATTACHMENTS_CHUNKS = ATTACHMENTS + ".chunks";
 
 MongoDB::MongoDB(QObject *parent) : QObject(parent) {
     _databaseContext.init();
+
+    LogUtils::logConstructor(this);
 }
 
 MongoDB::MongoDB(const MongoDB &other, QObject *parent) : QObject(parent) {
@@ -36,12 +38,15 @@ MongoDB::MongoDB(const MongoDB &other, QObject *parent) : QObject(parent) {
 
     _databaseName = other._databaseName;
 
+    LogUtils::logConstructor(this);
 }
 
 MongoDB::MongoDB(const DatabaseContext &context, QObject *parent) : QObject(parent) {
     _databaseContext = context;
 
     _databaseName = context.databaseName.toStdString();
+
+    LogUtils::logConstructor(this);
 }
 
 void
@@ -240,7 +245,7 @@ MongoDB::findFilesByMessageId(const QString &messageId) {
 
         QString targetFilename = attachmentMetadata[Attachment::FILENAME].toString();
 
-        QSharedPointer<TempFile> *file = findFileByChecksum(checksum, client, targetFilename);
+        TempFile* file = findFileByChecksum(checksum, client, targetFilename);
 
         if (!file) {
             continue;
@@ -285,9 +290,9 @@ MongoDB::findFileByChecksum(const QString &checksum, mongocxx::client &client, c
 
     auto downloader = bucket.open_download_stream(id);
 
-    TempFile *tempFile = new TempFile(fileName);
+    TempFile *tempFile = new TempFile(fileName, this);
 
-    QQmlEngine::setObjectOwnership(tempFile, QQmlEngine::JavaScriptOwnership);
+    QQmlEngine::setObjectOwnership(tempFile, QQmlEngine::CppOwnership);
 
     auto length = downloader.file_length();
 

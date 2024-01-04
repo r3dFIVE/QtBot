@@ -7,7 +7,6 @@
 #include "util/enumutils.h"
 #include "util/mongoutils.h"
 #include "payloads/user.h"
-#include "gridfsfile.h"
 #include "payloads/message.h"
 
 using namespace bsoncxx::builder::stream;

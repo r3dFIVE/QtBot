@@ -97,25 +97,23 @@ Route::buildHttpMultiPart(const EventContext &context, const QVariantList &files
 
 void
 Route::appendFilePart(const QVariant &fileVariant) {    
-    QFile *qfile;
+    File *file = fileVariant.value<File*>();
 
-    TempFile *tempFile = qvariant_cast<TempFile*>(fileVariant);
-
-    if (tempFile) {
-        qfile = tempFile->get();
-    } else {
-        qfile = fileVariant.value<File*>()->get();
+    if (!file) {
+        return;
     }
 
-    if (!qfile->isOpen()) {
-        if  (!qfile->open(QIODevice::ReadOnly)) {
-            _logger->warning(QString("Failed to open file, reason: %1").arg(qfile->errorString()));
+    QFile *qFile = file->get();
+
+    if (!qFile->isOpen()) {
+        if  (!qFile->open(QIODevice::ReadOnly)) {
+            _logger->warning(QString("Failed to open file, reason: %1").arg(qFile->errorString()));
 
             return;
         }
     }
 
-    QFileInfo fileInfo(*qfile);
+    QFileInfo fileInfo(*qFile);
 
     QMimeType mimeType = MimeUtils::getMimeType(fileInfo);
 
@@ -131,7 +129,7 @@ Route::appendFilePart(const QVariant &fileVariant) {
 
     filePart.setHeader(QNetworkRequest::ContentDispositionHeader, dispostionValue);
 
-    filePart.setBodyDevice(qfile);
+    filePart.setBodyDevice(qFile);
 
     _httpMultiPart->append(filePart);
 }

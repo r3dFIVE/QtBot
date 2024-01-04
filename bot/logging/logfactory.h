@@ -21,13 +21,15 @@
 #ifndef LOGFACTORY_H
 #define LOGFACTORY_H
 
-#include "logger.h"
-#include "logworker.h"
-
 #include <QString>
 #include <QSharedPointer>
 
+
+#include "logger.h"
+#include "logworker.h"
+#include "logutils.h"
 #include "util/settings.h"
+
 
 class LogFactory
 {
@@ -35,7 +37,7 @@ class LogFactory
     static QHash<QString, Logger*> _loggers;
 
 public:
-    static Logger* getLogger(QString prefix = QString());
+    static Logger *getLogger(const QString &prefix = QString());
     static Logger *getLogger(QObject *parent);
     static void cleanup();
     static void init(LogWorker *worker);
