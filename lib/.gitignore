@@ -4,3 +4,4 @@
 !.gitignore
 !gumbo-parser/*
 !xml2json/*
+!boost/*
