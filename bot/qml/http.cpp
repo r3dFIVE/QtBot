@@ -4,6 +4,7 @@
 #include "util/httputils.h"
 #include "util/mimeutils.h"
 #include "util/serializationutils.h"
+#include "util/settings.h"
 
 
 Http::Http(QObject *parent) : QObject(parent) {

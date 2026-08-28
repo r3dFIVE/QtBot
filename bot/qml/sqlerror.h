@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -46,10 +46,8 @@ public:
         _logger->trace(QString("Destroyed SqlError(%1)").arg(ptrStr));
     }
 
-    Q_INVOKABLE SqlError &operator=(const SqlError &other);
     Q_INVOKABLE SqlError &operator=(SqlError &&other) noexcept;
 
-    Q_INVOKABLE bool operator==(const SqlError& other) const;
     Q_INVOKABLE bool operator!=(const SqlError& other) const;
 
     Q_INVOKABLE QString driverText() const;
@@ -61,6 +59,6 @@ public:
     Q_INVOKABLE bool isValid() const;
 };
 
-Q_DECLARE_METATYPE(SqlError)
+Q_DECLARE_METATYPE(SqlError*)
 
 #endif // SQLERROR_H

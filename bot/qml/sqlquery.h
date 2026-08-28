@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -86,7 +86,7 @@ public:
     Q_INVOKABLE void addBindValue(const QVariant& val, Sql::ParamTypeFlag type = Sql::In);
     Q_INVOKABLE QVariant boundValue(const QString& placeholder) const;
     Q_INVOKABLE QVariant boundValue(int pos) const;
-    Q_INVOKABLE QMap<QString, QVariant> boundValues() const;
+    Q_INVOKABLE QVariantList boundValues() const;
     Q_INVOKABLE QString executedQuery() const;
     Q_INVOKABLE QVariant lastInsertId() const;
     Q_INVOKABLE void finish();

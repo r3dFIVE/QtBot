@@ -8,7 +8,6 @@
 
 #include <bsoncxx/json.hpp>
 #include <mongocxx/client.hpp>
-#include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
 #include <mongocxx/instance.hpp>
 #include <bsoncxx/types/bson_value/view.hpp>

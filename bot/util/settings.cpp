@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -156,7 +156,7 @@ Settings::validateBotSettings() {
 
     QString restrictionState = _settings[RESTRICTION_STATE].toString();
 
-    int typeValue = metaEnum.keyToValue(restrictionState.toUtf8());
+    int typeValue = metaEnum.keyToValue(restrictionState.toUpper().toUtf8());
 
     if (typeValue < 0) {
         invalidEnumValue(RESTRICTION_STATE, restrictionState, metaEnum);

@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -21,10 +21,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCommandLineParser>
 #include <QtCore/QCommandLineOption>
-#include <QLatin1Literal>
 #include <QSharedPointer>
 #include "echoserver.h"
-#include "payloads/jsonserializable.h"
 
 int main(int argc, char *argv[])
 {

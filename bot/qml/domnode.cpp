@@ -166,10 +166,10 @@ DOMNode::getElementsByClassName(const QString& name) {
         if (attr) {
             const QString value = QString::fromUtf8(attr->value);
 
-            const QVector<QStringRef> parts =
-                    value.splitRef(QChar(' '), Qt::SkipEmptyParts, Qt::CaseInsensitive);
+            const QVector<QString> parts =
+                    value.split(QChar(' '), Qt::SkipEmptyParts, Qt::CaseInsensitive);
 
-            for (const QStringRef& part: parts) {
+            for (const QString& part: parts) {
                 if (part.compare(name, Qt::CaseInsensitive) == 0) {
                     nodes << new DOMNode(node, parent);
 
@@ -340,7 +340,7 @@ DOMNode::tag() const {
         return HtmlTag::Tag(_ptr->v.element.tag);
     }
 
-    return HtmlTag::Tag::UNKNOWN;
+    return HtmlTag::Tag::LAST;
 }
 
 QString
