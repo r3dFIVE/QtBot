@@ -1,4 +1,4 @@
-QT += gui websockets sql qml xml xmlpatterns
+QT += gui sql qml xml websockets
 
 INCLUDEPATH += $$PWD/.
 DEPENDPATH += $$PWD/.
@@ -10,20 +10,18 @@ win32 {
     BOOST_HEADERS=$$LIB_DIR/boost
     MONGO_CXX_HEADERS=$$LIB_DIR/mongo-cxx-driver/include
     MONGO_CXX_LIB=$$LIB_DIR/mongo-cxx-driver/lib
-    GUMBO_LIB=$$LIB_DIR/gumbo-parser
 
-    INCLUDEPATH += $$MONGO_CXX_HEADERS/mongocxx/v_noabi
-    INCLUDEPATH += $$MONGO_CXX_HEADERS/bsoncxx/v_noabi
+
     INCLUDEPATH += $$BOOST_HEADERS
     INCLUDEPATH += $$GUMBO_LIB
 
-    LIBS += -L$$MONGO_CXX_LIB -lmongocxx -lbsoncxx
+    LIBS += -L$$MONGO_CXX_LIB -libbsoncxx -libbsoncxx
     LIBS += -L$$GUMBO_LIB -lgumbo
 
 } else {
-    LIBS += -L/usr/local/lib -lmongocxx -lbsoncxx -lgumbo
-    INCLUDEPATH += /usr/local/include/bsoncxx/v_noabi
-    INCLUDEPATH += /usr/local/include/mongocxx/v_noabi
+    LIBS += -L/usr/lib64 -lgumbo -lmongocxx -lbsoncxx
+    INCLUDEPATH += /usr/include/bsoncxx/v_noabi
+    INCLUDEPATH += /usr/include/mongocxx/v_noabi
 }
 
 
@@ -121,7 +119,6 @@ HEADERS += \
     $$PWD/qml/sqlerror.h \
     $$PWD/qml/sqlquery.h \
     $$PWD/qml/tempfile.h \
-    $$PWD/qml/xmlquery.h \
     $$PWD/routes/auditgetguildauditlog.h \
     $$PWD/routes/bucket.h \
     $$PWD/routes/channeladdpinnedchannelmessage.h \
@@ -325,7 +322,6 @@ SOURCES += \
     $$PWD/qml/mongodb.cpp \
     $$PWD/qml/sqlerror.cpp \
     $$PWD/qml/sqlquery.cpp \
-    $$PWD/qml/xmlquery.cpp \
     $$PWD/routes/discordapi.cpp \
     $$PWD/botjob/corecommand.cpp \
     $$PWD/qml/file.cpp \

@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -21,13 +21,10 @@
 #ifndef CORECOMMANDS_H
 #define CORECOMMANDS_H
 
-#include "bot.h"
 #include "commandbinding.h"
 #include "corecommand.h"
 #include "eventhandler.h"
-#include "logging/logfactory.h"
 #include "botjob/ibotjob.h"
-#include "qml/sqldatabase.h"
 
 
 class CoreCommands {

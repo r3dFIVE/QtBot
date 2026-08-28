@@ -11,7 +11,6 @@
 
 #include <QObject>
 #include <QJsonObject>
-#include <functional>
 
 #include "gumbo.h"
 #include "enums/htmltag.h"
@@ -21,7 +20,6 @@ class QString;
 class DOMNode;
 class DOMAttribute;
 class DOMParser;
-class QStringList;
 
 
 class DOMNode : public QObject

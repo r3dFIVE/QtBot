@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -28,17 +28,6 @@ SqlError::SqlError(const SqlError &other, QObject *parent) : QObject(parent) {
 
 SqlError::SqlError(const QSqlError &other, QObject *parent) : QObject(parent) {
     _sqlError = other;
-}
-
-SqlError&
-SqlError::operator=(const SqlError &other) {
-    if (this == &other) {
-        return *this;
-    }
-
-    _sqlError = other._sqlError;
-
-    return *this;
 }
 
 SqlError&

@@ -6,8 +6,8 @@
 #include <QObject>
 #include <QDebug>
 #include <QSharedPointer>
-#include <QXmlItem>
-#include <QXmlQuery>
+//#include <QXmlItem>
+//#include <QXmlQuery>
 #include <QDomDocument>
 #include <QJsonObject>
 
@@ -20,7 +20,7 @@ class XMLQuery : public QObject
     Q_OBJECT
 
     Logger *_logger = LogFactory::getLogger(this);
-    QXmlQuery _query;
+    //QXmlQuery _query;
 
 public:
 

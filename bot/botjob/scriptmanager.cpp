@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,7 @@
 #include <QSqlDatabase>
 #include <QVariant>
 
+#include "bot.h"
 #include "bindingfactory.h"
 #include "botjob/botscript.h"
 #include "botjob/ibinding.h"
@@ -342,7 +343,7 @@ ScriptManager::buildValidBotScripts(GuildEntity &guildEntity) {
                       .arg(fileInfo.fileName())
                       .arg(guildEntity.getId()));
 
-        buildBotScript(fileInfo.absoluteFilePath(), guildEntity);
+        buildBotScript(fileInfo, guildEntity);
     }    
     
     guildEntity.setCommandNamesByScriptName(_scriptNamesByCommand);    

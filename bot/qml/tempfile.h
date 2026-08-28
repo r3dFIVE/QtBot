@@ -1,12 +1,13 @@
 #ifndef TEMPFILE_H
 #define TEMPFILE_H
 
-#include "file.h"
 #include <QDebug>
 #include <QObject>
 #include <QDir>
 #include <QUuid>
 
+#include "file.h"
+#include "util/settings.h"
 
 class TempFile : public File
 {

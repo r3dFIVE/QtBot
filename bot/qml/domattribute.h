@@ -12,6 +12,7 @@
 #include <QObject>
 
 #include "logging/logfactory.h"
+#include "logging/logutils.h"
 
 
 class DOMAttribute : public QObject

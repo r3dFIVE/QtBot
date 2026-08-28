@@ -1,7 +1,7 @@
 /*
  *  QtBot - The extensible Qt Discord Bot!
  *
- *  Copyright (C) 2020  Ross McTague - r3dFIVE
+ *  Copyright (C) 2026  Ross McTague - r3dFIVE
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -21,6 +21,7 @@
 #include "logfactory.h"
 
 #include <QThread>
+#include <QHash>
 
 LogWorker *LogFactory::_worker = nullptr;
 QHash<QString, Logger*> LogFactory::_loggers = QHash<QString, Logger*>();
@@ -50,9 +51,7 @@ LogFactory::init(LogWorker *worker) {
 
 void
 LogFactory::cleanup() {
-    for (Logger *logger : _loggers) {
-        delete logger;
+    for (auto it = _loggers.cbegin(), end = _loggers.cend(); it != end; ++it) {
+        delete *it;
     }
 }
-
-

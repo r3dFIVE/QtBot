@@ -39,7 +39,9 @@ public:
 
     QString
     static toQString(const bsoncxx::types::bson_value::view &view) {
-       return QString::fromStdString(view.get_utf8().value.to_string());
+        bsoncxx::types::b_string bStr = view.get_string();
+
+        return QString::fromUtf8(bStr.value.data(), bStr.value.length());
     }
 
     QJsonObject
@@ -51,9 +53,11 @@ public:
 
     QJsonObject
     static toJson(const bsoncxx::types::bson_value::view &view) {
-       QString valueStr = QString::fromStdString(view.get_utf8().value.to_string());
 
-       return  QJsonDocument::fromJson(valueStr.toUtf8()).object();
+        bsoncxx::types::b_string bStr = view.get_string();
+        QString valueStr = QString::fromUtf8(bStr.value.data(), bStr.value.length());
+
+        return  QJsonDocument::fromJson(valueStr.toUtf8()).object();
     }
 
     QJsonObject
