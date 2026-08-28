@@ -4,6 +4,6 @@
 [submodule "lib/xml2json"]
 	path = lib/xml2json
 	url = https://github.com/Cheedoong/xml2json
-[submodule "lib/gumbo-parser/lib/gumbo-parser/gumbo-parser"]
-	path = /lib/gumbo-parser
-	url = https://codeberg.org/gumbo-parser/gumbo-parser.git
+[submodule "lib/gumbo-parser"]
+	path = lib/gumbo-parser
+	url = https://codeberg.org/gumbo-parser/gumbo-parser
